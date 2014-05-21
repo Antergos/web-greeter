@@ -1,0 +1,4 @@
+#!/bin/sh
+# Needs xephyr nested server
+lightdm --test-mode -d -c ./lightdm.conf
+

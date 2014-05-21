@@ -1,0 +1,12 @@
+Overview of changes in lightdm-webkit-greeter 0.1.2
+
+    * Fix files not being added to tarball
+    * Don't use AC_CONFIG_MACRO_DIR in configure.ac
+
+Overview of changes in lightdm-webkit-greeter 0.1.1
+
+    * Update to work with newer LightDM
+
+Overview of changes in lightdm-webkit-greeter 0.1.0
+
+    * Split out into separate module from lightdm
