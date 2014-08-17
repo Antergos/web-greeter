@@ -1,0 +1,6 @@
+[theme]
+name=Antergos
+description=Antergos Theme
+engine=lightdm-webkit-greeter
+url=index.html
+session=cinnamon

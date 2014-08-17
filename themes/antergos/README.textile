@@ -1,0 +1,68 @@
+h1. lightdm-webkit-theme-antergos
+
+
+h2. Overview
+
+Official LightDM Webkit Greeter Theme of Antergos Linux
+
+h2. Screenshot
+<img src="screenshot.png" alt="screenshot" />
+
+h2. Prerequisites
+
+Both lightdm and lightdm-webkit-greeter are required.
+antergos-wallpapers used for the background switcher
+
+Enable @ligthdm-webkit-greeter@ by editing @/etc/lightdm/lightdm.conf@ and setting @greeter-session@ property to @lightdm-webkit-greeter@ :
+
+bc. 
+[SeatDefaults]
+#greeter-session=lightdm-gtk-greeter
+greeter-session=lightdm-webkit-greeter
+user-session=your-session (gnome,cinnamon,xfce...)
+
+h2. Installation
+
+Arch users can install using their favorite AUR pacman wrapper. Others can install manually:
+
+# Download "Antergos Theme":https://github.com/Antergos/lightdm-webkit-theme-antergos/zipball/master
+# Unzip it.
+# This should create a folder named like @Antergos-lightdm-webkit-theme-antergos-28c4b13@
+# Rename this folder to @antergos@ (so that the complete path becomes @/usr/share/lightdm-webkit/themes/antergos@)
+# Edit the resource @/etc/lightdm/lightdm-webkit-greeter.conf@ and set @webkit-theme@ property to @antergos@ :
+
+bc. 
+theme-name=Adwaita
+#webkit-theme=default
+webkit-theme=antergos
+font-name='Lato'
+xft-antialias=true
+xft-dpi=96
+xft-hintstyle=medium
+xft-rgba=rgb
+
+Optionally you can install the included font "Lato".
+
+Now if you restart your computer (or at least if you restart lightdm), the antergos greeter theme should be activated. 
+
+h1. Uninstallation
+
+To uninstall, simply restore the @greeter-session@ property of the @/etc/lightdm/lightdm.conf@ file and restart your computer (or at least lightdm).
+
+You may also want to :
+# Remove the folder @antergos@ created in @/usr/share/lightdm-webkit/themes/@
+# Restore the @webkit-theme@ property of the @/etc/lightdm/lightdm-webkit-greeter.conf@ file
+
+h1. User icons management
+
+To change users icons, there are two options :
+
+* Create a @.face@ file in the user's home folder in which you put a @jpg@ or @png@ resource
+
+Or 
+
+* Create a resource named with the user's login in @/var/lib/AccountsService/icons/@
+* Edit @/var/lib/AccountsService/users/<userLogin>@ and add a property @Icon@ targeting the icon resource you just created
+
+This theme works well with 96x96 images.
+

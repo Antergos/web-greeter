@@ -1,0 +1,590 @@
+/* --------------------------------------------
+Antergos Greeter Default Theme Stylesheet
+
+Author:		Dustin Falgout
+URL: 		http://antergos.com/
+Copyright: 	(c)2013 by Antergos Developers
+License: 	GPL
+----------------------------------------------- */
+
+/* Global Styles */
+
+
+@font-face{
+font-family: Lato;
+src: url('../../font-awesome/fonts/Lato-Regular.ttf');
+}
+
+@font-face{
+font-family: LatoLight;
+src: url('../../font-awesome/fonts/Lato-Light.ttf');
+}
+
+.hidden {
+   opacity: 0;
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+}
+::-webkit-scrollbar-track {
+    background-color: #eaeaea;
+    border-left: 1px solid #ccc;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #5d5d5d;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: #b3b3b3;
+}
+
+.user-wrap2::-webkit-scrollbar {
+    width: 4px;
+}
+.user-wrap2::-webkit-scrollbar-track {
+    background-color: #eaeaea;
+    border-left: 1px solid #ccc;
+}
+.user-wrap2::-webkit-scrollbar-thumb {
+    background-color: #5d5d5d;
+}
+.user-wrap2::-webkit-scrollbar-thumb:hover {
+    background-color: #b3b3b3;
+}
+.close_wallpapers{
+    padding: 2px 10px !important;
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+    background-color: #000000;
+    font-family: "Lato", "Open Sans", sans-serif;
+}
+
+i {
+    font-size: 17px;
+}
+
+h3, .panel-heading {
+    font-family: "Lato", "Open Sans", sans-serif;
+    font-size: 16px;
+    text-align: center;
+    font-weight: 400;
+}
+
+a {
+    text-decoration: none !important;
+}
+
+/* Background Switcher */
+
+.bg-switch {
+    position: relative;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 250px;
+    margin: 40px auto auto;
+    padding: 0px 53px;
+    color: #f5f5f5;
+}
+
+.bg-switch .bgs .bg {
+    text-align: center;
+    text-decoration: none;
+}
+
+.bg-switch .bgs .bg.active img {
+    border-color: #3d73c5;
+}
+
+.bg-switch .bgs .bg img {
+    width: 145px;
+    height: 95px;
+    border: 2px solid #ffffff;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.hovered {
+    text-decoration: none;
+    background-color: #ecf0f1;
+}
+
+#user-list2 {
+   width: 100%;
+}
+
+#user-list2 span {
+    font-size: 19px;
+}
+
+#user-list2 img {
+  width: 40px;
+    margin-right: 10px;
+}
+
+#bg-switch-wrapper {
+    margin-right: -250px;
+    right: 0;
+    width: 250px;
+    background: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    height: 100%;
+    overflow-y: auto;
+    z-index: 1000;
+    transition: all 0.4s ease 0s;
+}
+
+.bg-switch-container {
+    position: absolute;
+    top: 0;
+    width: 250px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#bg-switch-toggle {
+    top: 0;
+    right: -2px;
+    position: fixed;
+    z-index: 1;
+}
+
+#bg-switch-wrapper.active {
+    right: 250px;
+    width: 250px;
+    transition: all 0.4s ease 0s;
+    overflow-x: hidden;
+}
+
+.toggle {
+    margin: 5px 20px 0 0;
+}
+
+/* Full Page Image Header Area */
+
+.header {
+    display: table;
+    height: 100%;
+    width: 100%;
+    position: relative;
+    background-image: url('');
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+
+}
+
+#user-target2 i {
+   right:  -21px;
+    color: #2c3e50;
+    font-size: 14px;
+}
+#trigger i {
+    color: #2c3e50;
+    font-size: 14px;
+    position: relative;
+    top: 9.5px;
+    right: 5px;
+}
+
+/* Clock Widget */
+
+.time {
+    font-family: "LatoLight", "Open Sans", sans-serif;
+    font-size: 96px;
+    line-height: 1em;
+    text-decoration: none;
+    color: #3d73c5;
+    background-color: rgb(252, 247, 247);
+    transition: 1s ease-out;
+    position: relative;
+    top: 10.5px;
+
+}
+
+#panelfix {
+    height: 170px !important;
+    overflow: visible;
+}
+
+.time-panel a {
+    display: block;
+    -webkit-animation: clkwiggle 10s infinite;
+}
+
+.time:hover {
+    cursor: pointer;
+    color: #77ADFF;
+    /* text-shadow: 0px 0px 6px rgba(0, 0, 0, 0.7); */
+}
+
+.time-panel {
+    background-color: rgb(252, 247, 247) !important;
+    border-color: transparent !important;
+}
+
+.time-panel:target {
+    -webkit-animation: flip 0.5s ease-out;
+}
+
+.time-panel:target:after {
+    visibility: hidden;
+}
+
+/* Login Dialog */
+
+
+.welcome {
+   font-weight:500;
+    font-size: 17px;
+    position: relative;
+    right: 9px;
+}
+
+
+.login-wrapper {
+    list-style-type: none;
+    display: table-row;
+}
+
+.login-cell {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.login-box {
+    min-height: 250px;
+}
+.panel-shadow {
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.panel-default {
+    background-color: rgb(252, 247, 247);
+}
+
+.badge {
+    color: #2c3e50;
+}
+.badge, .badge i {
+    font-size: 10px !important;
+    display: none;
+}
+.list-group-item.hovered .badge,
+.list-group-item.hovered .badge i  {
+    display: block;
+
+}
+.panel-heading {
+    padding: 10px 20px !important;
+}
+.panel-footer {
+    height: 50px;
+}
+
+#sessions, #actionsArea {
+    transition: all ease 3s;
+}
+.panel-footer  .btn {
+padding-top: 6.5px;
+padding-bottom: 6.5px;
+padding-left: 12px;
+padding-right: 12px;
+}
+
+.panel-body {
+    background-color: rgb(252, 247, 247);
+    padding: 10px;
+}
+
+.panel-footer {
+    padding: 5px 15px;
+
+}
+
+.panel-flow {
+    overflow:visible !important;
+}
+
+.password ul {
+    text-align: left;
+}
+
+div.password, div.status, div.timer {
+    text-align: center;
+    position: relative;
+    display: none;
+    width: 47%;
+    margin: 0 auto;
+}
+
+.password {
+    font-size: 14px !important;
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+}
+.form-control {
+    height: 36px;
+}
+#passwordArea .btn {
+    padding-top: 6.5px;
+    padding-bottom: 6.5px;
+    padding-left: 12px;
+    padding-right: 12px;
+}
+#logArea {
+    position: absolute;
+    top: 25%;
+    left: 5%;
+    width: 25%;
+    height: 50%;
+    display: none;
+    overflow: auto;
+    color: #fff;
+    background: rgba(0,0,0,0.6);
+    border-radius: 10px;
+    font-size: 15px;
+    padding: 20px;
+}
+
+/* Animation */
+
+@-webkit-keyframes bounce {
+    0% {
+        -webkit-transform: translateY(0);
+    }
+    100% {
+        -webkit-transform: translateY(-20px);
+    }
+}
+
+@-webkit-keyframes clkwiggle {
+    0% {-webkit-transform: rotate(0deg);}
+    1% {-webkit-transform: rotate(-2deg);}
+    1.5% {-webkit-transform: rotate(2deg);}
+    2% {-webkit-transform: rotate(0deg);}
+    2.5% {-webkit-transform: rotate(-2deg);}
+    3.5% {-webkit-transform: rotate(2deg);}
+    4% {-webkit-transform: rotate(0deg);}
+    100% {-webkit-transform: rotate(0deg);}
+}
+
+
+/* User Selection */
+
+.user-selection {
+
+    width: 99%;
+    height: 125px;
+    text-align: center;
+}
+
+.user-selection ul {
+    position: relative;
+    display: inline-block;
+    padding: 0 5px;
+    margin: 15px 0 0;
+
+}
+
+/* User Selection Images */
+
+.user-selection li {
+    display: inline-block;
+    position: relative;
+    margin: 0 7px 15px;
+    vertical-align: baseline;
+}
+
+.user-selection a {
+    display: inline-block;
+    cursor: pointer;
+    outline: none;
+}
+
+.user-selection a i, .time-panel a i {
+    font-size: 15px;
+    color: #5e5e5e;
+}
+
+.user-toggle {
+    position: fixed;
+}
+
+
+/* Applies the bounce animation to the targeted user image.  */
+.user-selection li:target a {
+    -webkit-animation: bounce .3s 6 alternate ease-out;
+}
+
+/* Generates the status indicator. */
+.user-selection li:after {
+    content: " ";
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    opacity: 0;
+    visibility: hidden;
+    background-color: rgba(8, 51, 120, 0.80);
+    margin-left: -2px;
+    border-radius: 5px;
+    box-shadow: inset 0 1px 3px rgba(65, 140, 255, .4), 0 0 4px rgba(65, 140, 255, .5), 0 -1px 7px rgb(65, 140, 255);
+    transition: opacity .5s;
+}
+
+/* Displays the status indicator. */
+.user-selection li:target:after {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* This is just a wrapper in order to center the actual label horizontally. You
+may need to adjust the width negative margin if you have really long labels. */
+.user-selection em {
+    position: absolute;
+    top: -34px;
+    left: 50%;
+    display: none;
+    width: 150px;
+    margin-left: -75px;
+    text-align: center;
+
+}
+
+/* Generates the little arrow at the bottom of the label. */
+.user-selection em:after {
+    content: " ";
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    margin-left: -6px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid rgba(0, 0, 0, .6);
+    border-bottom: none;
+    z-index: 1000;
+}
+
+/* This is the actual label. */
+.user-selection em span {
+    display: inline-block;
+    padding: 5px 12px;
+    font-size: 14px;
+    font-style: normal;
+    color: #FFF;
+    background: #000;
+    background: rgba(0, 0, 0, .6);
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, .9);
+    border-radius: 12px;
+    z-index: 1000;
+}
+
+.user-selection li:hover em {
+    display: block;
+    z-index: 1000;
+}
+
+/* Image Hover Effect */
+/* Sets the face images to a smaller width so they can be enlarged and applies
+transitions for a smooth animation. Make sure to adjust the width so it
+matches your images. */
+.user-selection img {
+    width: 72px;
+    height: auto;
+    transition: width .2s, height .2s;
+}
+
+.user-selection li:hover img {
+    width: 96px;
+}
+
+.user-selection li:active img {
+    opacity: .9;
+}
+
+.random {
+    background: rgba(111, 111, 111, 0.65);
+    text-align: center;
+    display: table;
+    color: rgba(255, 255, 255, 0.72);
+    width: 145px;
+    height: 95px;
+    border: 2px solid #ffffff;
+    margin-bottom: 10px;
+    cursor: pointer;
+    padding-top: 35px;
+}
+
+.random span {
+    font-size: 18px;
+}
+.random:hover {
+    color: white;
+    background: rgba(111, 111, 111, 0.85);
+}
+.random.active {
+    border: 2px solid #3d73c5;
+}
+
+.user-wrap2 {
+    max-width: 50%;
+    margin: 0 auto;
+    display: -webkit-box;
+    max-height: 124px;
+    overflow: auto;
+}
+
+#list-group {
+padding: 0px;
+    overflow: visible;
+}
+
+
+@media (max-width: 1900px) {
+
+    .bg-switch {
+        position: relative;
+        width: 250px;
+        margin: 40px auto auto;
+        padding: 0px 74px;
+    }
+
+    .bg-switch .bgs .bg {
+        text-align: center;
+        text-decoration: none;
+    }
+
+    .bg-switch .bgs .bg img {
+        width: 102px;
+        height: 67px;
+        margin-bottom: 5px;
+    }
+
+    h3 {
+        margin-top: 10px;
+        margin-bottom: 8px;
+    }
+
+    #logArea {
+        top: 24%;
+        left: 2%;
+    }
+
+    .random {
+        width: 102px;
+        height: 67px;
+        margin-bottom: 5px;
+        padding-top: 18px;
+    }
+}
