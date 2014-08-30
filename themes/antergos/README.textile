@@ -5,13 +5,16 @@ h2. Overview
 
 Official LightDM Webkit Greeter Theme of Antergos Linux
 
-h2. Screenshot
-<img src="screenshot.png" alt="screenshot" />
+h2. Screenshots
+<img src="img/screenshot1.jpg" alt="screenshot1" />
+<img src="img/screenshot2.jpg" alt="screenshot2" />
+<img src="img/screenshot3.jpg" alt="screenshot3" />
 
 h2. Prerequisites
 
-Both lightdm and lightdm-webkit-greeter are required.
-antergos-wallpapers used for the background switcher
+* lightdm
+* lightdm-webkit-greeter
+* antergos-wallpapers (used for the background switcher)
 
 Enable @ligthdm-webkit-greeter@ by editing @/etc/lightdm/lightdm.conf@ and setting @greeter-session@ property to @lightdm-webkit-greeter@ :
 
@@ -23,7 +26,9 @@ user-session=your-session (gnome,cinnamon,xfce...)
 
 h2. Installation
 
-Arch users can install using their favorite AUR pacman wrapper. Others can install manually:
+Antergos users should have it installed by default. It can be reinstalled if needed using pacman.
+Arch users can install using their favorite AUR pacman wrapper.
+Others can install manually:
 
 # Download "Antergos Theme":https://github.com/Antergos/lightdm-webkit-theme-antergos/zipball/master
 # Unzip it.
