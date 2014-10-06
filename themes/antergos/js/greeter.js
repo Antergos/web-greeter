@@ -139,7 +139,7 @@ function checkKey(event){
             log(action);
             break;
         case 32:
-            action = !users_shown ? show_users() : 0;
+            action = !users_shown && !auth_pending ? show_users() : 0;
             log(action);
             break;
         default:
@@ -241,6 +241,7 @@ function cancelAuthentication() {
         $('.list-group-item.hovered').removeClass('hovered').siblings().show();
         $('.fa-toggle-down').show();
         selectedUser = null;
+        auth_pending = false;
     }
     return true;
 }
