@@ -1,7 +1,7 @@
 [theme]
 name=Antergos
-version=2.0.5
+version=2.0.7
 description=Antergos Theme
-engine=lightdm-webkit-greeter
+engine=lightdm-webkit2-greeter
 url=index.html
 session=cinnamon
