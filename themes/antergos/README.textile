@@ -13,15 +13,15 @@ h2. Screenshots
 h2. Prerequisites
 
 * lightdm
-* lightdm-webkit-greeter
+* lightdm-webkit2-greeter
 * antergos-wallpapers (used for the background switcher)
 
-Enable @ligthdm-webkit-greeter@ by editing @/etc/lightdm/lightdm.conf@ and setting @greeter-session@ property to @lightdm-webkit-greeter@ :
+Enable @ligthdm-webkit2-greeter@ by editing @/etc/lightdm/lightdm.conf@ and setting @greeter-session@ property to @lightdm-webkit2-greeter@ :
 
 bc. 
 [SeatDefaults]
 #greeter-session=lightdm-gtk-greeter
-greeter-session=lightdm-webkit-greeter
+greeter-session=lightdm-webkit2-greeter
 user-session=your-session (gnome,cinnamon,xfce...)
 
 h2. Installation
@@ -34,7 +34,7 @@ Others can install manually:
 # Unzip it.
 # This should create a folder named like @Antergos-lightdm-webkit-theme-antergos-28c4b13@
 # Rename this folder to @antergos@ (so that the complete path becomes @/usr/share/lightdm-webkit/themes/antergos@)
-# Edit the resource @/etc/lightdm/lightdm-webkit-greeter.conf@ and set @webkit-theme@ property to @antergos@ :
+# Edit the resource @/etc/lightdm/lightdm-webkit2-greeter.conf@ and set @webkit-theme@ property to @antergos@ :
 
 bc. 
 theme-name=Adwaita
