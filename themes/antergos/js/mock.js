@@ -69,7 +69,7 @@ if (typeof lightdm == 'undefined') {
 	lightdm.cancel_authentication= function() {
 		_lightdm_mock_check_argument_length(arguments, 0);
 		if (!lightdm._username) {
-			throw "we are not authenticating";
+			console.log("we are not authenticating");
 		}
 		lightdm._username= null;
 	};

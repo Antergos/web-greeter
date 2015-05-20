@@ -19,6 +19,9 @@ src: url('../../font-awesome/fonts/Lato-Regular.ttf');
 font-family: LatoLight;
 src: url('../../font-awesome/fonts/Lato-Light.ttf');
 }
+*:focus {
+	outline: none;
+	}
 
 .hidden {
    opacity: 0;
@@ -280,13 +283,16 @@ a {
 .list-group-item.hovered .badge,
 .list-group-item.hovered .badge i  {
     display: block;
+	margin-top: 3px;
 
 }
 .panel-heading {
     padding: 10px 20px !important;
+	background: #f1f1f1;
 }
 .panel-footer {
     height: 50px;
+	background: #f1f1f1;
 }
 
 #sessions, #actionsArea {
@@ -327,11 +333,8 @@ div.password, div.status, div.timer {
 
 .password {
     font-size: 14px !important;
-    padding-top: 5px !important;
-    padding-bottom: 5px !important;
-}
-.form-control {
-    height: 36px;
+	line-height: 37px;
+    height: 37px;
 }
 #passwordArea .btn {
     padding-top: 6.5px;
@@ -590,4 +593,46 @@ padding: 0px;
 
 .list-group-item {
   padding: 0px 15px;
+}
+
+a.list-group-item:focus, a.list-group-item:hover, a.list-group-item.hovered
+{
+    position:relative;
+    -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 10px rgba(0, 0, 0, 0.1) inset;
+       -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 10px rgba(0, 0, 0, 0.1) inset;
+            box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 10px rgba(0, 0, 0, 0.1) inset;
+	outline: none;
+	margin: 0px 0;
+	background: #ffffff;
+}
+a.list-group-item:focus:before, a.list-group-item:focus:after,
+a.list-group-item:hover:before, a.list-group-item:hover:after,
+a.list-group-item.hovered:after, a.list-group-item.hovered:before
+{
+    content:"";
+    position:absolute;
+    z-index:-1;
+    -webkit-box-shadow:0 0 5px rgba(0,0,0,0.8);
+    -moz-box-shadow:0 0 5px rgba(0,0,0,0.8);
+    box-shadow:0 0 5px rgba(0,0,0,0.8);
+    top:0;
+    bottom:0;
+    left:10px;
+    right:10px;
+    -moz-border-radius:100px / 10px;
+    border-radius:100px / 10px;
+}
+a.list-group-item:focus:after, a.list-group-item:hover:after, a.list-group-item.hovered:after
+{
+    right:10px;
+    left:auto;
+    -webkit-transform:skew(8deg) rotate(3deg);
+       -moz-transform:skew(8deg) rotate(3deg);
+        -ms-transform:skew(8deg) rotate(3deg);
+         -o-transform:skew(8deg) rotate(3deg);
+            transform:skew(8deg) rotate(3deg);
+}
+td.input-group, #passwordArea table {
+	width: 100%;
+	margin-top: 5px;
 }

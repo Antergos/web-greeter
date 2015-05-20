@@ -254,15 +254,15 @@
                                                                         <ul class="dropdown-menu pull-right">
                                                                             <li>
                                                                                 <a href="#" onclick="cancelAuthentication()">
-                                                                                    <i class="fa fa-times"></i>Cancel</a>
+                                                                                    <i class="fa fa-times"></i> Cancel</a>
                                                                             </li>
                                                                             <li>
                                                                                 <a href="#" onclick="showLog()">
-                                                                                    <i class="fa fa-bug"></i>View Log</a>
+                                                                                    <i class="fa fa-bug"></i> View Log</a>
                                                                             </li>
                                                                             <li>
                                                                                 <a href="#" onclick="$(document.location.reload(true))">
-                                                                                    <i class="fa fa-refresh"></i>Reset</a>
+                                                                                    <i class="fa fa-refresh"></i> Reset</a>
                                                                             </li>
                                                                         </ul>
                                                                     </div>
@@ -333,8 +333,6 @@
             $(this).hide();
             $("#bg-switch-toggle").show();
         });
-    </script>
-    <script>
         $("#bg-switch-toggle").click(function(e) {
             e.preventDefault();
             $("#bg-switch-wrapper").toggleClass("active");
@@ -342,11 +340,22 @@
             $("#bg-switch-close").show();
         });
 
-         // Show user list when pressed any key
-        $(document).keypress(function(e) {
 
+        $('*').each(function(){
+	        $(this).attr('tabindex', '-1');
         });
 
+        $('#collapseTwo').on('shown.bs.collapse', function() {
+	        $('#collapseTwo a').each(function(index) {
+		        var i = index + 1;
+		        $(this).attr('tabindex', i);
+	        });
+        });
+	     $('#collapseTwo').on('hidden.bs.collapse', function() {
+	        $('#collapseTwo a').each(function(index) {
+		        $(this).attr('tabindex', -1);
+	        });
+        });
 
     </script>
 

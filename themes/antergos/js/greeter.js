@@ -236,14 +236,12 @@ function cancelAuthentication() {
 	$('#timerArea').hide();
 	$('#passwordArea').hide();
 	$('#session-list').hide();
-	if (selectedUser != null) {
 		lightdm.cancel_authentication();
 		log("authentication cancelled for " + selectedUser);
-		$('.list-group-item.hovered').removeClass('hovered').siblings().show();
+		$('.list-group-item').removeClass('hovered').siblings().show();
 		$('.fa-toggle-down').show();
 		selectedUser = null;
 		authPending = false;
-	}
 	return true;
 }
 
