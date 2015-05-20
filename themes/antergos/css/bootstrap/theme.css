@@ -541,7 +541,6 @@ matches your images. */
     max-width: 50%;
     margin: 0 auto;
     display: -webkit-box;
-    max-height: 124px;
     overflow: auto;
 }
 
@@ -587,4 +586,8 @@ padding: 0px;
         margin-bottom: 5px;
         padding-top: 18px;
     }
+}
+
+.list-group-item {
+  padding: 0px 15px;
 }

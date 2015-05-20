@@ -7,9 +7,9 @@ if (typeof lightdm == 'undefined') {
 	lightdm.layouts= [{name: "test", short_description: "test description", short_description:"really long epic description"}];
 	lightdm.default_layout= lightdm.layouts[0];
 	lightdm.layout= lightdm.layouts[0];
-	lightdm.sessions=[{key: "key1", name: "gnome", comment: "no comment"}, {key: "key2", name: "cinnamon", comment: "no comment"},{key: "key3", name: "openbox", comment: "no comment"}, {key: "key4", name: "kde", comment: "no comment"}];
+	lightdm.sessions=[{key: "gnome", name: "gnome", comment: "no comment"}, {key: "cinnamon", name: "cinnamon", comment: "no comment"},{key: "openbox", name: "openbox", comment: "no comment"}, {key: "key4", name: "kde", comment: "no comment"}];
 
-	lightdm.default_session=lightdm.sessions[0];
+	lightdm.default_session=lightdm.sessions[0]['name'];
 	lightdm.authentication_user= null;
 	lightdm.is_authenticated= false;
 	lightdm.can_suspend= true;

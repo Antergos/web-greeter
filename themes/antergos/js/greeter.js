@@ -1,6 +1,6 @@
 var DEBUG = true;
 var selectedUser = null;
-var auth_pending = null;
+var authPending = null;
 var users_shown = null;
 
 function buildUserList() {
@@ -131,15 +131,15 @@ function checkKey(event) {
 	var action;
 	switch (event.which) {
 		case 13:
-			action = auth_pending ? submitPassword() : !users_shown ? show_users() : 0;
+			action = authPending ? submitPassword() : !users_shown ? show_users() : 0;
 			log(action);
 			break;
 		case 27:
-			action = auth_pending ? cancelAuthentication() : 0;
+			action = authPending ? cancelAuthentication() : 0;
 			log(action);
 			break;
 		case 32:
-			action = !users_shown && !auth_pending ? show_users() : 0;
+			action = !users_shown && !authPending ? show_users() : 0;
 			log(action);
 			break;
 		default:
@@ -223,8 +223,9 @@ function startAuthentication(userId) {
 	$('.selected').html(usrSessionName);
 	$('.selected').attr('id', usrSession);
 	$('#session-list').removeClass('hidden');
+	$('#session-list').show();
 	$('#passwordArea').show();
-	auth_pending = true;
+	authPending = true;
 
 	lightdm.start_authentication(userId);
 }
@@ -241,7 +242,7 @@ function cancelAuthentication() {
 		$('.list-group-item.hovered').removeClass('hovered').siblings().show();
 		$('.fa-toggle-down').show();
 		selectedUser = null;
-		auth_pending = false;
+		authPending = false;
 	}
 	return true;
 }
@@ -285,7 +286,7 @@ function show_prompt(text) {
 
 function authentication_complete() {
 	log("authentication_complete()");
-	auth_pending = false;
+	authPending = false;
 	$('#timerArea').hide();
 	var selSession = $('.selected').attr('id');
 	if (lightdm.is_authenticated) {
