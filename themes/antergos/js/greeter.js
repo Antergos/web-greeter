@@ -8,7 +8,7 @@ function buildUserList() {
 	var userList = document.getElementById('user-list2');
 	for (var i in lightdm.users) {
 		var user = lightdm.users[i];
-		var tux = 'img/antergos-logo-user.png';
+		var tux = 'img/screenshot1.jpg';
 		var imageSrc = user.image.length > 0 ? user.image : tux;
 		var lastSession = localStorage.getItem(user.name);
 		if (lastSession == null || lastSession == undefined) {
@@ -17,7 +17,7 @@ function buildUserList() {
 		}
 		log('Last Session (' + user.name + '): ' + lastSession);
 		var li = '<a href="#' + user.name + '" class="list-group-item ' + user.name + '" onclick="startAuthentication(\'' + user.name + '\')" session="' + lastSession + '">' +
-			'<img src="' + imageSrc + '" class="img-square" alt="' + user.display_name + '" onerror="imgNotFound(this)"/> ' +
+			'<img src="' + imageSrc + '" class="img-circle" alt="' + user.display_name + '" onerror="imgNotFound(this)"/> ' +
 			'<span>' + user.display_name + '</span>' +
 			'<span class="badge"><i class="fa fa-check"></i></span>' +
 			'</a>';
@@ -258,7 +258,7 @@ function submitPassword() {
  */
 
 function imgNotFound(source) {
-	source.src = 'img/antergos-logo-user.png';
+	source.src = 'img/screenshot1.jpg';
 	source.onerror = "";
 	return true;
 }

@@ -126,7 +126,8 @@ a {
 }
 
 #user-list2 img {
-  width: 40px;
+  width: 32px;
+    height: 32px;
     margin-right: 10px;
 }
 
@@ -333,8 +334,12 @@ div.password, div.status, div.timer {
 
 .password {
     font-size: 14px !important;
-	line-height: 37px;
     height: 37px;
+}
+input.password.form-control:focus {
+    -webkit-box-shadow: inset 0 -2px 0 #2196f3 !important;
+    box-shadow: inset 0 -2px 0 #2196f3 !important;
+    border-bottom: 2px solid #2196f3 !important;
 }
 #passwordArea .btn {
     padding-top: 6.5px;
@@ -592,7 +597,15 @@ padding: 0px;
 }
 
 .list-group-item {
-  padding: 0px 15px;
+  padding: 5px 15px;
+}
+.list-group-item img {
+    position: relative;
+    bottom: 2px;
+}
+.list-group-item span:first-of-type {
+    position: relative;
+    top: 2px;
 }
 
 a.list-group-item:focus, a.list-group-item:hover, a.list-group-item.hovered
