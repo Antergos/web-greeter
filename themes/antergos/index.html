@@ -1,363 +1,352 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!--
+  ~ Copyright © 2015 Antergos
+  ~
+  ~ index.html
+  ~
+  ~ This file is part of lightdm-webkit-theme-antergos
+  ~
+  ~ lightdm-webkit-theme-antergos is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License,
+  ~ or any later version.
+  ~
+  ~ lightdm-webkit-theme-antergos is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ The following additional terms are in effect as per Section 7 of this license:
+  ~
+  ~ The preservation of all legal notices and author attributions in
+  ~ the material or in the Appropriate Legal Notices displayed
+  ~ by works containing it is required.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="The Antergos Default Greeter Theme">
-    <meta name="author" content="Dustin Falgout">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="The Antergos Default Greeter Theme">
+	<meta name="author" content="Dustin Falgout">
 
-    <title>The Antergos Default Greeter Theme</title>
+	<title>The Antergos Default Greeter Theme</title>
 
-    <!--For testing changes made to theme in any web browser-->
-    <script type="text/javascript" src="js/mock.js"></script>
+	<!--For testing changes made to theme in any web browser-->
+	<script type="text/javascript" src="js/mock.js"></script>
 
-    <!-- Bootstrap Core CSS -->
-    <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.css" />
-    <link rel="stylesheet" type="text/css" href="css/bootstrap/prettify.css">
+	<!-- Bootstrap Core CSS -->
+	<link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.min.css"/>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap/prettify.css">
 
-    <!-- Custom CSS here -->
-    <link rel="stylesheet" type="text/css" href="css/bootstrap/theme.css">
-    <link rel="stylesheet" type="text/css" href="font-awesome/css/font-awesome.css" />
+	<!-- Custom CSS here -->
+	<link rel="stylesheet" type="text/css" href="css/bootstrap/theme.css">
+	<link rel="stylesheet" type="text/css" href="font-awesome/css/font-awesome.min.css"/>
 
-    <!-- The order in which each script appears in document is VERY IMPORTANT -->
-    <script src="js/jquery-1.10.2.js"></script>
-    <script src="js/bootstrap.js"></script>
-    <script src="js/bootstrap-select.js"></script>
-    <script type="text/javascript" src="js/greeter.js"></script>
+	<!-- The order in which each script appears in document is VERY IMPORTANT -->
+	<script src="js/jquery-2.1.4.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<!--<script src="js/bootstrap-select.js"></script>-->
+	<script type="text/javascript" src="js/greeter.js"></script>
 
-    <script type="text/javascript">
-        function randomBG() {
-            localStorage.setItem("bgsaved", '');
-            $(".bgs .bg .random").first().addClass('active');
-            var arrayBackground = [];
-            $('.bgs .clearfix').each(function(i) {
-                if (i > 0) {
-                    arrayBackground.push($(this).attr('data-img'));
-                }
-            });
-            var randBG = arrayBackground[Math.floor(Math.random() * arrayBackground.length)];
-            $('.header').fadeTo('slow', 0.3, function() {
-                $(".header").css("background", "url('/usr/share/antergos/wallpapers/" + randBG + "')");
-            }).fadeTo('slow', 1);
-        }
+	<script type="text/javascript">
+		function randomBG() {
+			localStorage.setItem("bgsaved", '');
+			$(".bgs .bg .random").first().addClass('active');
+			var arrayBackground = [];
+			$('.bgs .clearfix').each(function (i) {
+				if (i > 0) {
+					arrayBackground.push($(this).attr('data-img'));
+				}
+			});
+			var randBG = arrayBackground[Math.floor(Math.random() * arrayBackground.length)];
+			$('.header').fadeTo('slow', 0.3, function () {
+				$(".header").css("background", "url('/usr/share/antergos/wallpapers/" + randBG + "')");
+			}).fadeTo('slow', 1);
+		}
 
-        $(function() {
-            // bg switcher
-            var $btns = $(".bg-switch .bg");
-            $btns.click(function(e) {
-                e.preventDefault();
-                $btns.removeClass("active");
-                $(".bgs .bg .random").first().removeClass('active');
-                $(this).addClass("active");
-                var bg = $(this).data("img");
-                if (bg == 'random') {
-                    console.log("Sets random background");
-                    localStorage.setItem("bgrandom", '1');
-                    randomBG();
-                } else {
-                    console.log("Turn off random");
-                    localStorage.setItem("bgrandom", '0');
-                    $('.header').fadeTo('slow', 0.3, function() {
-                        $(".header").css("background", "url('/usr/share/antergos/wallpapers/" + bg + "')");
-                    }).fadeTo('slow', 1);
-                    var bgurl = "url('/usr/share/antergos/wallpapers/" + bg + "')";
-                    localStorage.setItem("bgsaved", bgurl)
-                }
-            });
+		$(function () {
+			// bg switcher
+			var $btns = $(".bg-switch .bg");
+			$btns.click(function (e) {
+				e.preventDefault();
+				$btns.removeClass("active");
+				$(".bgs .bg .random").first().removeClass('active');
+				$(this).addClass("active");
+				var bg = $(this).data("img");
+				if (bg == 'random') {
+					console.log("Sets random background");
+					localStorage.setItem("bgrandom", '1');
+					randomBG();
+				} else {
+					console.log("Turn off random");
+					localStorage.setItem("bgrandom", '0');
+					$('.header').fadeTo('slow', 0.3, function () {
+						$(".header").css("background", "url('/usr/share/antergos/wallpapers/" + bg + "')");
+					}).fadeTo('slow', 1);
+					var bgurl = "url('/usr/share/antergos/wallpapers/" + bg + "')";
+					localStorage.setItem("bgsaved", bgurl)
+				}
+			});
 
-        });
+		});
 
-        $(document).ready(function() {
-            if ((localStorage.getItem("bgsaved") !== null) && (localStorage.getItem("bgrandom") == '0')) {
-                $('.header').fadeTo('slow', 0.3, function() {
-                    $(".header").css("background", localStorage.bgsaved);
-                }).fadeTo('slow', 1);
-            }
-            if (localStorage.getItem("bgrandom") !== '0') {
-                console.log("Is random");
-                randomBG();
-            }
-            if (localStorage.getItem("bgrandom") == null) {
-                localStorage.setItem("bgrandom", "1");
-            }
-        });
+		$(document).ready(function () {
+			if ((localStorage.getItem("bgsaved") !== null) && (localStorage.getItem("bgrandom") == '0')) {
+				$('.header').fadeTo('slow', 0.3, function () {
+					$(".header").css("background", localStorage.getItem('bgsaved'));
+				}).fadeTo('slow', 1);
+			}
+			if (localStorage.getItem("bgrandom") !== '0') {
+				console.log("Is random");
+				randomBG();
+			}
+			if (localStorage.getItem("bgrandom") == null) {
+				localStorage.setItem("bgrandom", "1");
+			}
+		});
 
-        function showAlert() {
-            $("#login").addClass("in");
-        }
+		function showAlert() {
+			$("#login").addClass("in");
+		}
 
-        window.setTimeout(function() {
-            showAlert();
-        }, 500);
+		window.setTimeout(function () {
+			showAlert();
+		}, 500);
 
-        function showLog() {
-            $("#logArea").show();
-        }
-    </script>
+		function showLog() {
+			$("#logArea").show();
+		}
+	</script>
 
 </head>
 
 <body>
 
-    <!-- BG Switcher -->
-    <a id="bg-switch-toggle" href="#" class="btn btn-primary btn-lg toggle close_wallpapers">
-        <i class="fa fa-bars"></i>
-    </a>
+<!-- BG Switcher -->
+<a id="bg-switch-toggle" href="#" class="btn btn-primary btn-lg toggle close_wallpapers"> <i class="fa fa-bars"></i>
+</a>
 
-    <div id="bg-switch-wrapper">
-        <div class="bg-switch-container">
-            <a id="bg-switch-close" href="#" class="btn btn-default btn-lg pull-right toggle close_wallpapers">
-                <i class="fa fa-times"></i>
-            </a>
+<div id="bg-switch-wrapper">
+	<div class="bg-switch-container">
+		<a id="bg-switch-close" href="#" class="btn btn-default btn-lg pull-right toggle close_wallpapers">
+			<i class="fa fa-times"></i> </a>
 
-            <div class="bg-switch">
-                <h3>Background Options</h3>
+		<div class="bg-switch">
+			<h3>Background Options</h3>
 
-                <div class="clearfix"></div>
-                <div class="bgs">
-                    <a href="#" data-img="random" class="bg clearfix">
-                        <div class="random">
-                            <span>Random</span>
-                        </div>
-                    </a>
-                    <a href="#" data-img="antergos-wallpaper.png" class="bg clearfix">
-                        <img src="img/thumbs/antergos-wallpaper.png" />
-                    </a>
-                    <a href="#" data-img="83II_by_bo0xVn.jpg" class="bg clearfix">
-                        <img src="img/thumbs/83II_by_bo0xVn.jpg" />
-                    </a>
-                    <a href="#" data-img="as_time_goes_by____by_moskanon-d5dgvt8.jpg" class="bg clearfix">
-                        <img src="img/thumbs/as_time_goes_by____by_moskanon-d5dgvt8.jpg" />
-                    </a>
-                    <a href="#" data-img="autumn_hike___plant_details_by_aoiban-d5l7y83.jpg" class="bg clearfix">
-                        <img src="img/thumbs/autumn_hike___plant_details_by_aoiban-d5l7y83.jpg" />
-                    </a>
-                    <a href="#" data-img="blossom_by_snipes2.jpg" class="bg clearfix">
-                        <img src="img/thumbs/blossom_by_snipes2.jpg" />
-                    </a>
-                    <a href="#" data-img="c65sk3mshowxrtlljbvh.jpg" class="bg clearfix">
-                        <img src="img/thumbs/c65sk3mshowxrtlljbvh.jpg" />
-                    </a>
-                    <a href="#" data-img="early_morning_by_kylekc.jpg" class="bg clearfix">
-                        <img src="img/thumbs/early_morning_by_kylekc.jpg" />
-                    </a>
-                    <a href="#" data-img="extinction_by_signcropstealer-d5j4y84.jpg" class="bg clearfix">
-                        <img src="img/thumbs/extinction_by_signcropstealer-d5j4y84.jpg" />
-                    </a>
-                    <a href="#" data-img="field_by_stevenfields-d59ap2i.jpg" class="bg clearfix">
-                        <img src="img/thumbs/field_by_stevenfields-d59ap2i.jpg" />
-                    </a>
-                    <a href="#" data-img="Grass_by_masha_darkelf666.jpg" class="bg clearfix">
-                        <img src="img/thumbs/Grass_by_masha_darkelf666.jpg" />
-                    </a>
-                    <a href="#" data-img="Grass_Fullscreen.jpg" class="bg clearfix">
-                        <img src="img/thumbs/Grass_Fullscreen.jpg" />
-                    </a>
-                    <a href="#" data-img="humble_by_splendidofsun-d5g47hb.jpg" class="bg clearfix">
-                        <img src="img/thumbs/humble_by_splendidofsun-d5g47hb.jpg" />
-                    </a>
-                    <a href="#" data-img="In_the_Grass.jpg" class="bg clearfix">
-                        <img src="img/thumbs/In_the_Grass.jpg" />
-                    </a>
-                    <a href="#" data-img="morning_light.jpg" class="bg clearfix">
-                        <img src="img/thumbs/morning_light.jpg" />
-                    </a>
-                    <a href="#" data-img="Nautilus_Fullscreen.jpg" class="bg clearfix">
-                        <img src="img/thumbs/Nautilus_Fullscreen.jpg" />
-                    </a>
-                    <a href="#" data-img="nikon_d40.jpg" class="bg clearfix">
-                        <img src="img/thumbs/nikon_d40.jpg" />
-                    </a>
-                    <a href="#" data-img="solely_by_stevenfields.jpg" class="bg clearfix">
-                        <img src="img/thumbs/solely_by_stevenfields.jpg" />
-                    </a>
-                     <a href="#" data-img="sky_full_of_stars.jpg" class="bg clearfix">
-                        <img src="img/thumbs/sky_full_of_stars.jpg" />
-                    </a>
-                    <a href="#" data-img="the_world_inside_my_lens__by_moskanon-d5fsiqs.jpg" class="bg clearfix">
-                        <img src="img/thumbs/the_world_inside_my_lens__by_moskanon-d5fsiqs.jpg" />
-                    </a>
-                    <a href="#" data-img="white_line_by_snipes2.jpg" class="bg clearfix">
-                        <img src="img/thumbs/white_line_by_snipes2.jpg" />
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- /BG Switcher Sidebar -->
+			<div class="clearfix"></div>
+			<div class="bgs">
+				<a href="#" data-img="random" class="bg clearfix">
+					<div class="random">
+						<span>Random</span>
+					</div>
+				</a> <a href="#" data-img="antergos-wallpaper.png" class="bg clearfix">
+				<img src="img/thumbs/antergos-wallpaper.png"/> </a>
+				<a href="#" data-img="83II_by_bo0xVn.jpg" class="bg clearfix">
+					<img src="img/thumbs/83II_by_bo0xVn.jpg"/> </a>
+				<a href="#" data-img="as_time_goes_by____by_moskanon-d5dgvt8.jpg" class="bg clearfix">
+					<img src="img/thumbs/as_time_goes_by____by_moskanon-d5dgvt8.jpg"/> </a>
+				<a href="#" data-img="autumn_hike___plant_details_by_aoiban-d5l7y83.jpg" class="bg clearfix">
+					<img src="img/thumbs/autumn_hike___plant_details_by_aoiban-d5l7y83.jpg"/> </a>
+				<a href="#" data-img="blossom_by_snipes2.jpg" class="bg clearfix">
+					<img src="img/thumbs/blossom_by_snipes2.jpg"/> </a>
+				<a href="#" data-img="c65sk3mshowxrtlljbvh.jpg" class="bg clearfix">
+					<img src="img/thumbs/c65sk3mshowxrtlljbvh.jpg"/> </a>
+				<a href="#" data-img="early_morning_by_kylekc.jpg" class="bg clearfix">
+					<img src="img/thumbs/early_morning_by_kylekc.jpg"/> </a>
+				<a href="#" data-img="extinction_by_signcropstealer-d5j4y84.jpg" class="bg clearfix">
+					<img src="img/thumbs/extinction_by_signcropstealer-d5j4y84.jpg"/> </a>
+				<a href="#" data-img="field_by_stevenfields-d59ap2i.jpg" class="bg clearfix">
+					<img src="img/thumbs/field_by_stevenfields-d59ap2i.jpg"/> </a>
+				<a href="#" data-img="Grass_by_masha_darkelf666.jpg" class="bg clearfix">
+					<img src="img/thumbs/Grass_by_masha_darkelf666.jpg"/> </a>
+				<a href="#" data-img="Grass_Fullscreen.jpg" class="bg clearfix">
+					<img src="img/thumbs/Grass_Fullscreen.jpg"/> </a>
+				<a href="#" data-img="humble_by_splendidofsun-d5g47hb.jpg" class="bg clearfix">
+					<img src="img/thumbs/humble_by_splendidofsun-d5g47hb.jpg"/> </a>
+				<a href="#" data-img="In_the_Grass.jpg" class="bg clearfix"> <img src="img/thumbs/In_the_Grass.jpg"/>
+				</a> <a href="#" data-img="morning_light.jpg" class="bg clearfix">
+				<img src="img/thumbs/morning_light.jpg"/> </a>
+				<a href="#" data-img="Nautilus_Fullscreen.jpg" class="bg clearfix">
+					<img src="img/thumbs/Nautilus_Fullscreen.jpg"/> </a>
+				<a href="#" data-img="nikon_d40.jpg" class="bg clearfix"> <img src="img/thumbs/nikon_d40.jpg"/> </a>
+				<a href="#" data-img="solely_by_stevenfields.jpg" class="bg clearfix">
+					<img src="img/thumbs/solely_by_stevenfields.jpg"/> </a>
+				<a href="#" data-img="sky_full_of_stars.jpg" class="bg clearfix">
+					<img src="img/thumbs/sky_full_of_stars.jpg"/> </a>
+				<a href="#" data-img="the_world_inside_my_lens__by_moskanon-d5fsiqs.jpg" class="bg clearfix">
+					<img src="img/thumbs/the_world_inside_my_lens__by_moskanon-d5fsiqs.jpg"/> </a>
+				<a href="#" data-img="white_line_by_snipes2.jpg" class="bg clearfix">
+					<img src="img/thumbs/white_line_by_snipes2.jpg"/> </a>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /BG Switcher Sidebar -->
 
-    <!-- Full Page Image Header Area -->
-    <div id="top" class="header">
-        <div class="login-wrapper">
-            <div class="login-cell">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-6 col-md-offset-3">
-                            <!-- Login Dialog -->
-                            <div id="login" class="panel panel-default login-box fade">
-                                <div class="panel-heading text-center">
+<!-- Full Page Image Header Area -->
+<div id="top" class="header">
+	<div class="login-wrapper">
+		<div class="login-cell">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-6 col-md-offset-3">
+						<!-- Login Dialog -->
+						<div id="login" class="panel panel-default login-box fade">
+							<div class="panel-heading text-center">
                                     <span class="pull-left">
-                                        <img src="img/antergos.png" alt="Antergos" />
-                                    </span>
-                                    <span class="welcome">Welcome!</span>
-                                    <span id="hostname" class="pull-right"></span>
-                                </div>
-                                <div id="panelfix" class="panel-body">
-                                    <div class="panel-group" id="accordion">
-                                        <div class="panel panel-default panel-shadow time-panel">
+                                        <img src="img/antergos.png" alt="Antergos"/>
+                                    </span> <span class="welcome">Welcome!</span>
+								<span id="hostname" class="pull-right"></span>
+							</div>
+							<div id="panelfix" class="panel-body">
+								<div class="panel-group" id="accordion">
+									<div class="panel panel-default panel-shadow time-panel">
 
+										<div id="collapseOne" class="panel-collapse collapse in">
+											<div id="timewrap" class="panel-body panel-shadow time-panel text-center">
+												<a id="trigger" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+													<!-- Clock Widget -->
+													<span id="current_time" class="time text-center"></span>
+													<i class="fa fa-toggle-up"></i> </a>
 
-                                            <div id="collapseOne" class="panel-collapse collapse in">
-                                                <div id="timewrap" class="panel-body panel-shadow time-panel text-center">
-                                                    <a id="trigger" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                                                        <!-- Clock Widget -->
-                                                        <span id="current_time" class="time text-center"></span>
-                                                        <i class="fa fa-toggle-up"></i>
-                                                    </a>
+											</div>
 
-                                                </div>
+										</div>
 
-                                            </div>
+									</div>
+									<div class="panel panel-default panel-shadow panel-flow">
+										<!-- User Selection Widget -->
+										<div id="collapseTwo" class="panel-collapse collapse">
+											<div id="list-group" class="panel-body panel-wrap">
 
-                                        </div>
-                                        <div class="panel panel-default panel-shadow panel-flow">
-                                            <!-- User Selection Widget -->
-                                            <div id="collapseTwo" class="panel-collapse collapse">
-                                                <div id="list-group" class="panel-body panel-wrap">
+												<div class="user-wrap2">
 
-                                                    <div class="user-wrap2">
+													<div id="user-list2" class="list-group"></div>
+													<a id="user-target2" class="user-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="cancelAuthentication()">
+														<i class="fa fa-toggle-down" style="position:absolute;"></i>
+													</a>
 
-                                                        <div id="user-list2" class="list-group">
-                                                        </div>
-                                                        <a id="user-target2" class="user-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="cancelAuthentication()">
-                                                            <i class="fa fa-toggle-down" style="position:absolute;"></i>
-                                                        </a>
+												</div>
+												<!-- Password Input -->
+												<div id="passwordArea" class="password">
+													<table border="0" align="center">
+														<tr>
+															<td class="input-group">
+																<input id="passwordField" type="password" class="password form-control"/>
 
+																<div class="input-group-btn">
+																	<button class="btn btn-primary" type="button" onclick="submitPassword()">
+																		<i class="fa fa-sign-in"></i>
+																	</button>
+																	<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+																		<i class="fa fa-caret-down"></i>
+																	</button>
+																	<ul class="dropdown-menu pull-right">
+																		<li>
+																			<a href="#" onclick="cancelAuthentication()">
+																				<i class="fa fa-times"></i> Cancel</a>
+																		</li>
+																		<li>
+																			<a href="#" onclick="showLog()">
+																				<i class="fa fa-bug"></i> View Log</a>
+																		</li>
+																		<li>
+																			<a href="#" onclick="$(document.location.reload(true))">
+																				<i class="fa fa-refresh"></i> Reset</a>
+																		</li>
+																	</ul>
+																</div>
+															</td>
 
-
-                                                    </div>
-                                                    <!-- Password Input -->
-                                                    <div id="passwordArea" class="password">
-                                                        <table border="0" align="center">
-                                                            <tr>
-                                                                <td class="input-group">
-                                                                    <input id="passwordField" type="password" class="password form-control" />
-
-                                                                    <div class="input-group-btn">
-                                                                        <button class="btn btn-primary" type="button" onclick="submitPassword()">
-                                                                            <i class="fa fa-sign-in"></i>
-                                                                        </button>
-                                                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                                                            <i class="fa fa-caret-down"></i>
-                                                                        </button>
-                                                                        <ul class="dropdown-menu pull-right">
-                                                                            <li>
-                                                                                <a href="#" onclick="cancelAuthentication()">
-                                                                                    <i class="fa fa-times"></i> Cancel</a>
-                                                                            </li>
-                                                                            <li>
-                                                                                <a href="#" onclick="showLog()">
-                                                                                    <i class="fa fa-bug"></i> View Log</a>
-                                                                            </li>
-                                                                            <li>
-                                                                                <a href="#" onclick="$(document.location.reload(true))">
-                                                                                    <i class="fa fa-refresh"></i> Reset</a>
-                                                                            </li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </td>
-
-
-                                                            </tr>
-                                                        </table>
-                                                        <div id="timerArea" class="timer">
-                                                            <i class="fa fa-spinner fa-spin"></i>
-                                                        </div>
-                                                    </div>
-                                                    <!-- Status Area -->
-                                                    <div id="statusArea" class="status">
-                                                        <table border="0" align="center">
-                                                            <tr>
-                                                                <td>
-                                                                    <div class="alert alert-danger  fade in">
-                                                                        <button type="button" class="close" onclick="cancelAuthentication()" data-dismiss="alert" aria-hidden="true">&nbsp;&times;</button>
+														</tr>
+													</table>
+													<div id="timerArea" class="timer">
+														<i class="fa fa-spinner fa-spin"></i>
+													</div>
+												</div>
+												<!-- Status Area -->
+												<div id="statusArea" class="status">
+													<table border="0" align="center">
+														<tr>
+															<td>
+																<div class="alert alert-danger  fade in">
+																	<button type="button" class="close" onclick="cancelAuthentication()" data-dismiss="alert" aria-hidden="true">&nbsp;&times;</button>
                                                                         <span id="showMsg">
                                                                             <strong>Uh Oh!!</strong>Authentication failed. Please try again.
                                                                         </span>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        </table>
-                                                    </div>
+																</div>
+															</td>
+														</tr>
+													</table>
+												</div>
 
-                                                </div>
-                                            </div>
-                                        </div>
+											</div>
+										</div>
+									</div>
 
-                                    </div>
-                                </div>
+								</div>
+							</div>
 
-                                <div class="panel-footer">
-                                    <div id="session-list" class="btn-group pull-left hidden">
-  <button type="button" class="btn btn-default selected"></button>
-  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-caret-down"></i></button>
-  <ul id="sessions" class="dropdown-menu">
-  </ul>
+							<div class="panel-footer">
+								<div id="session-list" class="btn-group pull-left hidden">
+									<button type="button" class="btn btn-default selected"></button>
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+										<i class="fa fa-caret-down"></i></button>
+									<ul id="sessions" class="dropdown-menu"></ul>
+								</div>
+								<div id="actionsArea" class="btn-group pull-right"></div>
+
+							</div>
+
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
-                                                <div id="actionsArea" class="btn-group pull-right"></div>
 
-                                        </div>
+<div id="logArea" class="log"></div>
 
-
-
-
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="logArea" class="log"></div>
-
-
-
-    <!-- Custom JavaScript for the BG Switcher & Clock Toggle -->
-    <script>
-        $("#bg-switch-close").click(function(e) {
-            e.preventDefault();
-            $("#bg-switch-wrapper").toggleClass("active");
-            $(this).hide();
-            $("#bg-switch-toggle").show();
-        });
-        $("#bg-switch-toggle").click(function(e) {
-            e.preventDefault();
-            $("#bg-switch-wrapper").toggleClass("active");
-            $(this).hide();
-            $("#bg-switch-close").show();
-        });
+<!-- Custom JavaScript for the BG Switcher & Clock Toggle -->
+<script>
+	$("#bg-switch-close").click(function (e) {
+		e.preventDefault();
+		$("#bg-switch-wrapper").toggleClass("active");
+		$(this).hide();
+		$("#bg-switch-toggle").show();
+	});
+	$("#bg-switch-toggle").click(function (e) {
+		e.preventDefault();
+		$("#bg-switch-wrapper").toggleClass("active");
+		$(this).hide();
+		$("#bg-switch-close").show();
+	});
 
 
-        $('*').each(function(){
-	        $(this).attr('tabindex', '-1');
-        });
+	$('*').each(function () {
+		$(this).attr('tabindex', -1);
+	});
 
-        $('#collapseTwo').on('shown.bs.collapse', function() {
-	        $('#collapseTwo a').each(function(index) {
-		        var i = index + 1;
-		        $(this).attr('tabindex', i);
-	        });
-        });
-	     $('#collapseTwo').on('hidden.bs.collapse', function() {
-	        $('#collapseTwo a').each(function(index) {
-		        $(this).attr('tabindex', -1);
-	        });
-        });
+	$('#collapseTwo').on('shown.bs.collapse', function () {
+		$('#collapseTwo a').each(function (index) {
+			var i = index + 1;
+			$(this).attr('tabindex', i);
+		});
+	});
+	$('#collapseTwo').on('hidden.bs.collapse', function () {
+		$('#collapseTwo a').each(function (index) {
+			$(this).attr('tabindex', -1);
+		});
+	});
 
-    </script>
+</script>
 
 </body>
 

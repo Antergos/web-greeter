@@ -21,6 +21,9 @@ if (typeof lightdm == 'undefined') {
         { name: "clarkk", real_name: "Superman", display_name: "Clark Kent", image: "", language: "en_US", layout: null, session: "gnome", logged_in: false },
         { name: "brucew", real_name: "Batman", display_name: "Bruce Wayne", image: "", language: "en_US", layout: null, session: "cinnamon", logged_in: false},
         { name: "peterp", real_name: "Spiderman", display_name: "Peter Parker", image: "", language: "en_US", layout: null, session: "gnome", logged_in: true},
+		{ name: "clarkk2", real_name: "Superman", display_name: "Clark Kent", image: "", language: "en_US", layout: null, session: "gnome", logged_in: false },
+        { name: "brucew2", real_name: "Batman", display_name: "Bruce Wayne", image: "", language: "en_US", layout: null, session: "cinnamon", logged_in: false},
+        { name: "peterp2", real_name: "Spiderman", display_name: "Peter Parker", image: "", language: "en_US", layout: null, session: "gnome", logged_in: true}
     ];
 
 	lightdm.num_users= lightdm.users.length;
