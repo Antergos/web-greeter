@@ -69,42 +69,54 @@ sigterm_cb (int signum)
 }
 
 int
-main (int argc, char **argv)
-{
+main(int argc, char **argv) {
     GdkScreen *screen;
     GdkRectangle geometry;
     GKeyFile *keyfile;
     gchar *theme;
 
-    WebKitWebContext *context = webkit_web_context_get_default ();
+    WebKitWebContext *context = webkit_web_context_get_default();
 
-    signal (SIGTERM, sigterm_cb);
+    signal(SIGTERM, sigterm_cb);
 
-    gtk_init (&argc, &argv);
+    gtk_init(&argc, &argv);
 
-    webkit_web_context_set_web_extensions_directory (context, LIGHTDM_WEBKIT2_GREETER_EXTENSIONS_DIR);
-    
+    webkit_web_context_set_web_extensions_directory(context, LIGHTDM_WEBKIT2_GREETER_EXTENSIONS_DIR);
+
     /* settings */
-    keyfile = g_key_file_new ();
-    g_key_file_load_from_file (keyfile, "/etc/lightdm/lightdm-webkit2-greeter.conf", G_KEY_FILE_NONE, NULL);
+    keyfile = g_key_file_new();
+    g_key_file_load_from_file(keyfile, "/etc/lightdm/lightdm-webkit2-greeter.conf", G_KEY_FILE_NONE, NULL);
     theme = g_key_file_get_string(keyfile, "greeter", "webkit-theme", NULL);
 
-    window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-    screen = gtk_window_get_screen (GTK_WINDOW (window));
-    gdk_screen_get_monitor_geometry (screen, gdk_screen_get_primary_monitor(screen), &geometry);
-    gtk_window_set_default_size (GTK_WINDOW (window), geometry.width, geometry.height);
-    gtk_window_move (GTK_WINDOW (window), geometry.x, geometry.y);
-    gdk_window_set_cursor (gdk_get_default_root_window (), gdk_cursor_new_for_display (gtk_widget_get_display (window), GDK_LEFT_PTR));
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    screen = gtk_window_get_screen(GTK_WINDOW(window));
 
-    web_view = webkit_web_view_new ();
-    
-    gtk_container_add (GTK_CONTAINER (window), web_view);
+    gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
+    gdk_screen_get_monitor_geometry(screen, gdk_screen_get_primary_monitor(screen), &geometry);
 
-    webkit_web_view_load_uri (WEBKIT_WEB_VIEW (web_view), g_strdup_printf("file://%s/%s/index.html", THEME_DIR, theme));
+    GdkGeometry hints;
+    hints.min_width = geometry.width;
+    hints.max_width = geometry.width;
+    hints.min_height = geometry.height;
+    hints.max_height = geometry.height;
 
-    gtk_widget_show_all (window);
+    gtk_window_set_geometry_hints(GTK_WINDOW(window), window, &hints,
+                                  (GdkWindowHints)(GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE));
 
-    gtk_main ();
+    gtk_window_set_default_size(GTK_WINDOW(window), geometry.width, geometry.height);
+    gtk_window_move(GTK_WINDOW(window), geometry.x, geometry.y);
+    gdk_window_set_cursor(gdk_get_default_root_window(),
+                          gdk_cursor_new_for_display(gtk_widget_get_display(window), GDK_LEFT_PTR));
+
+    web_view = webkit_web_view_new();
+
+    gtk_container_add(GTK_CONTAINER(window), web_view);
+
+    webkit_web_view_load_uri(WEBKIT_WEB_VIEW(web_view), g_strdup_printf("file://%s/%s/index.html", THEME_DIR, theme));
+
+    gtk_widget_show_all(window);
+
+    gtk_main();
 
     return 0;
 }
