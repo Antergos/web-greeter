@@ -81,7 +81,6 @@ main (int argc, char **argv)
     signal (SIGTERM, sigterm_cb);
 
     gtk_init (&argc, &argv);
-    gdk_window_set_cursor (gdk_get_default_root_window (), gdk_cursor_new (GDK_LEFT_PTR));
 
     webkit_web_context_set_web_extensions_directory (context, LIGHTDM_WEBKIT2_GREETER_EXTENSIONS_DIR);
     
@@ -94,7 +93,8 @@ main (int argc, char **argv)
     screen = gtk_window_get_screen (GTK_WINDOW (window));
     gdk_screen_get_monitor_geometry (screen, gdk_screen_get_primary_monitor(screen), &geometry);
     gtk_window_set_default_size (GTK_WINDOW (window), geometry.width, geometry.height);
-	gtk_window_move (GTK_WINDOW (window), geometry.x, geometry.y);
+    gtk_window_move (GTK_WINDOW (window), geometry.x, geometry.y);
+    gdk_window_set_cursor (gdk_get_default_root_window (), gdk_cursor_new_for_display (gtk_widget_get_display (window), GDK_LEFT_PTR));
 
     web_view = webkit_web_view_new ();
     
