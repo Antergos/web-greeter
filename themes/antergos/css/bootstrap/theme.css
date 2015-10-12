@@ -288,7 +288,7 @@ a {
 	min-height: 275px;
 }
 
-.panel-shadow {
+#panel-fix .panel-shadow, .panel-group {
 	box-shadow: none !important;
 	border: none !important;
 }
@@ -359,9 +359,10 @@ div.password, div.status, div.timer {
 	margin: 0 auto;
 }
 
-.password {
+.password.form-control {
 	font-size: 14px !important;
 	height: 37px;
+	width: 74% !important;
 }
 
 input.password.form-control:focus {
@@ -409,138 +410,6 @@ input.password.form-control:focus {
 	3.5% { -webkit-transform: rotate(2deg); }
 	4% { -webkit-transform: rotate(0deg); }
 	100% { -webkit-transform: rotate(0deg); }
-}
-
-/* User Selection */
-
-.user-selection {
-	width: 99%;
-	height: 125px;
-	text-align: center;
-}
-
-.user-selection ul {
-	position: relative;
-	display: inline-block;
-	padding: 0 5px;
-	margin: 15px 0 0;
-}
-
-/* User Selection Images */
-
-.user-selection li {
-	display: inline-block;
-	position: relative;
-	margin: 0 7px 15px;
-	vertical-align: baseline;
-}
-
-.user-selection a {
-	display: inline-block;
-	cursor: pointer;
-	outline: none;
-}
-
-.user-selection a i, .time-panel a i {
-	font-size: 15px;
-	color: #5E5E5E;
-}
-
-.user-toggle {
-	position: fixed;
-}
-
-/* Applies the bounce animation to the targeted user image.  */
-.user-selection li:target a {
-	-webkit-animation: bounce .3s 6 alternate ease-out;
-}
-
-/* Generates the status indicator. */
-.user-selection li:after {
-	content: " ";
-	position: absolute;
-	bottom: -5px;
-	left: 50%;
-	width: 5px;
-	height: 5px;
-	opacity: 0;
-	visibility: hidden;
-	background-color: rgba(8, 51, 120, 0.80);
-	margin-left: -2px;
-	border-radius: 5px;
-	box-shadow: inset 0 1px 3px rgba(65, 140, 255, .4), 0 0 4px rgba(65, 140, 255, .5), 0 -1px 7px rgb(65, 140, 255);
-	transition: opacity .5s;
-}
-
-/* Displays the status indicator. */
-.user-selection li:target:after {
-	visibility: visible;
-	opacity: 1;
-}
-
-/* This is just a wrapper in order to center the actual label horizontally. You
-may need to adjust the width negative margin if you have really long labels. */
-.user-selection em {
-	position: absolute;
-	top: -34px;
-	left: 50%;
-	display: none;
-	width: 150px;
-	margin-left: -75px;
-	text-align: center;
-}
-
-/* Generates the little arrow at the bottom of the label. */
-.user-selection em:after {
-	content: " ";
-	position: absolute;
-	bottom: -6px;
-	left: 50%;
-	margin-left: -6px;
-	width: 0;
-	height: 0;
-	border-left: 6px solid transparent;
-	border-right: 6px solid transparent;
-	border-top: 6px solid rgba(0, 0, 0, .6);
-	border-bottom: none;
-	z-index: 1000;
-}
-
-/* This is the actual label. */
-.user-selection em span {
-	display: inline-block;
-	padding: 5px 12px;
-	font-size: 14px;
-	font-style: normal;
-	color: #FFFFFF;
-	background: #000000;
-	background: rgba(0, 0, 0, .6);
-	text-shadow: 1px 1px 1px rgba(0, 0, 0, .9);
-	border-radius: 12px;
-	z-index: 1000;
-}
-
-.user-selection li:hover em {
-	display: block;
-	z-index: 1000;
-}
-
-/* Image Hover Effect */
-/* Sets the face images to a smaller width so they can be enlarged and applies
-transitions for a smooth animation. Make sure to adjust the width so it
-matches your images. */
-.user-selection img {
-	width: 72px;
-	height: auto;
-	transition: width .2s, height .2s;
-}
-
-.user-selection li:hover img {
-	width: 96px;
-}
-
-.user-selection li:active img {
-	opacity: .9;
 }
 
 .random {
@@ -654,7 +523,7 @@ a.list-group-item.hovered:after, a.list-group-item.hovered:before {
 	bottom: 0;
 	left: 10px;
 	right: 10px;
-	border-radius: 100px / 10px;
+	border-radius: 10px;
 }
 
 a.list-group-item:focus:after, a.list-group-item:hover:after, a.list-group-item.hovered:after {
@@ -664,7 +533,7 @@ a.list-group-item:focus:after, a.list-group-item:hover:after, a.list-group-item.
 	transform: skew(8deg) rotate(3deg);
 }
 
-td.input-group, #passwordArea table {
+.input-group, #passwordArea table {
 	width: 100%;
 	margin-top: 5px;
 }

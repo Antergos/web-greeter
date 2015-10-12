@@ -25,14 +25,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var DEBUG = true,
+	selectedUser = null,
+	authPending = null,
+	users_shown = null,
+	userList;
+
+
+/**
+ * Logs.
+ */
+function log(text) {
+	if (DEBUG) {
+		$('#logArea').append(text);
+		$('#logArea').append('<br/>');
+	}
+}
 
 $(document).ready(function () {
-
-	var DEBUG = true,
-		selectedUser = null,
-		authPending = null,
-		users_shown = null,
-		userList;
 
 	function buildUserList() {
 		// User list building
@@ -207,7 +217,7 @@ $(document).ready(function () {
 		return string.charAt(0).toUpperCase() + string.slice(1);
 	}
 
-	window.handleAction = function(id) {
+	window.handleAction = function (id) {
 		log("handleAction(" + id + ")");
 		eval("lightdm." + id + "()");
 	};
@@ -235,7 +245,7 @@ $(document).ready(function () {
 	}
 
 
-	window.startAuthentication = function(userId) {
+	window.startAuthentication = function (userId) {
 		log("startAuthentication(" + userId + ")");
 
 		if (selectedUser !== null) {
@@ -246,6 +256,7 @@ $(document).ready(function () {
 		localStorage.setItem('selUser', userId);
 		selectedUser = '.' + userId;
 		$(selectedUser).addClass('hovered');
+		console.log(userList);
 		if ($(userList).children().length > 3) {
 			$(userList).css('column-count', 'initial');
 			$(userList).parent().css('max-width', '50%');
@@ -270,7 +281,7 @@ $(document).ready(function () {
 		lightdm.start_authentication(userId);
 	};
 
-	window.cancelAuthentication = function() {
+	window.cancelAuthentication = function () {
 		log("cancelAuthentication()");
 		$('#statusArea').hide();
 		$('#timerArea').hide();
@@ -289,7 +300,7 @@ $(document).ready(function () {
 		return true;
 	};
 
-	window.submitPassword = function() {
+	window.submitPassword = function () {
 		log("provideSecret()");
 		lightdm.provide_secret($('#passwordField').val());
 		$('#passwordArea').hide();
@@ -301,13 +312,13 @@ $(document).ready(function () {
 	 * Image loading management.
 	 */
 
-	window.imgNotFound = function(source) {
-		source.src = 'img/screenshot1.jpg';
+	window.imgNotFound = function (source) {
+		source.src = 'img/antergos-logo-user.jpg';
 		source.onerror = "";
 		return true;
 	};
 
-	window.sessionToggle = function(el) {
+	window.sessionToggle = function (el) {
 		var selText = $(el).text();
 		var theID = $(el).attr('id');
 		var selUser = localStorage.getItem('selUser');
@@ -315,53 +326,42 @@ $(document).ready(function () {
 		$(el).parents('.btn-group').find('.selected').html(selText);
 		localStorage.setItem(selUser, theID)
 	};
-
-	/**
-	 * Lightdm Callbacks
-	 */
-	window.show_prompt = function(text) {
-		log("show_prompt(" + text + ")");
-		$('#passwordField').val("");
-		$('#passwordArea').show();
-		$('#passwordField').focus();
-	};
-
-	function authentication_complete() {
-		log("authentication_complete()");
-		authPending = false;
-		$('#timerArea').hide();
-		var selSession = $('.selected').attr('id');
-		if (lightdm.is_authenticated) {
-			log("authenticated !");
-			lightdm.login(lightdm.authentication_user, selSession);
-		} else {
-			log("not authenticated !");
-			$('#statusArea').show();
-		}
-	}
-
-	function show_message(text) {
-		var msgWrap = document.getElementById('statusArea'),
-		showMsg = document.getElementById('showMsg');
-		showMsg.innerHTML = text;
-		if (text.length > 0) {
-			$('#passwordArea').hide();
-			$(msgWrap).show();
-		}
-	}
-
-	function show_error(text) {
-		show_message(text);
-	}
-
-	/**
-	 * Logs.
-	 */
-	function log(text) {
-		if (DEBUG) {
-			$('#logArea').append(text);
-			$('#logArea').append('<br/>');
-		}
-	}
-
 });
+
+/**
+ * Lightdm Callbacks
+ */
+function show_prompt(text) {
+	log("show_prompt(" + text + ")");
+	$('#passwordField').val("");
+	$('#passwordArea').show();
+	$('#passwordField').focus();
+}
+
+function authentication_complete() {
+	log("authentication_complete()");
+	authPending = false;
+	$('#timerArea').hide();
+	var selSession = $('.selected').attr('id');
+	if (lightdm.is_authenticated) {
+		log("authenticated !");
+		lightdm.login(lightdm.authentication_user, selSession);
+	} else {
+		log("not authenticated !");
+		$('#statusArea').show();
+	}
+}
+
+function show_message(text) {
+	var msgWrap = document.getElementById('statusArea'),
+		showMsg = document.getElementById('showMsg');
+	showMsg.innerHTML = text;
+	if (text.length > 0) {
+		$('#passwordArea').hide();
+		$(msgWrap).show();
+	}
+}
+
+function show_error(text) {
+	show_message(text);
+}
