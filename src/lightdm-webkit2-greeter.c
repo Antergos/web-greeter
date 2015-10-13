@@ -49,7 +49,7 @@ main(int argc, char **argv) {
     GdkRectangle geometry;
     GKeyFile *keyfile;
     gchar *theme;
-    GdkRGBA *bg_color;
+    GdkRGBA bg_color;
 
     WebKitWebContext *context = webkit_web_context_get_default();
     webkit_web_context_set_web_extensions_directory(context, LIGHTDM_WEBKIT2_GREETER_EXTENSIONS_DIR);
@@ -78,8 +78,10 @@ main(int argc, char **argv) {
 
 
     web_view = webkit_web_view_new();
-    gdk_rgba_parse(bg_color, "000000");
-    webkit_web_view_set_background_color(WEBKIT_WEB_VIEW(web_view), bg_color);
+    if (gdk_rgba_parse(&bg_color, "#000000")) {
+        webkit_web_view_set_background_color(WEBKIT_WEB_VIEW(web_view), gdk_rgba_copy(&bg_color));
+    };
+
 
     gtk_container_add(GTK_CONTAINER(window), web_view);
 
