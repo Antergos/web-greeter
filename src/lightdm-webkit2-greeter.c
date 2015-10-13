@@ -16,6 +16,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 #include <glib.h>
+#include <glib-unix.h>
 #include <gtk/gtkx.h>
 #include <webkit2/webkit2.h>
 #include <JavaScriptCore/JavaScript.h>
@@ -72,7 +73,7 @@ wm_window_filter (GdkXEvent *gxevent, GdkEvent *event, gpointer  data)
 
         XGetInputFocus (xevent->xunmap.display, &xwin, &revert_to);
         if (revert_to == RevertToNone)
-            gdk_window_lower (gtk_widget_get_window (gtk_widget_get_toplevel (GTK_WIDGET (screen_overlay))));
+            gdk_window_lower (gtk_widget_get_window (gtk_widget_get_toplevel (GTK_WIDGET (window))));
     }
 
     return GDK_FILTER_CONTINUE;

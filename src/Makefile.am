@@ -34,7 +34,8 @@ lightdm_webkit2_greeter_CFLAGS = \
 	-DBINARY=\"lightdm-webkit2-greeter\"
 
 lightdm_webkit2_greeter_LDADD = \
-	$(GREETER_LIBS)
+	$(GREETER_LIBS) \
+	$(LIBX11_LIBS)
 
 DISTCLEANFILES = \
 	Makefile.in

@@ -22,6 +22,7 @@ PKG_CHECK_MODULES(GREETER, [
     gtk+-3.0
     webkit2gtk-4.0
     dbus-glib-1
+    x11
 ])
 
 PKG_CHECK_MODULES(WEB_EXTENSION, [webkit2gtk-4.0 >= 2.8.0])
