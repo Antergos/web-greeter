@@ -20,7 +20,7 @@
 
 #include <lightdm.h>
 
-#include <../config.h>
+#include <config.h>
 
 static GtkWidget *web_view;
 static GtkWidget *window;
@@ -34,33 +34,8 @@ timed_login_cb (LightDMGreeter *greeter, const gchar *username, WebKitWebView *v
     command = g_strdup_printf ("timed_login('%s')", username); // FIXME: Escape text
     webkit_web_view_run_javascript (view, command, NULL, web_view_javascript_finished, NULL);
     g_free (command);
-}
+}*/
 
-static gboolean
-fade_timer_cb (gpointer data)
-{
-    gdouble opacity;
-
-    opacity = gtk_widget_get_opacity (window);
-    opacity -= 0.1;
-    if (opacity <= 0)
-    {
-        gtk_main_quit ();
-        return FALSE;
-    }
-    gtk_widget_set_opacity (window, opacity);
-
-    return TRUE;
-}
-
-static void
-quit_cb (LightDMGreeter *greeter, const gchar *username)
-{
-
-    // Fade out the greeter
-    g_timeout_add (40, (GSourceFunc) fade_timer_cb, NULL);
-}
-*/
 
 static void
 sigterm_cb (int signum)
@@ -74,14 +49,17 @@ main(int argc, char **argv) {
     GdkRectangle geometry;
     GKeyFile *keyfile;
     gchar *theme;
+    GdkRGBA *bg_color;
 
     WebKitWebContext *context = webkit_web_context_get_default();
+    webkit_web_context_set_web_extensions_directory(context, LIGHTDM_WEBKIT2_GREETER_EXTENSIONS_DIR);
 
     signal(SIGTERM, sigterm_cb);
 
     gtk_init(&argc, &argv);
 
-    webkit_web_context_set_web_extensions_directory(context, LIGHTDM_WEBKIT2_GREETER_EXTENSIONS_DIR);
+    gdk_window_set_cursor (gdk_get_default_root_window (), gdk_cursor_new_for_display (gdk_display_get_default (), GDK_LEFT_PTR));
+
 
     /* settings */
     keyfile = g_key_file_new();
@@ -94,21 +72,14 @@ main(int argc, char **argv) {
     gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
     gdk_screen_get_monitor_geometry(screen, gdk_screen_get_primary_monitor(screen), &geometry);
 
-    GdkGeometry hints;
-    hints.min_width = geometry.width;
-    hints.max_width = geometry.width;
-    hints.min_height = geometry.height;
-    hints.max_height = geometry.height;
 
-    gtk_window_set_geometry_hints(GTK_WINDOW(window), window, &hints,
-                                  (GdkWindowHints)(GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE));
+    gtk_window_set_default_size (GTK_WINDOW (window), geometry.width, geometry.height);
+    gtk_window_move (GTK_WINDOW (window), geometry.x, geometry.y);
 
-    gtk_window_set_default_size(GTK_WINDOW(window), geometry.width, geometry.height);
-    gtk_window_move(GTK_WINDOW(window), geometry.x, geometry.y);
-    gdk_window_set_cursor(gdk_get_default_root_window(),
-                          gdk_cursor_new_for_display(gtk_widget_get_display(window), GDK_LEFT_PTR));
 
     web_view = webkit_web_view_new();
+    gdk_rgba_parse(bg_color, "000000");
+    webkit_web_view_set_background_color(WEBKIT_WEB_VIEW(web_view), bg_color);
 
     gtk_container_add(GTK_CONTAINER(window), web_view);
 

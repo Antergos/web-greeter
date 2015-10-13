@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(lightdm-webkit2-greeter, 0.1.2)
+AC_INIT(lightdm-webkit2-greeter, 0.2.0)
 AC_SUBST(THEME_DIR)
 AC_CONFIG_HEADER(config.h)
 
@@ -24,7 +24,7 @@ PKG_CHECK_MODULES(GREETER, [
     dbus-glib-1
 ])
 
-PKG_CHECK_MODULES(WEB_EXTENSION, [webkit2gtk-4.0 >= 2.0.0])
+PKG_CHECK_MODULES(WEB_EXTENSION, [webkit2gtk-4.0 >= 2.8.0])
 AC_SUBST(WEB_EXTENSION_CFLAGS)
 AC_SUBST(WEB_EXTENSION_LIBS)
 

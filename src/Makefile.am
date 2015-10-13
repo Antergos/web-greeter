@@ -8,7 +8,6 @@ liblightdm_webkit2_greeter_ext_la_CFLAGS = \
 	$(GREETER_CFLAGS) \
 	$(WARN_CFLAGS) \
 	-DVERSION=\"$(VERSION)\" \
-	-DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\" \
 	-DLOCALE_DIR=\"$(localedir)\" \
 	 $(WEB_EXTENSION_CFLAGS)
 
