@@ -30,7 +30,6 @@ lightdm_webkit2_greeter_CFLAGS = \
 	$(WARN_CFLAGS) \
 	-DLIGHTDM_WEBKIT2_GREETER_EXTENSIONS_DIR=\""$(libdir)/lightdm-webkit2-greeter"\" \
 	-DVERSION=\"$(VERSION)\" \
-	-DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\" \
 	-DLOCALE_DIR=\"$(localedir)\" \
 	-DBINARY=\"lightdm-webkit2-greeter\"
 

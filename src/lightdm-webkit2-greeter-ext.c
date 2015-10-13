@@ -1011,7 +1011,7 @@ authentication_complete_cb(LightDMGreeter *greeter, WebKitWebExtension *extensio
     }
 }
 
-static gboolean
+/*static gboolean
 fade_timer_cb(gpointer data) {
     gdouble opacity;
 
@@ -1031,7 +1031,7 @@ quit_cb(LightDMGreeter *greeter, const gchar *username) {
 
     // Fade out the greeter
     g_timeout_add(40, (GSourceFunc) fade_timer_cb, NULL);
-}
+}*/
 
 G_MODULE_EXPORT void
 webkit_web_extension_initialize(WebKitWebExtension *extension) {
@@ -1043,7 +1043,7 @@ webkit_web_extension_initialize(WebKitWebExtension *extension) {
     g_signal_connect(G_OBJECT(greeter), "show-prompt", G_CALLBACK(show_prompt_cb), extension);
     g_signal_connect(G_OBJECT(greeter), "show-message", G_CALLBACK(show_message_cb), extension);
     g_signal_connect(G_OBJECT(greeter), "show-error", G_CALLBACK(show_message_cb), extension);
-    g_signal_connect(G_OBJECT(greeter), "quit", G_CALLBACK(quit_cb), extension);
+//    g_signal_connect(G_OBJECT(greeter), "quit", G_CALLBACK(quit_cb), extension);
 
     g_signal_connect(extension, "page-created", G_CALLBACK(web_page_created_callback), NULL);
 
