@@ -14,6 +14,9 @@
 
 #include <stdlib.h>
 #include <gtk/gtk.h>
+#include <gdk/gdkx.h>
+#include <glib.h>
+#include <gtk/gtkx.h>
 #include <webkit2/webkit2.h>
 #include <JavaScriptCore/JavaScript.h>
 #include <glib/gi18n.h>
@@ -41,6 +44,38 @@ static void
 sigterm_cb (int signum)
 {
     exit (0);
+}
+
+static GdkFilterReturn
+wm_window_filter (GdkXEvent *gxevent, GdkEvent *event, gpointer  data)
+{
+    XEvent *xevent = (XEvent*)gxevent;
+    if (xevent->type == MapNotify)
+    {
+        GdkDisplay *display = gdk_x11_lookup_xdisplay (xevent->xmap.display);
+        GdkWindow *win = gdk_x11_window_foreign_new_for_display (display, xevent->xmap.window);
+        GdkWindowTypeHint win_type = gdk_window_get_type_hint (win);
+
+        if (win_type != GDK_WINDOW_TYPE_HINT_COMBO &&
+            win_type != GDK_WINDOW_TYPE_HINT_TOOLTIP &&
+            win_type != GDK_WINDOW_TYPE_HINT_NOTIFICATION)
+            /*
+            if (win_type == GDK_WINDOW_TYPE_HINT_DESKTOP ||
+                win_type == GDK_WINDOW_TYPE_HINT_DIALOG)
+            */
+            gdk_window_focus (win, GDK_CURRENT_TIME);
+    }
+    else if (xevent->type == UnmapNotify)
+    {
+        Window xwin;
+        int revert_to = RevertToNone;
+
+        XGetInputFocus (xevent->xunmap.display, &xwin, &revert_to);
+        if (revert_to == RevertToNone)
+            gdk_window_lower (gtk_widget_get_window (gtk_widget_get_toplevel (GTK_WIDGET (screen_overlay))));
+    }
+
+    return GDK_FILTER_CONTINUE;
 }
 
 int
@@ -86,6 +121,11 @@ main(int argc, char **argv) {
     gtk_container_add(GTK_CONTAINER(window), web_view);
 
     webkit_web_view_load_uri(WEBKIT_WEB_VIEW(web_view), g_strdup_printf("file://%s/%s/index.html", THEME_DIR, theme));
+
+    /* There is no window manager, so we need to implement some of its functionality */
+    GdkWindow* root_window = gdk_get_default_root_window ();
+    gdk_window_set_events (root_window, gdk_window_get_events (root_window) | GDK_SUBSTRUCTURE_MASK);
+    gdk_window_add_filter (root_window, wm_window_filter, NULL);
 
     gtk_widget_show_all(window);
 

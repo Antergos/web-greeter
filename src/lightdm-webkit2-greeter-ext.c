@@ -1042,7 +1042,6 @@ webkit_web_extension_initialize(WebKitWebExtension *extension) {
     g_signal_connect(G_OBJECT(greeter), "authentication-complete", G_CALLBACK(authentication_complete_cb), extension);
     g_signal_connect(G_OBJECT(greeter), "show-prompt", G_CALLBACK(show_prompt_cb), extension);
     g_signal_connect(G_OBJECT(greeter), "show-message", G_CALLBACK(show_message_cb), extension);
-    g_signal_connect(G_OBJECT(greeter), "show-error", G_CALLBACK(show_message_cb), extension);
 //    g_signal_connect(G_OBJECT(greeter), "quit", G_CALLBACK(quit_cb), extension);
 
     g_signal_connect(extension, "page-created", G_CALLBACK(web_page_created_callback), NULL);
