@@ -143,15 +143,6 @@ main(int argc, char **argv) {
 
     gdk_rgba_parse(&bg_color, "#000000");
 
-
-    if (bg_color.alpha < 1) {
-        GdkVisual *rgba_visual = gdk_screen_get_rgba_visual(screen);
-
-        if (rgba_visual) {
-            gtk_widget_set_visual(GTK_WIDGET(window), rgba_visual);
-            gtk_widget_set_app_paintable(GTK_WIDGET(window), TRUE);
-        }
-    }
     webkit_web_view_set_background_color(WEBKIT_WEB_VIEW(web_view), gdk_rgba_copy(&bg_color));
 
 
