@@ -15,8 +15,6 @@ src/
 ### JetBrains template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio
 
-*.iml
-
 ## Directory-based project format:
 .idea/
 # if you remove the above rule, at least ignore the following:
@@ -62,7 +60,6 @@ crashlytics-build.properties
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
 *$py.class
 
 # C extensions
@@ -111,8 +108,6 @@ coverage.xml
 *.pot
 
 # Django stuff:
-*.log
-
 # Sphinx documentation
 docs/_build/
 
@@ -145,7 +140,6 @@ Makefile.in
 *.pch
 
 # Compiled Dynamic libraries
-*.so
 *.dylib
 *.dll
 
@@ -159,7 +153,6 @@ Makefile.in
 *.lib
 
 # Executables
-*.exe
 *.out
 *.app
 ### CMake template
@@ -171,31 +164,14 @@ cmake_install.cmake
 install_manifest.txt
 ### C template
 # Object files
-*.o
 *.ko
-*.obj
 *.elf
 
 # Precompiled Headers
-*.gch
-*.pch
-
 # Libraries
-*.lib
-*.a
-*.la
-*.lo
-
 # Shared objects (inc. Windows DLLs)
-*.dll
-*.so
 *.so.*
-*.dylib
-
 # Executables
-*.exe
-*.out
-*.app
 *.i*86
 *.x86_64
 *.hex
