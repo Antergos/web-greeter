@@ -1,3 +1,8 @@
+Overview of changes in lightdm-webkit-greeter 0.2.1
+
+    * Handle tasks that a WM would normally handle.
+    * Code clean-up
+
 Overview of changes in lightdm-webkit-greeter 0.2.0
 
     * Add missing lightdm.set_language function
