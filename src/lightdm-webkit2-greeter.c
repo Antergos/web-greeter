@@ -84,8 +84,8 @@ initialize_web_extensions_cb(WebKitWebContext *context,
 
 }
 
-static WebkitSettings
-get_new_webkit_settings_object() {
+static void
+create_new_webkit_settings_object() {
     webkit_settings = webkit_settings_new_with_settings("enable-developer-extras", TRUE,
                                                         "enable-fullscreen", TRUE,
                                                         "enable-site-specific-quirks", TRUE,
@@ -98,7 +98,6 @@ get_new_webkit_settings_object() {
                                                         "enable-write-console-messages-to-stdout", TRUE,
 
                                                         NULL);
-    return webkit_settings;
 }
 
 int
@@ -139,7 +138,7 @@ main(int argc, char **argv) {
     gtk_window_set_default_size(GTK_WINDOW(window), geometry.width, geometry.height);
     gtk_window_move(GTK_WINDOW(window), geometry.x, geometry.y);
 
-    webkit_settings = get_new_webkit_settings_object();
+    create_new_webkit_settings_object();
     web_view = webkit_web_view_new_with_settings(webkit_settings);
 
     gdk_rgba_parse(&bg_color, "#000000");
