@@ -208,6 +208,10 @@ a {
 	background-position: center !important;
 }
 
+#user-target2 {
+	position: relative;
+}
+
 #user-target2 i {
 	right: -21px;
 	color: #2C3E50;
@@ -288,7 +292,7 @@ a {
 	min-height: 275px;
 }
 
-#panel-fix .panel-shadow, .panel-group {
+#panel-fix .panel-shadow, .panel-group, .panel-shadow {
 	box-shadow: none !important;
 	border: none !important;
 }
@@ -359,10 +363,12 @@ div.password, div.status, div.timer {
 	margin: 0 auto;
 }
 
-.password.form-control {
-	font-size: 14px !important;
-	height: 37px;
-	width: 74% !important;
+#passwordField {
+	margin-left: 1px;
+}
+
+.input-group-btn {
+	width: auto;
 }
 
 input.password.form-control:focus {
@@ -442,7 +448,7 @@ input.password.form-control:focus {
 	max-width: 50%;
 	margin: 0 auto;
 	display: -webkit-box;
-	overflow: auto;
+	overflow: visible;
 }
 
 #list-group {

@@ -60,11 +60,7 @@ You may also want to :
 
 h1. User icons management
 
-To change users icons, there are two options :
-
-* Create a @.face@ file in the user's home folder in which you put a @jpg@ or @png@ resource
-
-Or 
+To change users icons:
 
 * Create a resource named with the user's login in @/var/lib/AccountsService/icons/@
 * Edit @/var/lib/AccountsService/users/<userLogin>@ and add a property @Icon@ targeting the icon resource you just created

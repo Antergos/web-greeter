@@ -63,25 +63,26 @@ $(document).ready(function () {
 				'<span class="badge"><i class="fa fa-check"></i></span>' +
 				'</a>';
 			$(userList).append(li);
-			if ($(userList).children().length > 3) {
+		}
+		if ($(userList).children().length > 3) {
 				$(userList).css('column-count', '2');
 				$(userList).parent().css('max-width', '85%');
 			}
-		}
 	}
 
 	function buildSessionList() {
 		// Build Session List
+		var btnGrp = $('#sessions');
 		for (var i in lightdm.sessions) {
 			var session = lightdm.sessions[i];
-			var btnGrp = document.getElementById('sessions');
 			var theClass = session.name.replace(/ /g, '');
-			var button = '\n<li><a href="#" id="' + session.key + '" onclick="sessionToggle(this)" class="' + theClass + '">' + session.name + '</a></li>';
+			var button = '\n<li><a href="#" data-session-id="' + session.key + '" onclick="sessionToggle(this)" class="' + theClass + '">' + session.name + '</a></li>';
 
 			$(btnGrp).append(button);
 
 
 		}
+		$('.dropdown-toggle').dropdown();
 	}
 
 	function show_users() {
@@ -92,6 +93,8 @@ $(document).ready(function () {
 		if ($('#user-list2 a').length <= 1) $('#user-list2 a').trigger('click');
 
 	}
+
+	$(window).load(function() {
 
 	/**
 	 * UI Initialization.
@@ -113,6 +116,7 @@ $(document).ready(function () {
 	addActionLink("hibernate");
 	addActionLink("suspend");
 	addActionLink("restart");
+	});
 
 	function get_hostname() {
 		var hostname = lightdm.hostname;
@@ -268,14 +272,15 @@ $(document).ready(function () {
 		var usrSession = localStorage.getItem(userId);
 
 		log("usrSession: " + usrSession);
-		var usrSessionEl = "#" + usrSession;
+		var usrSessionEl = "[data-session-id=" + usrSession + "]";
 		var usrSessionName = $(usrSessionEl).html();
 		log("usrSessionName: " + usrSessionName);
 		$('.selected').html(usrSessionName);
-		$('.selected').attr('id', usrSession);
+		$('.selected').attr('data-session-id', usrSession);
 		$('#session-list').removeClass('hidden');
 		$('#session-list').show();
 		$('#passwordArea').show();
+		$('.dropdown-toggle').dropdown();
 		authPending = true;
 
 		lightdm.start_authentication(userId);
@@ -320,9 +325,9 @@ $(document).ready(function () {
 
 	window.sessionToggle = function (el) {
 		var selText = $(el).text();
-		var theID = $(el).attr('id');
+		var theID = $(el).attr('data-session-id');
 		var selUser = localStorage.getItem('selUser');
-		$(el).parents('.btn-group').find('.selected').attr('id', theID);
+		$(el).parents('.btn-group').find('.selected').attr('data-session-id', theID);
 		$(el).parents('.btn-group').find('.selected').html(selText);
 		localStorage.setItem(selUser, theID)
 	};

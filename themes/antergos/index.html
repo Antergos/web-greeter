@@ -106,6 +106,7 @@
 			if (localStorage.getItem("bgrandom") == null) {
 				localStorage.setItem("bgrandom", "1");
 			}
+	  		$('.dropdown-toggle').dropdown();
 		});
 
 		function showAlert() {
@@ -202,7 +203,7 @@
                                     </span> <span class="welcome">Welcome!</span>
 								<span id="hostname" class="pull-right"></span>
 							</div>
-							<div id="panelfix" class="panel-body">
+							<div id="panelfix" class="panel-body panel-shadow">
 								<div class="panel-group" id="accordion">
 									<div class="panel panel-default panel-shadow time-panel">
 
@@ -220,8 +221,8 @@
 									</div>
 									<div class="panel panel-default panel-shadow panel-flow">
 										<!-- User Selection Widget -->
-										<div id="collapseTwo" class="panel-collapse collapse">
-											<div id="list-group" class="panel-body panel-wrap">
+										<div id="collapseTwo" class="panel-collapse panel-shadow collapse">
+											<div id="list-group" class="panel-body panel-shadow panel-wrap">
 
 												<div class="user-wrap2">
 
@@ -289,6 +290,10 @@
 												</div>
 
 											</div>
+											<!-- This is a hack to work-around webkit2gtk glitches with drawing on screen.
+											     The spinner animation makes GTK constantly repaint the screen which prevents
+											     WSOD (White Screen Of Death) -->
+										  <i class="fa fa-spinner fa-spin" style="color: transparent"></i>
 										</div>
 									</div>
 
@@ -299,7 +304,7 @@
 								<div id="session-list" class="btn-group pull-left hidden">
 									<button type="button" class="btn btn-default selected"></button>
 									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-										<i class="fa fa-caret-down"></i></button>
+										<span class="fa fa-caret-down"></span></button>
 									<ul id="sessions" class="dropdown-menu"></ul>
 								</div>
 								<div id="actionsArea" class="btn-group pull-right"></div>
@@ -338,13 +343,13 @@
 	});
 
 	$('#collapseTwo').on('shown.bs.collapse', function () {
-		$('#collapseTwo a').each(function (index) {
+		$('#collapseTwo a').filter(':not(.dropdown-menu *)').each(function (index) {
 			var i = index + 1;
 			$(this).attr('tabindex', i);
 		});
 	});
 	$('#collapseTwo').on('hidden.bs.collapse', function () {
-		$('#collapseTwo a').each(function (index) {
+		$('#collapseTwo a').filter(':not(.dropdown-menu *)').each(function (index) {
 			$(this).attr('tabindex', -1);
 		});
 	});
