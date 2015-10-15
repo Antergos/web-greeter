@@ -85,7 +85,7 @@ initialize_web_extensions_cb(WebKitWebContext *context,
 }
 
 static void
-create_new_webkit_settings_object() {
+create_new_webkit_settings_object(void) {
     webkit_settings = webkit_settings_new_with_settings("enable-developer-extras", TRUE,
                                                         "enable-fullscreen", TRUE,
                                                         "enable-site-specific-quirks", TRUE,
