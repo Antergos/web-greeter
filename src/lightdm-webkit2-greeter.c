@@ -76,16 +76,16 @@ wm_window_filter(GdkXEvent *gxevent, GdkEvent *event, gpointer data) {
     return GDK_FILTER_CONTINUE;
 }
 
-int
-main(int argc, char **argv) {
-    GdkScreen *screen;
-    GdkRectangle geometry;
-    GKeyFile *keyfile;
-    gchar *theme;
-    GdkRGBA bg_color;
+static void
+initialize_web_extensions_cb(WebKitWebContext *context,
+                             gpointer user_data) {
 
-    WebKitWebContext *context = webkit_web_context_get_default();
     webkit_web_context_set_web_extensions_directory(context, LIGHTDM_WEBKIT2_GREETER_EXTENSIONS_DIR);
+
+}
+
+static WebkitSettings
+get_new_webkit_settings_object() {
     webkit_settings = webkit_settings_new_with_settings("enable-developer-extras", TRUE,
                                                         "enable-fullscreen", TRUE,
                                                         "enable-site-specific-quirks", TRUE,
@@ -98,6 +98,23 @@ main(int argc, char **argv) {
                                                         "enable-write-console-messages-to-stdout", TRUE,
 
                                                         NULL);
+    return webkit_settings;
+}
+
+int
+main(int argc, char **argv) {
+    GdkScreen *screen;
+    GdkRectangle geometry;
+    GKeyFile *keyfile;
+    gchar *theme;
+    GdkRGBA bg_color;
+
+    WebKitWebContext *context = webkit_web_context_get_default();
+    g_signal_connect(context,
+                     "initialize-web-extensions",
+                     G_CALLBACK(initialize_web_extensions_cb),
+                     NULL);
+
 
     signal(SIGTERM, sigterm_cb);
 
@@ -122,6 +139,7 @@ main(int argc, char **argv) {
     gtk_window_set_default_size(GTK_WINDOW(window), geometry.width, geometry.height);
     gtk_window_move(GTK_WINDOW(window), geometry.x, geometry.y);
 
+    webkit_settings = get_new_webkit_settings_object();
     web_view = webkit_web_view_new_with_settings(webkit_settings);
 
     gdk_rgba_parse(&bg_color, "#000000");
