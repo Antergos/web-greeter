@@ -32,7 +32,7 @@ AC_SUBST(WEB_EXTENSION_LIBS)
 dnl ###########################################################################
 dnl Configurable values
 dnl ###########################################################################
-THEME_DIR="/usr/share/lightdm-webkit/themes/"
+THEME_DIR="/usr/share/lightdm-webkit/themes"
 AC_ARG_WITH(theme-dir,
             AS_HELP_STRING(--with-theme-dir=<path>,
                            Theme directory to use for webkit themes),
