@@ -49,7 +49,7 @@ $(document).ready(function () {
 		userList = $('#user-list2');
 		for (var i in lightdm.users) {
 			var user = lightdm.users[i];
-			var tux = 'img/screenshot1.jpg';
+			var tux = 'img/antergos-logo-user.png';
 			var imageSrc = user.image.length > 0 ? user.image : tux;
 			var lastSession = localStorage.getItem(user.name);
 			if (lastSession == null && lastSession == undefined) {
@@ -347,7 +347,7 @@ function authentication_complete() {
 	log("authentication_complete()");
 	authPending = false;
 	$('#timerArea').hide();
-	var selSession = $('.selected').attr('id');
+	var selSession = $('.selected').attr('data-session-id');
 	if (lightdm.is_authenticated) {
 		log("authenticated !");
 		lightdm.login(lightdm.authentication_user, selSession);
