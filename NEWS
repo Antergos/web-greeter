@@ -1,3 +1,8 @@
+Overview of changes in lightdm-webkit-greeter 0.2.2
+
+    * Call gtk_init() as early as possible to prevent widget drawing failures.
+    * Use glib helper function to set sigterm signal
+
 Overview of changes in lightdm-webkit-greeter 0.2.1
 
     * Handle tasks that a WM would normally handle.

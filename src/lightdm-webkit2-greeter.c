@@ -108,9 +108,9 @@ main(int argc, char **argv) {
     gchar *theme;
     GdkRGBA bg_color;
 
-    gtk_init(&argc, &argv);
+    g_unix_signal_add(SIGTERM, (GSourceFunc)sigterm_cb, /* is_callback */ GINT_TO_POINTER (TRUE));
 
-    signal(SIGTERM, sigterm_cb);
+    gtk_init(&argc, &argv);
 
     WebKitWebContext *context = webkit_web_context_get_default();
     g_signal_connect(context,
