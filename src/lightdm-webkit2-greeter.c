@@ -108,16 +108,15 @@ main(int argc, char **argv) {
     gchar *theme;
     GdkRGBA bg_color;
 
+    gtk_init(&argc, &argv);
+
+    signal(SIGTERM, sigterm_cb);
+
     WebKitWebContext *context = webkit_web_context_get_default();
     g_signal_connect(context,
                      "initialize-web-extensions",
                      G_CALLBACK(initialize_web_extensions_cb),
                      NULL);
-
-
-    signal(SIGTERM, sigterm_cb);
-
-    gtk_init(&argc, &argv);
 
     gdk_window_set_cursor(gdk_get_default_root_window(),
                           gdk_cursor_new_for_display(gdk_display_get_default(), GDK_LEFT_PTR));
@@ -133,8 +132,6 @@ main(int argc, char **argv) {
 
     gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
     gdk_screen_get_monitor_geometry(screen, gdk_screen_get_primary_monitor(screen), &geometry);
-
-
     gtk_window_set_default_size(GTK_WINDOW(window), geometry.width, geometry.height);
     gtk_window_move(GTK_WINDOW(window), geometry.x, geometry.y);
 
@@ -142,9 +139,7 @@ main(int argc, char **argv) {
     web_view = webkit_web_view_new_with_settings(webkit_settings);
 
     gdk_rgba_parse(&bg_color, "#000000");
-
     webkit_web_view_set_background_color(WEBKIT_WEB_VIEW(web_view), gdk_rgba_copy(&bg_color));
-
 
     gtk_container_add(GTK_CONTAINER(window), web_view);
 
