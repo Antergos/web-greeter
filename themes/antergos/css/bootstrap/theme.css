@@ -381,6 +381,10 @@ input.password.form-control:focus {
 	padding: 7px 12px;
 }
 
+#passwordArea .btn-group > .btn {
+	float: initial;
+}
+
 #logArea {
 	position: absolute;
 	top: 25%;
