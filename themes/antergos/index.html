@@ -36,11 +36,10 @@
 	<title>The Antergos Default Greeter Theme</title>
 
 	<!--For testing changes made to theme in any web browser-->
-	<script type="text/javascript" src="js/mock.js"></script>
+	<!--<script type="text/javascript" src="js/mock.js"></script>-->
 
 	<!-- Bootstrap Core CSS -->
 	<link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.min.css"/>
-	<link rel="stylesheet" type="text/css" href="css/bootstrap/prettify.css">
 
 	<!-- Custom CSS here -->
 	<link rel="stylesheet" type="text/css" href="css/bootstrap/theme.css">
@@ -106,7 +105,7 @@
 			if (localStorage.getItem("bgrandom") == null) {
 				localStorage.setItem("bgrandom", "1");
 			}
-	  		$('.dropdown-toggle').dropdown();
+			$('.dropdown-toggle').dropdown();
 		});
 
 		function showAlert() {
@@ -270,7 +269,7 @@
 														</tr>
 													</table>
 													<div id="timerArea" class="timer">
-														<i class="fa fa-spinner fa-spin"></i>
+														<i class="fa fa-spinner"></i>
 													</div>
 												</div>
 												<!-- Status Area -->
@@ -292,8 +291,8 @@
 											</div>
 											<!-- This is a hack to work-around webkit2gtk glitches with drawing on screen.
 											     The spinner animation makes GTK constantly repaint the screen which prevents
-											     WSOD (White Screen Of Death) -->
-										  <i class="fa fa-spinner fa-spin" style="color: transparent"></i>
+											     WSOD (White Screen Of Death)
+											<i class="fa fa-spinner fa-spin" style="color: transparent"></i>-->
 										</div>
 									</div>
 
