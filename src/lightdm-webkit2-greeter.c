@@ -43,9 +43,10 @@
 
 #include <config.h>
 
-static GtkWidget *web_view;
-static GtkWidget *window;
+static GtkWidget      *web_view;
+static GtkWidget      *window;
 static WebKitSettings *webkit_settings;
+static GdkDisplay     *default_display;
 
 
 static GdkFilterReturn
@@ -53,8 +54,8 @@ wm_window_filter(GdkXEvent *gxevent, GdkEvent *event, gpointer data) {
 
 	XEvent *xevent = (XEvent *) gxevent;
 	if (xevent->type == MapNotify) {
-		GdkDisplay *display = gdk_x11_lookup_xdisplay(xevent->xmap.display);
-		GdkWindow *win = gdk_x11_window_foreign_new_for_display(display, xevent->xmap.window);
+		GdkDisplay        *display = gdk_x11_lookup_xdisplay(xevent->xmap.display);
+		GdkWindow         *win     = gdk_x11_window_foreign_new_for_display(display, xevent->xmap.window);
 		GdkWindowTypeHint win_type = gdk_window_get_type_hint(win);
 
 		if (win_type != GDK_WINDOW_TYPE_HINT_COMBO
@@ -66,7 +67,7 @@ wm_window_filter(GdkXEvent *gxevent, GdkEvent *event, gpointer data) {
 
 	} else if (xevent->type == UnmapNotify) {
 		Window xwin;
-		int revert_to = RevertToNone;
+		int    revert_to = RevertToNone;
 
 		XGetInputFocus(xevent->xunmap.display, &xwin, &revert_to);
 		if (revert_to == RevertToNone) {
@@ -77,12 +78,14 @@ wm_window_filter(GdkXEvent *gxevent, GdkEvent *event, gpointer data) {
 	return GDK_FILTER_CONTINUE;
 }
 
+
 static void
 initialize_web_extensions_cb(WebKitWebContext *context, gpointer user_data) {
 
 	webkit_web_context_set_web_extensions_directory(context, LIGHTDM_WEBKIT2_GREETER_EXTENSIONS_DIR);
 
 }
+
 
 static void
 create_new_webkit_settings_object(void) {
@@ -101,14 +104,46 @@ create_new_webkit_settings_object(void) {
 	);
 }
 
+
 static gboolean
-context_menu_cb(WebKitWebView *web_view,
-				  WebKitContextMenu *context_menu,
-				  GdkEvent *event,
-				  WebKitHitTestResult *hit_test_result,
-				  gpointer user_data) {
+context_menu_cb(WebKitWebView *view,
+				WebKitContextMenu *context_menu,
+				GdkEvent *event,
+				WebKitHitTestResult *hit_test_result,
+				gpointer user_data) {
 	return TRUE;
 }
+
+
+static void
+lock_hint_cb(void) {
+	// Make the greeter behave a bit more like a screensaver if used as un/lock-screen by blanking the screen.
+	Display *display = gdk_x11_display_get_xdisplay(default_display);
+	XGetScreenSaver(display, &timeout, &interval, &prefer_blanking, &allow_exposures);
+	XForceScreenSaver(display, ScreenSaverActive);
+	XSetScreenSaver(display,
+					config_get_int(NULL, CONFIG_KEY_SCREENSAVER_TIMEOUT, 60),
+					0,
+					ScreenSaverActive,
+					DefaultExposures);
+}
+
+
+static void
+message_received_cb(WebKitUserContentManager *manager,
+					WebKitJavascriptResult *message,
+					gpointer user_data) {
+	char *message_str;
+
+	message_str = get_js_result_as_string(message);
+
+	/* TODO:
+	 * Abstract this by using JSON for exchanging messages so the handler can be used for more than one task/event.
+	 */
+	lock_hint_cb();
+
+}
+
 
 static gboolean
 fade_timer_cb(gpointer data) {
@@ -125,30 +160,29 @@ fade_timer_cb(gpointer data) {
 	return TRUE;
 }
 
+
 static void
 quit_cb(void) {
-
 	// Fade out the greeter
 	g_timeout_add(40, (GSourceFunc) fade_timer_cb, NULL);
+
 }
 
 
 int
 main(int argc, char **argv) {
-	GdkScreen *screen;
-	GdkWindow *root_window;
-	GdkRectangle geometry;
-	GKeyFile *keyfile;
-	gchar *theme;
-	GdkRGBA bg_color;
+	GdkScreen                *screen;
+	GdkWindow                *root_window;
+	GdkRectangle             geometry;
+	GKeyFile                 *keyfile;
+	gchar                    *theme;
+	GdkRGBA                  bg_color;
+	WebKitUserContentManager *manager;
+	WebKitWebContext         *context;
 
 	g_unix_signal_add(SIGTERM, (GSourceFunc) quit_cb, /* is_callback */ GINT_TO_POINTER(TRUE));
 
 	gtk_init(&argc, &argv);
-
-	WebKitWebContext *context = webkit_web_context_get_default();
-	g_signal_connect(context, "initialize-web-extensions", G_CALLBACK(initialize_web_extensions_cb), NULL);
-
 
 	// Apply greeter settings from conf file
 	keyfile = g_key_file_new();
@@ -156,23 +190,36 @@ main(int argc, char **argv) {
 	theme = g_key_file_get_string(keyfile, "greeter", "webkit-theme", NULL);
 
 	// Setup the main window
-	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	screen = gtk_window_get_screen(GTK_WINDOW(window));
+	window      = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	screen      = gtk_window_get_screen(GTK_WINDOW(window));
 	root_window = gdk_get_default_root_window();
+	display     = gdk_display_get_default();
 
 	gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
 	gdk_screen_get_monitor_geometry(screen, gdk_screen_get_primary_monitor(screen), &geometry);
 	gtk_window_set_default_size(GTK_WINDOW(window), geometry.width, geometry.height);
 	gtk_window_move(GTK_WINDOW(window), geometry.x, geometry.y);
-	gdk_window_set_cursor(root_window, gdk_cursor_new_for_display(gdk_display_get_default(), GDK_LEFT_PTR));
+	gdk_window_set_cursor(root_window, gdk_cursor_new_for_display(display, GDK_LEFT_PTR));
 
 	// There is no window manager, so we need to implement some of its functionality
 	gdk_window_set_events(root_window, gdk_window_get_events(root_window) | GDK_SUBSTRUCTURE_MASK);
 	gdk_window_add_filter(root_window, wm_window_filter, NULL);
 
-	// Configure the web_view's settings.
+	// Register and connect handler for setting the web extensions directory so webkit can find our extension
+	context = webkit_web_context_get_default();
+	g_signal_connect(context, "initialize-web-extensions", G_CALLBACK(initialize_web_extensions_cb), NULL);
+
+	// Register and connect handler for messages sent from our web extension
+	manager = webkit_user_content_manager_new();
+	webkit_user_content_manager_register_script_message_handler(manager, "Greeter");
+	g_signal_connect(manager, "script-message-received::Greeter", G_CALLBACK(message_received_cb), NULL);
+
+	// Create the web_view
+	web_view = webkit_web_view_new_with_user_content_manager(manager);
+
+	// Set the web_view's settings.
 	create_new_webkit_settings_object();
-	web_view = webkit_web_view_new_with_settings(webkit_settings);
+	webkit_web_view_set_settings(web_view, webkit_settings);
 
 	// The default background is white which causes a flash effect when the greeter starts. Make it black instead.
 	gdk_rgba_parse(&bg_color, "#000000");
@@ -183,9 +230,8 @@ main(int argc, char **argv) {
 
 	gtk_container_add(GTK_CONTAINER(window), web_view);
 	webkit_web_view_load_uri(WEBKIT_WEB_VIEW(web_view), g_strdup_printf("file://%s/%s/index.html", THEME_DIR, theme));
-
-
 	gtk_widget_show_all(window);
+
 
 	gtk_main();
 
