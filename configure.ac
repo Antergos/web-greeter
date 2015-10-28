@@ -3,6 +3,7 @@ dnl Process this file with autoconf to produce a configure script.
 AC_INIT(lightdm-webkit2-greeter, 0.2.3)
 AC_SUBST(THEME_DIR)
 AC_CONFIG_HEADER(config.h)
+AC_PREREQ([2.59])
 
 LT_INIT()
 
@@ -17,7 +18,7 @@ dnl ###########################################################################
 dnl Dependencies
 dnl ###########################################################################
 
-PKG_CHECK_MODULES(GREETER, [
+PKG_CHECK_MODULES([GREETER], [
     liblightdm-gobject-1
     gtk+-3.0
     webkit2gtk-4.0
@@ -25,9 +26,14 @@ PKG_CHECK_MODULES(GREETER, [
     x11
 ])
 
-PKG_CHECK_MODULES(WEB_EXTENSION, [webkit2gtk-4.0 >= 2.8.0])
-AC_SUBST(WEB_EXTENSION_CFLAGS)
-AC_SUBST(WEB_EXTENSION_LIBS)
+dnl PKG_CHECK_MODULES(WEB_EXTENSION, [webkit2gtk-4.0 >= 2.8.0])
+dnl AC_SUBST(WEB_EXTENSION_CFLAGS)
+dnl AC_SUBST(WEB_EXTENSION_LIBS)
+
+PKG_CHECK_MODULES([WEB_EXTENSION], [
+                  webkit2gtk-web-extension-4.0 >= 2.8.0])
+AC_SUBST([WEB_EXTENSION_CFLAGS])
+AC_SUBST([WEB_EXTENSION_LIBS])
 
 dnl ###########################################################################
 dnl Configurable values
@@ -83,7 +89,6 @@ data/Makefile
 src/Makefile
 po/Makefile.in
 themes/Makefile
-themes/webkit/Makefile
 ])
 
 dnl ###########################################################################

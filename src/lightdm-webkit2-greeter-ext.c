@@ -35,7 +35,9 @@
 #include <glib/gi18n.h>
 
 #include <webkit2/webkit-web-extension.h>
-#include <webkitdom/WebKitDOMCustom.h>
+#define WEBKIT_DOM_USE_UNSTABLE_API
+#include <webkitdom/WebKitDOMDOMWindowUnstable.h>
+#include <webkitdom/webkitdom.h>
 
 #include <JavaScriptCore/JavaScript.h>
 #include <lightdm.h>
@@ -512,7 +514,7 @@ get_lock_hint_cb(JSContextRef context,
 				 JSValueRef *exception) {
 	LightDMGreeter *greeter = JSObjectGetPrivate(thisObject);
 
-	return JSValueMakeBoolean(lightdm_greeter_get_lock_hint(greeter));
+	return JSValueMakeBoolean(context, lightdm_greeter_get_lock_hint(greeter));
 }
 
 
@@ -971,15 +973,15 @@ static const JSClassDefinition gettext_definition = {
 };
 
 
-static void
+/*static void
 web_page_created_callback(WebKitWebExtension *extension, WebKitWebPage *web_page, gpointer user_data) {
-	/*@formatter:off*/
+
 	g_print("Page %" G_GUINT64_FORMAT "created for %s\n",
 			webkit_web_page_get_id(web_page),
 			webkit_web_page_get_uri(web_page)
 	);
-	/*@formatter:on*/
-}
+
+}*/
 
 
 static void
@@ -991,7 +993,8 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	JSGlobalContextRef jsContext;
 	JSObjectRef        globalObject;
 	WebKitDOMDocument  *dom_document;
-	WebkitDOMDOMWindow *dom_window;
+	WebKitDOMDOMWindow *dom_window;
+	gchar *message = "LockHint";
 
 	page_id = webkit_web_page_get_id(web_page);
 
@@ -1026,7 +1029,9 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 		dom_document = webkit_web_page_get_dom_document(web_page);
 		dom_window   = webkit_dom_document_get_default_view(dom_document);
 
-		webkit_dom_dom_window_webkit_message_handlers_post_message(dom_window, 'Greeter', 'lock_hint_cb');
+		if (dom_window) {
+			webkit_dom_dom_window_webkit_message_handlers_post_message(dom_window, "GreeterBridge", message);
+		}
 	}
 
 }

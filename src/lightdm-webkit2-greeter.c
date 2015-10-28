@@ -48,6 +48,10 @@ static GtkWidget      *window;
 static WebKitSettings *webkit_settings;
 static GdkDisplay     *default_display;
 
+/* Screensaver values */
+static int timeout, interval, prefer_blanking, allow_exposures;
+static gint config_timeout;
+
 
 static GdkFilterReturn
 wm_window_filter(GdkXEvent *gxevent, GdkEvent *event, gpointer data) {
@@ -116,13 +120,13 @@ context_menu_cb(WebKitWebView *view,
 
 
 static void
-lock_hint_cb(void) {
+greeter_bridge_lock_hint_cb(void) {
 	// Make the greeter behave a bit more like a screensaver if used as un/lock-screen by blanking the screen.
 	Display *display = gdk_x11_display_get_xdisplay(default_display);
 	XGetScreenSaver(display, &timeout, &interval, &prefer_blanking, &allow_exposures);
 	XForceScreenSaver(display, ScreenSaverActive);
 	XSetScreenSaver(display,
-					config_get_int(NULL, CONFIG_KEY_SCREENSAVER_TIMEOUT, 60),
+					config_timeout,
 					0,
 					ScreenSaverActive,
 					DefaultExposures);
@@ -133,14 +137,11 @@ static void
 message_received_cb(WebKitUserContentManager *manager,
 					WebKitJavascriptResult *message,
 					gpointer user_data) {
-	char *message_str;
-
-	message_str = get_js_result_as_string(message);
 
 	/* TODO:
 	 * Abstract this by using JSON for exchanging messages so the handler can be used for more than one task/event.
 	 */
-	lock_hint_cb();
+	greeter_bridge_lock_hint_cb();
 
 }
 
@@ -188,18 +189,19 @@ main(int argc, char **argv) {
 	keyfile = g_key_file_new();
 	g_key_file_load_from_file(keyfile, "/etc/lightdm/lightdm-webkit2-greeter.conf", G_KEY_FILE_NONE, NULL);
 	theme = g_key_file_get_string(keyfile, "greeter", "webkit-theme", NULL);
+	config_timeout = g_key_file_get_integer(keyfile, "greeter", "screensaver-timeout", NULL);
 
 	// Setup the main window
 	window      = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	screen      = gtk_window_get_screen(GTK_WINDOW(window));
 	root_window = gdk_get_default_root_window();
-	display     = gdk_display_get_default();
+	default_display     = gdk_display_get_default();
 
 	gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
 	gdk_screen_get_monitor_geometry(screen, gdk_screen_get_primary_monitor(screen), &geometry);
 	gtk_window_set_default_size(GTK_WINDOW(window), geometry.width, geometry.height);
 	gtk_window_move(GTK_WINDOW(window), geometry.x, geometry.y);
-	gdk_window_set_cursor(root_window, gdk_cursor_new_for_display(display, GDK_LEFT_PTR));
+	gdk_window_set_cursor(root_window, gdk_cursor_new_for_display(default_display, GDK_LEFT_PTR));
 
 	// There is no window manager, so we need to implement some of its functionality
 	gdk_window_set_events(root_window, gdk_window_get_events(root_window) | GDK_SUBSTRUCTURE_MASK);
@@ -211,15 +213,15 @@ main(int argc, char **argv) {
 
 	// Register and connect handler for messages sent from our web extension
 	manager = webkit_user_content_manager_new();
-	webkit_user_content_manager_register_script_message_handler(manager, "Greeter");
-	g_signal_connect(manager, "script-message-received::Greeter", G_CALLBACK(message_received_cb), NULL);
+	webkit_user_content_manager_register_script_message_handler(manager, "GreeterBridge");
+	g_signal_connect(manager, "script-message-received::GreeterBridge", G_CALLBACK(message_received_cb), NULL);
 
 	// Create the web_view
 	web_view = webkit_web_view_new_with_user_content_manager(manager);
 
 	// Set the web_view's settings.
 	create_new_webkit_settings_object();
-	webkit_web_view_set_settings(web_view, webkit_settings);
+	webkit_web_view_set_settings(WEBKIT_WEB_VIEW(web_view), webkit_settings);
 
 	// The default background is white which causes a flash effect when the greeter starts. Make it black instead.
 	gdk_rgba_parse(&bg_color, "#000000");

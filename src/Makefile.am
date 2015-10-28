@@ -15,6 +15,10 @@ liblightdm_webkit2_greeter_ext_la_LIBADD = \
 	$(WEB_EXTENSION_LIBS) \
 	$(GREETER_LIBS)
 
+liblightdm_webkit2_greeter_ext_LDADD = \
+    $(WEB_EXTENSION_LIBS) \
+	$(GREETER_LIBS)
+
 liblightdm_webkit2_greeter_ext_la_LDFLAGS = -module -avoid-version -no-undefined
 
 greeter_PROGRAMS = lightdm-webkit2-greeter
@@ -22,8 +26,6 @@ greeterdir = $(bindir)
 
 lightdm_webkit2_greeter_SOURCES = \
 	lightdm-webkit2-greeter.c
-
-myapp_CPPFLAGS = 
 
 lightdm_webkit2_greeter_CFLAGS = \
 	$(GREETER_CFLAGS) \
@@ -35,6 +37,7 @@ lightdm_webkit2_greeter_CFLAGS = \
 
 lightdm_webkit2_greeter_LDADD = \
 	$(GREETER_LIBS) \
+	$(WEB_EXTENSION_LIBS) \
 	$(LIBX11_LIBS)
 
 DISTCLEANFILES = \
