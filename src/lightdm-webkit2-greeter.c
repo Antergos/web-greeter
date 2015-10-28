@@ -1,15 +1,32 @@
 /*
  * lightdm-webkit2-greeter.c
  *
- * Copyright (C) 2010 Robert Ancell.
- * Author: Robert Ancell <robert.ancell@canonical.com>
- * Webkit2 port: Copyright (C) 2014 Antergos
+ * Copyright © 2014-2015 Antergos Developers <dev@antergos.com>
  *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version. See http://www.gnu.org/copyleft/gpl.html the full text of the
- * license.
+ * Based on code from lightdm-webkit-greeter:
+ * Copyright © 2010-2015 Robert Ancell <robert.ancell@canonical.com>
+ *
+ * This file is part of lightdm-webkit2-greeter.
+ *
+ * lightdm-webkit2-greeter is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * lightdm-webkit2-greeter is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * The following additional terms are in effect as per Section 7 of the license:
+ *
+ * The preservation of all legal notices and author attributions in
+ * the material or in the Appropriate Legal Notices displayed
+ * by works containing it is required.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with lightdm-webkit2-greeter; If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 #include <stdlib.h>
@@ -30,129 +47,128 @@ static GtkWidget *web_view;
 static GtkWidget *window;
 static WebKitSettings *webkit_settings;
 
-/*
-static void
-timed_login_cb (LightDMGreeter *greeter, const gchar *username, WebKitWebView *view)
-{
-    gchar *command;
-
-    command = g_strdup_printf ("timed_login('%s')", username); // FIXME: Escape text
-    webkit_web_view_run_javascript (view, command, NULL, web_view_javascript_finished, NULL);
-    g_free (command);
-}*/
-
 
 static void
 sigterm_cb(int signum) {
-    exit(0);
+	exit(0);
 }
 
 static GdkFilterReturn
 wm_window_filter(GdkXEvent *gxevent, GdkEvent *event, gpointer data) {
-    XEvent *xevent = (XEvent *) gxevent;
-    if (xevent->type == MapNotify) {
-        GdkDisplay *display = gdk_x11_lookup_xdisplay(xevent->xmap.display);
-        GdkWindow *win = gdk_x11_window_foreign_new_for_display(display, xevent->xmap.window);
-        GdkWindowTypeHint win_type = gdk_window_get_type_hint(win);
 
-        if (win_type != GDK_WINDOW_TYPE_HINT_COMBO &&
-            win_type != GDK_WINDOW_TYPE_HINT_TOOLTIP &&
-            win_type != GDK_WINDOW_TYPE_HINT_NOTIFICATION)
-            /*
-            if (win_type == GDK_WINDOW_TYPE_HINT_DESKTOP ||
-                win_type == GDK_WINDOW_TYPE_HINT_DIALOG)
-            */
-            gdk_window_focus(win, GDK_CURRENT_TIME);
-    }
-    else if (xevent->type == UnmapNotify) {
-        Window xwin;
-        int revert_to = RevertToNone;
+	XEvent *xevent = (XEvent *) gxevent;
+	if (xevent->type == MapNotify) {
+		GdkDisplay *display = gdk_x11_lookup_xdisplay(xevent->xmap.display);
+		GdkWindow *win = gdk_x11_window_foreign_new_for_display(display, xevent->xmap.window);
+		GdkWindowTypeHint win_type = gdk_window_get_type_hint(win);
 
-        XGetInputFocus(xevent->xunmap.display, &xwin, &revert_to);
-        if (revert_to == RevertToNone)
-            gdk_window_lower(gtk_widget_get_window(gtk_widget_get_toplevel(GTK_WIDGET(window))));
-    }
+		if (win_type != GDK_WINDOW_TYPE_HINT_COMBO && win_type != GDK_WINDOW_TYPE_HINT_TOOLTIP
+			&& win_type != GDK_WINDOW_TYPE_HINT_NOTIFICATION) {
 
-    return GDK_FILTER_CONTINUE;
+			gdk_window_focus(win, GDK_CURRENT_TIME);
+		}
+
+	} else if (xevent->type == UnmapNotify) {
+		Window xwin;
+		int revert_to = RevertToNone;
+
+		XGetInputFocus(xevent->xunmap.display, &xwin, &revert_to);
+		if (revert_to == RevertToNone) {
+			gdk_window_lower(gtk_widget_get_window(gtk_widget_get_toplevel(GTK_WIDGET(window))));
+		}
+	}
+
+	return GDK_FILTER_CONTINUE;
 }
 
 static void
-initialize_web_extensions_cb(WebKitWebContext *context,
-                             gpointer user_data) {
+initialize_web_extensions_cb(WebKitWebContext *context, gpointer user_data) {
 
-    webkit_web_context_set_web_extensions_directory(context, LIGHTDM_WEBKIT2_GREETER_EXTENSIONS_DIR);
+	webkit_web_context_set_web_extensions_directory(context, LIGHTDM_WEBKIT2_GREETER_EXTENSIONS_DIR);
 
 }
 
 static void
 create_new_webkit_settings_object(void) {
-    webkit_settings = webkit_settings_new_with_settings("enable-developer-extras", TRUE,
-                                                        "enable-fullscreen", TRUE,
-                                                        "enable-site-specific-quirks", TRUE,
-                                                        "enable-dns-prefetching", TRUE,
-                                                        "javascript-can-open-windows-automatically", TRUE,
-                                                        "allow-file-access-from-file-urls", TRUE,
-                                                        "enable-accelerated-2d-canvas", TRUE,
-                                                        "enable-smooth-scrolling", TRUE,
-                                                        "enable-webgl", TRUE,
-                                                        "enable-write-console-messages-to-stdout", TRUE,
+	webkit_settings = webkit_settings_new_with_settings(
+		"enable-developer-extras", FALSE,
+		"enable-fullscreen", TRUE,
+		"enable-site-specific-quirks", TRUE,
+		"enable-dns-prefetching", TRUE,
+		"javascript-can-open-windows-automatically", TRUE,
+		"allow-file-access-from-file-urls", TRUE,
+		"enable-accelerated-2d-canvas", TRUE,
+		"enable-smooth-scrolling", TRUE,
+		"enable-webgl", TRUE,
+		"enable-write-console-messages-to-stdout", TRUE,
+		NULL
+	);
+}
 
-                                                        NULL);
+static gboolean
+context_menu_cb(WebKitWebView *web_view,
+				  WebKitContextMenu *context_menu,
+				  GdkEvent *event,
+				  WebKitHitTestResult *hit_test_result,
+				  gpointer user_data) {
+	return TRUE;
 }
 
 int
 main(int argc, char **argv) {
-    GdkScreen *screen;
-    GdkRectangle geometry;
-    GKeyFile *keyfile;
-    gchar *theme;
-    GdkRGBA bg_color;
+	GdkScreen *screen;
+	GdkWindow *root_window;
+	GdkRectangle geometry;
+	GKeyFile *keyfile;
+	gchar *theme;
+	GdkRGBA bg_color;
 
-    g_unix_signal_add(SIGTERM, (GSourceFunc)sigterm_cb, /* is_callback */ GINT_TO_POINTER (TRUE));
+	g_unix_signal_add(SIGTERM, (GSourceFunc) sigterm_cb, /* is_callback */ GINT_TO_POINTER(TRUE));
 
-    gtk_init(&argc, &argv);
+	gtk_init(&argc, &argv);
 
-    WebKitWebContext *context = webkit_web_context_get_default();
-    g_signal_connect(context,
-                     "initialize-web-extensions",
-                     G_CALLBACK(initialize_web_extensions_cb),
-                     NULL);
-
-    gdk_window_set_cursor(gdk_get_default_root_window(),
-                          gdk_cursor_new_for_display(gdk_display_get_default(), GDK_LEFT_PTR));
+	WebKitWebContext *context = webkit_web_context_get_default();
+	g_signal_connect(context, "initialize-web-extensions", G_CALLBACK(initialize_web_extensions_cb), NULL);
 
 
-    /* settings */
-    keyfile = g_key_file_new();
-    g_key_file_load_from_file(keyfile, "/etc/lightdm/lightdm-webkit2-greeter.conf", G_KEY_FILE_NONE, NULL);
-    theme = g_key_file_get_string(keyfile, "greeter", "webkit-theme", NULL);
+	// Apply greeter settings from conf file
+	keyfile = g_key_file_new();
+	g_key_file_load_from_file(keyfile, "/etc/lightdm/lightdm-webkit2-greeter.conf", G_KEY_FILE_NONE, NULL);
+	theme = g_key_file_get_string(keyfile, "greeter", "webkit-theme", NULL);
 
-    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    screen = gtk_window_get_screen(GTK_WINDOW(window));
+	// Setup the main window
+	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	screen = gtk_window_get_screen(GTK_WINDOW(window));
+	root_window = gdk_get_default_root_window();
 
-    gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
-    gdk_screen_get_monitor_geometry(screen, gdk_screen_get_primary_monitor(screen), &geometry);
-    gtk_window_set_default_size(GTK_WINDOW(window), geometry.width, geometry.height);
-    gtk_window_move(GTK_WINDOW(window), geometry.x, geometry.y);
+	gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
+	gdk_screen_get_monitor_geometry(screen, gdk_screen_get_primary_monitor(screen), &geometry);
+	gtk_window_set_default_size(GTK_WINDOW(window), geometry.width, geometry.height);
+	gtk_window_move(GTK_WINDOW(window), geometry.x, geometry.y);
+	gdk_window_set_cursor(root_window, gdk_cursor_new_for_display(gdk_display_get_default(), GDK_LEFT_PTR));
 
-    create_new_webkit_settings_object();
-    web_view = webkit_web_view_new_with_settings(webkit_settings);
+	// There is no window manager, so we need to implement some of its functionality
+	gdk_window_set_events(root_window, gdk_window_get_events(root_window) | GDK_SUBSTRUCTURE_MASK);
+	gdk_window_add_filter(root_window, wm_window_filter, NULL);
 
-    gdk_rgba_parse(&bg_color, "#000000");
-    webkit_web_view_set_background_color(WEBKIT_WEB_VIEW(web_view), gdk_rgba_copy(&bg_color));
+	// Configure the web_view's settings.
+	create_new_webkit_settings_object();
+	web_view = webkit_web_view_new_with_settings(webkit_settings);
 
-    gtk_container_add(GTK_CONTAINER(window), web_view);
+	// The default background is white which causes a flash effect when the greeter starts. Make it black instead.
+	gdk_rgba_parse(&bg_color, "#000000");
+	webkit_web_view_set_background_color(WEBKIT_WEB_VIEW(web_view), gdk_rgba_copy(&bg_color));
 
-    webkit_web_view_load_uri(WEBKIT_WEB_VIEW(web_view), g_strdup_printf("file://%s/%s/index.html", THEME_DIR, theme));
+	// Disable the context (right-click) menu.
+	g_signal_connect(web_view, "context-menu", G_CALLBACK(context_menu_cb), NULL);
 
-    /* There is no window manager, so we need to implement some of its functionality */
-    GdkWindow *root_window = gdk_get_default_root_window();
-    gdk_window_set_events(root_window, gdk_window_get_events(root_window) | GDK_SUBSTRUCTURE_MASK);
-    gdk_window_add_filter(root_window, wm_window_filter, NULL);
+	gtk_container_add(GTK_CONTAINER(window), web_view);
+	webkit_web_view_load_uri(WEBKIT_WEB_VIEW(web_view), g_strdup_printf("file://%s/%s/index.html", THEME_DIR, theme));
 
-    gtk_widget_show_all(window);
 
-    gtk_main();
+	gtk_widget_show_all(window);
 
-    return 0;
+	gtk_main();
+
+	return 0;
 }
