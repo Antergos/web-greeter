@@ -48,11 +48,6 @@ static GtkWidget *window;
 static WebKitSettings *webkit_settings;
 
 
-static void
-sigterm_cb(int signum) {
-	exit(0);
-}
-
 static GdkFilterReturn
 wm_window_filter(GdkXEvent *gxevent, GdkEvent *event, gpointer data) {
 
@@ -62,7 +57,8 @@ wm_window_filter(GdkXEvent *gxevent, GdkEvent *event, gpointer data) {
 		GdkWindow *win = gdk_x11_window_foreign_new_for_display(display, xevent->xmap.window);
 		GdkWindowTypeHint win_type = gdk_window_get_type_hint(win);
 
-		if (win_type != GDK_WINDOW_TYPE_HINT_COMBO && win_type != GDK_WINDOW_TYPE_HINT_TOOLTIP
+		if (win_type != GDK_WINDOW_TYPE_HINT_COMBO
+			&& win_type != GDK_WINDOW_TYPE_HINT_TOOLTIP
 			&& win_type != GDK_WINDOW_TYPE_HINT_NOTIFICATION) {
 
 			gdk_window_focus(win, GDK_CURRENT_TIME);
@@ -114,6 +110,29 @@ context_menu_cb(WebKitWebView *web_view,
 	return TRUE;
 }
 
+static gboolean
+fade_timer_cb(gpointer data) {
+	gdouble opacity;
+
+	opacity = gtk_widget_get_opacity(window);
+	opacity -= 0.1;
+	if (opacity <= 0) {
+		gtk_main_quit();
+		return FALSE;
+	}
+	gtk_widget_set_opacity(window, opacity);
+
+	return TRUE;
+}
+
+static void
+quit_cb(void) {
+
+	// Fade out the greeter
+	g_timeout_add(40, (GSourceFunc) fade_timer_cb, NULL);
+}
+
+
 int
 main(int argc, char **argv) {
 	GdkScreen *screen;
@@ -123,7 +142,7 @@ main(int argc, char **argv) {
 	gchar *theme;
 	GdkRGBA bg_color;
 
-	g_unix_signal_add(SIGTERM, (GSourceFunc) sigterm_cb, /* is_callback */ GINT_TO_POINTER(TRUE));
+	g_unix_signal_add(SIGTERM, (GSourceFunc) quit_cb, /* is_callback */ GINT_TO_POINTER(TRUE));
 
 	gtk_init(&argc, &argv);
 
