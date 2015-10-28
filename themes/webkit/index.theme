@@ -1,6 +1,0 @@
-[theme]
-name=WebKit
-description=WebKit Theme
-engine=lightdm-webkit2-greeter
-url=index.html
-session=gnome

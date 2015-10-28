@@ -1,7 +1,8 @@
-Overview of changes in lightdm-webkit-greeter 0.2.2
+Overview of changes in lightdm-webkit-greeter 0.2.3
 
-    * Call gtk_init() as early as possible to prevent widget drawing failures.
-    * Use glib helper function to set sigterm signal
+    * Add support for getting the lock_hint from lightdm.
+    * Default webkit theme is now antergos.
+    * Code formatting cleanup
 
 Overview of changes in lightdm-webkit-greeter 0.2.1
 
