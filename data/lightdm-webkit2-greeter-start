@@ -1,0 +1,4 @@
+#!/bin/bash
+
+[[ which compton ]] && compton &
+lightdm-webkit2-greeter

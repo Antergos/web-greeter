@@ -35,11 +35,9 @@
 #include <glib/gi18n.h>
 
 #include <webkit2/webkit-web-extension.h>
-#define WEBKIT_DOM_USE_UNSTABLE_API
-#include <webkitdom/WebKitDOMDOMWindowUnstable.h>
-#include <webkitdom/webkitdom.h>
-
+#include <webkitdom/WebKitDOMCustom.h>
 #include <JavaScriptCore/JavaScript.h>
+
 #include <lightdm.h>
 
 G_MODULE_EXPORT void webkit_web_extension_initialize(WebKitWebExtension *extension);
@@ -855,72 +853,73 @@ ngettext_cb(JSContextRef context,
 
 
 static const JSStaticValue lightdm_user_values[] = {
-	{"name", get_user_name_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"real_name", get_user_real_name_cb, NULL, kJSPropertyAttributeReadOnly},
+	{"name",         get_user_name_cb,         NULL, kJSPropertyAttributeReadOnly},
+	{"real_name",    get_user_real_name_cb,    NULL, kJSPropertyAttributeReadOnly},
 	{"display_name", get_user_display_name_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"image", get_user_image_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"language", get_user_language_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"layout", get_user_layout_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"session", get_user_session_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"logged_in", get_user_logged_in_cb, NULL, kJSPropertyAttributeReadOnly},
-	{NULL, NULL, NULL, 0}};
+	{"image",        get_user_image_cb,        NULL, kJSPropertyAttributeReadOnly},
+	{"language",     get_user_language_cb,     NULL, kJSPropertyAttributeReadOnly},
+	{"layout",       get_user_layout_cb,       NULL, kJSPropertyAttributeReadOnly},
+	{"session",      get_user_session_cb,      NULL, kJSPropertyAttributeReadOnly},
+	{"logged_in",    get_user_logged_in_cb,    NULL, kJSPropertyAttributeReadOnly},
+	{NULL,           NULL,                     NULL, 0}};
 
 static const JSStaticValue lightdm_language_values[] = {
-	{"code", get_language_code_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"name", get_language_name_cb, NULL, kJSPropertyAttributeReadOnly},
+	{"code",      get_language_code_cb,      NULL, kJSPropertyAttributeReadOnly},
+	{"name",      get_language_name_cb,      NULL, kJSPropertyAttributeReadOnly},
 	{"territory", get_language_territory_cb, NULL, kJSPropertyAttributeReadOnly},
-	{NULL, NULL, NULL, 0}};
+	{NULL,        NULL,                      NULL, 0}};
 
 static const JSStaticValue lightdm_layout_values[] = {
-	{"name", get_layout_name_cb, NULL, kJSPropertyAttributeReadOnly},
+	{"name",              get_layout_name_cb,              NULL, kJSPropertyAttributeReadOnly},
 	{"short_description", get_layout_short_description_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"description", get_layout_description_cb, NULL, kJSPropertyAttributeReadOnly},
-	{NULL, NULL, NULL, 0}};
+	{"description",       get_layout_description_cb,       NULL, kJSPropertyAttributeReadOnly},
+	{NULL,                NULL,                            NULL, 0}};
 
 static const JSStaticValue lightdm_session_values[] = {
-	{"key", get_session_key_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"name", get_session_name_cb, NULL, kJSPropertyAttributeReadOnly},
+	{"key",     get_session_key_cb,     NULL, kJSPropertyAttributeReadOnly},
+	{"name",    get_session_name_cb,    NULL, kJSPropertyAttributeReadOnly},
 	{"comment", get_session_comment_cb, NULL, kJSPropertyAttributeReadOnly},
-	{NULL, NULL, NULL, 0}};
+	{NULL,      NULL,                   NULL, 0}};
 
 static const JSStaticValue lightdm_greeter_values[] = {
-	{"hostname", get_hostname_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"users", get_users_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"default_language", get_default_language_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"languages", get_languages_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"default_layout", get_default_layout_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"layouts", get_layouts_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"layout", get_layout_cb, set_layout_cb, kJSPropertyAttributeReadOnly},
-	{"sessions", get_sessions_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"num_users", get_num_users_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"default_session", get_default_session_cb, NULL, kJSPropertyAttributeNone},
-	{"timed_login_user", get_timed_login_user_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"timed_login_delay", get_timed_login_delay_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"authentication_user", get_authentication_user_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"is_authenticated", get_is_authenticated_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"can_suspend", get_can_suspend_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"can_hibernate", get_can_hibernate_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"can_restart", get_can_restart_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"can_shutdown", get_can_shutdown_cb, NULL, kJSPropertyAttributeReadOnly},
-	{"lock_hint", get_lock_hint_cb, NULL, kJSPropertyAttributeReadOnly},
-	{NULL, NULL, NULL, 0}};
+	{"hostname",            get_hostname_cb,            NULL,          kJSPropertyAttributeReadOnly},
+	{"users",               get_users_cb,               NULL,          kJSPropertyAttributeReadOnly},
+	{"default_language",    get_default_language_cb,    NULL,          kJSPropertyAttributeReadOnly},
+	{"languages",           get_languages_cb,           NULL,          kJSPropertyAttributeReadOnly},
+	{"default_layout",      get_default_layout_cb,      NULL,          kJSPropertyAttributeReadOnly},
+	{"layouts",             get_layouts_cb,             NULL,          kJSPropertyAttributeReadOnly},
+	{"layout",              get_layout_cb,              set_layout_cb, kJSPropertyAttributeReadOnly},
+	{"sessions",            get_sessions_cb,            NULL,          kJSPropertyAttributeReadOnly},
+	{"num_users",           get_num_users_cb,           NULL,          kJSPropertyAttributeReadOnly},
+	{"default_session",     get_default_session_cb,     NULL,          kJSPropertyAttributeNone},
+	{"timed_login_user",    get_timed_login_user_cb,    NULL,          kJSPropertyAttributeReadOnly},
+	{"timed_login_delay",   get_timed_login_delay_cb,   NULL,          kJSPropertyAttributeReadOnly},
+	{"authentication_user", get_authentication_user_cb, NULL,          kJSPropertyAttributeReadOnly},
+	{"is_authenticated",    get_is_authenticated_cb,    NULL,          kJSPropertyAttributeReadOnly},
+	{"can_suspend",         get_can_suspend_cb,         NULL,          kJSPropertyAttributeReadOnly},
+	{"can_hibernate",       get_can_hibernate_cb,       NULL,          kJSPropertyAttributeReadOnly},
+	{"can_restart",         get_can_restart_cb,         NULL,          kJSPropertyAttributeReadOnly},
+	{"can_shutdown",        get_can_shutdown_cb,        NULL,          kJSPropertyAttributeReadOnly},
+	{"lock_hint",           get_lock_hint_cb,           NULL,          kJSPropertyAttributeReadOnly},
+	{NULL,                  NULL,                       NULL,          0}};
 
 static const JSStaticFunction lightdm_greeter_functions[] = {
-	{"cancel_timed_login", cancel_timed_login_cb, kJSPropertyAttributeReadOnly},
-	{"start_authentication", start_authentication_cb, kJSPropertyAttributeReadOnly},
-	{"provide_secret", provide_secret_cb, kJSPropertyAttributeReadOnly},
+	{"cancel_timed_login",    cancel_timed_login_cb,    kJSPropertyAttributeReadOnly},
+	{"start_authentication",  start_authentication_cb,  kJSPropertyAttributeReadOnly},
+	{"provide_secret",        provide_secret_cb,        kJSPropertyAttributeReadOnly},
 	{"cancel_authentication", cancel_authentication_cb, kJSPropertyAttributeReadOnly},
-	{"suspend", suspend_cb, kJSPropertyAttributeReadOnly},
-	{"hibernate", hibernate_cb, kJSPropertyAttributeReadOnly},
-	{"restart", restart_cb, kJSPropertyAttributeReadOnly},
-	{"shutdown", shutdown_cb, kJSPropertyAttributeReadOnly},
-	{"set_language", set_language_cb, kJSPropertyAttributeReadOnly},
-	{"login", login_cb, kJSPropertyAttributeReadOnly}, {NULL, NULL, 0}};
+	{"suspend",               suspend_cb,               kJSPropertyAttributeReadOnly},
+	{"hibernate",             hibernate_cb,             kJSPropertyAttributeReadOnly},
+	{"restart",               restart_cb,               kJSPropertyAttributeReadOnly},
+	{"shutdown",              shutdown_cb,              kJSPropertyAttributeReadOnly},
+	{"set_language",          set_language_cb,          kJSPropertyAttributeReadOnly},
+	{"login",                 login_cb,                 kJSPropertyAttributeReadOnly},
+	{NULL,                    NULL,                     0}};
 
 static const JSStaticFunction gettext_functions[] = {
-	{"gettext", gettext_cb, kJSPropertyAttributeReadOnly},
+	{"gettext",  gettext_cb,  kJSPropertyAttributeReadOnly},
 	{"ngettext", ngettext_cb, kJSPropertyAttributeReadOnly},
-	{NULL, NULL, 0}};
+	{NULL,       NULL,        0}};
 
 static const JSClassDefinition lightdm_user_definition = {
 	0,                     /* Version       */
@@ -994,7 +993,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	JSObjectRef        globalObject;
 	WebKitDOMDocument  *dom_document;
 	WebKitDOMDOMWindow *dom_window;
-	gchar *message = "LockHint";
+	gchar              *message = "LockHint";
 
 	page_id = webkit_web_page_get_id(web_page);
 
