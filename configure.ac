@@ -38,6 +38,7 @@ AC_SUBST([WEB_EXTENSION_LIBS])
 dnl ###########################################################################
 dnl Configurable values
 dnl ###########################################################################
+
 THEME_DIR="/usr/share/lightdm-webkit/themes"
 AC_ARG_WITH(theme-dir,
             AS_HELP_STRING(--with-theme-dir=<path>,
@@ -48,6 +49,9 @@ AC_ARG_WITH(theme-dir,
 )
 AC_SUBST(THEME_DIR)
 AC_DEFINE_UNQUOTED(THEME_DIR, "$THEME_DIR", Theme Dir)
+
+dnl ###########################################################################
+dnl ###########################################################################
 
 CONFIG_DIR="/etc/lightdm/"
 AC_ARG_WITH(config-dir,
@@ -60,6 +64,9 @@ AC_ARG_WITH(config-dir,
 AC_SUBST(CONFIG_DIR)
 AC_DEFINE_UNQUOTED(CONFIG_DIR, "$CONFIG_DIR", Config Dir)
 
+dnl ###########################################################################
+dnl ###########################################################################
+
 DESKTOP_DIR="/usr/share/xgreeters/"
 AC_ARG_WITH(desktop-dir,
             AS_HELP_STRING(--with-desktop-dir=<path>,
@@ -70,6 +77,22 @@ AC_ARG_WITH(desktop-dir,
 )
 AC_SUBST(DESKTOP_DIR)
 AC_DEFINE_UNQUOTED(DESKTOP_DIR, "$DESKTOP_DIR", Desktop Dir)
+
+dnl ###########################################################################
+dnl ###########################################################################
+
+AC_ARG_ENABLE([at-spi-command],
+    AC_HELP_STRING([--enable-at-spi-command[=command]], [Try to start at-spi service]])
+    AC_HELP_STRING([--disable-at-spi-command], [Do not start at-spi service]),
+    [], [])
+
+AS_IF([test "x$enable_at_spi_command" != "xno"],
+[
+    if test "x$enable_at_spi_command" = "xyes" || test "x$enable_at_spi_command" = "x"; then
+        enable_at_spi_command="/usr/lib/at-spi2-core/at-spi-bus-launcher --launch-immediately"
+    fi
+    AC_DEFINE_UNQUOTED([AT_SPI_COMMAND], ["$enable_at_spi_command"], [Command to start at-spi service])
+])
 
 dnl ###########################################################################
 dnl Internationalization

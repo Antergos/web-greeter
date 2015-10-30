@@ -43,13 +43,15 @@
 
 #include <config.h>
 
+#include "src/lightdm-webkit2-greeter-css-application-css.h"
+
 static GtkWidget      *web_view;
 static GtkWidget      *window;
 static WebKitSettings *webkit_settings;
 static GdkDisplay     *default_display;
 
 /* Screensaver values */
-static int timeout, interval, prefer_blanking, allow_exposures;
+static int  timeout, interval, prefer_blanking, allow_exposures;
 static gint config_timeout;
 
 
@@ -150,13 +152,13 @@ static gboolean
 fade_timer_cb(gpointer data) {
 	gdouble opacity;
 
-	opacity = gtk_widget_get_opacity(window);
+	opacity = gtk_widget_get_opacity(web_view);
 	opacity -= 0.1;
 	if (opacity <= 0) {
 		gtk_main_quit();
 		return FALSE;
 	}
-	gtk_widget_set_opacity(window, opacity);
+	gtk_widget_set_opacity(web_view, opacity);
 
 	return TRUE;
 }
@@ -180,6 +182,7 @@ main(int argc, char **argv) {
 	GdkRGBA                  bg_color;
 	WebKitUserContentManager *manager;
 	WebKitWebContext         *context;
+	GtkCssProvider           *css_provider;
 
 	g_unix_signal_add(SIGTERM, (GSourceFunc) quit_cb, /* is_callback */ GINT_TO_POINTER(TRUE));
 
@@ -188,14 +191,14 @@ main(int argc, char **argv) {
 	// Apply greeter settings from conf file
 	keyfile = g_key_file_new();
 	g_key_file_load_from_file(keyfile, "/etc/lightdm/lightdm-webkit2-greeter.conf", G_KEY_FILE_NONE, NULL);
-	theme = g_key_file_get_string(keyfile, "greeter", "webkit-theme", NULL);
+	theme          = g_key_file_get_string(keyfile, "greeter", "webkit-theme", NULL);
 	config_timeout = g_key_file_get_integer(keyfile, "greeter", "screensaver-timeout", NULL);
 
 	// Setup the main window
-	window      = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	screen      = gtk_window_get_screen(GTK_WINDOW(window));
-	root_window = gdk_get_default_root_window();
-	default_display     = gdk_display_get_default();
+	window          = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	screen          = gtk_window_get_screen(GTK_WINDOW(window));
+	root_window     = gdk_get_default_root_window();
+	default_display = gdk_display_get_default();
 
 	gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
 	gdk_screen_get_monitor_geometry(screen, gdk_screen_get_primary_monitor(screen), &geometry);
@@ -206,6 +209,15 @@ main(int argc, char **argv) {
 	// There is no window manager, so we need to implement some of its functionality
 	gdk_window_set_events(root_window, gdk_window_get_events(root_window) | GDK_SUBSTRUCTURE_MASK);
 	gdk_window_add_filter(root_window, wm_window_filter, NULL);
+
+	// Setup CSS provider
+	css_provider = gtk_css_provider_new();
+	gtk_css_provider_load_from_data(css_provider,
+									lightdm_webkit2_greeter_css_application,
+									lightdm_webkit2_greeter_css_application_length, NULL);
+	gtk_style_context_add_provider_for_screen(screen,
+											  GTK_STYLE_PROVIDER(css_provider),
+											  GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
 	// Register and connect handler for setting the web extensions directory so webkit can find our extension
 	context = webkit_web_context_get_default();

@@ -1,4 +1,0 @@
-#!/bin/bash
-
-[[ which compton ]] && compton --config /etc/lightdm/lightdm-webkit2-greeter-compton.conf &
-lightdm-webkit2-greeter
