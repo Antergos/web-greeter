@@ -43,7 +43,7 @@
 
 #include <config.h>
 
-#include "src/lightdm-webkit2-greeter-css-application-css.h"
+#include "src/lightdm-webkit2-greeter-css-application.h"
 
 static GtkWidget      *web_view;
 static GtkWidget      *window;
