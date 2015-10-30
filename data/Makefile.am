@@ -3,8 +3,7 @@ etc_DATA = \
 	lightdm-webkit2-greeter.conf \
 	lightdm-webkit2-greeter-compton.conf
 
-launcherdir = $(bindir)
-launcher_DATA = lightdm-webkit2-greeter-start
+dist_bin_SCRIPTS = lightdm-webkit2-greeter-start
 
 desktopdir = $(DESKTOP_DIR)
 desktop_DATA = lightdm-webkit2-greeter.desktop
@@ -12,10 +11,7 @@ desktop_DATA = lightdm-webkit2-greeter.desktop
 EXTRA_DIST = \
 	$(etc_DATA) \
 	$(desktop_DATA) \
-	$(launcher_DATA)
-
-dist-hook:
-	chmod a+x $(etcdir)/$(launcher_DATA)
+	$(dist_bin_SCRIPTS)
 
 DISTCLEANFILES = \
 	Makefile.in
