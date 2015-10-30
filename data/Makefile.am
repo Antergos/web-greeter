@@ -1,5 +1,7 @@
 etcdir = /etc/lightdm/
-etc_DATA = lightdm-webkit2-greeter.conf
+etc_DATA = \
+	lightdm-webkit2-greeter.conf \
+	lightdm-webkit2-greeter-compton.conf
 
 launcherdir = $(bindir)
 launcher_DATA = lightdm-webkit2-greeter-start
