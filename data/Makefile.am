@@ -14,5 +14,8 @@ EXTRA_DIST = \
 	$(desktop_DATA) \
 	$(launcher_DATA)
 
+dist-hook:
+	chmod a+x $(etcdir)/$(launcher_DATA)
+
 DISTCLEANFILES = \
 	Makefile.in
