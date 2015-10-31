@@ -44,11 +44,15 @@ lightdm_webkit2_greeter_LDADD = \
 	$(WEB_EXTENSION_LIBS) \
 	$(LIBX11_LIBS)
 
-lightdm-webkit2-greeter-css-application.h: lightdm-webkit2-greeter-application.css Makefile
+lightdm-webkit2-greeter-css-application.h: $(srcdir)/lightdm-webkit2-greeter-application.css Makefile
 	$(AM_V_GEN) exo-csource --static --name=lightdm_webkit2_greeter_css_application $< >$@
 
 BUILT_SOURCES = \
 	$(lightdm_webkit2_greeter_built_sources)
 
 DISTCLEANFILES = \
-	Makefile.in
+	Makefile.in \
+	$(lightdm_webkit2_greeter_built_sources)
+
+EXTRA_DIST = \
+	lightdm-webkit2-greeter-application.css
