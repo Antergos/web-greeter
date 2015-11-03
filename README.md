@@ -1,8 +1,5 @@
 # lightdm-webkit2-greeter
-<a href="https://scan.coverity.com/projects/antergos-lightdm-webkit2-greeter">
-  <img alt="Coverity Scan Build Status"
-       src="https://scan.coverity.com/projects/6871/badge.svg"/>
-</a>
+[![Latest Release](https://img.shields.io/github/release/Antergos/lightdm-webkit2-greeter.svg?style=flat-square)](https://github.com/Antergos/lightdm-webkit2-greeter/release)     [![Coverity Scan Build Status](https://img.shields.io/coverity/scan/6871.svg?style=flat-square)](https://scan.coverity.com/projects/antergos-lightdm-webkit2-greeter)
 
 ### Dependencies
 - liblightdm-gobject-1
