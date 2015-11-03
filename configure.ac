@@ -111,6 +111,16 @@ data/Makefile
 src/Makefile
 po/Makefile.in
 themes/Makefile
+themes/antergos/Makefile
+themes/antergos/js/Makefile
+themes/antergos/img/Makefile
+themes/antergos/img/thumbs/Makefile
+themes/antergos/font-awesome/Makefile
+themes/antergos/font-awesome/fonts/Makefile
+themes/antergos/font-awesome/css/Makefile
+themes/antergos/css/Makefile
+themes/antergos/css/lib/Makefile
+themes/antergos/css/bootstrap/Makefile
 ])
 
 dnl ###########################################################################
