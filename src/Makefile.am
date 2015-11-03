@@ -17,7 +17,7 @@ liblightdm_webkit2_greeter_ext_la_LIBADD = \
 	$(WEB_EXTENSION_LIBS) \
 	$(GREETER_LIBS)
 
-liblightdm_webkit2_greeter_ext_LDADD = \
+liblightdm_webkit2_greeter_ext_la_LDADD = \
 	$(WEB_EXTENSION_LIBS) \
 	$(GREETER_LIBS)
 
