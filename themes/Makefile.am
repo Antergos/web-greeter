@@ -1,11 +1,11 @@
-themedir = /usr/share/lightdm-webkit
-theme = antergos
+themedir = $(THEME_DIR)/antergos
+theme_DATA = antergos
 
 EXTRA_DIST = $(theme)
 
-dist-hook:
-	chmod -R u+w $(distdir)/antergos
-	rm -rf $(distdir)/antergos/.git
+install-data-hook:
+	chmod -R u+w $(distdir)/themes/antergos
+	rm -rf $(distdir)/themes/antergos/.git
 
 DISTCLEANFILES = \
 	Makefile.in
