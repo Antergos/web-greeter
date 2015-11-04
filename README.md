@@ -10,6 +10,8 @@
   - webkitgtk (Arch)
   - libwebkit2gtk (Ubuntu)
 - dbus-glib-1
+- [antergos-wallpapers](http://antergos.com/antergos-wallpapers-0.6.zip)
+  - Should be installed to `/usr/share/antergos/wallpapers`
 
 ### Build Dependencies
  - exo-csource
@@ -33,12 +35,12 @@ sudo make install
 ```sh
 wget https://github.com/Antergos/lightdm-webkit2-greeter/archive/master.zip
 unzip master.zip
-cd lightdm-webkit2-greeter-master/themes
+cd lightdm-web**/themes
 rm -rf antergos
 wget https://github.com/Antergos/lightdm-webkit-theme-antergos/archive/master.zip
 unzip master.zip
 mv lightdm** antergos
-cd ../../
+cd ..
 ./autogen.sh --prefix=/usr
 make
 sudo make install
