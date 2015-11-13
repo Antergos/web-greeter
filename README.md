@@ -25,7 +25,7 @@ The process is slightly different depending on how you obtain the source.
 ```sh
 git clone https://github.com/Antergos/lightdm-webkit2-greeter.git greeter
 cd greeter
-git submodule init
+git submodule init && git submodule update
 ./autogen.sh --prefix=/usr
 make
 sudo make install
