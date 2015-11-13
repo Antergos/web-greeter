@@ -2,21 +2,20 @@
 [![Latest Release](https://img.shields.io/badge/stable-v0.2.2-blue.svg?style=flat-square)](https://github.com/Antergos/lightdm-webkit2-greeter/releases)     [![Coverity Scan Build Status](https://img.shields.io/coverity/scan/6871.svg?style=flat-square)](https://scan.coverity.com/projects/antergos-lightdm-webkit2-greeter)
 
 ### Dependencies
-- liblightdm-gobject-1
-  - lightdm (Arch)
-  - liblightdm-gobject-1 (Ubuntu)
-- gtk+-3.0
-- webkit2gtk-4.0
-  - webkitgtk (Arch)
-  - libwebkit2gtk (Ubuntu)
-- dbus-glib-1
-- [antergos-wallpapers](http://antergos.com/antergos-wallpapers-0.6.zip)
-  - Should be installed to `/usr/share/antergos/wallpapers`
+| Name | Arch Pkg | Ubuntu Pkg |
+|-------|---------|-----------|
+|liblightdm-gobject-1|lightdm|liblightdm-gobject-1|
+|gtk+ 3|gtk3|libgtk-3-0|
+|webkit2gtk-4.0|webkitgtk|libwebkit2gtk|
+|dbus-glib-1|dbus-glib|dbus-glib|
+|[antergos-wallpapers](http://antergos.com/antergos-wallpapers-0.6.zip)|antergos-wallpapers|N/A|
+- Notes:
+  - antergos-wallpapers should be installed to `/usr/share/antergos/wallpapers`
 
 ### Build Dependencies
- - exo-csource
-   - exo (Arch)
-   - libexo (Ubuntu)
+| Name | Arch Pkg | Ubuntu Pkg |
+|-------|---------|-----------|
+|exo-csource|exo|libexo|
 
 ### How To Build
 The process is slightly different depending on how you obtain the source.
