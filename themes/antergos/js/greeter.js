@@ -324,7 +324,7 @@ $(document).ready(function() {
 	 */
 
 	window.imgNotFound = function(source) {
-		source.src = 'img/antergos-logo-user.jpg';
+		source.src = 'img/antergos-logo-user.png';
 		source.onerror = "";
 		return true;
 	};
