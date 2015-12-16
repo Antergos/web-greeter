@@ -90,7 +90,7 @@ $(document).ready(function() {
 			$('#trigger').trigger('click');
 			users_shown = true;
 		}
-		if ($('#user-list2 a').length <= 1) $('#user-list2 a').trigger('click');
+		if ($('#user-list2').length <= 1) $('#user-list2 a').trigger('click');
 
 	}
 
