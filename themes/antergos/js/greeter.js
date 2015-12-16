@@ -42,7 +42,7 @@ function log(text) {
 	}
 }
 
-$(document).ready(function () {
+$(document).ready(function() {
 
 	function buildUserList() {
 		// User list building
@@ -65,9 +65,9 @@ $(document).ready(function () {
 			$(userList).append(li);
 		}
 		if ($(userList).children().length > 3) {
-				$(userList).css('column-count', '2');
-				$(userList).parent().css('max-width', '85%');
-			}
+			$(userList).css('column-count', '2');
+			$(userList).parent().css('max-width', '85%');
+		}
 	}
 
 	function buildSessionList() {
@@ -96,26 +96,26 @@ $(document).ready(function () {
 
 	$(window).load(function() {
 
-	/**
-	 * UI Initialization.
-	 */
+		/**
+		 * UI Initialization.
+		 */
 
 
-	initialize_timer();
-	get_hostname();
+		initialize_timer();
+		get_hostname();
 
-	buildUserList();
-	buildSessionList();
-	// Password submit when enter key is pressed
+		buildUserList();
+		buildSessionList();
+		// Password submit when enter key is pressed
 
-	$(document).keydown(function (e) {
-		checkKey(e);
-	});
-	// Action buttons
-	addActionLink("shutdown");
-	addActionLink("hibernate");
-	addActionLink("suspend");
-	addActionLink("restart");
+		$(document).keydown(function(e) {
+			checkKey(e);
+		});
+		// Action buttons
+		addActionLink("shutdown");
+		addActionLink("hibernate");
+		addActionLink("suspend");
+		addActionLink("restart");
 	});
 
 	function get_hostname() {
@@ -221,7 +221,7 @@ $(document).ready(function () {
 		return string.charAt(0).toUpperCase() + string.slice(1);
 	}
 
-	window.handleAction = function (id) {
+	window.handleAction = function(id) {
 		log("handleAction(" + id + ")");
 		eval("lightdm." + id + "()");
 	};
@@ -249,7 +249,7 @@ $(document).ready(function () {
 	}
 
 
-	window.startAuthentication = function (userId) {
+	window.startAuthentication = function(userId) {
 		log("startAuthentication(" + userId + ")");
 
 		if (selectedUser !== null) {
@@ -270,8 +270,14 @@ $(document).ready(function () {
 
 
 		var usrSession = localStorage.getItem(userId);
+		if (! usrSession) {
+			var user_session = lightdm.get_user_session(userId);
+			usrSession = user_session ? user_session : lightdm.get_default_session();
+			localStorage.setItem(userId, usrSession);
+		}
 
 		log("usrSession: " + usrSession);
+
 		var usrSessionEl = "[data-session-id=" + usrSession + "]";
 		var usrSessionName = $(usrSessionEl).html();
 		log("usrSessionName: " + usrSessionName);
@@ -286,7 +292,7 @@ $(document).ready(function () {
 		lightdm.start_authentication(userId);
 	};
 
-	window.cancelAuthentication = function () {
+	window.cancelAuthentication = function() {
 		log("cancelAuthentication()");
 		$('#statusArea').hide();
 		$('#timerArea').hide();
@@ -305,7 +311,7 @@ $(document).ready(function () {
 		return true;
 	};
 
-	window.submitPassword = function () {
+	window.submitPassword = function() {
 		log("provideSecret()");
 		lightdm.provide_secret($('#passwordField').val());
 		$('#passwordArea').hide();
@@ -317,13 +323,13 @@ $(document).ready(function () {
 	 * Image loading management.
 	 */
 
-	window.imgNotFound = function (source) {
+	window.imgNotFound = function(source) {
 		source.src = 'img/antergos-logo-user.jpg';
 		source.onerror = "";
 		return true;
 	};
 
-	window.sessionToggle = function (el) {
+	window.sessionToggle = function(el) {
 		var selText = $(el).text();
 		var theID = $(el).attr('data-session-id');
 		var selUser = localStorage.getItem('selUser');
