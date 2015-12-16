@@ -1,5 +1,5 @@
 # lightdm-webkit2-greeter
-[![Latest Release](https://img.shields.io/badge/stable-v0.2.2-blue.svg?style=flat-square)](https://github.com/Antergos/lightdm-webkit2-greeter/releases)     [![Coverity Scan Build Status](https://img.shields.io/coverity/scan/6871.svg?style=flat-square)](https://scan.coverity.com/projects/antergos-lightdm-webkit2-greeter)
+[![Latest Release](https://img.shields.io/github/release/Antergos/lightdm-webkit2-greeter.svg?style=flat-square)](https://github.com/Antergos/lightdm-webkit2-greeter/releases)     [![Coverity Scan Build Status](https://img.shields.io/coverity/scan/6871.svg?style=flat-square)](https://scan.coverity.com/projects/antergos-lightdm-webkit2-greeter)
 
 ### Dependencies
 | Name | Arch Pkg | Ubuntu Pkg |
