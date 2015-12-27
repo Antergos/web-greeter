@@ -43,6 +43,10 @@ cd ..
 ./autogen.sh --prefix=/usr
 make
 sudo make install
+
+### Theme JavaScript API:
+The greeter exposes a JavaScript API to greeter themes which they must use to interact with the greeter (in order to facilitate the user login process). The [API Documentation](https://antergos.com/wiki/development/lightdm-webkit2-greeter-theme-javascript-api/) is a W.I.P. 
+
 ```
 
 
