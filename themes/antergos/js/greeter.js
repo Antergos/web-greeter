@@ -47,21 +47,24 @@ $(document).ready(function() {
 	function buildUserList() {
 		// User list building
 		userList = $('#user-list2');
-		for (var i in lightdm.users) {
-			var user = lightdm.users[i];
-			var tux = 'img/antergos-logo-user.png';
-			var imageSrc = user.image.length > 0 ? user.image : tux;
-			var lastSession = localStorage.getItem(user.name);
-			if (lastSession == null && lastSession == undefined) {
+		for ( var i = 0; i < lightdm.users.length; i++ ) {
+			var user = lightdm.users[i],
+				tux = 'img/antergos-logo-user.png',
+				lastSession = localStorage.getItem(user.name ),
+				imageSrc = user.image.length ? user.image : tux;
+
+			if (null === lastSession) {
 				localStorage.setItem(user.name, lightdm.default_session);
-				lastSession = localStorage.getItem(user.name);
+				lastSession = lightdm.default_session;
 			}
 			log('Last Session (' + user.name + '): ' + lastSession);
+
 			var li = '<a href="#' + user.name + '" class="list-group-item ' + user.name + '" onclick="startAuthentication(\'' + user.name + '\')" data-session="' + lastSession + '">' +
 				'<img src="' + imageSrc + '" class="img-circle" alt="' + user.display_name + '" onerror="imgNotFound(this)"/> ' +
 				'<span>' + user.display_name + '</span>' +
 				'<span class="badge"><i class="fa fa-check"></i></span>' +
 				'</a>';
+
 			$(userList).append(li);
 		}
 		if ($(userList).children().length > 3) {
