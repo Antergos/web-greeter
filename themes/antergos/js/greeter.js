@@ -1,5 +1,6 @@
 /*
- * Copyright © 2015 Antergos
+ *
+ * Copyright © 2015-2016 Antergos
  *
  * greeter.js
  *
@@ -32,70 +33,177 @@ var DEBUG = true,
 	userList;
 
 
-/**
- * Logs.
- */
-function log(text) {
-	if (DEBUG) {
-		$('#logArea').append(text);
-		$('#logArea').append('<br/>');
+class AntergosTheme {
+	constructor() {
+		this.debug = this.cache_get( 'debug', 'enabled' );
+		this.user_list_visible = false;
+		this.$user_list = $( '#user-list2' );
+		this.$session_list = $( '#sessions' );
+		this.$clock_container = $( '#collapseOne' );
+		this.lang = window.navigator.language;
+		this.initialize();
+		//this.register_events();
+	}
+
+	initialize() {
+		this.initialize_clock();
+		this.prepare_user_list();
+		this.prepare_session_list();
+		//this.maybe_create_thumbnails();
+		//this.prepare_session_list();
+		//this.prepare_system_actions();
+	}
+
+	/**
+	 * Add text to the debug log element (accessible from the login screen).
+	 *
+	 * @param {string} text - To be added to the log.
+	 */
+	log( text ) {
+		if ( 'true' === this.debug ) {
+			$( '#logArea' ).append( `${text}<br/>` );
+		}
+	}
+
+	/**
+	 * Get a key's value from localStorage. Keys can have two or more parts.
+	 * For example: "ant:user:john:session".
+	 *
+	 * @param {...string} key_parts - Strings that are combined to form the key.
+	 */
+	cache_get( ...key_parts ) {
+		var key = `ant`,
+			index = 0;
+
+		for (part of key_parts) {
+			key += `:${part}`;
+			index += 1;
+		}
+		return localStorage.getItem( key );
+	}
+
+	/**
+	 * Set a key's value in localStorage. Keys can have two or more parts.
+	 * For example: "ant:user:john:session".
+	 *
+	 * @param {string} value - The value to set.
+	 * @param {...string} key_parts - Strings that are combined to form the key.
+	 */
+	cache_set( value, ...key_parts ) {
+		var key = `ant`,
+			index = 0;
+
+		for ( part of key_parts ) {
+			key += `:${part}`;
+			index += 1;
+		}
+		return localStorage.setItem( key, value );
+	}
+
+	/**
+	 * Initialize the user list.
+	 */
+	prepare_user_list() {
+		var tux = 'img/antergos-logo-user.png',
+			template;
+
+		// Loop through the array of LightDMUser objects to create our user list.
+		for ( var user of lightdm.users ) {
+			var last_session = this.cache_get( 'user', user.name, 'session' ),
+				image_src = user.image.length ? user.image : tux;
+
+			if ( null === last_session ) {
+				// For backwards compatibility
+				last_session = localStorage.getItem(user.name);
+				if ( null === last_session ) {
+					// This user has never logged in before let's enable the system's default session.
+					last_session = lightdm.default_session;
+				}
+				this.cache_set( last_session, 'user', user.name, 'session' );
+			}
+
+			this.log( `Last session for ${user.name} was: ${last_session}` );
+
+			template = `
+				<a href="#${user.name}" class="list-group-item ${user.name}" data-session="${last_session}">
+					<img src="${image_src}" class="img-circle" alt="${user.display_name}" />
+					<span>${user.display_name}</span>
+					<span class="badge"><i class="fa fa-check"></i></span>
+				</a>`;
+
+			// Register event handler here so we don't have to iterate over the users again later.
+			$( template ).appendTo( this.$user_list ).click( this.start_authentication ).children( 'img' ).on( 'error', this.image_not_found );
+
+		} // END for ( var user of lightdm.users )
+
+		if ( $( $user_list ).children().length > 3 ) {
+			// Make the user list two columns instead of one.
+			$( $user_list ).css( 'column-count', '2' );
+			$( $user_list ).parent().css( 'max-width', '85%' );
+		}
+
+	}
+
+	/**
+	 * Initialize the session selection dropdown.
+	 */
+	prepare_session_list() {
+		// Loop through the array of LightDMSession objects to create our session list.
+		for (var session of lightdm.sessions) {
+			var css_class = session.name.replace(/ /g, ''),
+				template;
+
+			this.log(`Adding ${session.name} to the session list...`);
+
+			template = `
+				<li>
+					<a href="#" data-session-id="${session.key}" class="${css_class}">${session.name}</a>
+				</li>`;
+
+			$(template).appendTo(this.$session_list).click(this.session_toggle_handler);
+
+		} // END for (var session of lightdm.sessions)
+
+		$( '.dropdown-toggle' ).dropdown();
+	}
+
+	initialize_clock() {
+		this.update_clock();
+		setInterval( this.update_clock, 60000 );
+	}
+
+	session_toggle_handler(event) {
+		var session = event.target,
+			session_name = $( session ).text(),
+			session_key = $( session ).attr( 'data-session-id' ),
+			selected_user = this.cache_get( 'misc', 'selected_user' );
+
+		$( session ).parents( '.btn-group' ).find( '.selected' ).attr( 'data-session-id', session_key ).html(session_name);
+	}
+
+	show_user_list() {
+		if ( $(this.$clock_container).hasClass( 'in' ) ) {
+			$( '#trigger' ).trigger( 'click' );
+			this.user_list_visible = true;
+		}
+		if ( $(this.$user_list).length <= 1 ) {
+			$(this.$user_list).find('a').trigger( 'click' );
+		}
+	}
+
+	image_not_found() {
+
+	}
+
+	start_authentication() {
+
 	}
 }
 
+
+
 $(document).ready(function() {
 
-	function buildUserList() {
-		// User list building
-		userList = $('#user-list2');
-		for ( var i = 0; i < lightdm.users.length; i++ ) {
-			var user = lightdm.users[i],
-				tux = 'img/antergos-logo-user.png',
-				lastSession = localStorage.getItem(user.name ),
-				imageSrc = user.image.length ? user.image : tux;
-
-			if (null === lastSession) {
-				localStorage.setItem(user.name, lightdm.default_session);
-				lastSession = lightdm.default_session;
-			}
-			log('Last Session (' + user.name + '): ' + lastSession);
-
-			var li = '<a href="#' + user.name + '" class="list-group-item ' + user.name + '" onclick="startAuthentication(\'' + user.name + '\')" data-session="' + lastSession + '">' +
-				'<img src="' + imageSrc + '" class="img-circle" alt="' + user.display_name + '" onerror="imgNotFound(this)"/> ' +
-				'<span>' + user.display_name + '</span>' +
-				'<span class="badge"><i class="fa fa-check"></i></span>' +
-				'</a>';
-
-			$(userList).append(li);
-		}
-		if ($(userList).children().length > 3) {
-			$(userList).css('column-count', '2');
-			$(userList).parent().css('max-width', '85%');
-		}
-	}
-
-	function buildSessionList() {
-		// Build Session List
-		var btnGrp = $('#sessions');
-		for (var i in lightdm.sessions) {
-			var session = lightdm.sessions[i];
-			var theClass = session.name.replace(/ /g, '');
-			var button = '\n<li><a href="#" data-session-id="' + session.key + '" onclick="sessionToggle(this)" class="' + theClass + '">' + session.name + '</a></li>';
-
-			$(btnGrp).append(button);
-
-
-		}
-		$('.dropdown-toggle').dropdown();
-	}
-
-	function show_users() {
-		if ($('#collapseOne').hasClass('in')) {
-			$('#trigger').trigger('click');
-			users_shown = true;
-		}
-		if ($('#user-list2').length <= 1) $('#user-list2 a').trigger('click');
-
-	}
 
 	$(window).load(function() {
 
@@ -107,7 +215,7 @@ $(document).ready(function() {
 		initialize_timer();
 		get_hostname();
 
-		buildUserList();
+		theme = new AntergosTheme();
 		buildSessionList();
 		// Password submit when enter key is pressed
 
@@ -175,7 +283,7 @@ $(document).ready(function() {
 
 	function initialize_timer() {
 		var userLang = window.navigator.language;
-		log(userLang);
+
 		update_time();
 		setInterval(update_time, 60000);
 	}
@@ -225,7 +333,6 @@ $(document).ready(function() {
 	}
 
 	window.handleAction = function(id) {
-		log("handleAction(" + id + ")");
 		eval("lightdm." + id + "()");
 	};
 
@@ -283,7 +390,7 @@ $(document).ready(function() {
 
 		var usrSessionEl = "[data-session-id=" + usrSession + "]";
 		var usrSessionName = $(usrSessionEl).html();
-		log("usrSessionName: " + usrSessionName);
+
 		$('.selected').html(usrSessionName);
 		$('.selected').attr('data-session-id', usrSession);
 		$('#session-list').removeClass('hidden');
@@ -296,13 +403,12 @@ $(document).ready(function() {
 	};
 
 	window.cancelAuthentication = function() {
-		log("cancelAuthentication()");
 		$('#statusArea').hide();
 		$('#timerArea').hide();
 		$('#passwordArea').hide();
 		$('#session-list').hide();
 		lightdm.cancel_authentication();
-		log("authentication cancelled for " + selectedUser);
+
 		if ($(userList).children().length > 3) {
 			$(userList).css('column-count', '2');
 			$(userList).parent().css('max-width', '85%');
@@ -315,11 +421,11 @@ $(document).ready(function() {
 	};
 
 	window.submitPassword = function() {
-		log("provideSecret()");
+
 		lightdm.provide_secret($('#passwordField').val());
 		$('#passwordArea').hide();
 		$('#timerArea').show();
-		log("done");
+
 	};
 
 	/**
@@ -346,22 +452,22 @@ $(document).ready(function() {
  * Lightdm Callbacks
  */
 function show_prompt(text) {
-	log("show_prompt(" + text + ")");
+
 	$('#passwordField').val("");
 	$('#passwordArea').show();
 	$('#passwordField').focus();
 }
 
 function authentication_complete() {
-	log("authentication_complete()");
+
 	authPending = false;
 	$('#timerArea').hide();
 	var selSession = $('.selected').attr('data-session-id');
 	if (lightdm.is_authenticated) {
-		log("authenticated !");
+
 		lightdm.login(lightdm.authentication_user, selSession);
 	} else {
-		log("not authenticated !");
+
 		$('#statusArea').show();
 	}
 }

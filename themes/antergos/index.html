@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <!--
-  ~ Copyright © 2015 Antergos
+  ~
+  ~ Copyright © 2015-2016 Antergos
   ~
   ~ index.html
   ~
@@ -16,7 +17,7 @@
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~ GNU General Public License for more details.
   ~
-  ~ The following additional terms are in effect as per Section 7 of the license:
+  ~ The following additional terms are in effect as per Section 7 of this license:
   ~
   ~ The preservation of all legal notices and author attributions in
   ~ the material or in the Appropriate Legal Notices displayed
@@ -31,24 +32,26 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="The Antergos Default Greeter Theme">
+	<title>LightDM Webkit2 Greeter</title>
+	<meta name="description" content="Theme: antergos">
 	<meta name="author" content="Dustin Falgout">
 
-	<title>The Antergos Default Greeter Theme</title>
+	<!--For testing the theme in a web browser -->
+	<script type="text/javascript" src="js/mock.js"></script>
 
-	<!--For testing changes made to theme in any web browser-->
-	<!--<script type="text/javascript" src="js/mock.js"></script>-->
+	<!-- Vendor CSS -->
+	<link rel="stylesheet" type="text/css" href="css/vendor/bootstrap.min.css"/>
+	<link rel="stylesheet" type="text/css" href="fonts/font-awesome/font-awesome.min.css"/>
 
-	<!-- Bootstrap Core CSS -->
-	<link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.min.css"/>
+	<!-- Theme's CSS -->
+	<link rel="stylesheet" type="text/css" href="css/style.css">
 
-	<!-- Custom CSS here -->
-	<link rel="stylesheet" type="text/css" href="css/bootstrap/theme.css">
-	<link rel="stylesheet" type="text/css" href="font-awesome/css/font-awesome.min.css"/>
+	<!-- Vendor JavaScript -->
+	<script src="js/vendor/jquery-2.1.4.min.js"></script>
+	<script src="js/vendor/bootstrap.min.js"></script>
+	<script src="js/vendor/moment-with-locales.min.js"></script>
 
-	<!-- The order in which each script appears in document is VERY IMPORTANT -->
-	<script src="js/jquery-2.1.4.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
+	<!-- Theme JavaScript -->
 	<script type="text/javascript" src="js/greeter.js"></script>
 
 	<script type="text/javascript">

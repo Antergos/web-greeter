@@ -1,7 +1,8 @@
 /*
- * Copyright © 2015 Antergos
  *
- * theme.css
+ * Copyright © 2015-2016 Antergos
+ *
+ * style.css
  *
  * This file is part of lightdm-webkit-theme-antergos
  *
@@ -29,12 +30,12 @@
 
 @font-face {
 	font-family: Lato;
-	src: url('../../font-awesome/fonts/Lato-Regular.ttf');
+	src: url('../fonts/fonts/Lato-Regular.ttf');
 }
 
 @font-face {
 	font-family: LatoLight;
-	src: url('../../font-awesome/fonts/Lato-Light.ttf');
+	src: url('../fonts/fonts/Lato-Light.ttf');
 }
 
 *:focus {
