@@ -466,7 +466,8 @@ set_layout_cb(JSContextRef context,
 			  JSValueRef value,
 			  JSValueRef *exception) {
 	JSStringRef layout_arg;
-	char        layout[1024];
+	size_t	    layout_size;
+	gchar       *layout;
 
 	// FIXME: Throw exception
 	if (JSValueGetType(context, value) != kJSTypeString) {
@@ -474,11 +475,14 @@ set_layout_cb(JSContextRef context,
 	}
 
 	layout_arg = JSValueToStringCopy(context, value, NULL);
-	JSStringGetUTF8CString(layout_arg, layout, 1024);
+	layout_size = JSStringGetMaximumUTF8CStringSize(layout_arg);
+	layout = g_malloc (layout_size);
+	JSStringGetUTF8CString(layout_arg, layout, layout_size);
 	JSStringRelease(layout_arg);
 
 	//lightdm_set_layout (layout);
 
+	g_free (layout);
 	return true;
 }
 
@@ -588,7 +592,8 @@ start_authentication_cb(JSContextRef context,
 						JSValueRef *exception) {
 	LightDMGreeter *greeter = JSObjectGetPrivate(thisObject);
 	JSStringRef    name_arg;
-	char           name[1024];
+	size_t         name_size;
+	gchar          *name;
 
 	// FIXME: Throw exception
 	if (!( argumentCount == 1 && JSValueGetType(context, arguments[0]) == kJSTypeString )) {
@@ -596,13 +601,17 @@ start_authentication_cb(JSContextRef context,
 	}
 
 	name_arg = JSValueToStringCopy(context, arguments[0], NULL);
-	JSStringGetUTF8CString(name_arg, name, 1024);
+	name_size = JSStringGetMaximumUTF8CStringSize(name_arg);
+	name = g_malloc (name_size);
+	JSStringGetUTF8CString(name_arg, name, name_size);
 	JSStringRelease(name_arg);
 
         if (*name == '\0')
 	        lightdm_greeter_authenticate(greeter, NULL);
         else
 	        lightdm_greeter_authenticate(greeter, name);
+
+	g_free (name);
 	return JSValueMakeNull(context);
 }
 
@@ -616,7 +625,8 @@ respond_cb(JSContextRef context,
 				  JSValueRef *exception) {
 	LightDMGreeter *greeter = JSObjectGetPrivate(thisObject);
 	JSStringRef    response_arg;
-	char           response[1024];
+	size_t         response_size;
+	gchar          *response;
 
 	// FIXME: Throw exception
 	if (!( argumentCount == 1 && JSValueGetType(context, arguments[0]) == kJSTypeString )) {
@@ -624,11 +634,14 @@ respond_cb(JSContextRef context,
 	}
 
 	response_arg = JSValueToStringCopy(context, arguments[0], NULL);
-	JSStringGetUTF8CString(response_arg, response, 1024);
+	response_size = JSStringGetMaximumUTF8CStringSize(response_arg);
+	response = g_malloc (response_size);
+	JSStringGetUTF8CString(response_arg, response, response_size);
 	JSStringRelease(response_arg);
 
 	lightdm_greeter_respond(greeter, response);
 
+	g_free (response);
 	return JSValueMakeNull(context);
 }
 
@@ -793,23 +806,28 @@ login_cb(JSContextRef context,
 		 JSValueRef *exception) {
 	LightDMGreeter *greeter                 = JSObjectGetPrivate(thisObject);
 	JSStringRef    arg;
-	char           username[1024], *session = NULL;
+	size_t         username_size, session_size;
+	gchar          *username, *session = NULL;
 
 	// FIXME: Throw exception
 
 	arg = JSValueToStringCopy(context, arguments[0], NULL);
-	JSStringGetUTF8CString(arg, username, 1024);
+	username_size = JSStringGetMaximumUTF8CStringSize(arg);
+	username = g_malloc (username_size);
+	JSStringGetUTF8CString(arg, username, username_size);
 	JSStringRelease(arg);
 
 	if (argumentCount > 1) {
 		arg     = JSValueToStringCopy(context, arguments[1], NULL);
-		session = g_malloc(sizeof(char) * 1024);
-		JSStringGetUTF8CString(arg, session, 1024);
+		session_size = JSStringGetMaximumUTF8CStringSize(arg);
+		session = g_malloc (session_size);
+		JSStringGetUTF8CString(arg, session, session_size);
 		JSStringRelease(arg);
 	}
 
 	lightdm_greeter_start_session_sync(greeter, session, NULL);
 
+        g_free(username);
 	g_free(session);
 
 	return JSValueMakeNull(context);
@@ -825,16 +843,20 @@ set_language_cb(JSContextRef context,
 				JSValueRef *exception) {
 	LightDMGreeter *greeter = JSObjectGetPrivate(thisObject);
 	JSStringRef    arg;
-	char           language[1024];
+	size_t         language_size;
+	gchar          *language;
 
 	// FIXME: Throw exception
 
 	arg = JSValueToStringCopy(context, arguments[0], NULL);
-	JSStringGetUTF8CString(arg, language, 1024);
+	language_size = JSStringGetMaximumUTF8CStringSize(arg);
+	language = g_malloc (language_size);
+	JSStringGetUTF8CString(arg, language, language_size);
 	JSStringRelease(arg);
 
 	lightdm_greeter_set_language(greeter, language);
 
+	g_free (language);
 	return JSValueMakeNull(context);
 }
 
@@ -847,7 +869,8 @@ gettext_cb(JSContextRef context,
 		   const JSValueRef arguments[],
 		   JSValueRef *exception) {
 	JSStringRef string_arg, result;
-	char        string[1024];
+	size_t      string_size;
+	gchar       *string;
 
 	// FIXME: Throw exception
 	if (argumentCount != 1) {
@@ -855,10 +878,13 @@ gettext_cb(JSContextRef context,
 	}
 
 	string_arg = JSValueToStringCopy(context, arguments[0], NULL);
-	JSStringGetUTF8CString(string_arg, string, 1024);
+	string_size = JSStringGetMaximumUTF8CStringSize(string_arg);
+	string = g_malloc (string_size);
+	JSStringGetUTF8CString(string_arg, string, string_size);
 	JSStringRelease(string_arg);
 
 	result = JSStringCreateWithUTF8CString(gettext(string));
+	g_free (string);
 	return JSValueMakeString(context, result);
 }
 
@@ -871,7 +897,8 @@ ngettext_cb(JSContextRef context,
 			const JSValueRef arguments[],
 			JSValueRef *exception) {
 	JSStringRef  string_arg, plural_string_arg, result;
-	char         string[1024], plural_string[1024];
+	size_t       string_size, plural_string_size;
+	gchar        *string, *plural_string;
 	unsigned int n;
 
 	// FIXME: Throw exception
@@ -880,16 +907,22 @@ ngettext_cb(JSContextRef context,
 	}
 
 	string_arg = JSValueToStringCopy(context, arguments[0], NULL);
-	JSStringGetUTF8CString(string_arg, string, 1024);
+	string_size = JSStringGetMaximumUTF8CStringSize(string_arg);
+	string = g_malloc (string_size);
+	JSStringGetUTF8CString(string_arg, string, string_size);
 	JSStringRelease(string_arg);
 
 	plural_string_arg = JSValueToStringCopy(context, arguments[1], NULL);
-	JSStringGetUTF8CString(plural_string_arg, string, 1024);
+	plural_string_size = JSStringGetMaximumUTF8CStringSize(plural_string_arg);
+	plural_string = g_malloc (plural_string_size);
+	JSStringGetUTF8CString(plural_string_arg, string, plural_string_size);
 	JSStringRelease(plural_string_arg);
 
 	n = JSValueToNumber(context, arguments[2], NULL);
 
 	result = JSStringCreateWithUTF8CString(ngettext(string, plural_string, n));
+	g_free (string);
+	g_free (plural_string);
 	return JSValueMakeString(context, result);
 }
 
