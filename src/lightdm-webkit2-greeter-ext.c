@@ -52,6 +52,37 @@ static JSClassRef
 	lightdm_layout_class,
 	lightdm_session_class;
 
+static char *
+escape (const gchar *text)
+{
+	size_t len;
+	size_t i, j;
+	int count = 0;
+	gchar *escaped;
+
+	len = strlen (text);
+
+	for (i = 0; i < len; i++)
+		if (text[i] == '\'')
+			count++;
+
+	if (count == 0)
+		return g_strdup (text);
+
+	escaped = g_malloc (len + count + 1);
+
+	j = 0;
+	for (i = 0; i <= len; i++) {
+		if (text[i] == '\'') {
+			escaped[j] = '\\';
+			j++;
+		}
+		escaped[j] = text[i];
+		j++;
+	}
+
+	return escaped;
+}
 
 static JSValueRef
 get_user_name_cb(JSContextRef context,
@@ -1059,6 +1090,7 @@ show_prompt_cb(LightDMGreeter *greeter,
 	JSGlobalContextRef jsContext;
 	JSStringRef        command;
 	gchar              *string;
+	gchar              *etext;
         const gchar        *ct = "";
 
 	g_debug("Show prompt %s", text);
@@ -1079,12 +1111,14 @@ show_prompt_cb(LightDMGreeter *greeter,
                                 break;
                 }
  
-                string  = g_strdup_printf ("show_prompt('%s', '%s')", text, ct);
+		etext   = escape (text);
+                string  = g_strdup_printf ("show_prompt('%s', '%s')", etext, ct);
 		command = JSStringCreateWithUTF8CString(string);
 
 		JSEvaluateScript(jsContext, command, NULL, NULL, 0, NULL);
 
 		g_free(string);
+                g_free(etext);
 	}
 }
 
@@ -1099,6 +1133,7 @@ show_message_cb(LightDMGreeter *greeter,
 	WebKitFrame        *web_frame;
 	JSGlobalContextRef jsContext;
 	JSStringRef        command;
+	gchar              *etext;
 	gchar              *string;
         const gchar        *mt = "";
 
@@ -1117,12 +1152,14 @@ show_message_cb(LightDMGreeter *greeter,
                                 break;
                 }
  
-                string  = g_strdup_printf ("show_prompt('%s', '%s')", text, mt);
+		etext   = escape (text);
+                string  = g_strdup_printf ("show_prompt('%s', '%s')", etext, mt);
 		command = JSStringCreateWithUTF8CString(string);
 
 		JSEvaluateScript(jsContext, command, NULL, NULL, 0, NULL);
 
 		g_free(string);
+		g_free(etext);
 	}
 }
 
