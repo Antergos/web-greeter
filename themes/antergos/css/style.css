@@ -30,12 +30,12 @@
 
 @font-face {
 	font-family: Lato;
-	src: url('../fonts/fonts/Lato-Regular.ttf');
+	src: url('../fonts/TTF/Lato-Regular.ttf');
 }
 
 @font-face {
 	font-family: LatoLight;
-	src: url('../fonts/fonts/Lato-Light.ttf');
+	src: url('../fonts/TTF/Lato-Light.ttf');
 }
 
 *:focus {
@@ -333,10 +333,6 @@ a {
 
 #sessions, #actionsArea {
 	transition: all ease 3s;
-}
-
-.panel-footer .btn {
-	padding: 7px 12px;
 }
 
 .panel-body {

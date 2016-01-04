@@ -26,32 +26,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var DEBUG = true,
-	selectedUser = null,
-	authPending = null,
-	users_shown = null,
-	userList;
+
+String.prototype.capitalize = function() {
+	return this.charAt( 0 ).toUpperCase() + this.slice( 1 );
+};
+
+var _self;
 
 
 class AntergosTheme {
+
 	constructor() {
 		this.debug = this.cache_get( 'debug', 'enabled' );
 		this.user_list_visible = false;
+		this.auth_pending = false;
+		this.selected_user = null;
 		this.$user_list = $( '#user-list2' );
 		this.$session_list = $( '#sessions' );
 		this.$clock_container = $( '#collapseOne' );
-		this.lang = window.navigator.language;
+		this.$clock = $( "#current_time" );
+		this.$actions_container = $( "#actionsArea" );
+		this.$msg_area_container = $( '#statusArea' );
+		this.$msg_area = $( '#showMsg' );
+		this.lang = window.navigator.language.split( '-' )[ 0 ].toLocaleLowerCase();
+		this.translations = window.ant_translations;
+
 		this.initialize();
-		//this.register_events();
 	}
 
 	initialize() {
 		this.initialize_clock();
+		this.prepare_login_panel_header();
 		this.prepare_user_list();
 		this.prepare_session_list();
-		//this.maybe_create_thumbnails();
-		//this.prepare_session_list();
-		//this.prepare_system_actions();
+		this.prepare_system_action_buttons();
+
+		this.register_callbacks();
 	}
 
 	/**
@@ -60,7 +70,7 @@ class AntergosTheme {
 	 * @param {string} text - To be added to the log.
 	 */
 	log( text ) {
-		if ( 'true' === this.debug ) {
+		if ( 'true' === this.debug || true ) {
 			$( '#logArea' ).append( `${text}<br/>` );
 		}
 	}
@@ -75,7 +85,7 @@ class AntergosTheme {
 		var key = `ant`,
 			index = 0;
 
-		for (part of key_parts) {
+		for ( var part of key_parts ) {
 			key += `:${part}`;
 			index += 1;
 		}
@@ -93,11 +103,25 @@ class AntergosTheme {
 		var key = `ant`,
 			index = 0;
 
-		for ( part of key_parts ) {
+		for ( var part of key_parts ) {
 			key += `:${part}`;
 			index += 1;
 		}
 		return localStorage.setItem( key, value );
+	}
+
+	/**
+	 * Register callbacks for LightDM as well as any others that haven't been registered elsewhere.
+	 */
+	register_callbacks() {
+		$( document ).keydown( this, this.key_press_handler);
+		$('.cancel_auth').click(this, this.cancel_authentication);
+		$('.submit_passwd').click(this, this.submit_password);
+		window.show_prompt = this.show_prompt;
+		window.show_message = this.show_message;
+		window.start_authentication = this.start_authentication;
+		window.cancel_authentication = this.cancel_authentication;
+		window.authentication_complete = this.authentication_complete;
 	}
 
 	/**
@@ -114,9 +138,10 @@ class AntergosTheme {
 
 			if ( null === last_session ) {
 				// For backwards compatibility
-				last_session = localStorage.getItem(user.name);
+				last_session = localStorage.getItem( user.name );
 				if ( null === last_session ) {
-					// This user has never logged in before let's enable the system's default session.
+					// This user has never logged in before let's enable the system's default
+					// session.
 					last_session = lightdm.default_session;
 				}
 				this.cache_set( last_session, 'user', user.name, 'session' );
@@ -125,21 +150,20 @@ class AntergosTheme {
 			this.log( `Last session for ${user.name} was: ${last_session}` );
 
 			template = `
-				<a href="#${user.name}" class="list-group-item ${user.name}" data-session="${last_session}">
+				<a href="#" id="${user.name}" class="list-group-item ${user.name}" data-session="${last_session}">
 					<img src="${image_src}" class="img-circle" alt="${user.display_name}" />
 					<span>${user.display_name}</span>
 					<span class="badge"><i class="fa fa-check"></i></span>
 				</a>`;
 
 			// Register event handler here so we don't have to iterate over the users again later.
-			$( template ).appendTo( this.$user_list ).click( this.start_authentication ).children( 'img' ).on( 'error', this.image_not_found );
+			$( template ).appendTo( this.$user_list ).click( this, this.start_authentication ).children( 'img' ).on( 'error', this.image_not_found );
 
 		} // END for ( var user of lightdm.users )
 
-		if ( $( $user_list ).children().length > 3 ) {
+		if ( $( this.$user_list ).children().length > 3 ) {
 			// Make the user list two columns instead of one.
-			$( $user_list ).css( 'column-count', '2' );
-			$( $user_list ).parent().css( 'max-width', '85%' );
+			$( this.$user_list ).css( 'column-count', '2' ).parent().css( 'max-width', '85%' );
 		}
 
 	}
@@ -149,339 +173,265 @@ class AntergosTheme {
 	 */
 	prepare_session_list() {
 		// Loop through the array of LightDMSession objects to create our session list.
-		for (var session of lightdm.sessions) {
-			var css_class = session.name.replace(/ /g, ''),
+		for ( var session of lightdm.sessions ) {
+			var css_class = session.name.replace( / /g, '' ),
 				template;
 
-			this.log(`Adding ${session.name} to the session list...`);
+			this.log( `Adding ${session.name} to the session list...` );
 
 			template = `
 				<li>
 					<a href="#" data-session-id="${session.key}" class="${css_class}">${session.name}</a>
 				</li>`;
 
-			$(template).appendTo(this.$session_list).click(this.session_toggle_handler);
+			$( template ).appendTo( this.$session_list ).click( this, this.session_toggle_handler );
 
 		} // END for (var session of lightdm.sessions)
 
 		$( '.dropdown-toggle' ).dropdown();
 	}
 
-	initialize_clock() {
-		this.update_clock();
-		setInterval( this.update_clock, 60000 );
+	/**
+	 * Initialize the system action buttons
+	 */
+	prepare_system_action_buttons() {
+		var actions = {
+				shutdown: "power-off",
+				hibernate: "asterisk",
+				suspend: "arrow-down",
+				restart: "refresh"
+			},
+			template;
+
+		for ( var action of Object.keys( actions ) ) {
+			var cmd = `can_${action}`;
+			console.log( action );
+
+			template = `
+				<a href="#" id="${action}" class="btn btn-default ${action}" data-toggle="tooltip" data-placement="top" title="${action.capitalize()}" data-container="body">
+					<i class="fa fa-${actions[ action ]}"></i>
+				</a>`;
+
+			if ( lightdm[ cmd ] ) {
+				$( template ).appendTo( $( this.$actions_container ) ).click( action, ( event ) => {
+					lightdm[ event.data ]();
+				} );
+			}
+		} // END for (var [action, icon] of actions)
+
+		$( '[data-toggle=tooltip]' ).tooltip();
 	}
 
-	session_toggle_handler(event) {
-		var session = event.target,
-			session_name = $( session ).text(),
-			session_key = $( session ).attr( 'data-session-id' ),
-			selected_user = this.cache_get( 'misc', 'selected_user' );
+	initialize_clock() {
+		var saved_format = this.cache_get( 'clock', 'time_format' ),
+			format = (null !== saved_format) ? saved_format : 'LT',
+			detected_language = null;
 
-		$( session ).parents( '.btn-group' ).find( '.selected' ).attr( 'data-session-id', session_key ).html(session_name);
+		// Workaround for moment.js bug: https://github.com/moment/moment/issues/2856
+		for ( var lang of window.navigator.languages ) {
+			try {
+				detected_language = lang.split( '-' )[ 0 ].toLowerCase();
+				break;
+			} catch ( err ) {
+				this.log( String( err ) );
+			}
+		}
+
+		if ( null === detected_language ) {
+			detected_language = 'en';
+		}
+
+		moment.locale( detected_language );
+		this.$clock.html( moment().format( format ) );
+
+		setInterval( () => {
+			this.$clock.html( moment().format( format ) );
+		}, 60000 );
 	}
 
 	show_user_list() {
-		if ( $(this.$clock_container).hasClass( 'in' ) ) {
+		if ( $( this.$clock_container ).hasClass( 'in' ) ) {
 			$( '#trigger' ).trigger( 'click' );
 			this.user_list_visible = true;
 		}
-		if ( $(this.$user_list).length <= 1 ) {
-			$(this.$user_list).find('a').trigger( 'click' );
+		if ( $( this.$user_list ).length <= 1 ) {
+			$( this.$user_list ).find( 'a' ).trigger( 'click', this );
 		}
 	}
 
-	image_not_found() {
+	prepare_login_panel_header() {
+		var greeting = null;
 
-	}
+		if ( this.translations.hasOwnProperty( this.lang ) ) {
+			greeting = this.translations[ this.lang ];
 
-	start_authentication() {
+		} else {
 
-	}
-}
-
-
-
-$(document).ready(function() {
-
-
-	$(window).load(function() {
-
-		/**
-		 * UI Initialization.
-		 */
-
-
-		initialize_timer();
-		get_hostname();
-
-		theme = new AntergosTheme();
-		buildSessionList();
-		// Password submit when enter key is pressed
-
-		$(document).keydown(function(e) {
-			checkKey(e);
-		});
-		// Action buttons
-		addActionLink("shutdown");
-		addActionLink("hibernate");
-		addActionLink("suspend");
-		addActionLink("restart");
-	});
-
-	function get_hostname() {
-		var hostname = lightdm.hostname;
-		var hostname_span = document.getElementById('hostname');
-		$(hostname_span).append(hostname);
-	}
-
-	/**
-	 * Actions management.
-	 *
-	 *
-	 */
-
-	function update_time() {
-		var time = document.getElementById("current_time");
-		var date = new Date();
-		var twelveHr = [
-			'sq-al',
-			'zh-cn',
-			'zh-tw',
-			'en-au',
-			'en-bz',
-			'en-ca',
-			'en-cb',
-			'en-jm',
-			'en-ng',
-			'en-nz',
-			'en-ph',
-			'en-us',
-			'en-tt',
-			'en-zw',
-			'es-us',
-			'es-mx'];
-		var userLang = window.navigator.language;
-		var is_twelveHr = twelveHr.indexOf(userLang);
-		var hh = date.getHours();
-		var mm = date.getMinutes();
-		var suffix = "AM";
-		if (hh >= 12) {
-			suffix = "PM";
-			if (is_twelveHr !== -1 && is_twelveHr !== 12) {
-				hh = hh - 12;
+			for ( var lang of window.navigator.languages ) {
+				if ( this.translations.hasOwnProperty( lang ) ) {
+					greeting = this.translations[ lang ];
+					break;
+				}
 			}
+
+			greeting = (null === greeting) ? 'Welcome!' : greeting;
 		}
-		if (mm < 10) {
-			mm = "0" + mm;
-		}
-		if (hh === 0 && is_twelveHr !== -1) {
-			hh = 12;
-		}
-		time.innerHTML = hh + ":" + mm + " " + suffix;
+		$( '.welcome' ).text( greeting );
+
+		$( '#hostname' ).append( lightdm.hostname );
 	}
 
-	function initialize_timer() {
-		var userLang = window.navigator.language;
+	start_authentication( event ) {
+		var user_id = $( this ).attr( 'id' ),
+			selector = `.${user_id}`,
+			self = event.data,
+			user_session = self.cache_get( 'user', user_id, 'session' );
 
-		update_time();
-		setInterval(update_time, 60000);
+		if ( self.auth_pending || null !== self.selected_user ) {
+			lightdm.cancel_authentication();
+			self.log( `Authentication cancelled for ${self.selected_user}` );
+			self.selected_user = null;
+		}
+
+		self.log( `Starting authentication for ${user_id}.` );
+		self.selected_user = user_id;
+
+		// CSS hack to workaround webkit bug
+		if ( $( self.$user_list ).children().length > 3 ) {
+			$( self.$user_list ).css( 'column-count', 'initial' ).parent().css( 'max-width', '50%' );
+		}
+		$( selector ).addClass( 'hovered' ).siblings().hide();
+		$( '.fa-toggle-down' ).hide();
+
+		self.log( `Session for ${user_id} is ${user_session}` );
+
+		$( `[data-session-id="${user_session}"]` ).parent().trigger( 'click', this );
+
+		$( '#session-list' ).removeClass( 'hidden' ).show();
+		$( '#passwordArea' ).show();
+		$( '.dropdown-toggle' ).dropdown();
+
+		self.auth_pending = true;
+
+		lightdm.start_authentication( user_id );
 	}
 
-	function checkKey(event) {
-		var action;
-		switch (event.which) {
+	cancel_authentication(event) {
+		var self = event.data,
+			selectors = [ '#statusArea', '#timerArea', '#passwordArea', '#session-list' ];
+
+		for ( var selector of selectors ) {
+			$( selector ).hide();
+		}
+
+		lightdm.cancel_authentication();
+
+		self.log( 'Cancelled authentication.' );
+
+		// CSS hack to work-around webkit bug
+		if ( $( self.$user_list ).children().length > 3 ) {
+			$( self.$user_list ).css( 'column-count', '2' ).parent().css( 'max-width', '85%' );
+		}
+
+		$( '.hovered' ).removeClass( 'hovered' ).siblings().show();
+		$( '.fa-toggle-down' ).show();
+		self.selected_user = null;
+		self.auth_pending = false;
+
+	}
+
+	authentication_complete() {
+		var selected_session = $( '.selected' ).attr( 'data-session-id' );
+
+		_self.auth_pending = false;
+		_self.cache_set( selected_session, 'user', lightdm.authentication_user, 'session' );
+
+		$( '#timerArea' ).hide();
+
+		if ( lightdm.is_authenticated ) {
+			lightdm.login( lightdm.authentication_user, selected_session );
+		} else {
+			$( '#statusArea' ).show();
+		}
+	}
+
+	submit_password(event) {
+		lightdm.provide_secret( $( '#passwordField' ).val() );
+		$( '#passwordArea' ).hide();
+		$( '#timerArea' ).show();
+	}
+
+	session_toggle_handler( event ) {
+		var self = event.data,
+			$session = $(this).children('a'),
+			session_name = $session.text(),
+			session_key = $session.attr( 'data-session-id' );
+		console.log($session);
+
+		$session.parents( '.btn-group' ).find( '.selected' ).attr( 'data-session-id', session_key ).html( session_name );
+	}
+
+	key_press_handler( event ) {
+		var self = event.data,
+			action;
+		switch ( event.which ) {
 			case 13:
-				action = authPending ? submitPassword() : !users_shown ? show_users() : 0;
-				log(action);
+				action = self.auth_pending ? self.submit_password() : ! self.user_list_visible ? self.show_user_list() : 0;
+				self.log( action );
 				break;
 			case 27:
-				action = authPending ? cancelAuthentication() : 0;
-				log(action);
+				action = self.auth_pending ? self.cancel_authentication() : 0;
+				self.log( action );
 				break;
 			case 32:
-				action = !users_shown && !authPending ? show_users() : 0;
-				log(action);
+				action = (! self.user_list_visible && ! self.auth_pending) ? self.show_user_list() : 0;
+				self.log( action );
 				break;
 			default:
 				break;
 		}
 	}
 
-	function addActionLink(id) {
-		if (eval("lightdm.can_" + id)) {
-			var label = id.substr(0, 1).toUpperCase() + id.substr(1, id.length - 1);
-			var id2;
-			if (id == "shutdown") {
-				id2 = "power-off"
-			}
-			if (id == "hibernate") {
-				id2 = "asterisk"
-			}
-			if (id == "suspend") {
-				id2 = "arrow-down"
-			}
-			if (id == "restart") {
-				id2 = "refresh"
-			}
-			$("#actionsArea").append('\n<button type="button" class="btn btn-default ' + id + '" data-toggle="tooltip" data-placement="top" title="' + label + '" data-container="body" onclick="handleAction(\'' + id + '\')"><i class="fa fa-' + id2 + '"></i></button>');
-		}
-	}
-
-	function capitalize(string) {
-		return string.charAt(0).toUpperCase() + string.slice(1);
-	}
-
-	window.handleAction = function(id) {
-		eval("lightdm." + id + "()");
-	};
-
-	function getUserObj(username) {
-		var user = null;
-		for (var i = 0; i < lightdm.users.length; ++i) {
-			if (lightdm.users[i].name == username) {
-				user = lightdm.users[i];
-				break;
-			}
-		}
-		return user;
-	}
-
-	function getSessionObj(sessionname) {
-		var session = null;
-		for (var i = 0; i < lightdm.sessions.length; ++i) {
-			if (lightdm.sessions[i].name == sessionname) {
-				session = lightdm.sessions[i];
-				break;
-			}
-		}
-		return session;
-	}
-
-
-	window.startAuthentication = function(userId) {
-		log("startAuthentication(" + userId + ")");
-
-		if (selectedUser !== null) {
-			lightdm.cancel_authentication();
-			localStorage.setItem('selUser', null);
-			log("authentication cancelled for " + selectedUser);
-		}
-		localStorage.setItem('selUser', userId);
-		selectedUser = '.' + userId;
-		$(selectedUser).addClass('hovered');
-		console.log(userList);
-		if ($(userList).children().length > 3) {
-			$(userList).css('column-count', 'initial');
-			$(userList).parent().css('max-width', '50%');
-		}
-		$(selectedUser).siblings().hide();
-		$('.fa-toggle-down').hide();
-
-
-		var usrSession = localStorage.getItem(userId);
-		if (! usrSession) {
-			var user_session = lightdm.get_user_session(userId);
-			usrSession = user_session ? user_session : lightdm.get_default_session();
-			localStorage.setItem(userId, usrSession);
-		}
-
-		log("usrSession: " + usrSession);
-
-		var usrSessionEl = "[data-session-id=" + usrSession + "]";
-		var usrSessionName = $(usrSessionEl).html();
-
-		$('.selected').html(usrSessionName);
-		$('.selected').attr('data-session-id', usrSession);
-		$('#session-list').removeClass('hidden');
-		$('#session-list').show();
-		$('#passwordArea').show();
-		$('.dropdown-toggle').dropdown();
-		authPending = true;
-
-		lightdm.start_authentication(userId);
-	};
-
-	window.cancelAuthentication = function() {
-		$('#statusArea').hide();
-		$('#timerArea').hide();
-		$('#passwordArea').hide();
-		$('#session-list').hide();
-		lightdm.cancel_authentication();
-
-		if ($(userList).children().length > 3) {
-			$(userList).css('column-count', '2');
-			$(userList).parent().css('max-width', '85%');
-		}
-		$('.list-group-item').removeClass('hovered').siblings().show();
-		$('.fa-toggle-down').show();
-		selectedUser = null;
-		authPending = false;
+	/**
+	 * User image on('error') handler.
+	 */
+	image_not_found( source ) {
+		source.onerror = "";
+		source.src = 'img/antergos-logo-user.png';
 		return true;
-	};
-
-	window.submitPassword = function() {
-
-		lightdm.provide_secret($('#passwordField').val());
-		$('#passwordArea').hide();
-		$('#timerArea').show();
-
-	};
+	}
 
 	/**
-	 * Image loading management.
+	 * LightDM Callback - Show password prompt to user.
+	 *
+	 * @param text
 	 */
+	show_prompt( text ) {
 
-	window.imgNotFound = function(source) {
-		source.src = 'img/antergos-logo-user.png';
-		source.onerror = "";
-		return true;
-	};
+		$( '#passwordField' ).val( "" );
+		$( '#passwordArea' ).show();
+		$( '#passwordField' ).focus();
+	}
 
-	window.sessionToggle = function(el) {
-		var selText = $(el).text();
-		var theID = $(el).attr('data-session-id');
-		var selUser = localStorage.getItem('selUser');
-		$(el).parents('.btn-group').find('.selected').attr('data-session-id', theID);
-		$(el).parents('.btn-group').find('.selected').html(selText);
-		localStorage.setItem(selUser, theID)
-	};
-});
-
-/**
- * Lightdm Callbacks
- */
-function show_prompt(text) {
-
-	$('#passwordField').val("");
-	$('#passwordArea').show();
-	$('#passwordField').focus();
-}
-
-function authentication_complete() {
-
-	authPending = false;
-	$('#timerArea').hide();
-	var selSession = $('.selected').attr('data-session-id');
-	if (lightdm.is_authenticated) {
-
-		lightdm.login(lightdm.authentication_user, selSession);
-	} else {
-
-		$('#statusArea').show();
+	/**
+	 * LightDM Callback - Show message to user.
+	 *
+	 * @param msg
+	 */
+	show_message( msg ) {
+		if ( msg.length > 0 ) {
+			$( this.$msg_area ).html( msg );
+			$( '#passwordArea' ).hide();
+			$( this.$msg_area_container ).show();
+		}
 	}
 }
 
-function show_message(text) {
-	var msgWrap = document.getElementById('statusArea'),
-		showMsg = document.getElementById('showMsg');
-	showMsg.innerHTML = text;
-	if (text.length > 0) {
-		$('#passwordArea').hide();
-		$(msgWrap).show();
-	}
-}
 
-function show_error(text) {
-	show_message(text);
-}
+$( window ).load( function() {
+
+	_self = new AntergosTheme();
+
+
+} );
+

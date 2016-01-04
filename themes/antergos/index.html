@@ -52,76 +52,77 @@
 	<script src="js/vendor/moment-with-locales.min.js"></script>
 
 	<!-- Theme JavaScript -->
+	<script type="text/javascript" src="js/greeting_translations.js"></script>
 	<script type="text/javascript" src="js/greeter.js"></script>
 
 	<script type="text/javascript">
 		function randomBG() {
-			localStorage.setItem("bgsaved", '');
-			$(".bgs .bg .random").first().addClass('active');
+			localStorage.setItem( "bgsaved", '' );
+			$( ".bgs .bg .random" ).first().addClass( 'active' );
 			var arrayBackground = [];
-			$('.bgs .clearfix').each(function (i) {
-				if (i > 0) {
-					arrayBackground.push($(this).attr('data-img'));
+			$( '.bgs .clearfix' ).each( function( i ) {
+				if ( i > 0 ) {
+					arrayBackground.push( $( this ).attr( 'data-img' ) );
 				}
-			});
-			var randBG = arrayBackground[Math.floor(Math.random() * arrayBackground.length)];
-			$('.header').fadeTo(300, 0.5, function () {
-				$(".header").css("background", "url('/usr/share/antergos/wallpapers/" + randBG + "')");
-			}).fadeTo(300, 1);
+			} );
+			var randBG = arrayBackground[ Math.floor( Math.random() * arrayBackground.length ) ];
+			$( '.header' ).fadeTo( 300, 0.5, function() {
+				$( ".header" ).css( "background", "url('/usr/share/antergos/wallpapers/" + randBG + "')" );
+			} ).fadeTo( 300, 1 );
 		}
 
-		$(function () {
+		$( function() {
 			// bg switcher
-			var $btns = $(".bg-switch .bg");
-			$btns.click(function (e) {
+			var $btns = $( ".bg-switch .bg" );
+			$btns.click( function( e ) {
 				e.preventDefault();
-				$btns.removeClass("active");
-				$(".bgs .bg .random").first().removeClass('active');
-				$(this).addClass("active");
-				var bg = $(this).data("img");
-				if (bg == 'random') {
-					console.log("Sets random background");
-					localStorage.setItem("bgrandom", '1');
+				$btns.removeClass( "active" );
+				$( ".bgs .bg .random" ).first().removeClass( 'active' );
+				$( this ).addClass( "active" );
+				var bg = $( this ).data( "img" );
+				if ( bg == 'random' ) {
+					console.log( "Sets random background" );
+					localStorage.setItem( "bgrandom", '1' );
 					randomBG();
 				} else {
-					console.log("Turn off random");
-					localStorage.setItem("bgrandom", '0');
-					$('.header').fadeTo(300, 0.5, function () {
-						$(".header").css("background", "url('/usr/share/antergos/wallpapers/" + bg + "')");
-					}).fadeTo(300, 1);
+					console.log( "Turn off random" );
+					localStorage.setItem( "bgrandom", '0' );
+					$( '.header' ).fadeTo( 300, 0.5, function() {
+						$( ".header" ).css( "background", "url('/usr/share/antergos/wallpapers/" + bg + "')" );
+					} ).fadeTo( 300, 1 );
 					var bgurl = "url('/usr/share/antergos/wallpapers/" + bg + "')";
-					localStorage.setItem("bgsaved", bgurl)
+					localStorage.setItem( "bgsaved", bgurl )
 				}
-			});
+			} );
 
-		});
+		} );
 
-		$(document).ready(function () {
-			if ((localStorage.getItem("bgsaved") !== null) && (localStorage.getItem("bgrandom") == '0')) {
-				$('.header').fadeTo(300, 0.5, function () {
-					$(".header").css("background", localStorage.getItem('bgsaved'));
-				}).fadeTo(300, 1);
+		$( document ).ready( function() {
+			if ( (localStorage.getItem( "bgsaved" ) !== null) && (localStorage.getItem( "bgrandom" ) == '0') ) {
+				$( '.header' ).fadeTo( 300, 0.5, function() {
+					$( ".header" ).css( "background", localStorage.getItem( 'bgsaved' ) );
+				} ).fadeTo( 300, 1 );
 			}
-			if (localStorage.getItem("bgrandom") !== '0') {
-				console.log("Is random");
+			if ( localStorage.getItem( "bgrandom" ) !== '0' ) {
+				console.log( "Is random" );
 				randomBG();
 			}
-			if (localStorage.getItem("bgrandom") == null) {
-				localStorage.setItem("bgrandom", "1");
+			if ( localStorage.getItem( "bgrandom" ) == null ) {
+				localStorage.setItem( "bgrandom", "1" );
 			}
-			$('.dropdown-toggle').dropdown();
-		});
+			$( '.dropdown-toggle' ).dropdown();
+		} );
 
 		function showAlert() {
-			$("#login").addClass("in");
+			$( "#login" ).addClass( "in" );
 		}
 
-		window.setTimeout(function () {
+		window.setTimeout( function() {
 			showAlert();
-		}, 500);
+		}, 500 );
 
 		function showLog() {
-			$("#logArea").show();
+			$( "#logArea" ).show();
 		}
 	</script>
 
@@ -203,7 +204,7 @@
 							<div class="panel-heading text-center">
                                     <span class="pull-left">
                                         <img src="img/antergos.png" alt="Antergos"/>
-                                    </span> <span class="welcome">Welcome!</span>
+                                    </span> <span class="welcome"></span>
 								<span id="hostname" class="pull-right"></span>
 							</div>
 							<div id="panelfix" class="panel-body panel-shadow">
@@ -230,7 +231,7 @@
 												<div class="user-wrap2">
 
 													<div id="user-list2" class="list-group"></div>
-													<a id="user-target2" class="user-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" onclick="cancelAuthentication()">
+													<a id="user-target2" class="user-toggle cancel_auth" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
 														<i class="fa fa-toggle-down" style="position:absolute;"></i>
 													</a>
 
@@ -245,7 +246,7 @@
 
 																	<div class="input-group-btn">
 																		<div class="btn-group">
-																			<button class="btn btn-primary" type="button" onclick="submitPassword()">
+																			<button class="btn btn-primary submit_passwd" type="button">
 																				<i class="fa fa-sign-in"></i>
 																			</button>
 																			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
@@ -253,7 +254,7 @@
 																			</button>
 																			<ul class="dropdown-menu pull-right">
 																				<li>
-																					<a href="#" onclick="cancelAuthentication()">
+																					<a href="#" class="cancel_auth">
 																						<i class="fa fa-times"></i> Cancel</a>
 																				</li>
 																				<li>
@@ -282,7 +283,7 @@
 														<tr>
 															<td>
 																<div class="alert alert-danger  fade in">
-																	<button type="button" class="close" onclick="cancelAuthentication()" data-dismiss="alert" aria-hidden="true">&nbsp;&times;</button>
+																	<button type="button" class="close cancel_auth" data-dismiss="alert" aria-hidden="true">&nbsp;&times;</button>
                                                                         <span id="showMsg">
                                                                             <strong>Uh Oh!!</strong>Authentication failed. Please try again.
                                                                         </span>
@@ -293,10 +294,6 @@
 												</div>
 
 											</div>
-											<!-- This is a hack to work-around webkit2gtk glitches with drawing on screen.
-											     The spinner animation makes GTK constantly repaint the screen which prevents
-											     WSOD (White Screen Of Death)
-											<i class="fa fa-spinner fa-spin" style="color: transparent"></i>-->
 										</div>
 									</div>
 
@@ -327,35 +324,35 @@
 
 <!-- Custom JavaScript for the BG Switcher & Clock Toggle -->
 <script>
-	$("#bg-switch-close").click(function (e) {
+	$( "#bg-switch-close" ).click( function( e ) {
 		e.preventDefault();
-		$("#bg-switch-wrapper").toggleClass("active");
-		$(this).hide();
-		$("#bg-switch-toggle").show();
-	});
-	$("#bg-switch-toggle").click(function (e) {
+		$( "#bg-switch-wrapper" ).toggleClass( "active" );
+		$( this ).hide();
+		$( "#bg-switch-toggle" ).show();
+	} );
+	$( "#bg-switch-toggle" ).click( function( e ) {
 		e.preventDefault();
-		$("#bg-switch-wrapper").toggleClass("active");
-		$(this).hide();
-		$("#bg-switch-close").show();
-	});
+		$( "#bg-switch-wrapper" ).toggleClass( "active" );
+		$( this ).hide();
+		$( "#bg-switch-close" ).show();
+	} );
 
 
-	$('*').each(function () {
-		$(this).attr('tabindex', -1);
-	});
+	$( '*' ).each( function() {
+		$( this ).attr( 'tabindex', - 1 );
+	} );
 
-	$('#collapseTwo').on('shown.bs.collapse', function () {
-		$('#collapseTwo a').filter(':not(.dropdown-menu *)').each(function (index) {
+	$( '#collapseTwo' ).on( 'shown.bs.collapse', function() {
+		$( '#collapseTwo a' ).filter( ':not(.dropdown-menu *)' ).each( function( index ) {
 			var i = index + 1;
-			$(this).attr('tabindex', i);
-		});
-	});
-	$('#collapseTwo').on('hidden.bs.collapse', function () {
-		$('#collapseTwo a').filter(':not(.dropdown-menu *)').each(function (index) {
-			$(this).attr('tabindex', -1);
-		});
-	});
+			$( this ).attr( 'tabindex', i );
+		} );
+	} );
+	$( '#collapseTwo' ).on( 'hidden.bs.collapse', function() {
+		$( '#collapseTwo a' ).filter( ':not(.dropdown-menu *)' ).each( function( index ) {
+			$( this ).attr( 'tabindex', - 1 );
+		} );
+	} );
 
 </script>
 
