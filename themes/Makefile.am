@@ -1,4 +1,4 @@
-SUBDIRS = antergos
+SUBDIRS = simple
 
 DISTCLEANFILES = \
 	Makefile.in

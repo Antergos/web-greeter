@@ -568,32 +568,35 @@ start_authentication_cb(JSContextRef context,
 	JSStringGetUTF8CString(name_arg, name, 1024);
 	JSStringRelease(name_arg);
 
-	lightdm_greeter_authenticate(greeter, name);
+        if (*name == '\0')
+	        lightdm_greeter_authenticate(greeter, NULL);
+        else
+	        lightdm_greeter_authenticate(greeter, name);
 	return JSValueMakeNull(context);
 }
 
 
 static JSValueRef
-provide_secret_cb(JSContextRef context,
+respond_cb(JSContextRef context,
 				  JSObjectRef function,
 				  JSObjectRef thisObject,
 				  size_t argumentCount,
 				  const JSValueRef arguments[],
 				  JSValueRef *exception) {
 	LightDMGreeter *greeter = JSObjectGetPrivate(thisObject);
-	JSStringRef    secret_arg;
-	char           secret[1024];
+	JSStringRef    response_arg;
+	char           response[1024];
 
 	// FIXME: Throw exception
 	if (!( argumentCount == 1 && JSValueGetType(context, arguments[0]) == kJSTypeString )) {
 		return JSValueMakeNull(context);
 	}
 
-	secret_arg = JSValueToStringCopy(context, arguments[0], NULL);
-	JSStringGetUTF8CString(secret_arg, secret, 1024);
-	JSStringRelease(secret_arg);
+	response_arg = JSValueToStringCopy(context, arguments[0], NULL);
+	JSStringGetUTF8CString(response_arg, response, 1024);
+	JSStringRelease(response_arg);
 
-	lightdm_greeter_respond(greeter, secret);
+	lightdm_greeter_respond(greeter, response);
 
 	return JSValueMakeNull(context);
 }
@@ -637,6 +640,14 @@ get_is_authenticated_cb(JSContextRef context,
 	return JSValueMakeBoolean(context, lightdm_greeter_get_is_authenticated(greeter));
 }
 
+static JSValueRef
+get_in_authentication_cb(JSContextRef context,
+						JSObjectRef thisObject,
+						JSStringRef propertyName,
+						JSValueRef *exception) {
+	LightDMGreeter *greeter = JSObjectGetPrivate(thisObject);
+	return JSValueMakeBoolean(context, lightdm_greeter_get_in_authentication(greeter));
+}
 
 static JSValueRef
 get_can_suspend_cb(JSContextRef context,
@@ -895,6 +906,7 @@ static const JSStaticValue lightdm_greeter_values[] = {
 	{"timed_login_user",    get_timed_login_user_cb,    NULL,          kJSPropertyAttributeReadOnly},
 	{"timed_login_delay",   get_timed_login_delay_cb,   NULL,          kJSPropertyAttributeReadOnly},
 	{"authentication_user", get_authentication_user_cb, NULL,          kJSPropertyAttributeReadOnly},
+	{"in_authentication",   get_in_authentication_cb,   NULL,          kJSPropertyAttributeReadOnly},
 	{"is_authenticated",    get_is_authenticated_cb,    NULL,          kJSPropertyAttributeReadOnly},
 	{"can_suspend",         get_can_suspend_cb,         NULL,          kJSPropertyAttributeReadOnly},
 	{"can_hibernate",       get_can_hibernate_cb,       NULL,          kJSPropertyAttributeReadOnly},
@@ -906,7 +918,7 @@ static const JSStaticValue lightdm_greeter_values[] = {
 static const JSStaticFunction lightdm_greeter_functions[] = {
 	{"cancel_timed_login",    cancel_timed_login_cb,    kJSPropertyAttributeReadOnly},
 	{"start_authentication",  start_authentication_cb,  kJSPropertyAttributeReadOnly},
-	{"provide_secret",        provide_secret_cb,        kJSPropertyAttributeReadOnly},
+	{"respond",               respond_cb,               kJSPropertyAttributeReadOnly},
 	{"cancel_authentication", cancel_authentication_cb, kJSPropertyAttributeReadOnly},
 	{"suspend",               suspend_cb,               kJSPropertyAttributeReadOnly},
 	{"hibernate",             hibernate_cb,             kJSPropertyAttributeReadOnly},
@@ -1047,6 +1059,7 @@ show_prompt_cb(LightDMGreeter *greeter,
 	JSGlobalContextRef jsContext;
 	JSStringRef        command;
 	gchar              *string;
+        const gchar        *ct = "";
 
 	g_debug("Show prompt %s", text);
 
@@ -1057,7 +1070,16 @@ show_prompt_cb(LightDMGreeter *greeter,
 
 		jsContext = webkit_frame_get_javascript_global_context(web_frame);
 
-		string  = g_strdup_printf("show_prompt('%s')", text);
+                switch (type) {
+                        case LIGHTDM_PROMPT_TYPE_QUESTION:
+                                ct = "text";
+                                break;
+                        case LIGHTDM_PROMPT_TYPE_SECRET:
+                                ct = "password";
+                                break;
+                }
+ 
+                string  = g_strdup_printf ("show_prompt('%s', '%s')", text, ct);
 		command = JSStringCreateWithUTF8CString(string);
 
 		JSEvaluateScript(jsContext, command, NULL, NULL, 0, NULL);
@@ -1078,6 +1100,7 @@ show_message_cb(LightDMGreeter *greeter,
 	JSGlobalContextRef jsContext;
 	JSStringRef        command;
 	gchar              *string;
+        const gchar        *mt = "";
 
 	web_page = webkit_web_extension_get_page(extension, page_id);
 	if (web_page != NULL) {
@@ -1085,7 +1108,16 @@ show_message_cb(LightDMGreeter *greeter,
 
 		jsContext = webkit_frame_get_javascript_global_context(web_frame);
 
-		string  = g_strdup_printf("show_message('%s')", text);
+                switch (type) {
+                        case LIGHTDM_MESSAGE_TYPE_ERROR:
+                                mt = "error";
+                                break;
+                        case LIGHTDM_MESSAGE_TYPE_INFO:
+                                mt = "info";
+                                break;
+                }
+ 
+                string  = g_strdup_printf ("show_prompt('%s', '%s')", text, mt);
 		command = JSStringCreateWithUTF8CString(string);
 
 		JSEvaluateScript(jsContext, command, NULL, NULL, 0, NULL);
@@ -1116,6 +1148,27 @@ authentication_complete_cb(LightDMGreeter *greeter, WebKitWebExtension *extensio
 	}
 }
 
+static void
+autologin_timer_expired_cb(LightDMGreeter *greeter, WebKitWebExtension *extension) {
+
+	WebKitWebPage      *web_page;
+	WebKitFrame        *web_frame;
+	JSGlobalContextRef jsContext;
+	JSStringRef        command;
+
+	web_page = webkit_web_extension_get_page(extension, page_id);
+
+	if (web_page != NULL) {
+		web_frame = webkit_web_page_get_main_frame(web_page);
+
+		jsContext = webkit_frame_get_javascript_global_context(web_frame);
+
+		command = JSStringCreateWithUTF8CString("autologin_timer_expired()");
+
+		JSEvaluateScript(jsContext, command, NULL, NULL, 0, NULL);
+	}
+}
+
 
 G_MODULE_EXPORT void
 webkit_web_extension_initialize(WebKitWebExtension *extension) {
@@ -1124,6 +1177,7 @@ webkit_web_extension_initialize(WebKitWebExtension *extension) {
 	g_signal_connect(G_OBJECT(greeter), "authentication-complete", G_CALLBACK(authentication_complete_cb), extension);
 	g_signal_connect(G_OBJECT(greeter), "show-prompt", G_CALLBACK(show_prompt_cb), extension);
 	g_signal_connect(G_OBJECT(greeter), "show-message", G_CALLBACK(show_message_cb), extension);
+	g_signal_connect(G_OBJECT(greeter), "autologin-timer-expired", G_CALLBACK(autologin_timer_expired_cb), extension);
 
 	g_signal_connect(webkit_script_world_get_default(),
 					 "window-object-cleared",
