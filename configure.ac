@@ -108,6 +108,7 @@ dnl ###########################################################################
 AC_OUTPUT([
 Makefile
 data/Makefile
+man/Makefile
 src/Makefile
 po/Makefile.in
 themes/Makefile

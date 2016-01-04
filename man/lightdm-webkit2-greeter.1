@@ -1,0 +1,110 @@
+.TH "LIGHTDM" "1" "2015/11/14"
+.nh
+.ad l
+.SH "NAME"
+lightdm-webkit2-greeter \- Themeable greeter for LightDM which uses webkit2.
+.SH "SYNOPSIS"
+.HP \w'\fBlightdm-webkit2-greeter\fR\ 'u
+\fBlightdm-webkit2-greeter\fR
+.SH "DESCRIPTION"
+.PP
+lightdm-webkit2-greeter is a LightDM greeter that uses webkit2 as the theming
+engine.  Greeters can be written in a combination of HTML and Javascript\&.
+.PP
+.SH "API"
+.PP
+The following functions must be provided by the custom greeter, which LightDM
+will call in the process of authenticating the user\&.
+.PP
+\fBshow_prompt(text, type)\fR
+.RS 4
+This will be called when LightDM needs to prompt the user for some reason, such
+as asking for a password\&.  The "text" parameter will be the text of the
+prompt, and the "type" parameter will either be "text" for a visible prompt, or
+"password" for a prompt that the input should be hidden\&.
+.RE
+.PP
+\fBshow_message(text, type)\fR
+.RS 4
+This will be called when LightDM needs to display some info for the user\&.
+The "text" parameter will be the text of the
+message, and the "type" parameter will either be "info" for an information
+message, or "error" for an error message that LightDM has encountered\&.
+.RE
+.PP
+\fBauthentication_complete()\fR
+.RS 4
+This function is called by LightDM when authentication has completed\&.
+.RE
+.PP
+\fBautologin_timer_expired()\fR
+.RS 4
+This function is called by LightDM when an autologin user's login timer has
+expired.  The greeter should reset the authentication process\&.
+.RE
+.PP
+The following functions are available for the greeter to call to execute
+actions within LightDM\&.
+.PP
+\fBlightdm.start_authentication(name)\fR
+.RS 4
+Specifies the name of the user we'd like to start authenticating as\&.  Note that
+if you pass an empty string (""), LightDM (via PAM) will issue a show_prompt()
+call to ask for the username\&.
+.RE
+.PP
+\fBlightdm.respond(text)\fR
+.RS 4
+When LightDM has prompted for input, provide the response to the input\&.
+.RE
+.PP
+\fBlightdm.login(user, session)\fR
+.RS 4
+Once LightDM has successfully authenticated the user, start the user's session
+by calling this function\&.  "user" is the authenticated user, and "session" is
+the user's session\&.
+.RE
+.PP
+Variables available within the greeter are:
+.PP
+\fBlightdm.authentication_user\fR
+.RS 4
+The authenticated user\&.
+.RE
+.PP
+\fBlightdm.default_session\fR
+.RS 4
+The default session for the system\&.
+.RE
+.PP
+\fBlightdm.is_authenticated\fR
+.RS 4
+Indicates if the user has successfully authenticated\&.
+.RE
+.PP
+Please see the LightDM API documentation for the complete list of calls
+available.  The lightdm-webkit2-greeter implements all of the LightDM API.
+.PP
+.SH "CONFIGURATION"
+.PP
+\fB/etc/lightdm/lightdm-webkit2-greeter.conf\fR
+.RS 4
+Keyfile that contains one key: webkit-theme\&.  This should point to which
+theme the greeter should use.
+.RE
+.SH "FILES"
+.PP
+\fB/usr/share/lightdm-webkit/themes\fR
+.RS 4
+Directory where themes should be stored\&.
+.RE
+.SH "EXAMPLES"
+.PP
+Please see the "simple" theme that is shipped with
+lightdm-webkit2-greeter\&.
+.SH "SEE ALSO"
+.PP
+http://people.ubuntu.com/~robert-ancell/lightdm/reference/core.html
+.SH "AUTHOR"
+.PP
+lightdm-webkit-greeter was written by Robert Ancell <robert.ancell\&@canonical\&.com\&>\&.

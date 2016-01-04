@@ -1,4 +1,4 @@
-SUBDIRS = data po src themes
+SUBDIRS = data man po src themes
 
 DISTCLEANFILES = \
 	Makefile.in \
