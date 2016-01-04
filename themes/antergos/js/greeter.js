@@ -48,7 +48,7 @@ class AntergosTheme {
 		this.$actions_container = $( "#actionsArea" );
 		this.$msg_area_container = $( '#statusArea' );
 		this.$msg_area = $( '#showMsg' );
-		this.lang = window.navigator.language.split( '-' )[ 0 ].toLocaleLowerCase();
+		this.lang = window.navigator.language.split( '-' )[ 0 ].toLowerCase();
 		this.translations = window.ant_translations;
 
 		this.initialize();
@@ -225,7 +225,8 @@ class AntergosTheme {
 	initialize_clock() {
 		var saved_format = this.cache_get( 'clock', 'time_format' ),
 			format = (null !== saved_format) ? saved_format : 'LT',
-			detected_language = null;
+			detected_language = 'en';
+			window.navigator.languages = (typeof window.navigator.languages !== 'undefined') ? window.navigator.languages : [ window.navigator.language];
 
 		// Workaround for moment.js bug: https://github.com/moment/moment/issues/2856
 		for ( var lang of window.navigator.languages ) {
@@ -427,11 +428,7 @@ class AntergosTheme {
 	}
 }
 
-
 $( window ).load( function() {
-
 	_self = new AntergosTheme();
-
-
 } );
 

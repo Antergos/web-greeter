@@ -1,0 +1,3 @@
+{
+"presets": ["/usr/lib/node_modules/babel-preset-es2015"]
+}
