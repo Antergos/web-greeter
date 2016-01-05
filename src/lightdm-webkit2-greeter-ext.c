@@ -468,6 +468,7 @@ set_layout_cb(JSContextRef context,
 	JSStringRef layout_arg;
 	size_t	    layout_size;
 	gchar       *layout;
+	const GList *layouts, *link;
 
 	if (JSValueGetType(context, value) != kJSTypeString) {
 		JSStringRef string = JSStringCreateWithUTF8CString("Expected a string");
@@ -483,7 +484,16 @@ set_layout_cb(JSContextRef context,
 	JSStringGetUTF8CString(layout_arg, layout, layout_size);
 	JSStringRelease(layout_arg);
 
-	//lightdm_set_layout (layout);
+	layouts = lightdm_get_layouts ();
+	for (link = layouts; link; link = link->next)
+	{
+		LightDMLayout *currlayout = link->data;
+		if (!(g_strcmp0(lightdm_layout_get_name(currlayout), layout))) {
+			g_object_ref (currlayout);
+			lightdm_set_layout (currlayout);
+			break;
+		}
+	}
 
 	g_free (layout);
 	return true;
@@ -1009,7 +1019,7 @@ static const JSStaticValue lightdm_greeter_values[] = {
 	{"languages",           get_languages_cb,           NULL,          kJSPropertyAttributeReadOnly},
 	{"default_layout",      get_default_layout_cb,      NULL,          kJSPropertyAttributeReadOnly},
 	{"layouts",             get_layouts_cb,             NULL,          kJSPropertyAttributeReadOnly},
-	{"layout",              get_layout_cb,              set_layout_cb, kJSPropertyAttributeReadOnly},
+	{"layout",              get_layout_cb,              set_layout_cb, kJSPropertyAttributeNone},
 	{"sessions",            get_sessions_cb,            NULL,          kJSPropertyAttributeReadOnly},
 	{"num_users",           get_num_users_cb,           NULL,          kJSPropertyAttributeReadOnly},
 	{"default_session",     get_default_session_cb,     NULL,          kJSPropertyAttributeNone},
