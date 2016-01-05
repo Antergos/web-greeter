@@ -34,6 +34,13 @@ PKG_CHECK_MODULES([WEB_EXTENSION], [webkit2gtk-web-extension-4.0 >= 2.8.0])
 AC_SUBST([WEB_EXTENSION_CFLAGS])
 AC_SUBST([WEB_EXTENSION_LIBS])
 
+# Check for exo-csource
+AC_DEFUN([AC_PROG_EXOCSOURCE], [AC_CHECK_PROG(EXOCSOURCE,exo-csource,yes)])
+AC_PROG_EXOCSOURCE
+if test x"${EXOCSOURCE}" != x"yes" ; then
+    AC_MSG_ERROR([Please install the package containing the exo-csource binary.])
+fi
+
 dnl ###########################################################################
 dnl Configurable values
 dnl ###########################################################################
