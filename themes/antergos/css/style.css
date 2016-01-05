@@ -511,8 +511,8 @@ input.password.form-control:focus {
 
 a.list-group-item:focus, a.list-group-item:hover, a.list-group-item.hovered {
 	position: relative;
-	-webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 10px rgba(0, 0, 0, 0.1) inset;
-	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 10px rgba(0, 0, 0, 0.1) inset;
+	-webkit-box-shadow: 0 1px 0px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.1) inset;
+	box-shadow: 0 1px 0px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.1) inset;
 	outline: none;
 	margin: 0px 0;
 	background: #FFFFFF;

@@ -26,17 +26,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * This is used to access our main class from within jQuery callbacks.
+ */
+var _self = null;
 
+
+/**
+ * Capitalize a string.
+ *
+ * @returns {string}
+ */
 String.prototype.capitalize = function() {
 	return this.charAt( 0 ).toUpperCase() + this.slice( 1 );
 };
 
-var _self;
 
-
+/**
+ * This is the theme's main class object. It contains almost all the theme's logic.
+ */
 class AntergosTheme {
 
 	constructor() {
+		if (null !== _self) {
+			return _self;
+		}
 		this.debug = this.cache_get( 'debug', 'enabled' );
 		this.user_list_visible = false;
 		this.auth_pending = false;
@@ -111,12 +125,13 @@ class AntergosTheme {
 	}
 
 	/**
-	 * Register callbacks for LightDM as well as any others that haven't been registered elsewhere.
+	 * Register callbacks for the LDM Greeter as well as any others that haven't been registered
+	 * elsewhere.
 	 */
 	register_callbacks() {
-		$( document ).keydown( this, this.key_press_handler);
-		$('.cancel_auth').click(this, this.cancel_authentication);
-		$('.submit_passwd').click(this, this.submit_password);
+		$( document ).keydown( this.key_press_handler );
+		$( '.cancel_auth' ).click( this.cancel_authentication );
+		$( '.submit_passwd' ).click( this.submit_password );
 		window.show_prompt = this.show_prompt;
 		window.show_message = this.show_message;
 		window.start_authentication = this.start_authentication;
@@ -157,7 +172,7 @@ class AntergosTheme {
 				</a>`;
 
 			// Register event handler here so we don't have to iterate over the users again later.
-			$( template ).appendTo( this.$user_list ).click( this, this.start_authentication ).children( 'img' ).on( 'error', this.image_not_found );
+			$( template ).appendTo( this.$user_list ).click( this.start_authentication ).children( 'img' ).on( 'error', this.image_not_found );
 
 		} // END for ( var user of lightdm.users )
 
@@ -184,7 +199,7 @@ class AntergosTheme {
 					<a href="#" data-session-id="${session.key}" class="${css_class}">${session.name}</a>
 				</li>`;
 
-			$( template ).appendTo( this.$session_list ).click( this, this.session_toggle_handler );
+			$( template ).appendTo( this.$session_list ).click( this.session_toggle_handler );
 
 		} // END for (var session of lightdm.sessions)
 
@@ -205,7 +220,6 @@ class AntergosTheme {
 
 		for ( var action of Object.keys( actions ) ) {
 			var cmd = `can_${action}`;
-			console.log( action );
 
 			template = `
 				<a href="#" id="${action}" class="btn btn-default ${action}" data-toggle="tooltip" data-placement="top" title="${action.capitalize()}" data-container="body">
@@ -226,7 +240,7 @@ class AntergosTheme {
 		var saved_format = this.cache_get( 'clock', 'time_format' ),
 			format = (null !== saved_format) ? saved_format : 'LT',
 			detected_language = 'en';
-			window.navigator.languages = (typeof window.navigator.languages !== 'undefined') ? window.navigator.languages : [ window.navigator.language];
+		window.navigator.languages = (typeof window.navigator.languages !== 'undefined') ? window.navigator.languages : [ window.navigator.language ];
 
 		// Workaround for moment.js bug: https://github.com/moment/moment/issues/2856
 		for ( var lang of window.navigator.languages ) {
@@ -250,6 +264,11 @@ class AntergosTheme {
 		}, 60000 );
 	}
 
+
+	/**
+	 * Show the user list if its not already shown. This is used to allow the user to
+	 * display the user list by pressing Enter or Spacebar.
+	 */
 	show_user_list() {
 		if ( $( this.$clock_container ).hasClass( 'in' ) ) {
 			$( '#trigger' ).trigger( 'click' );
@@ -274,37 +293,42 @@ class AntergosTheme {
 					break;
 				}
 			}
-
-			greeting = (null === greeting) ? 'Welcome!' : greeting;
 		}
-		$( '.welcome' ).text( greeting );
 
+		greeting = (null === greeting) ? 'Welcome!' : greeting;
+
+		$( '.welcome' ).text( greeting );
 		$( '#hostname' ).append( lightdm.hostname );
 	}
 
+
+	/**
+	 * Start the authentication process for the selected user.
+	 *
+	 * @param {object} event - jQuery.Event object from 'click' event.
+	 */
 	start_authentication( event ) {
 		var user_id = $( this ).attr( 'id' ),
 			selector = `.${user_id}`,
-			self = event.data,
-			user_session = self.cache_get( 'user', user_id, 'session' );
+			user_session = _self.cache_get( 'user', user_id, 'session' );
 
-		if ( self.auth_pending || null !== self.selected_user ) {
+		if ( _self.auth_pending || null !== _self.selected_user ) {
 			lightdm.cancel_authentication();
-			self.log( `Authentication cancelled for ${self.selected_user}` );
-			self.selected_user = null;
+			_self.log( `Authentication cancelled for ${_self.selected_user}` );
+			_self.selected_user = null;
 		}
 
-		self.log( `Starting authentication for ${user_id}.` );
-		self.selected_user = user_id;
+		_self.log( `Starting authentication for ${user_id}.` );
+		_self.selected_user = user_id;
 
 		// CSS hack to workaround webkit bug
-		if ( $( self.$user_list ).children().length > 3 ) {
-			$( self.$user_list ).css( 'column-count', 'initial' ).parent().css( 'max-width', '50%' );
+		if ( $( _self.$user_list ).children().length > 3 ) {
+			$( _self.$user_list ).css( 'column-count', 'initial' ).parent().css( 'max-width', '50%' );
 		}
 		$( selector ).addClass( 'hovered' ).siblings().hide();
 		$( '.fa-toggle-down' ).hide();
 
-		self.log( `Session for ${user_id} is ${user_session}` );
+		_self.log( `Session for ${user_id} is ${user_session}` );
 
 		$( `[data-session-id="${user_session}"]` ).parent().trigger( 'click', this );
 
@@ -312,14 +336,19 @@ class AntergosTheme {
 		$( '#passwordArea' ).show();
 		$( '.dropdown-toggle' ).dropdown();
 
-		self.auth_pending = true;
+		_self.auth_pending = true;
 
 		lightdm.start_authentication( user_id );
 	}
 
-	cancel_authentication(event) {
-		var self = event.data,
-			selectors = [ '#statusArea', '#timerArea', '#passwordArea', '#session-list' ];
+
+	/**
+	 * Cancel the pending authentication.
+	 *
+	 * @param {object} event - jQuery.Event object from 'click' event.
+	 */
+	cancel_authentication( event ) {
+		var selectors = [ '#statusArea', '#timerArea', '#passwordArea', '#session-list' ];
 
 		for ( var selector of selectors ) {
 			$( selector ).hide();
@@ -327,20 +356,27 @@ class AntergosTheme {
 
 		lightdm.cancel_authentication();
 
-		self.log( 'Cancelled authentication.' );
+		_self.log( 'Cancelled authentication.' );
 
 		// CSS hack to work-around webkit bug
-		if ( $( self.$user_list ).children().length > 3 ) {
-			$( self.$user_list ).css( 'column-count', '2' ).parent().css( 'max-width', '85%' );
+		if ( $( _self.$user_list ).children().length > 3 ) {
+			$( _self.$user_list ).css( 'column-count', '2' ).parent().css( 'max-width', '85%' );
 		}
 
 		$( '.hovered' ).removeClass( 'hovered' ).siblings().show();
 		$( '.fa-toggle-down' ).show();
-		self.selected_user = null;
-		self.auth_pending = false;
+
+		_self.selected_user = null;
+		_self.auth_pending = false;
 
 	}
 
+
+	/**
+	 * Called when the user attempts to authenticate (inputs password).
+	 * We check to see if the user successfully authenticated and if so tell the LDM
+	 * Greeter to log them in with the session they selected.
+	 */
 	authentication_complete() {
 		var selected_session = $( '.selected' ).attr( 'data-session-id' );
 
@@ -350,43 +386,42 @@ class AntergosTheme {
 		$( '#timerArea' ).hide();
 
 		if ( lightdm.is_authenticated ) {
+			// The user entered the correct password. Let's log them in.
 			lightdm.login( lightdm.authentication_user, selected_session );
 		} else {
+			// The user did not enter the correct password. Show error message.
 			$( '#statusArea' ).show();
 		}
 	}
 
-	submit_password(event) {
+	submit_password( event ) {
 		lightdm.provide_secret( $( '#passwordField' ).val() );
 		$( '#passwordArea' ).hide();
 		$( '#timerArea' ).show();
 	}
 
 	session_toggle_handler( event ) {
-		var self = event.data,
-			$session = $(this).children('a'),
+		var $session = $( this ).children( 'a' ),
 			session_name = $session.text(),
 			session_key = $session.attr( 'data-session-id' );
-		console.log($session);
 
 		$session.parents( '.btn-group' ).find( '.selected' ).attr( 'data-session-id', session_key ).html( session_name );
 	}
 
 	key_press_handler( event ) {
-		var self = event.data,
-			action;
+		var action;
 		switch ( event.which ) {
 			case 13:
-				action = self.auth_pending ? self.submit_password() : ! self.user_list_visible ? self.show_user_list() : 0;
-				self.log( action );
+				action = _self.auth_pending ? _self.submit_password() : ! _self.user_list_visible ? _self.show_user_list() : 0;
+				_self.log( action );
 				break;
 			case 27:
-				action = self.auth_pending ? self.cancel_authentication() : 0;
-				self.log( action );
+				action = _self.auth_pending ? _self.cancel_authentication() : 0;
+				_self.log( action );
 				break;
 			case 32:
-				action = (! self.user_list_visible && ! self.auth_pending) ? self.show_user_list() : 0;
-				self.log( action );
+				action = (! _self.user_list_visible && ! _self.auth_pending) ? _self.show_user_list() : 0;
+				_self.log( action );
 				break;
 			default:
 				break;
@@ -428,7 +463,11 @@ class AntergosTheme {
 	}
 }
 
-$( window ).load( function() {
+
+/**
+ * Initialize the theme once the window has loaded.
+ */
+$( window ).load( () => {
 	_self = new AntergosTheme();
 } );
 
