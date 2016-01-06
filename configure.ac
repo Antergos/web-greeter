@@ -119,6 +119,16 @@ man/Makefile
 src/Makefile
 po/Makefile.in
 themes/Makefile
+themes/antergos/css/vendor/Makefile
+themes/antergos/css/Makefile
+themes/antergos/Makefile
+themes/antergos/fonts/Makefile
+themes/antergos/fonts/font-awesome/Makefile
+themes/antergos/fonts/TTF/Makefile
+themes/antergos/js/vendor/Makefile
+themes/antergos/js/Makefile
+themes/antergos/img/Makefile
+themes/antergos/img/thumbs/Makefile
 themes/simple/Makefile
 ])
 
