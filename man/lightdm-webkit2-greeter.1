@@ -2,18 +2,18 @@
 .nh
 .ad l
 .SH "NAME"
-lightdm-webkit2-greeter \- Themeable greeter for LightDM which uses webkit2.
+lightdm-webkit2-greeter \- Themeable greeter for LightDM which uses webkit2\&.
 .SH "SYNOPSIS"
 .HP \w'\fBlightdm-webkit2-greeter\fR\ 'u
 \fBlightdm-webkit2-greeter\fR
 .SH "DESCRIPTION"
 .PP
 lightdm-webkit2-greeter is a LightDM greeter that uses webkit2 as the theming
-engine.  Greeters can be written in a combination of HTML and Javascript\&.
+engine\&.  Greeters can be written in a combination of HTML and Javascript\&.
 .PP
 .SH "API"
 .PP
-The following functions must be provided by the custom greeter, which LightDM
+The following functions \fBmust\fR be provided by the custom greeter, which LightDM
 will call in the process of authenticating the user\&.
 .PP
 \fBshow_prompt(text, type)\fR
@@ -40,72 +40,187 @@ This function is called by LightDM when authentication has completed\&.
 \fBautologin_timer_expired()\fR
 .RS 4
 This function is called by LightDM when an autologin user's login timer has
-expired.  The greeter should reset the authentication process\&.
+expired\&.  The greeter should reset the authentication process\&.
 .RE
 .PP
 The following functions are available for the greeter to call to execute
 actions within LightDM\&.
 .PP
-\fBlightdm.start_authentication(name)\fR
+\fBlightdm\&.cancel_authentication()\fR
 .RS 4
-Specifies the name of the user we'd like to start authenticating as\&.  Note that
-if you pass an empty string (""), LightDM (via PAM) will issue a show_prompt()
-call to ask for the username\&.
+Cancels the authentication of any user currently in the process of
+authenticating\&.
 .RE
 .PP
-\fBlightdm.respond(text)\fR
+\fBlightdm\&.cancel_timed_login()\fR
 .RS 4
-When LightDM has prompted for input, provide the response to the input\&.
+Cancels the authentication of the timed login user\&.
 .RE
 .PP
-\fBlightdm.login(user, session)\fR
+\fBlightdm\&.hibernate()\fR
+.RS 4
+Hibernates the system, if the greeter has the authority to do so\&.
+.RE
+.PP
+\fBlightdm\&.login(user, session)\fR
 .RS 4
 Once LightDM has successfully authenticated the user, start the user's session
 by calling this function\&.  "user" is the authenticated user, and "session" is
 the user's session\&.
 .RE
 .PP
+\fBlightdm\&.respond(text)\fR
+.RS 4
+When LightDM has prompted for input, provide the response to LightDM\&.
+The deprecated function was "provide_secret"\&.  This is still available for
+backwards compatibility, but authors of greeters should move to using
+lightdm.respond()\&.
+.RE
+.PP
+\fBlightdm\&.restart()\fR
+.RS 4
+Restarts the system, if the greeter has the authority to do so\&.
+.RE
+.PP
+\fBlightdm\&.set_language(lang)\fR
+.RS 4
+Will set the language for the current LightDM session\&.
+.RE
+.PP
+\fBlightdm\&.shutdown()\fR
+.RS 4
+Shuts down the system, if the greeter has the authority to do so\&.
+.RE
+.PP
+\fBlightdm\&.start_authentication(name)\fR
+.RS 4
+Specifies the name of the user we'd like to start authenticating as\&.  Note that
+if you pass an empty string (""), LightDM (via PAM) will issue a show_prompt()
+call to ask for the username\&.
+.RE
+.PP
 Variables available within the greeter are:
 .PP
-\fBlightdm.authentication_user\fR
+\fBlightdm\&.authentication_user\fR
 .RS 4
-The authenticated user\&.
+String\&. The username of the authentication user being authenticated or null if no
+authentication is in progress\&.
 .RE
 .PP
-\fBlightdm.default_session\fR
+\fBlightdm\&.can_hibernate\fR
 .RS 4
-The default session for the system\&.
+Boolean\&. Whether or not the system can be made to hibernate by the greeter\&.
 .RE
 .PP
-\fBlightdm.is_authenticated\fR
+\fBlightdm\&.can_restart\fR
 .RS 4
-Indicates if the user has successfully authenticated\&.
+Boolean\&. Whether or not the system can be restarted by the greeter\&.
+.RE
+.PP
+\fBlightdm\&.can_shutdown\fR
+.RS 4
+Boolean\&. Whether or not the system can be shutdown by the greeter\&.
+.RE
+.PP
+\fBlightdm\&.can_suspend\fR
+.RS 4
+Boolean\&. Whether or not the system can be suspended by the greeter\&.
+.RE
+.PP
+\fBlightdm\&.default_language\fR
+.RS 4
+String\&. The current language (system-wide)\&.
+.RE
+.PP
+\fBlightdm\&.default_layout\fR
+.RS 4
+String\&. The current keyboard layout (system-wide)\&.
+.RE
+.PP
+\fBlightdm\&.default_session\fR
+.RS 4
+String\&. The name of the default session (as configured in lightdm.conf)\&.
+.RE
+.PP
+\fBlightdm\&.hostname\fR
+.RS 4
+String\&. The hostname of the system\&.
+.RE
+.PP
+\fBlightdm\&.is_authenticated\fR
+.RS 4
+Boolean\&. Indicates if the user has successfully authenticated\&.
+.RE
+.PP
+\fBlightdm\&.in_authentication\fR
+.RS 4
+Boolean\&. Indicates if lightdm is currently in the authentication phase\&.
+.RE
+.PP
+\fBlightdm\&.layout\fR
+.RS 4
+String\&. The name of the currently active keyboard layout\&. To change the
+layout, assign a valid layout name to this variable\&.
+.RE
+.PP
+\fBlightdm\&.layouts\fR
+.RS 4
+Array\&. The keyboard layouts that are available on the system\&. Returns an Array
+of LightDMLayout objects\&.
+.RE
+.PP
+\fBlightdm\&.num_users\fR
+.RS 4
+Number\&. The number of users able to log in\&.
+.RE
+.PP
+\fBlightdm\&.sessions\fR
+.RS 4
+Array\&. The sessions that are available on the system\&. Returns an Array of
+LightDMSession objects\&.
+.RE
+.PP
+\fBlightdm\&.timed_login_delay\fR
+.RS 4
+Number\&. The number of seconds to wait before automatically logging in\&.
+.RE
+.PP
+\fBlightdm\&.timed_login_user\fR
+.RS 4
+String\&. The name of the user account that should be logged into
+automatically after timed login delay has passed\&.
+.RE
+.PP
+\fBlightdm\&.users\fR
+.RS 4
+Array\&. The users that are able to log in\&. Returns an Array of LightDMUser
+objects\&.
 .RE
 .PP
 Please see the LightDM API documentation for the complete list of calls
-available.  The lightdm-webkit2-greeter implements all of the LightDM API.
+available\&.  The lightdm-webkit2-greeter implements all of the LightDM API\&.
 .PP
 .SH "CONFIGURATION"
 .PP
-\fB/etc/lightdm/lightdm-webkit2-greeter.conf\fR
+\fB/etc/lightdm/lightdm-webkit2-greeter\&.conf\fR
 .RS 4
 Keyfile that contains one key: webkit-theme\&.  This should point to which
-theme the greeter should use.
+theme the greeter should use\&.
 .RE
 .SH "FILES"
 .PP
-\fB/usr/share/lightdm-webkit/themes\fR
+\fB/usr/share/lightdm-webkit-themes\fR
 .RS 4
 Directory where themes should be stored\&.
 .RE
 .SH "EXAMPLES"
 .PP
-Please see the "simple" theme that is shipped with
+Please see the "antergos" and "simple" themes that are shipped with
 lightdm-webkit2-greeter\&.
 .SH "SEE ALSO"
 .PP
-http://people.ubuntu.com/~robert-ancell/lightdm/reference/core.html
+http://people\&.ubuntu\&.com/~robert-ancell/lightdm/reference/core\&.html
 .SH "AUTHOR"
 .PP
-lightdm-webkit-greeter was written by Robert Ancell <robert.ancell\&@canonical\&.com\&>\&.
+lightdm-webkit-greeter was written by Robert Ancell <robert\&.ancell\&@canonical\&.com\&>\&.
 lightdm-webkit2-greeter was ported to webkit2 by Dustin Falgout <dustin\&@falgout\&.us>\&.
