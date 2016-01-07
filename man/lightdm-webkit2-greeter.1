@@ -12,6 +12,10 @@ lightdm-webkit2-greeter is a LightDM greeter that uses webkit2 as the theming
 engine\&.  Greeters can be written in a combination of HTML and Javascript\&.
 .PP
 .SH "API"
+Please note that all functions or variables marked "deprecated" are still
+available for backwards compatibility, but may disappear in a future version of
+lightdm-webkit2-greeter\&.  Authors of themes should use the new functions and
+variables, which more closely match the LightDM API\&.
 .PP
 The following functions \fBmust\fR be provided by the custom greeter, which LightDM
 will call in the process of authenticating the user\&.
@@ -46,15 +50,34 @@ expired\&.  The greeter should reset the authentication process\&.
 The following functions are available for the greeter to call to execute
 actions within LightDM\&.
 .PP
+\fBlightdm\&.authenticate(name)\fR
+.RS 4
+Specifies the name of the user we'd like to start authenticating as\&.  Note that
+if you pass an empty string (""), LightDM (via PAM) will issue a show_prompt()
+call to ask for the username\&. The older function
+lightdm\&.start_authentication() has been deprecated\&.
+.RE
+.PP
+\fBlightdm\&.authenticate_as_guest()\fR
+.RS 4
+Authenticates as the guest user\&.
+.RE
+.PP
 \fBlightdm\&.cancel_authentication()\fR
 .RS 4
 Cancels the authentication of any user currently in the process of
 authenticating\&.
 .RE
 .PP
-\fBlightdm\&.cancel_timed_login()\fR
+\fBlightdm\&.cancel_autologin()\fR
 .RS 4
-Cancels the authentication of the timed login user\&.
+Cancels the authentication of the autologin user\&.  The older function
+lightdm\&.cancel_timed_login() has been deprecated.
+.RE
+.PP
+\fBlightdm\&.get_hint(hint_name)\fR
+.RS 4
+Returns the value of a named hint provided by LightDM\&.
 .RE
 .PP
 \fBlightdm\&.hibernate()\fR
@@ -62,11 +85,12 @@ Cancels the authentication of the timed login user\&.
 Hibernates the system, if the greeter has the authority to do so\&.
 .RE
 .PP
-\fBlightdm\&.login(user, session)\fR
+\fBlightdm\&.start_session_sync(user, session)\fR
 .RS 4
 Once LightDM has successfully authenticated the user, start the user's session
 by calling this function\&.  "user" is the authenticated user, and "session" is
-the user's session\&.
+the user's session\&. The older function lightdm\&.login() has been
+deprecated\&.
 .RE
 .PP
 \fBlightdm\&.respond(text)\fR
@@ -92,19 +116,30 @@ Will set the language for the current LightDM session\&.
 Shuts down the system, if the greeter has the authority to do so\&.
 .RE
 .PP
-\fBlightdm\&.start_authentication(name)\fR
-.RS 4
-Specifies the name of the user we'd like to start authenticating as\&.  Note that
-if you pass an empty string (""), LightDM (via PAM) will issue a show_prompt()
-call to ask for the username\&.
-.RE
-.PP
 Variables available within the greeter are:
 .PP
 \fBlightdm\&.authentication_user\fR
 .RS 4
 String\&. The username of the authentication user being authenticated or null if no
 authentication is in progress\&.
+.RE
+.PP
+\fBlightdm\&.autologin_guest\fR
+.RS 4
+Boolean\&. Indicates the guest user should be used for autologin\&.
+.RE
+.PP
+\fBlightdm\&.autologin_timeout\fR
+.RS 4
+Number\&. The number of seconds to wait before automatically logging in\&. The
+older variable lightdm\&.timed_user_delay has been deprecated\&.
+.RE
+.PP
+\fBlightdm\&.autologin_user\fR
+.RS 4
+String\&. The name of the user account that should be logged into
+automatically after timed login delay has passed\&. The older variable
+lightdm\&.timed_login_user has been deprecated\&.
 .RE
 .PP
 \fBlightdm\&.can_hibernate\fR
@@ -127,19 +162,19 @@ Boolean\&. Whether or not the system can be shutdown by the greeter\&.
 Boolean\&. Whether or not the system can be suspended by the greeter\&.
 .RE
 .PP
-\fBlightdm\&.default_language\fR
-.RS 4
-String\&. The current language (system-wide)\&.
-.RE
-.PP
-\fBlightdm\&.default_layout\fR
-.RS 4
-String\&. The current keyboard layout (system-wide)\&.
-.RE
-.PP
 \fBlightdm\&.default_session\fR
 .RS 4
 String\&. The name of the default session (as configured in lightdm.conf)\&.
+.RE
+.PP
+\fBlightdm\&.has_guest_account\fR
+.RS 4
+Boolean\&. A guest account is available for login\&.
+.RE
+.PP
+\fBlightdm\&.hide_users\fR
+.RS 4
+Boolean\&. The whole list of users should not be displayed\&.
 .RE
 .PP
 \fBlightdm\&.hostname\fR
@@ -157,10 +192,17 @@ Boolean\&. Indicates if the user has successfully authenticated\&.
 Boolean\&. Indicates if lightdm is currently in the authentication phase\&.
 .RE
 .PP
+\fBlightdm\&.language\fR
+.RS 4
+String\&. The currently selected language\&. The older variable name
+lightdm\&.default_language is deprecated\&.
+.RE
+.PP
 \fBlightdm\&.layout\fR
 .RS 4
 String\&. The name of the currently active keyboard layout\&. To change the
-layout, assign a valid layout name to this variable\&.
+layout, assign a valid layout name to this variable\&. The older variable name
+lightdm\&.default_layout is deprecated\&.
 .RE
 .PP
 \fBlightdm\&.layouts\fR
@@ -174,21 +216,20 @@ of LightDMLayout objects\&.
 Number\&. The number of users able to log in\&.
 .RE
 .PP
+\fBlightdm\&.select_guest\fR
+.RS 4
+Boolean\&. The guest user should be selected by default for login\&.
+.RE
+.PP
+\fBlightdm\&.select_user\fR
+.RS 4
+String\&. The username that should be selected by default for login\&.
+.RE
+.PP
 \fBlightdm\&.sessions\fR
 .RS 4
 Array\&. The sessions that are available on the system\&. Returns an Array of
 LightDMSession objects\&.
-.RE
-.PP
-\fBlightdm\&.timed_login_delay\fR
-.RS 4
-Number\&. The number of seconds to wait before automatically logging in\&.
-.RE
-.PP
-\fBlightdm\&.timed_login_user\fR
-.RS 4
-String\&. The name of the user account that should be logged into
-automatically after timed login delay has passed\&.
 .RE
 .PP
 \fBlightdm\&.users\fR
@@ -223,4 +264,4 @@ http://people\&.ubuntu\&.com/~robert-ancell/lightdm/reference/core\&.html
 .SH "AUTHOR"
 .PP
 lightdm-webkit-greeter was written by Robert Ancell <robert\&.ancell\&@canonical\&.com\&>\&.
-lightdm-webkit2-greeter was ported to webkit2 by Dustin Falgout <dustin\&@falgout\&.us>\&.
+lightdm-webkit2-greeter was ported to webkit2 by the Antergos Developers <dev@antergos\&.com>
