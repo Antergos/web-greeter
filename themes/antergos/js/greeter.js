@@ -26,6 +26,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 /**
  * This is used to access our main class from within jQuery callbacks.
  */
