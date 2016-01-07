@@ -240,7 +240,7 @@ class AntergosTheme {
 	initialize_clock() {
 		var saved_format = this.cache_get( 'clock', 'time_format' ),
 			format = (null !== saved_format) ? saved_format : 'LT',
-			detected_language = 'en';
+			detected_language = this.lang;
 		window.navigator.languages = (typeof window.navigator.languages !== 'undefined') ? window.navigator.languages : [ window.navigator.language ];
 
 		// Workaround for moment.js bug: https://github.com/moment/moment/issues/2856
@@ -283,14 +283,14 @@ class AntergosTheme {
 	prepare_login_panel_header() {
 		var greeting = null;
 
-		if ( this.translations.hasOwnProperty( this.lang ) ) {
-			greeting = this.translations[ this.lang ];
+		if ( this.translations.greeting.hasOwnProperty( this.lang ) ) {
+			greeting = this.translations.greeting[ this.lang ];
 
 		} else {
 
 			for ( var lang of window.navigator.languages ) {
-				if ( this.translations.hasOwnProperty( lang ) ) {
-					greeting = this.translations[ lang ];
+				if ( this.translations.greeting.hasOwnProperty( lang ) ) {
+					greeting = this.translations.greeting[ lang ];
 					break;
 				}
 			}
@@ -379,7 +379,8 @@ class AntergosTheme {
 	 * Greeter to log them in with the session they selected.
 	 */
 	authentication_complete() {
-		var selected_session = $( '.selected' ).attr( 'data-session-id' );
+		var selected_session = $( '.selected' ).attr( 'data-session-id' ),
+			err_msg = this.translations.auth_failed[ this.lang ];
 
 		_self.auth_pending = false;
 		_self.cache_set( selected_session, 'user', lightdm.authentication_user, 'session' );
@@ -391,6 +392,7 @@ class AntergosTheme {
 			lightdm.login( lightdm.authentication_user, selected_session );
 		} else {
 			// The user did not enter the correct password. Show error message.
+
 			$( '#statusArea' ).show();
 		}
 	}

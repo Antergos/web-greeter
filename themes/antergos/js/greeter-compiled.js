@@ -372,7 +372,7 @@ var AntergosTheme = (function () {
 
 			var saved_format = this.cache_get('clock', 'time_format'),
 			    format = null !== saved_format ? saved_format : 'LT',
-			    detected_language = 'en';
+			    detected_language = this.lang;
 			window.navigator.languages = typeof window.navigator.languages !== 'undefined' ? window.navigator.languages : [window.navigator.language];
 
 			// Workaround for moment.js bug: https://github.com/moment/moment/issues/2856
@@ -439,8 +439,8 @@ var AntergosTheme = (function () {
 		value: function prepare_login_panel_header() {
 			var greeting = null;
 
-			if (this.translations.hasOwnProperty(this.lang)) {
-				greeting = this.translations[this.lang];
+			if (this.translations.greeting.hasOwnProperty(this.lang)) {
+				greeting = this.translations.greeting[this.lang];
 			} else {
 				var _iteratorNormalCompletion7 = true;
 				var _didIteratorError7 = false;
@@ -451,8 +451,8 @@ var AntergosTheme = (function () {
 					for (var _iterator7 = window.navigator.languages[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
 						var lang = _step7.value;
 
-						if (this.translations.hasOwnProperty(lang)) {
-							greeting = this.translations[lang];
+						if (this.translations.greeting.hasOwnProperty(lang)) {
+							greeting = this.translations.greeting[lang];
 							break;
 						}
 					}
@@ -581,7 +581,8 @@ var AntergosTheme = (function () {
 	}, {
 		key: 'authentication_complete',
 		value: function authentication_complete() {
-			var selected_session = $('.selected').attr('data-session-id');
+			var selected_session = $('.selected').attr('data-session-id'),
+			    err_msg = this.translations.auth_failed[this.lang];
 
 			_self.auth_pending = false;
 			_self.cache_set(selected_session, 'user', lightdm.authentication_user, 'session');
@@ -593,6 +594,7 @@ var AntergosTheme = (function () {
 				lightdm.login(lightdm.authentication_user, selected_session);
 			} else {
 				// The user did not enter the correct password. Show error message.
+
 				$('#statusArea').show();
 			}
 		}
