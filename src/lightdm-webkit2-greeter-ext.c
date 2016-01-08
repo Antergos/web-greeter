@@ -67,6 +67,16 @@ string_or_null(JSContextRef context, const gchar *str) {
 	return result;
 }
 
+static JSValueRef
+mkexception (JSContextRef context, JSValueRef * exception, const gchar * str)
+{
+	JSStringRef string = JSStringCreateWithUTF8CString (str);
+	JSValueRef exceptionString = JSValueMakeString (context, string);
+	JSStringRelease (string);
+	*exception = JSValueToObject (context, exceptionString, NULL);
+	return JSValueMakeNull (context);
+}
+
 static char *
 escape (const gchar *text)
 {
@@ -494,13 +504,8 @@ cancel_autologin_cb(JSContextRef context,
 					  JSValueRef *exception) {
 	LightDMGreeter *greeter = JSObjectGetPrivate(thisObject);
 
-	if (argumentCount != 0) {
-		JSStringRef string = JSStringCreateWithUTF8CString("Argument count not zero");
-		JSValueRef exceptionString = JSValueMakeString(context, string);
-		JSStringRelease(string);
-		*exception = JSValueToObject(context, exceptionString, NULL);
-		return JSValueMakeNull(context);
-	}
+	if (argumentCount != 0)
+		return mkexception (context, exception, "Argument count not zero");
 
 	lightdm_greeter_cancel_autologin(greeter);
 	return JSValueMakeNull(context);
@@ -519,13 +524,8 @@ authenticate_cb(JSContextRef context,
 	size_t         name_size;
 	gchar          *name;
 
-	if (!( argumentCount == 1 && JSValueGetType(context, arguments[0]) == kJSTypeString )) {
-		JSStringRef string = JSStringCreateWithUTF8CString("Username argument not supplied");
-		JSValueRef exceptionString = JSValueMakeString(context, string);
-		JSStringRelease(string);
-		*exception = JSValueToObject(context, exceptionString, NULL);
-		return JSValueMakeNull(context);
-	}
+	if (!( argumentCount == 1 && JSValueGetType(context, arguments[0]) == kJSTypeString ))
+		return mkexception (context, exception, "Username argument not supplied");
 
 	name_arg = JSValueToStringCopy(context, arguments[0], NULL);
 	name_size = JSStringGetMaximumUTF8CStringSize(name_arg);
@@ -551,13 +551,8 @@ authenticate_as_guest_cb (JSContextRef context,
 				JSValueRef * exception) {
 	LightDMGreeter *greeter = JSObjectGetPrivate (thisObject);
 
-	if (argumentCount != 0) {
-		JSStringRef string = JSStringCreateWithUTF8CString ("Argument count not zero");
-		JSValueRef exceptionString = JSValueMakeString (context, string);
-		JSStringRelease (string);
-		*exception = JSValueToObject (context, exceptionString, NULL);
-		return JSValueMakeNull (context);
-	}
+	if (argumentCount != 0)
+		return mkexception (context, exception, "Argument count not zero");
 
 	lightdm_greeter_authenticate_as_guest (greeter);
 
@@ -576,14 +571,10 @@ get_hint_cb (JSContextRef context,
 	size_t hint_size;
 	gchar *hint_name;
 	JSStringRef hint;
+	JSValueRef  result;
 
-	if (!(argumentCount == 1 && JSValueGetType (context, arguments[0]) == kJSTypeString)) {
-		JSStringRef string = JSStringCreateWithUTF8CString ("Hint argument not supplied");
-		JSValueRef exceptionString = JSValueMakeString (context, string);
-		JSStringRelease (string);
-		*exception = JSValueToObject (context, exceptionString, NULL);
-		return JSValueMakeNull (context);
-	}
+	if (!(argumentCount == 1 && JSValueGetType (context, arguments[0]) == kJSTypeString))
+		return mkexception (context, exception, "Hint argument not supplied");
 
 	hint_arg = JSValueToStringCopy (context, arguments[0], NULL);
 	hint_size = JSStringGetMaximumUTF8CStringSize (hint_arg);
@@ -592,10 +583,11 @@ get_hint_cb (JSContextRef context,
 	JSStringRelease (hint_arg);
 
 	hint = JSStringCreateWithUTF8CString (lightdm_greeter_get_hint (greeter, hint_name));
-
 	g_free (hint_name);
+	result = JSValueMakeString (context, hint);
+        JSStringRelease (hint);
 
-	return JSValueMakeString (context, hint);
+        return result;
 }
 
 
@@ -611,13 +603,8 @@ respond_cb(JSContextRef context,
 	size_t         response_size;
 	gchar          *response;
 
-	if (!( argumentCount == 1 && JSValueGetType(context, arguments[0]) == kJSTypeString )) {
-		JSStringRef string = JSStringCreateWithUTF8CString("Response not supplied");
-		JSValueRef exceptionString = JSValueMakeString(context, string);
-		JSStringRelease(string);
-		*exception = JSValueToObject(context, exceptionString, NULL);
-		return JSValueMakeNull(context);
-	}
+	if (!( argumentCount == 1 && JSValueGetType(context, arguments[0]) == kJSTypeString ))
+		return mkexception (context, exception, "Response not supplied");
 
 	response_arg = JSValueToStringCopy(context, arguments[0], NULL);
 	response_size = JSStringGetMaximumUTF8CStringSize(response_arg);
@@ -641,13 +628,8 @@ cancel_authentication_cb(JSContextRef context,
 						 JSValueRef *exception) {
 	LightDMGreeter *greeter = JSObjectGetPrivate(thisObject);
 
-	if (argumentCount != 0) {
-		JSStringRef string = JSStringCreateWithUTF8CString("Argument count not zero");
-		JSValueRef exceptionString = JSValueMakeString(context, string);
-		JSStringRelease(string);
-		*exception = JSValueToObject(context, exceptionString, NULL);
-		return JSValueMakeNull(context);
-	}
+	if (argumentCount != 0)
+		return mkexception (context, exception, "Argument count not zero");
 
 	lightdm_greeter_cancel_authentication(greeter);
 	return JSValueMakeNull(context);
@@ -751,13 +733,8 @@ suspend_cb(JSContextRef context,
 		   size_t argumentCount,
 		   const JSValueRef arguments[],
 		   JSValueRef *exception) {
-	if (argumentCount != 0) {
-		JSStringRef string = JSStringCreateWithUTF8CString("Argument count not zero");
-		JSValueRef exceptionString = JSValueMakeString(context, string);
-		JSStringRelease(string);
-		*exception = JSValueToObject(context, exceptionString, NULL);
-		return JSValueMakeNull(context);
-	}
+	if (argumentCount != 0)
+		return mkexception (context, exception, "Argument count not zero");
 
 	lightdm_suspend(NULL);
 	return JSValueMakeNull(context);
@@ -780,13 +757,8 @@ hibernate_cb(JSContextRef context,
 			 size_t argumentCount,
 			 const JSValueRef arguments[],
 			 JSValueRef *exception) {
-	if (argumentCount != 0) {
-		JSStringRef string = JSStringCreateWithUTF8CString("Argument count not zero");
-		JSValueRef exceptionString = JSValueMakeString(context, string);
-		JSStringRelease(string);
-		*exception = JSValueToObject(context, exceptionString, NULL);
-		return JSValueMakeNull(context);
-	}
+	if (argumentCount != 0)
+		return mkexception (context, exception, "Argument count not zero");
 
 	lightdm_hibernate(NULL);
 	return JSValueMakeNull(context);
@@ -809,13 +781,8 @@ restart_cb(JSContextRef context,
 		   size_t argumentCount,
 		   const JSValueRef arguments[],
 		   JSValueRef *exception) {
-	if (argumentCount != 0) {
-		JSStringRef string = JSStringCreateWithUTF8CString("Argument count not zero");
-		JSValueRef exceptionString = JSValueMakeString(context, string);
-		JSStringRelease(string);
-		*exception = JSValueToObject(context, exceptionString, NULL);
-		return JSValueMakeNull(context);
-	}
+	if (argumentCount != 0)
+		return mkexception (context, exception, "Argument count not zero");
 
 	lightdm_restart(NULL);
 	return JSValueMakeNull(context);
@@ -838,13 +805,8 @@ shutdown_cb(JSContextRef context,
 			size_t argumentCount,
 			const JSValueRef arguments[],
 			JSValueRef *exception) {
-	if (argumentCount != 0) {
-		JSStringRef string = JSStringCreateWithUTF8CString("Argument count not zero");
-		JSValueRef exceptionString = JSValueMakeString(context, string);
-		JSStringRelease(string);
-		*exception = JSValueToObject(context, exceptionString, NULL);
-		return JSValueMakeNull(context);
-	}
+	if (argumentCount != 0)
+		return mkexception (context, exception, "Argument count not zero");
 
 	lightdm_shutdown(NULL);
 	return JSValueMakeNull(context);
@@ -864,13 +826,8 @@ start_session_sync_cb(JSContextRef context,
 	gchar          *username, *session = NULL;
 
 	if (!((argumentCount == 1 && JSValueGetType (context, arguments[0]) == kJSTypeString) ||
-	      (argumentCount == 2 && JSValueGetType (context, arguments[0]) == kJSTypeString && JSValueGetType (context, arguments[1]) == kJSTypeString))) {
-		JSStringRef string = JSStringCreateWithUTF8CString("Username or Session incorrect");
-		JSValueRef exceptionString = JSValueMakeString(context, string);
-		JSStringRelease(string);
-		*exception = JSValueToObject(context, exceptionString, NULL);
-		return JSValueMakeNull (context);
-	}
+	      (argumentCount == 2 && JSValueGetType (context, arguments[0]) == kJSTypeString && JSValueGetType (context, arguments[1]) == kJSTypeString))) 
+		return mkexception (context, exception, "Username or Session incorrect");
 
 	arg = JSValueToStringCopy(context, arguments[0], NULL);
 	username_size = JSStringGetMaximumUTF8CStringSize(arg);
@@ -907,13 +864,8 @@ set_language_cb(JSContextRef context,
 	size_t         language_size;
 	gchar          *language;
 
-	if (!(argumentCount == 1 && JSValueGetType (context, arguments[0]) == kJSTypeString)) {
-		JSStringRef string = JSStringCreateWithUTF8CString("Language not supplied");
-		JSValueRef exceptionString = JSValueMakeString(context, string);
-		JSStringRelease(string);
-		*exception = JSValueToObject(context, exceptionString, NULL);
-		return false;
-	}
+	if (!(argumentCount == 1 && JSValueGetType (context, arguments[0]) == kJSTypeString))
+		return mkexception (context, exception, "Language not supplied");
 
 	arg = JSValueToStringCopy(context, arguments[0], NULL);
 	language_size = JSStringGetMaximumUTF8CStringSize(arg);
@@ -935,17 +887,13 @@ gettext_cb(JSContextRef context,
 		   size_t argumentCount,
 		   const JSValueRef arguments[],
 		   JSValueRef *exception) {
-	JSStringRef string_arg, result;
+	JSStringRef string_arg, text;
 	size_t      string_size;
 	gchar       *string;
+        JSValueRef  result;
 
-	if (!(argumentCount == 1 && JSValueGetType (context, arguments[0]) == kJSTypeString)) {
-		JSStringRef string = JSStringCreateWithUTF8CString("Argument not supplied");
-		JSValueRef exceptionString = JSValueMakeString(context, string);
-		JSStringRelease(string);
-		*exception = JSValueToObject(context, exceptionString, NULL);
-		return JSValueMakeNull(context);
-	}
+	if (!(argumentCount == 1 && JSValueGetType (context, arguments[0]) == kJSTypeString))
+		return mkexception (context, exception, "Argument not supplied");
 
 	string_arg = JSValueToStringCopy(context, arguments[0], NULL);
 	string_size = JSStringGetMaximumUTF8CStringSize(string_arg);
@@ -953,9 +901,12 @@ gettext_cb(JSContextRef context,
 	JSStringGetUTF8CString(string_arg, string, string_size);
 	JSStringRelease(string_arg);
 
-	result = JSStringCreateWithUTF8CString(gettext(string));
+	text = JSStringCreateWithUTF8CString(gettext(string));
 	g_free (string);
-	return JSValueMakeString(context, result);
+	result = JSValueMakeString(context, text);
+	JSStringRelease (text);
+
+	return result;
 }
 
 
@@ -966,18 +917,14 @@ ngettext_cb(JSContextRef context,
 			size_t argumentCount,
 			const JSValueRef arguments[],
 			JSValueRef *exception) {
-	JSStringRef  string_arg, plural_string_arg, result;
+	JSStringRef  string_arg, plural_string_arg, text;
 	size_t       string_size, plural_string_size;
 	gchar        *string, *plural_string;
 	unsigned int n;
+	JSValueRef result;
 
-	if (argumentCount != 3) {
-		JSStringRef string = JSStringCreateWithUTF8CString("Needs 3 arguments");
-		JSValueRef exceptionString = JSValueMakeString(context, string);
-		JSStringRelease(string);
-		*exception = JSValueToObject(context, exceptionString, NULL);
-		return JSValueMakeNull(context);
-	}
+	if (argumentCount != 3)
+		return mkexception (context, exception, "Needs 3 arguments");
 
 	string_arg = JSValueToStringCopy(context, arguments[0], NULL);
 	string_size = JSStringGetMaximumUTF8CStringSize(string_arg);
@@ -993,10 +940,13 @@ ngettext_cb(JSContextRef context,
 
 	n = JSValueToNumber(context, arguments[2], NULL);
 
-	result = JSStringCreateWithUTF8CString(ngettext(string, plural_string, n));
+	text = JSStringCreateWithUTF8CString(ngettext(string, plural_string, n));
 	g_free (string);
 	g_free (plural_string);
-	return JSValueMakeString(context, result);
+	result = JSValueMakeString(context, text);
+        JSStringRelease (text);
+
+	return result;
 }
 
 
