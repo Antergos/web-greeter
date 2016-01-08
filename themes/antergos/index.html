@@ -52,7 +52,7 @@
 	<script src="js/vendor/moment-with-locales.min.js"></script>
 
 	<!-- Theme JavaScript -->
-	<script type="text/javascript" src="js/greeting_translations.js"></script>
+	<script type="text/javascript" src="js/translations.js"></script>
 	<script type="text/javascript" src="js/greeter-compiled.js"></script>
 
 	<script type="text/javascript">
@@ -322,15 +322,14 @@
 <div id="logArea" class="log"></div>
 
 <div class="modal">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&close;</button>
-				<h4 class="modal-title"></h4>
+				<button type="button" class="close fa fa-close" data-dismiss="modal" aria-hidden="true"></button>
+				<h4 class="modal-title" data-i18n="confirm_system_action">${i18n}</h4>
 			</div>
-			<div class="modal-body">
-				<p data-i18n="confirm_system_action">${i18n}</p>
-			</div>
+			<!--<div class="modal-body">
+			</div>-->
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal" data-i18n="cancel">${i18n}</button>
 				<button type="button" class="btn btn-primary"></button>

@@ -56,6 +56,8 @@ var AntergosTheme = (function () {
 
 		if (null !== _self) {
 			return _self;
+		} else {
+			_self = this;
 		}
 		this.debug = this.cache_get('debug', 'enabled');
 		this.user_list_visible = false;
@@ -71,12 +73,18 @@ var AntergosTheme = (function () {
 		this.lang = window.navigator.language.split('-')[0].toLowerCase();
 		this.translations = window.ant_translations;
 
+		if ('undefined' === typeof window.navigator.languages) {
+			window.navigator.languages = [window.navigator.language];
+		}
+
 		this.initialize();
 	}
 
 	_createClass(AntergosTheme, [{
 		key: 'initialize',
 		value: function initialize() {
+			this.prepare_translations();
+			this.do_static_translations();
 			this.initialize_clock();
 			this.prepare_login_panel_header();
 			this.prepare_user_list();
@@ -95,9 +103,10 @@ var AntergosTheme = (function () {
 	}, {
 		key: 'log',
 		value: function log(text) {
-			if ('true' === this.debug || true) {
-				$('#logArea').append(text + '<br/>');
+			if ('true' === this.debug) {
+				console.log(text);
 			}
+			$('#logArea').append(text + '<br/>');
 		}
 
 		/**
@@ -343,9 +352,7 @@ var AntergosTheme = (function () {
 					template = '\n\t\t\t\t<a href="#" id="' + action + '" class="btn btn-default ' + action + '" data-toggle="tooltip" data-placement="top" title="' + action.capitalize() + '" data-container="body">\n\t\t\t\t\t<i class="fa fa-' + actions[action] + '"></i>\n\t\t\t\t</a>';
 
 					if (lightdm[cmd]) {
-						$(template).appendTo($(this.$actions_container)).click(action, function (event) {
-							lightdm[event.data]();
-						});
+						$(template).appendTo($(this.$actions_container)).click(this.system_action_handler);
 					}
 				} // END for (var [action, icon] of actions)
 			} catch (err) {
@@ -364,6 +371,7 @@ var AntergosTheme = (function () {
 			}
 
 			$('[data-toggle=tooltip]').tooltip();
+			$('.modal').modal({ show: false });
 		}
 	}, {
 		key: 'initialize_clock',
@@ -373,7 +381,6 @@ var AntergosTheme = (function () {
 			var saved_format = this.cache_get('clock', 'time_format'),
 			    format = null !== saved_format ? saved_format : 'LT',
 			    detected_language = this.lang;
-			window.navigator.languages = typeof window.navigator.languages !== 'undefined' ? window.navigator.languages : [window.navigator.language];
 
 			// Workaround for moment.js bug: https://github.com/moment/moment/issues/2856
 			var _iteratorNormalCompletion6 = true;
@@ -437,22 +444,25 @@ var AntergosTheme = (function () {
 	}, {
 		key: 'prepare_login_panel_header',
 		value: function prepare_login_panel_header() {
-			var greeting = null;
+			var greeting = this.translations.greeting ? this.translations.greeting : 'Welcome!';
 
-			if (this.translations.greeting.hasOwnProperty(this.lang)) {
-				greeting = this.translations.greeting[this.lang];
-			} else {
+			$('.welcome').text(greeting);
+			$('#hostname').append(lightdm.hostname);
+		}
+	}, {
+		key: 'prepare_translations',
+		value: function prepare_translations() {
+			if (!this.translations.hasOwnProperty(this.lang)) {
 				var _iteratorNormalCompletion7 = true;
 				var _didIteratorError7 = false;
 				var _iteratorError7 = undefined;
 
 				try {
-
 					for (var _iterator7 = window.navigator.languages[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
 						var lang = _step7.value;
 
-						if (this.translations.greeting.hasOwnProperty(lang)) {
-							greeting = this.translations.greeting[lang];
+						if (this.translations.hasOwnProperty(lang)) {
+							this.lang = lang;
 							break;
 						}
 					}
@@ -471,11 +481,30 @@ var AntergosTheme = (function () {
 					}
 				}
 			}
+			if (!this.translations.hasOwnProperty(this.lang)) {
+				this.lang = 'en';
+			}
 
-			greeting = null === greeting ? 'Welcome!' : greeting;
+			this.translations = this.translations[this.lang];
+		}
 
-			$('.welcome').text(greeting);
-			$('#hostname').append(lightdm.hostname);
+		/**
+   * Replace '${i18n}' with translated string for all elements that
+   * have the data-i18n attribute. This is for elements that are not generated
+   * dynamically (they can be found in index.html).
+   */
+
+	}, {
+		key: 'do_static_translations',
+		value: function do_static_translations() {
+			$('[data-i18n]').each(function () {
+				var key = $(this).attr('data-i18n'),
+				    html = $(this).html(),
+				    translated = _self.translations[key],
+				    new_html = html.replace('${i18n}', translated);
+
+				$(this).html(new_html);
+			});
 		}
 
 		/**
@@ -634,6 +663,24 @@ var AntergosTheme = (function () {
 				default:
 					break;
 			}
+		}
+	}, {
+		key: 'system_action_handler',
+		value: function system_action_handler() {
+			var _this2 = this;
+
+			var action = $(this).attr('id'),
+			    $modal = $('.modal');
+
+			$modal.find('.btn-primary').text(_self.translations[action]).click(action, function (event) {
+				$(_this2).off('click');
+				lightdm[event.data]();
+			});
+			$modal.find('.btn-default').click(function () {
+				$(_this2).next().off('click');
+			});
+
+			$modal.modal('toggle');
 		}
 
 		/**

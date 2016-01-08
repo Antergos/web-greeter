@@ -368,10 +368,15 @@ div.password, div.status, div.timer {
 	width: auto;
 }
 
+input.password.form-control {
+	box-shadow: 0 1px #dddddd;
+	margin-top: -1px;
+}
 input.password.form-control:focus {
 	-webkit-box-shadow: inset 0 -2px 0 #2196F3 !important;
 	box-shadow: inset 0 -2px 0 #2196F3 !important;
 	border-bottom: 2px solid #2196F3 !important;
+	margin-top: 0;
 }
 
 #passwordArea .btn {
@@ -543,4 +548,20 @@ a.list-group-item:focus:after, a.list-group-item:hover:after, a.list-group-item.
 .input-group, #passwordArea table {
 	width: 100%;
 	margin-top: 5px;
+}
+.modal-title {
+	text-align: center;
+	padding-top: 20px;
+}
+
+.modal-footer {
+	text-align: center;
+	padding-bottom: 30px;
+	padding-left: 25px;
+	padding-right: 25px;
+}
+
+.modal-header {
+	padding-left: 25px;
+	padding-right: 25px;
 }
