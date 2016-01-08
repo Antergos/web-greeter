@@ -52,6 +52,21 @@ static JSClassRef
 	lightdm_layout_class,
 	lightdm_session_class;
 
+static JSValueRef
+string_or_null(JSContextRef context, const gchar *str) {
+	JSValueRef result;
+	JSStringRef string;
+
+	if (str == NULL)
+		return JSValueMakeNull (context);
+  
+	string = JSStringCreateWithUTF8CString (str);
+	result = JSValueMakeString (context, string);
+	JSStringRelease (string);
+  
+	return result;
+}
+
 static char *
 escape (const gchar *text)
 {
@@ -90,8 +105,7 @@ get_user_name_cb(JSContextRef context,
 				 JSStringRef propertyName,
 				 JSValueRef *exception) {
 	LightDMUser *user = JSObjectGetPrivate(thisObject);
-
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(lightdm_user_get_name(user)));
+	return string_or_null(context, lightdm_user_get_name(user));
 }
 
 
@@ -101,8 +115,7 @@ get_user_real_name_cb(JSContextRef context,
 					  JSStringRef propertyName,
 					  JSValueRef *exception) {
 	LightDMUser *user = JSObjectGetPrivate(thisObject);
-
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(lightdm_user_get_real_name(user)));
+	return string_or_null(context, lightdm_user_get_real_name(user));
 }
 
 
@@ -112,8 +125,7 @@ get_user_display_name_cb(JSContextRef context,
 						 JSStringRef propertyName,
 						 JSValueRef *exception) {
 	LightDMUser *user = JSObjectGetPrivate(thisObject);
-
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(lightdm_user_get_display_name(user)));
+	return string_or_null(context, lightdm_user_get_display_name(user));
 }
 
 
@@ -123,8 +135,7 @@ get_user_home_directory_cb(JSContextRef context,
 						 JSStringRef propertyName,
 						 JSValueRef *exception) {
 	LightDMUser *user = JSObjectGetPrivate(thisObject);
-
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(lightdm_user_get_home_directory(user)));
+	return string_or_null(context, lightdm_user_get_home_directory(user));
 }
 
 static JSValueRef
@@ -133,8 +144,7 @@ get_user_image_cb(JSContextRef context,
 				  JSStringRef propertyName,
 				  JSValueRef *exception) {
 	LightDMUser *user = JSObjectGetPrivate(thisObject);
-
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(lightdm_user_get_image(user)));
+	return string_or_null(context, lightdm_user_get_image(user));
 }
 
 
@@ -144,13 +154,7 @@ get_user_language_cb(JSContextRef context,
 					 JSStringRef propertyName,
 					 JSValueRef *exception) {
 	LightDMUser *user     = JSObjectGetPrivate(thisObject);
-	const gchar *language = lightdm_user_get_language(user);
-
-	if (!language) {
-		return JSValueMakeNull(context);
-	}
-
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(language));
+	return string_or_null(context, lightdm_user_get_language(user)); 
 }
 
 
@@ -160,13 +164,7 @@ get_user_layout_cb(JSContextRef context,
 				   JSStringRef propertyName,
 				   JSValueRef *exception) {
 	LightDMUser *user   = JSObjectGetPrivate(thisObject);
-	const gchar *layout = lightdm_user_get_layout(user);
-
-	if (!layout) {
-		return JSValueMakeNull(context);
-	}
-
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(layout));
+	return string_or_null(context, lightdm_user_get_layout(user));
 }
 
 
@@ -176,13 +174,7 @@ get_user_session_cb(JSContextRef context,
 					JSStringRef propertyName,
 					JSValueRef *exception) {
 	LightDMUser *user    = JSObjectGetPrivate(thisObject);
-	const gchar *session = lightdm_user_get_session(user);
-
-	if (!session) {
-		return JSValueMakeNull(context);
-	}
-
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(session));
+	return string_or_null(context, lightdm_user_get_session(user));
 }
 
 
@@ -202,8 +194,7 @@ get_language_code_cb(JSContextRef context,
 					 JSStringRef propertyName,
 					 JSValueRef *exception) {
 	LightDMLanguage *language = JSObjectGetPrivate(thisObject);
-
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(lightdm_language_get_code(language)));
+	return string_or_null(context, lightdm_language_get_code(language));
 }
 
 
@@ -213,8 +204,7 @@ get_language_name_cb(JSContextRef context,
 					 JSStringRef propertyName,
 					 JSValueRef *exception) {
 	LightDMLanguage *language = JSObjectGetPrivate(thisObject);
-
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(lightdm_language_get_name(language)));
+	return string_or_null(context, lightdm_language_get_name(language));
 }
 
 
@@ -224,8 +214,7 @@ get_language_territory_cb(JSContextRef context,
 						  JSStringRef propertyName,
 						  JSValueRef *exception) {
 	LightDMLanguage *language = JSObjectGetPrivate(thisObject);
-
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(lightdm_language_get_territory(language)));
+	return string_or_null(context, lightdm_language_get_territory(language));
 }
 
 
@@ -235,8 +224,7 @@ get_layout_name_cb(JSContextRef context,
 				   JSStringRef propertyName,
 				   JSValueRef *exception) {
 	LightDMLayout *layout = JSObjectGetPrivate(thisObject);
-
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(lightdm_layout_get_name(layout)));
+	return string_or_null(context, lightdm_layout_get_name(layout));
 }
 
 
@@ -246,8 +234,7 @@ get_layout_short_description_cb(JSContextRef context,
 								JSStringRef propertyName,
 								JSValueRef *exception) {
 	LightDMLayout *layout = JSObjectGetPrivate(thisObject);
-
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(lightdm_layout_get_short_description(layout)));
+	return string_or_null(context, lightdm_layout_get_short_description(layout));
 }
 
 
@@ -257,8 +244,7 @@ get_layout_description_cb(JSContextRef context,
 						  JSStringRef propertyName,
 						  JSValueRef *exception) {
 	LightDMLayout *layout = JSObjectGetPrivate(thisObject);
-
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(lightdm_layout_get_description(layout)));
+	return string_or_null(context, lightdm_layout_get_description(layout));
 }
 
 
@@ -268,8 +254,7 @@ get_session_key_cb(JSContextRef context,
 				   JSStringRef propertyName,
 				   JSValueRef *exception) {
 	LightDMSession *session = JSObjectGetPrivate(thisObject);
-
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(lightdm_session_get_key(session)));
+	return string_or_null(context, lightdm_session_get_key(session));
 }
 
 
@@ -279,8 +264,7 @@ get_session_name_cb(JSContextRef context,
 					JSStringRef propertyName,
 					JSValueRef *exception) {
 	LightDMSession *session = JSObjectGetPrivate(thisObject);
-
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(lightdm_session_get_name(session)));
+	return string_or_null(context, lightdm_session_get_name(session));
 }
 
 
@@ -290,8 +274,7 @@ get_session_comment_cb(JSContextRef context,
 					   JSStringRef propertyName,
 					   JSValueRef *exception) {
 	LightDMSession *session = JSObjectGetPrivate(thisObject);
-
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(lightdm_session_get_comment(session)));
+	return string_or_null(context, lightdm_session_get_comment(session));
 }
 
 
@@ -300,7 +283,7 @@ get_hostname_cb(JSContextRef context,
 				JSObjectRef thisObject,
 				JSStringRef propertyName,
 				JSValueRef *exception) {
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(lightdm_get_hostname()));
+	return string_or_null(context, lightdm_get_hostname());
 }
 
 
@@ -309,10 +292,7 @@ get_num_users_cb(JSContextRef context,
 				 JSObjectRef thisObject,
 				 JSStringRef propertyName,
 				 JSValueRef *exception) {
-	gint num_users;
-
-	num_users = g_list_length(lightdm_user_list_get_users(lightdm_user_list_get_instance()));
-	return JSValueMakeNumber(context, num_users);
+	return JSValueMakeNumber(context, g_list_length(lightdm_user_list_get_users(lightdm_user_list_get_instance())));
 }
 
 
@@ -371,7 +351,7 @@ get_language_cb(JSContextRef context,
 						JSObjectRef thisObject,
 						JSStringRef propertyName,
 						JSValueRef *exception) {
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(lightdm_language_get_name((LightDMLanguage *) lightdm_get_language())));
+	return string_or_null(context, lightdm_language_get_name((LightDMLanguage *) lightdm_get_language()));
 }
 
 static JSValueRef
@@ -405,7 +385,7 @@ get_layout_cb(JSContextRef context,
 			  JSObjectRef thisObject,
 			  JSStringRef propertyName,
 			  JSValueRef *exception) {
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(lightdm_layout_get_name(lightdm_get_layout())));
+	return string_or_null(context, lightdm_layout_get_name(lightdm_get_layout()));
 }
 
 
@@ -481,8 +461,7 @@ get_default_session_cb(JSContextRef context,
 					   JSStringRef propertyName,
 					   JSValueRef *exception) {
 	LightDMGreeter *greeter = JSObjectGetPrivate(thisObject);
-
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(lightdm_greeter_get_default_session_hint(greeter)));
+	return string_or_null(context, lightdm_greeter_get_default_session_hint(greeter));
 }
 
 
@@ -492,7 +471,6 @@ get_lock_hint_cb(JSContextRef context,
 				 JSStringRef propertyName,
 				 JSValueRef *exception) {
 	LightDMGreeter *greeter = JSObjectGetPrivate(thisObject);
-
 	return JSValueMakeBoolean(context, lightdm_greeter_get_lock_hint(greeter));
 }
 
@@ -503,7 +481,6 @@ get_autologin_timeout_cb(JSContextRef context,
 						 JSStringRef propertyName,
 						 JSValueRef *exception) {
 	LightDMGreeter *greeter = JSObjectGetPrivate(thisObject);
-
 	return JSValueMakeNumber(context, lightdm_greeter_get_autologin_timeout_hint(greeter));
 }
 
@@ -683,7 +660,7 @@ get_authentication_user_cb(JSContextRef context,
 						   JSStringRef propertyName,
 						   JSValueRef *exception) {
 	LightDMGreeter *greeter = JSObjectGetPrivate(thisObject);
-	return JSValueMakeString(context, JSStringCreateWithUTF8CString(lightdm_greeter_get_authentication_user(greeter)));
+	return string_or_null(context, lightdm_greeter_get_authentication_user(greeter));
 }
 
 static JSValueRef
@@ -710,7 +687,7 @@ get_select_user_cb (JSContextRef context,
 						JSStringRef propertyName,
 						JSValueRef * exception) {
 	LightDMGreeter *greeter = JSObjectGetPrivate (thisObject);
-	return JSValueMakeString (context, JSStringCreateWithUTF8CString (lightdm_greeter_get_select_user_hint (greeter)));
+	return string_or_null (context, lightdm_greeter_get_select_user_hint (greeter));
 }
 
 static JSValueRef
@@ -728,7 +705,7 @@ get_autologin_user_cb (JSContextRef context,
 						JSStringRef propertyName,
 						JSValueRef * exception) {
 	LightDMGreeter *greeter = JSObjectGetPrivate (thisObject);
-	return JSValueMakeString (context, JSStringCreateWithUTF8CString (lightdm_greeter_get_autologin_user_hint (greeter)));
+	return string_or_null (context, lightdm_greeter_get_autologin_user_hint (greeter));
 }
 
 static JSValueRef
