@@ -140,13 +140,13 @@
 			<i class="fa fa-times"></i> </a>
 
 		<div class="bg-switch">
-			<h3>Background Options</h3>
+			<h3 data-i18n="background_options">${i18n}</h3>
 
 			<div class="clearfix"></div>
 			<div class="bgs">
 				<a href="#" data-img="random" class="bg clearfix">
 					<div class="random">
-						<span>Random</span>
+						<span data-i18n="random">${i18n}</span>
 					</div>
 				</a> <a href="#" data-img="antergos-wallpaper.png" class="bg clearfix">
 				<img src="img/thumbs/antergos-wallpaper.png"/> </a>
@@ -254,16 +254,16 @@
 																			</button>
 																			<ul class="dropdown-menu pull-right">
 																				<li>
-																					<a href="#" class="cancel_auth">
-																						<i class="fa fa-times"></i> Cancel</a>
+																					<a href="#" class="cancel_auth" data-i18n="cancel">
+																						<i class="fa fa-times"></i> ${i18n}</a>
 																				</li>
 																				<li>
-																					<a href="#" onclick="showLog()">
-																						<i class="fa fa-bug"></i> View Log</a>
+																					<a href="#" onclick="$(document.location.reload(true))" data-i18n="reset">
+																						<i class="fa fa-refresh"></i> ${i18n}</a>
 																				</li>
 																				<li>
-																					<a href="#" onclick="$(document.location.reload(true))">
-																						<i class="fa fa-refresh"></i> Reset</a>
+																					<a href="#" onclick="showLog()" data-i18n="debug_log">
+																						<i class="fa fa-bug"></i> ${i18n}</a>
 																				</li>
 																			</ul>
 																		</div>
@@ -320,6 +320,24 @@
 </div>
 
 <div id="logArea" class="log"></div>
+
+<div class="modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&close;</button>
+				<h4 class="modal-title"></h4>
+			</div>
+			<div class="modal-body">
+				<p data-i18n="confirm_system_action">${i18n}</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal" data-i18n="cancel">${i18n}</button>
+				<button type="button" class="btn btn-primary"></button>
+			</div>
+		</div>
+	</div>
+</div>
 
 <!-- Custom JavaScript for the BG Switcher & Clock Toggle -->
 <script>
