@@ -407,7 +407,7 @@ class AntergosTheme {
 	 */
 	authentication_complete() {
 		var selected_session = $( '.selected' ).attr( 'data-session-id' ),
-			err_msg = this.translations.auth_failed[ this.lang ];
+			err_msg = _self.translations.auth_failed[ _self.lang ];
 
 		_self.auth_pending = false;
 		_self.cache_set( selected_session, 'user', lightdm.authentication_user, 'session' );
@@ -419,7 +419,6 @@ class AntergosTheme {
 			lightdm.login( lightdm.authentication_user, selected_session );
 		} else {
 			// The user did not enter the correct password. Show error message.
-
 			$( '#statusArea' ).show();
 		}
 	}
