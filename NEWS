@@ -1,3 +1,16 @@
+Overview of changes in lightdm-webkit-greeter 0.3.0
+
+    * Completed API including the guest and auto-login functions.
+    * API is now completely in-line with LightDM API.
+    * Several functional code improvements.
+    * Added Exception handling.
+    * Added man page.
+    * Default theme:
+        - Added translations.
+        - Added confirmation dialogue for system actions.
+        - Theme's script was completely rewritten in ES6.
+        - Use babel to compile ES6->ES5 until webkit catches up.
+
 Overview of changes in lightdm-webkit-greeter 0.2.3
 
     * Add support for getting the lock_hint from lightdm.
