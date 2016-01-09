@@ -28,7 +28,7 @@
 
 var fs = require( "fs" ),
 	path = require( 'path' ),
-	i18n_dir = process.argv[1] + 'i18n/',
+	i18n_dir = process.argv[2] + '/i18n/',
 	translation_files = fs.readdirSync( i18n_dir ),
 	output = i18n_dir + 'translations.json',
 	translations = {};
@@ -87,11 +87,11 @@ fs.writeFile( output, JSON.stringify( translations ), function( error ) {
 		console.log( "Successful Write to " + output );
 	}
 } );
-fs.writeFile( i18n_dir + 'js/translations.js', 'window.ant_translations = ' + JSON.stringify( translations ), function( error ) {
+fs.writeFile( i18n_dir.replace('/i18n/', '') + '/js/translations.js', 'window.ant_translations = ' + JSON.stringify( translations ), function( error ) {
 	if ( error ) {
 		console.error( "write error:  " + error.message );
 	} else {
-		console.log( "Successful Write to " + output );
+		console.log( "Successful Write to " + i18n_dir.replace('/i18n/', '') + '/js/translations.js' );
 	}
 } );
 
