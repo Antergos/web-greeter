@@ -4,7 +4,7 @@
 
 ### Overview
 
-This is the default theme included with [lightdm-webkit2-greeter](http://github.com/Antergos/lightdm-webkit2-greeter). If you are using the Webkit2 greeter, you already have this theme.
+This is the default theme included with [lightdm-webkit2-greeter](http://github.com/Antergos/lightdm-webkit2-greeter). If you are using the Webkit2 greeter, you already have this theme. The theme can also be used with the legacy Webkit1 greeter.
 
 ### Screenshots
 <img src="img/screenshot1.jpg" alt="screenshot1" />
