@@ -190,7 +190,7 @@ main(int argc, char **argv) {
 
 	// Apply greeter settings from conf file
 	keyfile = g_key_file_new();
-	g_key_file_load_from_file(keyfile, "/etc/lightdm/lightdm-webkit2-greeter.conf", G_KEY_FILE_NONE, NULL);
+	g_key_file_load_from_file(keyfile, CONFIG_DIR "/lightdm-webkit2-greeter.conf", G_KEY_FILE_NONE, NULL);
 	theme          = g_key_file_get_string(keyfile, "greeter", "webkit-theme", NULL);
 	config_timeout = g_key_file_get_integer(keyfile, "greeter", "screensaver-timeout", NULL);
 

@@ -34,6 +34,13 @@ PKG_CHECK_MODULES([WEB_EXTENSION], [webkit2gtk-web-extension-4.0 >= 2.8.0])
 AC_SUBST([WEB_EXTENSION_CFLAGS])
 AC_SUBST([WEB_EXTENSION_LIBS])
 
+# Check for exo-csource
+AC_DEFUN([AC_PROG_EXOCSOURCE], [AC_CHECK_PROG(EXOCSOURCE,exo-csource,yes)])
+AC_PROG_EXOCSOURCE
+if test x"${EXOCSOURCE}" != x"yes" ; then
+    AC_MSG_ERROR([Please install the package containing the exo-csource binary.])
+fi
+
 dnl ###########################################################################
 dnl Configurable values
 dnl ###########################################################################
@@ -108,19 +115,21 @@ dnl ###########################################################################
 AC_OUTPUT([
 Makefile
 data/Makefile
+man/Makefile
 src/Makefile
 po/Makefile.in
 themes/Makefile
+themes/antergos/css/vendor/Makefile
+themes/antergos/css/Makefile
 themes/antergos/Makefile
+themes/antergos/fonts/Makefile
+themes/antergos/fonts/font-awesome/Makefile
+themes/antergos/fonts/TTF/Makefile
+themes/antergos/js/vendor/Makefile
 themes/antergos/js/Makefile
 themes/antergos/img/Makefile
 themes/antergos/img/thumbs/Makefile
-themes/antergos/font-awesome/Makefile
-themes/antergos/font-awesome/fonts/Makefile
-themes/antergos/font-awesome/css/Makefile
-themes/antergos/css/Makefile
-themes/antergos/css/lib/Makefile
-themes/antergos/css/bootstrap/Makefile
+themes/simple/Makefile
 ])
 
 dnl ###########################################################################
