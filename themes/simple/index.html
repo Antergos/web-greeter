@@ -92,7 +92,7 @@
       function authentication_complete()
       {
         if (lightdm.is_authenticated) {
-          lightdm.start_session_sync (lightdm.authentication_user, lightdm.default_session);
+          lightdm.start_session_sync (); // Start default session
         } else {
           show_message ("Authentication Failed", "error");
           setTimeout (start_authentication, 3000);
@@ -130,7 +130,7 @@
       function start_authentication()
       {
         clear_messages();
-        lightdm.authenticate("");   // start with null userid, have pam prompt for userid.
+        lightdm.authenticate();   // start with null userid, have pam prompt for userid.
       }
 
       /*
