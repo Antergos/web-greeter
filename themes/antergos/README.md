@@ -1,5 +1,5 @@
 # lightdm-webkit-theme-antergos
-[![Latest Release](https://img.shields.io/github/release/Antergos/lightdm-webkit2-greeter.svg)](https://github.com/Antergos/lightdm-webkit2-greeter/releases/tag/0.2.3) [![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/Antergos/lightdm-webkit2-greeter/blob/master/LICENSE)
+[![Latest Release](https://img.shields.io/github/release/Antergos/lightdm-webkit-theme-antergos.svg)](https://github.com/Antergos/lightdm-webkit-theme-antergos/releases/tag/2.3.0) [![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/Antergos/lightdm-webkit2-greeter/blob/master/LICENSE)
 
 
 ### Overview
