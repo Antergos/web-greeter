@@ -916,8 +916,6 @@ start_session_sync_cb(JSContextRef context,
 		}
 	}
 	if (throw_exception) {
-		g_free(i);
-		g_free(throw_exception);
 		return mkexception(context, exception, "Username or Session incorrect");
 	}
 
