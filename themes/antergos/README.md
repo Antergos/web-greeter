@@ -7,11 +7,13 @@
 This is the default theme included with [lightdm-webkit2-greeter](http://github.com/Antergos/lightdm-webkit2-greeter). If you are using the Webkit2 greeter, you already have this theme. The theme can also be used with the legacy Webkit1 greeter.
 
 ### Screenshots
+<center>
 <img src="img/screenshot1.jpg" alt="screenshot1" />
 <hr/>
 <img src="img/screenshot2.jpg" alt="screenshot2" />
 <hr/>
 <img src="img/screenshot3.jpg" alt="screenshot3" />
+</center>
 
 ### Prerequisites
 * lightdm-webkit-greeter
