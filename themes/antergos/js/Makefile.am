@@ -3,7 +3,7 @@ javascript_DATA = \
 	greeter.js \
 	greeter-compiled.js \
 	greeter-compiled.js.map \
-	greeting_translations.js \
+	translations.js \
 	mock.js
 
 EXTRA_DIST = $(javascript_DATA)
