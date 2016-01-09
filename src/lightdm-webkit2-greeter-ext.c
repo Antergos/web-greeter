@@ -749,9 +749,10 @@ login_cb(JSContextRef context,
 		 size_t argumentCount,
 		 const JSValueRef arguments[],
 		 JSValueRef *exception) {
-	LightDMGreeter *greeter                 = JSObjectGetPrivate(thisObject);
-	JSStringRef    arg;
-	char           username[1024], *session = NULL;
+
+	LightDMGreeter *greeter = JSObjectGetPrivate(thisObject);
+	JSStringRef arg;
+	char username[1024], *session = NULL;
 
 	// FIXME: Throw exception
 
@@ -760,7 +761,7 @@ login_cb(JSContextRef context,
 	JSStringRelease(arg);
 
 	if (argumentCount > 1) {
-		arg     = JSValueToStringCopy(context, arguments[1], NULL);
+		arg = JSValueToStringCopy(context, arguments[1], NULL);
 		session = g_malloc(sizeof(char) * 1024);
 		JSStringGetUTF8CString(arg, session, 1024);
 		JSStringRelease(arg);
@@ -972,15 +973,15 @@ static const JSClassDefinition gettext_definition = {
 };
 
 
-/*static void
+static void
 web_page_created_callback(WebKitWebExtension *extension, WebKitWebPage *web_page, gpointer user_data) {
-
+	#define G_GUINT64_FORMAT "lu"
 	g_print("Page %" G_GUINT64_FORMAT "created for %s\n",
 			webkit_web_page_get_id(web_page),
 			webkit_web_page_get_uri(web_page)
 	);
 
-}*/
+}
 
 
 static void
