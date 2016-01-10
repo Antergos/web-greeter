@@ -1,24 +1,24 @@
-.TH "LIGHTDM" "1" "2015/11/14"
+.TH "lightdm-webkit2-greeter" "1" "2016.01.09"
 .nh
 .ad l
 .SH "NAME"
-lightdm-webkit2-greeter \- Themeable greeter for LightDM which uses webkit2\&.
+lightdm-webkit2-greeter \- LightDM greeter that uses webkit2 for theming via HTML/JavaScript\&.
 .SH "SYNOPSIS"
 .HP \w'\fBlightdm-webkit2-greeter\fR\ 'u
 \fBlightdm-webkit2-greeter\fR
 .SH "DESCRIPTION"
 .PP
-lightdm-webkit2-greeter is a LightDM greeter that uses webkit2 as the theming
-engine\&.  Greeters can be written in a combination of HTML and Javascript\&.
+lightdm-webkit2-greeter is a LightDM greeter that uses webkit2 for theming\&.  Themes can be written
+using a combination of HTML and Javascript\&.
 .PP
-.SH "API"
-Please note that all functions or variables marked "deprecated" are still
-available for backwards compatibility, but may disappear in a future version of
-lightdm-webkit2-greeter\&.  Authors of themes should use the new functions and
-variables, which more closely match the LightDM API\&.
+.SH "THEME JAVASCRIPT API"
+Please note that all properties and functions which are marked as "deprecated" are
+only available for backwards compatibility and will be removed in a future version of
+lightdm-webkit2-greeter\&.  Theme authors should not use any deprecated properties or
+functions in new works and should update any existing works which make use of
+deprecated properties and/or functions\&.
 .PP
-The following functions \fBmust\fR be provided by the custom greeter, which LightDM
-will call in the process of authenticating the user\&.
+The following functions \fBmust\fR be provided by the greeter theme and callable on the global "window" object\&.
 .PP
 \fBshow_prompt(text, type)\fR
 .RS 4
@@ -251,18 +251,18 @@ theme the greeter should use\&.
 .RE
 .SH "FILES"
 .PP
-\fB/usr/share/lightdm-webkit-themes\fR
+\fB/usr/share/lightdm-webkit/themes\fR
 .RS 4
 Directory where themes should be stored\&.
 .RE
 .SH "EXAMPLES"
 .PP
-Please see the "antergos" and "simple" themes that are shipped with
-lightdm-webkit2-greeter\&.
+Please see the "antergos" and "simple" themes that are shipped with lightdm-webkit2-greeter\&.
 .SH "SEE ALSO"
 .PP
 http://people\&.ubuntu\&.com/~robert-ancell/lightdm/reference/core\&.html
 .SH "AUTHOR"
 .PP
-lightdm-webkit-greeter was written by Robert Ancell <robert\&.ancell\&@canonical\&.com\&>\&.
-lightdm-webkit2-greeter was ported to webkit2 by the Antergos Developers <dev@antergos\&.com>
+The legacy lightdm-webkit-greeter was written by Robert Ancell <robert\&.ancell\&@canonical\&.com\&>\&.
+It was ported to webkit2 by the Antergos Developers <dev@antergos\&.com>\&. Also includes code improvements
+contributed by Scott Balneaves <sbalneav@ltsp\&.org>\&.
