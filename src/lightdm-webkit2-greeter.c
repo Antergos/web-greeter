@@ -1,7 +1,7 @@
 /*
  * lightdm-webkit2-greeter.c
  *
- * Copyright © 2014-2015 Antergos Developers <dev@antergos.com>
+ * Copyright © 2014-2016 Antergos Developers <dev@antergos.com>
  *
  * Based on code from lightdm-webkit-greeter:
  * Copyright © 2010-2015 Robert Ancell <robert.ancell@canonical.com>
@@ -45,23 +45,23 @@
 
 #include "src/lightdm-webkit2-greeter-css-application.h"
 
-static GtkWidget      *web_view;
-static GtkWidget      *window;
+static GtkWidget *web_view;
+static GtkWidget *window;
 static WebKitSettings *webkit_settings;
-static GdkDisplay     *default_display;
+static GdkDisplay *default_display;
 
 /* Screensaver values */
-static int  timeout, interval, prefer_blanking, allow_exposures;
+static int timeout, interval, prefer_blanking, allow_exposures;
 static gint config_timeout;
 
 
 static GdkFilterReturn
 wm_window_filter(GdkXEvent *gxevent, GdkEvent *event, gpointer data) {
-
 	XEvent *xevent = (XEvent *) gxevent;
+
 	if (xevent->type == MapNotify) {
-		GdkDisplay        *display = gdk_x11_lookup_xdisplay(xevent->xmap.display);
-		GdkWindow         *win     = gdk_x11_window_foreign_new_for_display(display, xevent->xmap.window);
+		GdkDisplay *display = gdk_x11_lookup_xdisplay(xevent->xmap.display);
+		GdkWindow *win = gdk_x11_window_foreign_new_for_display(display, xevent->xmap.window);
 		GdkWindowTypeHint win_type = gdk_window_get_type_hint(win);
 
 		if (win_type != GDK_WINDOW_TYPE_HINT_COMBO
@@ -73,7 +73,7 @@ wm_window_filter(GdkXEvent *gxevent, GdkEvent *event, gpointer data) {
 
 	} else if (xevent->type == UnmapNotify) {
 		Window xwin;
-		int    revert_to = RevertToNone;
+		int revert_to = RevertToNone;
 
 		XGetInputFocus(xevent->xunmap.display, &xwin, &revert_to);
 		if (revert_to == RevertToNone) {
@@ -117,14 +117,16 @@ context_menu_cb(WebKitWebView *view,
 				GdkEvent *event,
 				WebKitHitTestResult *hit_test_result,
 				gpointer user_data) {
+
 	return TRUE;
 }
 
 
 static void
 greeter_bridge_lock_hint_cb(void) {
-	// Make the greeter behave a bit more like a screensaver if used as un/lock-screen by blanking the screen.
+	// Make the greeter behave a bit more like a screensaver if used as [un]lock-screen by blanking the screen.
 	Display *display = gdk_x11_display_get_xdisplay(default_display);
+
 	XGetScreenSaver(display, &timeout, &interval, &prefer_blanking, &allow_exposures);
 	XForceScreenSaver(display, ScreenSaverActive);
 	XSetScreenSaver(display,
@@ -141,7 +143,8 @@ message_received_cb(WebKitUserContentManager *manager,
 					gpointer user_data) {
 
 	/* TODO:
-	 * Abstract this by using JSON for exchanging messages so the handler can be used for more than one task/event.
+	 * Abstract this by using JSON for exchanging messages so the handler can
+	 * be used for more than one task/event.
 	 */
 	greeter_bridge_lock_hint_cb();
 
@@ -151,13 +154,14 @@ message_received_cb(WebKitUserContentManager *manager,
 static gboolean
 fade_timer_cb(gpointer data) {
 	gdouble opacity;
-
 	opacity = gtk_widget_get_opacity(web_view);
 	opacity -= 0.1;
+
 	if (opacity <= 0) {
 		gtk_main_quit();
 		return FALSE;
 	}
+
 	gtk_widget_set_opacity(web_view, opacity);
 
 	return TRUE;
@@ -174,15 +178,15 @@ quit_cb(void) {
 
 int
 main(int argc, char **argv) {
-	GdkScreen                *screen;
-	GdkWindow                *root_window;
-	GdkRectangle             geometry;
-	GKeyFile                 *keyfile;
-	gchar                    *theme;
-	GdkRGBA                  bg_color;
+	GdkScreen *screen;
+	GdkWindow *root_window;
+	GdkRectangle geometry;
+	GKeyFile *keyfile;
+	gchar *theme;
+	GdkRGBA bg_color;
 	WebKitUserContentManager *manager;
-	WebKitWebContext         *context;
-	GtkCssProvider           *css_provider;
+	WebKitWebContext *context;
+	GtkCssProvider *css_provider;
 
 	g_unix_signal_add(SIGTERM, (GSourceFunc) quit_cb, /* is_callback */ GINT_TO_POINTER(TRUE));
 
@@ -191,13 +195,13 @@ main(int argc, char **argv) {
 	// Apply greeter settings from conf file
 	keyfile = g_key_file_new();
 	g_key_file_load_from_file(keyfile, CONFIG_DIR "/lightdm-webkit2-greeter.conf", G_KEY_FILE_NONE, NULL);
-	theme          = g_key_file_get_string(keyfile, "greeter", "webkit-theme", NULL);
+	theme = g_key_file_get_string(keyfile, "greeter", "webkit-theme", NULL);
 	config_timeout = g_key_file_get_integer(keyfile, "greeter", "screensaver-timeout", NULL);
 
 	// Setup the main window
-	window          = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	screen          = gtk_window_get_screen(GTK_WINDOW(window));
-	root_window     = gdk_get_default_root_window();
+	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	screen = gtk_window_get_screen(GTK_WINDOW(window));
+	root_window = gdk_get_default_root_window();
 	default_display = gdk_display_get_default();
 
 	gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
