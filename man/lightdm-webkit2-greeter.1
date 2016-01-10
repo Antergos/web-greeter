@@ -50,11 +50,11 @@ expired\&.  The greeter should reset the authentication process\&.
 The following functions are available for the greeter to call to execute
 actions within LightDM\&.
 .PP
-\fBlightdm\&.authenticate(name)\fR
+\fBlightdm\&.authenticate(username)\fR
 .RS 4
-Specifies the name of the user we'd like to start authenticating as\&.  Note that
-if you pass an empty string (""), LightDM (via PAM) will issue a show_prompt()
-call to ask for the username\&. The older function
+Specifies the username of the user we'd like to start authenticating as\&.  Note that
+if you call lightdm.authenticate with no argument, LightDM (via PAM) will issue
+a show_prompt() call to ask for the username\&. The older function
 lightdm\&.start_authentication() has been deprecated\&.
 .RE
 .PP
@@ -85,11 +85,12 @@ Returns the value of a named hint provided by LightDM\&.
 Hibernates the system, if the greeter has the authority to do so\&.
 .RE
 .PP
-\fBlightdm\&.start_session_sync(user, session)\fR
+\fBlightdm\&.start_session_sync(session)\fR
 .RS 4
 Once LightDM has successfully authenticated the user, start the user's session
-by calling this function\&.  "user" is the authenticated user, and "session" is
-the user's session\&. The older function lightdm\&.login() has been
+by calling this function\&.  "session" is the authenticated user's session\&.
+If no session is passed, start the authenticated user with the system default
+session. The older function lightdm\&.login(user, session) has been
 deprecated\&.
 .RE
 .PP
