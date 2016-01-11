@@ -3,7 +3,7 @@
  *
  * Copyright © 2014-2016 Antergos Developers <dev@antergos.com>
  *
- * Contributed Code:
+ * Includes Code Contributed By:
  * Copyright © 2016 Scott Balneaves <sbalneav@ltsp.org>
  *
  * Based on code from lightdm-webkit-greeter:
@@ -29,7 +29,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with lightdm-webkit2-greeter; If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 #include <stdlib.h>
@@ -47,11 +46,11 @@ G_MODULE_EXPORT void webkit_web_extension_initialize(WebKitWebExtension *extensi
 
 guint64 page_id = -1;
 
-#define USER     ((LightDMUser *)    JSObjectGetPrivate (thisObject))
-#define LANGUAGE ((LightDMLanguage *)JSObjectGetPrivate (thisObject))
-#define LAYOUT   ((LightDMLayout *)  JSObjectGetPrivate (thisObject))
-#define SESSION  ((LightDMSession *) JSObjectGetPrivate (thisObject))
-#define GREETER  ((LightDMGreeter *) JSObjectGetPrivate (thisObject))
+#define USER     ((LightDMUser *)     JSObjectGetPrivate (thisObject))
+#define LAYOUT   ((LightDMLayout *)   JSObjectGetPrivate (thisObject))
+#define SESSION  ((LightDMSession *)  JSObjectGetPrivate (thisObject))
+#define GREETER  ((LightDMGreeter *)  JSObjectGetPrivate (thisObject))
+#define LANGUAGE ((LightDMLanguage *) JSObjectGetPrivate (thisObject))
 
 static JSClassRef
 	lightdm_greeter_class,
@@ -448,7 +447,8 @@ get_language_cb(JSContextRef context,
 				JSObjectRef thisObject,
 				JSStringRef propertyName,
 				JSValueRef *exception) {
-	return string_or_null(context, lightdm_language_get_name((LightDMLanguage *) lightdm_get_language()));
+	return string_or_null(context,
+						  lightdm_language_get_name((LightDMLanguage *) lightdm_get_language()));
 }
 
 
@@ -1203,13 +1203,14 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 						kJSPropertyAttributeNone,
 						NULL);
 
-	// If lightdm was started as a lock-screen, send signal to our UI process.
+	/* If the greeter was started as a lock-screen, send message to our UI process. */
 	if (lightdm_greeter_get_lock_hint(greeter)) {
 		dom_document = webkit_web_page_get_dom_document(web_page);
 		dom_window = webkit_dom_document_get_default_view(dom_document);
 
 		if (dom_window) {
-			webkit_dom_dom_window_webkit_message_handlers_post_message(dom_window, "GreeterBridge", message);
+			webkit_dom_dom_window_webkit_message_handlers_post_message(dom_window,
+																	   "GreeterBridge", message);
 		}
 	}
 
@@ -1342,15 +1343,23 @@ G_MODULE_EXPORT void
 webkit_web_extension_initialize(WebKitWebExtension *extension) {
 	LightDMGreeter *greeter = lightdm_greeter_new();
 
-	g_signal_connect(G_OBJECT(greeter), "authentication-complete", G_CALLBACK(authentication_complete_cb), extension);
-	g_signal_connect(G_OBJECT(greeter), "show-prompt", G_CALLBACK(show_prompt_cb), extension);
-	g_signal_connect(G_OBJECT(greeter), "show-message", G_CALLBACK(show_message_cb), extension);
-	g_signal_connect(G_OBJECT(greeter), "autologin-timer-expired", G_CALLBACK(autologin_timer_expired_cb), extension);
+	g_signal_connect(G_OBJECT(greeter),
+					 "authentication-complete",
+					 G_CALLBACK(authentication_complete_cb),
+					 extension);
+
+	g_signal_connect(G_OBJECT(greeter),
+					 "autologin-timer-expired",
+					 G_CALLBACK(autologin_timer_expired_cb),
+					 extension);
 
 	g_signal_connect(webkit_script_world_get_default(),
 					 "window-object-cleared",
 					 G_CALLBACK(window_object_cleared_callback),
 					 greeter);
+
+	g_signal_connect(G_OBJECT(greeter), "show-prompt", G_CALLBACK(show_prompt_cb), extension);
+	g_signal_connect(G_OBJECT(greeter), "show-message", G_CALLBACK(show_message_cb), extension);
 
 	lightdm_greeter_connect_sync(greeter, NULL);
 }

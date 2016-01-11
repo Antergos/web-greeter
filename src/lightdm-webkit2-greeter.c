@@ -3,6 +3,9 @@
  *
  * Copyright © 2014-2016 Antergos Developers <dev@antergos.com>
  *
+ * Includes Code Contributed By:
+ * Copyright © 2016 Scott Balneaves <sbalneav@ltsp.org>
+ *
  * Based on code from lightdm-webkit-greeter:
  * Copyright © 2010-2015 Robert Ancell <robert.ancell@canonical.com>
  *
@@ -122,21 +125,31 @@ context_menu_cb(WebKitWebView *view,
 }
 
 
+/**
+ * Lock Hint enabled handler.
+ *
+ * Makes the greeter behave a bit more like a screensaver if it was launched as
+ * a lock-screen by blanking the screen.
+ */
 static void
-greeter_bridge_lock_hint_cb(void) {
-	// Make the greeter behave a bit more like a screensaver if used as [un]lock-screen by blanking the screen.
+lock_hint_enabled_handler(void) {
 	Display *display = gdk_x11_display_get_xdisplay(default_display);
 
 	XGetScreenSaver(display, &timeout, &interval, &prefer_blanking, &allow_exposures);
 	XForceScreenSaver(display, ScreenSaverActive);
-	XSetScreenSaver(display,
-					config_timeout,
-					0,
-					ScreenSaverActive,
-					DefaultExposures);
+	XSetScreenSaver(display, config_timeout, 0, ScreenSaverActive, DefaultExposures);
 }
 
 
+/**
+ * Message received callback.
+ *
+ * Receives messages from our web extension process and calls appropriate handlers.
+ *
+ * @param: manager The WebKitUserContentManager instance that was created in #main.
+ * @param: message The message sent from web extension process.
+ * @param: user_data Data that is private to the current user.
+ */
 static void
 message_received_cb(WebKitUserContentManager *manager,
 					WebKitJavascriptResult *message,
@@ -146,7 +159,7 @@ message_received_cb(WebKitUserContentManager *manager,
 	 * Abstract this by using JSON for exchanging messages so the handler can
 	 * be used for more than one task/event.
 	 */
-	greeter_bridge_lock_hint_cb();
+	lock_hint_enabled_handler();
 
 }
 
@@ -192,13 +205,17 @@ main(int argc, char **argv) {
 
 	gtk_init(&argc, &argv);
 
-	// Apply greeter settings from conf file
+	/* Apply greeter settings from config file */
 	keyfile = g_key_file_new();
-	g_key_file_load_from_file(keyfile, CONFIG_DIR "/lightdm-webkit2-greeter.conf", G_KEY_FILE_NONE, NULL);
+
+	g_key_file_load_from_file(keyfile,
+							  CONFIG_DIR "/lightdm-webkit2-greeter.conf",
+							  G_KEY_FILE_NONE, NULL);
+
 	theme = g_key_file_get_string(keyfile, "greeter", "webkit-theme", NULL);
 	config_timeout = g_key_file_get_integer(keyfile, "greeter", "screensaver-timeout", NULL);
 
-	// Setup the main window
+	/* Setup the main window */
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	screen = gtk_window_get_screen(GTK_WINDOW(window));
 	root_window = gdk_get_default_root_window();
@@ -210,11 +227,13 @@ main(int argc, char **argv) {
 	gtk_window_move(GTK_WINDOW(window), geometry.x, geometry.y);
 	gdk_window_set_cursor(root_window, gdk_cursor_new_for_display(default_display, GDK_LEFT_PTR));
 
-	// There is no window manager, so we need to implement some of its functionality
+	/* There is no window manager, so we need to implement some of its functionality */
 	gdk_window_set_events(root_window, gdk_window_get_events(root_window) | GDK_SUBSTRUCTURE_MASK);
 	gdk_window_add_filter(root_window, wm_window_filter, NULL);
 
-	// Setup CSS provider
+	/* Setup CSS provider. We use CSS to set the window background to black instead
+	 * of default white so the screen doesnt flash during startup.
+	 */
 	css_provider = gtk_css_provider_new();
 	gtk_css_provider_load_from_data(css_provider,
 									lightdm_webkit2_greeter_css_application,
@@ -223,33 +242,44 @@ main(int argc, char **argv) {
 											  GTK_STYLE_PROVIDER(css_provider),
 											  GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-	// Register and connect handler for setting the web extensions directory so webkit can find our extension
+	/* Register and connect handler that will set the web extensions directory
+	 * so webkit can find our extension.
+	 */
 	context = webkit_web_context_get_default();
-	g_signal_connect(context, "initialize-web-extensions", G_CALLBACK(initialize_web_extensions_cb), NULL);
+	g_signal_connect(context,
+					 "initialize-web-extensions",
+					 G_CALLBACK(initialize_web_extensions_cb), NULL);
 
-	// Register and connect handler for messages sent from our web extension
+	/* Register and connect handler of any messages we send from our web extension process. */
 	manager = webkit_user_content_manager_new();
 	webkit_user_content_manager_register_script_message_handler(manager, "GreeterBridge");
-	g_signal_connect(manager, "script-message-received::GreeterBridge", G_CALLBACK(message_received_cb), NULL);
+	g_signal_connect(manager,
+					 "script-message-received::GreeterBridge",
+					 G_CALLBACK(message_received_cb), NULL);
 
-	// Create the web_view
+	/* Create the web_view */
 	web_view = webkit_web_view_new_with_user_content_manager(manager);
 
-	// Set the web_view's settings.
+	/* Set the web_view's settings. */
 	create_new_webkit_settings_object();
 	webkit_web_view_set_settings(WEBKIT_WEB_VIEW(web_view), webkit_settings);
 
-	// The default background is white which causes a flash effect when the greeter starts. Make it black instead.
+	/* The default background is white which causes a flash effect when the greeter starts.
+	 * We make it black instead. This is for backwards compatibility with Gtk versions that
+	 * don't use the new CSS provider.
+	 */
 	gdk_rgba_parse(&bg_color, "#000000");
 	webkit_web_view_set_background_color(WEBKIT_WEB_VIEW(web_view), gdk_rgba_copy(&bg_color));
 
-	// Disable the context (right-click) menu.
+	/* Disable the context (right-click) menu. */
 	g_signal_connect(web_view, "context-menu", G_CALLBACK(context_menu_cb), NULL);
 
+	/* There's no turning back now, let's go! */
 	gtk_container_add(GTK_CONTAINER(window), web_view);
-	webkit_web_view_load_uri(WEBKIT_WEB_VIEW(web_view), g_strdup_printf("file://%s/%s/index.html", THEME_DIR, theme));
-	gtk_widget_show_all(window);
+	webkit_web_view_load_uri(WEBKIT_WEB_VIEW(web_view),
+							 g_strdup_printf("file://%s/%s/index.html", THEME_DIR, theme));
 
+	gtk_widget_show_all(window);
 
 	gtk_main();
 
