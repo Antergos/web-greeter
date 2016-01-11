@@ -1,1 +1,14 @@
-{"auth_failed":"¡UH oh! Error de autenticación. Por favor, vuelva a intentarlo.","background_options":"Opciones de fondo","cancel":"Cancelar","confirm_system_action":"¿Estás seguro?","debug_log":"registro de depuración","greeting":"¡Bienvenida!","hibernate":"Hibernar","random":"Al azar","reset":"Reiniciar","restart":"Reiniciar","shutdown":"Apagar","suspend":"Suspender"}
+{
+    "auth_failed": "¡UH oh! Error de autenticación. Por favor, vuelva a intentarlo.",
+    "background_options": "Opciones de fondo",
+    "cancel": "Cancelar",
+    "confirm_system_action": "¿Estás seguro?",
+    "debug_log": "registro de depuración",
+    "greeting": "¡Bienvenida!",
+    "hibernate": "Hibernar",
+    "random": "Al azar",
+    "reset": "Reiniciar",
+    "restart": "Reiniciar",
+    "shutdown": "Apagar",
+    "suspend": "Suspender"
+}

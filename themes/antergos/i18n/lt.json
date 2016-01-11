@@ -1,1 +1,14 @@
-{"auth_failed":"Uh Oh! Autentifikavimas nepavyko. Prašau, pabandykite dar kartą.","background_options":"Fono parinktys","cancel":"atšaukti","confirm_system_action":"Ar tu tuo tikras?","debug_log":"derinti Prisijungti","greeting":"Sveiki!","hibernate":"hibernate","random":"Atsitiktinės","reset":"Atstatyti","restart":"Perkrauti","shutdown":"Išjungti","suspend":"sustabdyti"}
+{
+    "auth_failed": "Uh Oh! Autentifikavimas nepavyko. Prašau, pabandykite dar kartą.",
+    "background_options": "Fono parinktys",
+    "cancel": "atšaukti",
+    "confirm_system_action": "Ar tu tuo tikras?",
+    "debug_log": "derinti Prisijungti",
+    "greeting": "Sveiki!",
+    "hibernate": "hibernate",
+    "random": "Atsitiktinės",
+    "reset": "Atstatyti",
+    "restart": "Perkrauti",
+    "shutdown": "Išjungti",
+    "suspend": "sustabdyti"
+}

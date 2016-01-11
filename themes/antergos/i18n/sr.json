@@ -1,1 +1,14 @@
-{"auth_failed":"Uh Oh! Аутхентицатион фаилед. Molim vas, pokušajte ponovo.","background_options":"Бацкгроунд Опције","cancel":"отказати","confirm_system_action":"Da li si siguran?","debug_log":"дебуг се","greeting":"Dobrodošao!","hibernate":"хибернирати","random":"случајан","reset":"Ресет","restart":"Ponovo pokreni","shutdown":"Isključi","suspend":"суспендовати"}
+{
+    "auth_failed": "Uh Oh! Аутхентицатион фаилед. Molim vas, pokušajte ponovo.",
+    "background_options": "Бацкгроунд Опције",
+    "cancel": "отказати",
+    "confirm_system_action": "Da li si siguran?",
+    "debug_log": "дебуг се",
+    "greeting": "Dobrodošao!",
+    "hibernate": "хибернирати",
+    "random": "случајан",
+    "reset": "Ресет",
+    "restart": "Ponovo pokreni",
+    "shutdown": "Isključi",
+    "suspend": "суспендовати"
+}

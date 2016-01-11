@@ -1,1 +1,14 @@
-{"auth_failed":".בוש הסנ השקבב .לשכנ תומיא !וה וא","background_options":"עקר תויורשפא","cancel":"לֵטַבְל","confirm_system_action":"?חוטב התא","debug_log":"Debug רבחתה","greeting":"!ךאוב ךורב","hibernate":"ףֹורֲחַל","random":"יִאַרקַא","reset":"לּוחתִא","restart":"לוחתיא","shutdown":"תובכל","suspend":"תֹועְׁשַהְל"}
+{
+    "auth_failed": ".בוש הסנ השקבב .לשכנ תומיא !וה וא",
+    "background_options": "עקר תויורשפא",
+    "cancel": "לֵטַבְל",
+    "confirm_system_action": "?חוטב התא",
+    "debug_log": "Debug רבחתה",
+    "greeting": "!ךאוב ךורב",
+    "hibernate": "ףֹורֲחַל",
+    "random": "יִאַרקַא",
+    "reset": "לּוחתִא",
+    "restart": "לוחתיא",
+    "shutdown": "תובכל",
+    "suspend": "תֹועְׁשַהְל"
+}

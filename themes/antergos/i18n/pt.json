@@ -1,1 +1,14 @@
-{"auth_failed":"Uh Oh! A autenticação falhou. Por favor, tente novamente.","background_options":"Opções de fundo","cancel":"Cancelar","confirm_system_action":"Você tem certeza?","debug_log":"Debug Log","greeting":"Bem-vindo!","hibernate":"hibernar","random":"aleatório","reset":"repor","restart":"Reiniciar","shutdown":"Desligar","suspend":"Suspender"}
+{
+    "auth_failed": "Uh Oh! A autenticação falhou. Por favor, tente novamente.",
+    "background_options": "Opções de fundo",
+    "cancel": "Cancelar",
+    "confirm_system_action": "Você tem certeza?",
+    "debug_log": "Registro de Depuração",
+    "greeting": "Bem-vindo!",
+    "hibernate": "Hibernar",
+    "random": "Aleatório",
+    "reset": "Repor",
+    "restart": "Reiniciar",
+    "shutdown": "Desligar",
+    "suspend": "Suspender"
+}
