@@ -60,7 +60,8 @@ static JSClassRef
 	lightdm_user_class,
 	lightdm_language_class,
 	lightdm_layout_class,
-	lightdm_session_class;
+	lightdm_session_class,
+	branding_class;
 
 
 /*
@@ -1111,6 +1112,12 @@ static const JSStaticFunction gettext_functions[] = {
 	{"ngettext", ngettext_cb, kJSPropertyAttributeReadOnly},
 	{NULL,       NULL,        0}};
 
+
+static const JSStaticValue branding_values[] = {
+	{"iconsdir",            get_iconsdir_cb,            NULL,          kJSPropertyAttributeReadOnly},
+	{NULL,                  NULL,                       NULL,          0}};
+
+
 static const JSClassDefinition lightdm_user_definition = {
 	0,                     /* Version       */
 	kJSClassAttributeNone, /* Attributes    */
@@ -1161,6 +1168,14 @@ static const JSClassDefinition gettext_definition = {
 	gettext_functions,     /* Static functions */
 };
 
+static const JSClassDefinition branding_definition = {
+	0,                      /* Version       */
+	kJSClassAttributeNone,  /* Attributes    */
+	"Branding",             /* Class name    */
+	NULL,                   /* Parent class  */
+	branding_values,        /* Static values */
+};
+
 /*static void
 web_page_created_callback(WebKitWebExtension *extension, WebKitWebPage *web_page, gpointer user_data) {
 	#define G_GUINT64_FORMAT "lu"
@@ -1177,7 +1192,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 							   WebKitFrame *frame,
 							   LightDMGreeter *greeter) {
 
-	JSObjectRef gettext_object, lightdm_greeter_object;
+	JSObjectRef gettext_object, lightdm_greeter_object, branding_object;
 	JSGlobalContextRef jsContext;
 	JSObjectRef globalObject;
 	WebKitDOMDocument *dom_document;
@@ -1195,6 +1210,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	lightdm_language_class = JSClassCreate(&lightdm_language_definition);
 	lightdm_layout_class = JSClassCreate(&lightdm_layout_definition);
 	lightdm_session_class = JSClassCreate(&lightdm_session_definition);
+	branding_class = JSClassCreate(&branding_definition);
 
 	gettext_object = JSObjectMake(jsContext, gettext_class, NULL);
 
@@ -1211,6 +1227,15 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 						globalObject,
 						JSStringCreateWithUTF8CString("lightdm"),
 						lightdm_greeter_object,
+						kJSPropertyAttributeNone,
+						NULL);
+
+	branding_object = JSObjectMake(jsContext, branding_class, greeter);
+
+	JSObjectSetProperty(jsContext,
+						globalObject,
+						JSStringCreateWithUTF8CString("branding"),
+						branding_object,
 						kJSPropertyAttributeNone,
 						NULL);
 
