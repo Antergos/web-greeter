@@ -42,6 +42,8 @@
 
 #include <lightdm.h>
 
+#include <config.h>
+
 G_MODULE_EXPORT void webkit_web_extension_initialize(WebKitWebExtension *extension);
 
 guint64 page_id = -1;
@@ -1013,6 +1015,15 @@ ngettext_cb(JSContextRef context,
 	return result;
 }
 
+static JSValueRef
+get_iconsdir_cb(JSContextRef context,
+				   JSObjectRef thisObject,
+				   JSStringRef propertyName,
+				   JSValueRef *exception) {
+	return string_or_null(context, ICONS_DIR);
+}
+
+
 
 static const JSStaticValue lightdm_user_values[] = {
 	{"name",           get_user_name_cb,           NULL, kJSPropertyAttributeReadOnly},
@@ -1073,6 +1084,7 @@ static const JSStaticValue lightdm_greeter_values[] = {
 	{"autologin_user",      get_autologin_user_cb,      NULL,          kJSPropertyAttributeReadOnly},
 	{"autologin_guest",     get_autologin_guest_cb,     NULL,          kJSPropertyAttributeReadOnly},
 	{"autologin_timeout",   get_autologin_timeout_cb,   NULL,          kJSPropertyAttributeReadOnly},
+	{"iconsdir",            get_iconsdir_cb,            NULL,          kJSPropertyAttributeReadOnly},
 	{NULL,                  NULL,                       NULL,          0}};
 
 static const JSStaticFunction lightdm_greeter_functions[] = {
@@ -1148,7 +1160,6 @@ static const JSClassDefinition gettext_definition = {
 	NULL,                  /* Static values    */
 	gettext_functions,     /* Static functions */
 };
-
 
 /*static void
 web_page_created_callback(WebKitWebExtension *extension, WebKitWebPage *web_page, gpointer user_data) {
