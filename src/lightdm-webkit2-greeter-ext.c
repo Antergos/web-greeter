@@ -1228,7 +1228,7 @@ static const JSStaticFunction gettext_functions[] = {
 	{NULL,       NULL,        0}};
 
 
-static const JSStaticFunction conffile_functions[] = {
+static const JSStaticFunction config_file_functions[] = {
 	{"get_str",  get_conf_str_cb,  kJSPropertyAttributeReadOnly},
 	{"get_num",  get_conf_num_cb,  kJSPropertyAttributeReadOnly},
 	{"get_bool", get_conf_bool_cb, kJSPropertyAttributeReadOnly},
@@ -1310,7 +1310,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 							   WebKitFrame *frame,
 							   LightDMGreeter *greeter) {
 
-	JSObjectRef gettext_object, lightdm_greeter_object, conffile_object;
+	JSObjectRef gettext_object, lightdm_greeter_object, config_file_object;
 	JSGlobalContextRef jsContext;
 	JSObjectRef globalObject;
 	WebKitDOMDocument *dom_document;
@@ -1348,7 +1348,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 						kJSPropertyAttributeNone,
 						NULL);
 
-	conffile_object = JSObjectMake(jsContext, conffile_class, greeter);
+	config_file_object = JSObjectMake(jsContext, config_file_class, greeter);
 
 	JSObjectSetProperty(jsContext,
 						globalObject,
