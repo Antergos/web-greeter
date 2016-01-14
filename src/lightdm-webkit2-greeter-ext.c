@@ -61,8 +61,9 @@ static JSClassRef
 	lightdm_language_class,
 	lightdm_layout_class,
 	lightdm_session_class,
-	branding_class;
+	conffile_class;
 
+GKeyFile *keyfile;
 
 /*
  * Returns either a string or null.
@@ -1017,6 +1018,127 @@ ngettext_cb(JSContextRef context,
 }
 
 static JSValueRef
+get_conf_str_cb(JSContextRef context,
+			JSObjectRef function,
+			JSObjectRef thisObject,
+			size_t argumentCount,
+			const JSValueRef arguments[],
+			JSValueRef *exception) {
+
+	gchar *section, *key, *value;
+        GError *err = NULL;
+	JSValueRef result;
+
+	if (argumentCount != 2) {
+		return mkexception(context, exception, "Needs 2 arguments");
+	}
+
+	section = arg_to_string(context, arguments[0], exception);
+
+	if (!section) {
+		return JSValueMakeNull(context);
+	}
+
+	key = arg_to_string(context, arguments[1], exception);
+
+	if (!section) {
+		return JSValueMakeNull(context);
+	}
+
+	value = g_key_file_get_string(keyfile, section, key, &err);
+
+        if (err) {
+		_mkexception(context, exception, err->message);
+		g_error_free(err);
+		return JSValueMakeNull(context);
+	}
+
+	result = string_or_null(context, value);
+
+	g_free(value);
+
+	return result;
+}
+
+static JSValueRef
+get_conf_num_cb(JSContextRef context,
+			JSObjectRef function,
+			JSObjectRef thisObject,
+			size_t argumentCount,
+			const JSValueRef arguments[],
+			JSValueRef *exception) {
+
+	gchar *section, *key;
+	gint value;
+        GError *err = NULL;
+
+	if (argumentCount != 2) {
+		return mkexception(context, exception, "Needs 2 arguments");
+	}
+
+	section = arg_to_string(context, arguments[0], exception);
+
+	if (!section) {
+		return JSValueMakeNull(context);
+	}
+
+	key = arg_to_string(context, arguments[1], exception);
+
+	if (!section) {
+		return JSValueMakeNull(context);
+	}
+
+	value = g_key_file_get_integer(keyfile, section, key, &err);
+
+        if (err) {
+		_mkexception(context, exception, err->message);
+		g_error_free(err);
+		return JSValueMakeNull(context);
+	}
+
+	return JSValueMakeNumber(context, value);
+}
+
+static JSValueRef
+get_conf_bool_cb(JSContextRef context,
+			JSObjectRef function,
+			JSObjectRef thisObject,
+			size_t argumentCount,
+			const JSValueRef arguments[],
+			JSValueRef *exception) {
+
+	gchar *section, *key;
+	gboolean value;
+        GError *err = NULL;
+
+	if (argumentCount != 2) {
+		return mkexception(context, exception, "Needs 2 arguments");
+	}
+
+	section = arg_to_string(context, arguments[0], exception);
+
+	if (!section) {
+		return JSValueMakeNull(context);
+	}
+
+	key = arg_to_string(context, arguments[1], exception);
+
+	if (!section) {
+		return JSValueMakeNull(context);
+	}
+
+	value = g_key_file_get_boolean(keyfile, section, key, &err);
+
+        if (err) {
+		_mkexception(context, exception, err->message);
+		g_error_free(err);
+		return JSValueMakeNull(context);
+	}
+
+	return JSValueMakeBoolean(context, value);
+}
+
+static JSValueRef
 get_iconsdir_cb(JSContextRef context,
 				   JSObjectRef thisObject,
 				   JSStringRef propertyName,
@@ -1113,9 +1235,11 @@ static const JSStaticFunction gettext_functions[] = {
 	{NULL,       NULL,        0}};
 
 
-static const JSStaticValue branding_values[] = {
-	{"iconsdir",            get_iconsdir_cb,            NULL,          kJSPropertyAttributeReadOnly},
-	{NULL,                  NULL,                       NULL,          0}};
+static const JSStaticFunction conffile_functions[] = {
+	{"get_str",  get_conf_str_cb,  kJSPropertyAttributeReadOnly},
+	{"get_num",  get_conf_num_cb,  kJSPropertyAttributeReadOnly},
+	{"get_bool", get_conf_bool_cb, kJSPropertyAttributeReadOnly},
+	{NULL,       NULL,             0}};
 
 
 static const JSClassDefinition lightdm_user_definition = {
@@ -1168,12 +1292,13 @@ static const JSClassDefinition gettext_definition = {
 	gettext_functions,     /* Static functions */
 };
 
-static const JSClassDefinition branding_definition = {
-	0,                      /* Version       */
-	kJSClassAttributeNone,  /* Attributes    */
-	"Branding",             /* Class name    */
-	NULL,                   /* Parent class  */
-	branding_values,        /* Static values */
+static const JSClassDefinition conffile_definition = {
+	0,                      /* Version          */
+	kJSClassAttributeNone,  /* Attributes       */
+	"Branding",             /* Class name       */
+	NULL,                   /* Parent class     */
+	NULL,                   /* Static values    */
+	conffile_functions,     /* Static functions */
 };
 
 /*static void
@@ -1192,7 +1317,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 							   WebKitFrame *frame,
 							   LightDMGreeter *greeter) {
 
-	JSObjectRef gettext_object, lightdm_greeter_object, branding_object;
+	JSObjectRef gettext_object, lightdm_greeter_object, conffile_object;
 	JSGlobalContextRef jsContext;
 	JSObjectRef globalObject;
 	WebKitDOMDocument *dom_document;
@@ -1210,7 +1335,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	lightdm_language_class = JSClassCreate(&lightdm_language_definition);
 	lightdm_layout_class = JSClassCreate(&lightdm_layout_definition);
 	lightdm_session_class = JSClassCreate(&lightdm_session_definition);
-	branding_class = JSClassCreate(&branding_definition);
+	conffile_class = JSClassCreate(&conffile_definition);
 
 	gettext_object = JSObjectMake(jsContext, gettext_class, NULL);
 
@@ -1230,12 +1355,12 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 						kJSPropertyAttributeNone,
 						NULL);
 
-	branding_object = JSObjectMake(jsContext, branding_class, greeter);
+	conffile_object = JSObjectMake(jsContext, conffile_class, greeter);
 
 	JSObjectSetProperty(jsContext,
 						globalObject,
-						JSStringCreateWithUTF8CString("branding"),
-						branding_object,
+						JSStringCreateWithUTF8CString("config"),
+						conffile_object,
 						kJSPropertyAttributeNone,
 						NULL);
 
@@ -1398,4 +1523,11 @@ webkit_web_extension_initialize(WebKitWebExtension *extension) {
 	g_signal_connect(G_OBJECT(greeter), "show-message", G_CALLBACK(show_message_cb), extension);
 
 	lightdm_greeter_connect_sync(greeter, NULL);
+
+	/* load greeter settings from config file */
+	keyfile = g_key_file_new();
+
+	g_key_file_load_from_file(keyfile,
+							  CONFIG_DIR "/lightdm-webkit2-greeter.conf",
+							  G_KEY_FILE_NONE, NULL);
 }
