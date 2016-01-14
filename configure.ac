@@ -87,20 +87,6 @@ AC_DEFINE_UNQUOTED(DESKTOP_DIR, "$DESKTOP_DIR", Desktop Dir)
 dnl ###########################################################################
 dnl ###########################################################################
 
-ICONS_DIR="/usr/share/icons/"
-AC_ARG_WITH(desktop-dir,
-            AS_HELP_STRING(--with-icons-dir=<path>,
-                           Theme icons directory for webkit themes),
-    if test x$withval != x; then
-        ICONS_DIR="$withval"
-    fi
-)
-AC_SUBST(ICONS_DIR)
-AC_DEFINE_UNQUOTED(ICONS_DIR, "$ICONS_DIR", Icons Dir)
-
-dnl ###########################################################################
-dnl ###########################################################################
-
 AC_ARG_ENABLE([at-spi-command],
     AC_HELP_STRING([--enable-at-spi-command[=command]], [Try to start at-spi service]])
     AC_HELP_STRING([--disable-at-spi-command], [Do not start at-spi service]),
