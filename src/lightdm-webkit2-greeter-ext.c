@@ -47,6 +47,7 @@
 G_MODULE_EXPORT void webkit_web_extension_initialize(WebKitWebExtension *extension);
 
 guint64 page_id = -1;
+GKeyFile *keyfile;
 
 #define USER     ((LightDMUser *)     JSObjectGetPrivate (thisObject))
 #define LAYOUT   ((LightDMLayout *)   JSObjectGetPrivate (thisObject))
@@ -61,9 +62,8 @@ static JSClassRef
 	lightdm_language_class,
 	lightdm_layout_class,
 	lightdm_session_class,
-	conffile_class;
+	config_file_class;
 
-GKeyFile *keyfile;
 
 /*
  * Returns either a string or null.
@@ -1017,16 +1017,21 @@ ngettext_cb(JSContextRef context,
 	return result;
 }
 
+/*
+ * Gets a key's value from config file.
+ *
+ * Returns config key's value as string.
+ */
 static JSValueRef
 get_conf_str_cb(JSContextRef context,
-			JSObjectRef function,
-			JSObjectRef thisObject,
-			size_t argumentCount,
-			const JSValueRef arguments[],
-			JSValueRef *exception) {
+				JSObjectRef function,
+				JSObjectRef thisObject,
+				size_t argumentCount,
+				const JSValueRef arguments[],
+				JSValueRef *exception) {
 
 	gchar *section, *key, *value;
-        GError *err = NULL;
+	GError *err = NULL;
 	JSValueRef result;
 
 	if (argumentCount != 2) {
@@ -1040,14 +1045,9 @@ get_conf_str_cb(JSContextRef context,
 	}
 
 	key = arg_to_string(context, arguments[1], exception);
-
-	if (!section) {
-		return JSValueMakeNull(context);
-	}
-
 	value = g_key_file_get_string(keyfile, section, key, &err);
 
-        if (err) {
+	if (err) {
 		_mkexception(context, exception, err->message);
 		g_error_free(err);
 		return JSValueMakeNull(context);
@@ -1060,17 +1060,23 @@ get_conf_str_cb(JSContextRef context,
 	return result;
 }
 
+
+/*
+ * Gets a key's value from config file.
+ *
+ * Returns config key's value as number.
+ */
 static JSValueRef
 get_conf_num_cb(JSContextRef context,
-			JSObjectRef function,
-			JSObjectRef thisObject,
-			size_t argumentCount,
-			const JSValueRef arguments[],
-			JSValueRef *exception) {
+				JSObjectRef function,
+				JSObjectRef thisObject,
+				size_t argumentCount,
+				const JSValueRef arguments[],
+				JSValueRef *exception) {
 
 	gchar *section, *key;
 	gint value;
-        GError *err = NULL;
+	GError *err = NULL;
 
 	if (argumentCount != 2) {
 		return mkexception(context, exception, "Needs 2 arguments");
@@ -1083,14 +1089,9 @@ get_conf_num_cb(JSContextRef context,
 	}
 
 	key = arg_to_string(context, arguments[1], exception);
-
-	if (!section) {
-		return JSValueMakeNull(context);
-	}
-
 	value = g_key_file_get_integer(keyfile, section, key, &err);
 
-        if (err) {
+	if (err) {
 		_mkexception(context, exception, err->message);
 		g_error_free(err);
 		return JSValueMakeNull(context);
@@ -1099,17 +1100,23 @@ get_conf_num_cb(JSContextRef context,
 	return JSValueMakeNumber(context, value);
 }
 
+
+/*
+ * Gets a key's value from config file.
+ *
+ * Returns config key's value as bool.
+ */
 static JSValueRef
 get_conf_bool_cb(JSContextRef context,
-			JSObjectRef function,
-			JSObjectRef thisObject,
-			size_t argumentCount,
-			const JSValueRef arguments[],
-			JSValueRef *exception) {
+				 JSObjectRef function,
+				 JSObjectRef thisObject,
+				 size_t argumentCount,
+				 const JSValueRef arguments[],
+				 JSValueRef *exception) {
 
 	gchar *section, *key;
 	gboolean value;
-        GError *err = NULL;
+	GError *err = NULL;
 
 	if (argumentCount != 2) {
 		return mkexception(context, exception, "Needs 2 arguments");
@@ -1122,14 +1129,9 @@ get_conf_bool_cb(JSContextRef context,
 	}
 
 	key = arg_to_string(context, arguments[1], exception);
-
-	if (!section) {
-		return JSValueMakeNull(context);
-	}
-
 	value = g_key_file_get_boolean(keyfile, section, key, &err);
 
-        if (err) {
+	if (err) {
 		_mkexception(context, exception, err->message);
 		g_error_free(err);
 		return JSValueMakeNull(context);
@@ -1137,15 +1139,6 @@ get_conf_bool_cb(JSContextRef context,
 
 	return JSValueMakeBoolean(context, value);
 }
-
-static JSValueRef
-get_iconsdir_cb(JSContextRef context,
-				   JSObjectRef thisObject,
-				   JSStringRef propertyName,
-				   JSValueRef *exception) {
-	return string_or_null(context, ICONS_DIR);
-}
-
 
 
 static const JSStaticValue lightdm_user_values[] = {
@@ -1292,13 +1285,13 @@ static const JSClassDefinition gettext_definition = {
 	gettext_functions,     /* Static functions */
 };
 
-static const JSClassDefinition conffile_definition = {
+static const JSClassDefinition config_file_definition = {
 	0,                      /* Version          */
 	kJSClassAttributeNone,  /* Attributes       */
-	"Branding",             /* Class name       */
+	"ConfigFile",           /* Class name       */
 	NULL,                   /* Parent class     */
 	NULL,                   /* Static values    */
-	conffile_functions,     /* Static functions */
+	config_file_functions,  /* Static functions */
 };
 
 /*static void
@@ -1335,7 +1328,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	lightdm_language_class = JSClassCreate(&lightdm_language_definition);
 	lightdm_layout_class = JSClassCreate(&lightdm_layout_definition);
 	lightdm_session_class = JSClassCreate(&lightdm_session_definition);
-	conffile_class = JSClassCreate(&conffile_definition);
+	config_file_class = JSClassCreate(&config_file_definition);
 
 	gettext_object = JSObjectMake(jsContext, gettext_class, NULL);
 
@@ -1360,7 +1353,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	JSObjectSetProperty(jsContext,
 						globalObject,
 						JSStringCreateWithUTF8CString("config"),
-						conffile_object,
+						config_file_object,
 						kJSPropertyAttributeNone,
 						NULL);
 
