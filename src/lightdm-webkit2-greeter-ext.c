@@ -1039,12 +1039,15 @@ get_conf_str_cb(JSContextRef context,
 	}
 
 	section = arg_to_string(context, arguments[0], exception);
-
 	if (!section) {
 		return JSValueMakeNull(context);
 	}
 
 	key = arg_to_string(context, arguments[1], exception);
+	if (!key) {
+		return JSValueMakeNull(context);
+	}
+
 	value = g_key_file_get_string(keyfile, section, key, &err);
 
 	if (err) {
@@ -1083,12 +1086,15 @@ get_conf_num_cb(JSContextRef context,
 	}
 
 	section = arg_to_string(context, arguments[0], exception);
-
 	if (!section) {
 		return JSValueMakeNull(context);
 	}
 
 	key = arg_to_string(context, arguments[1], exception);
+	if (!key) {
+		return JSValueMakeNull(context);
+	}
+
 	value = g_key_file_get_integer(keyfile, section, key, &err);
 
 	if (err) {
@@ -1123,12 +1129,15 @@ get_conf_bool_cb(JSContextRef context,
 	}
 
 	section = arg_to_string(context, arguments[0], exception);
-
 	if (!section) {
 		return JSValueMakeNull(context);
 	}
 
 	key = arg_to_string(context, arguments[1], exception);
+	if (!key) {
+		return JSValueMakeNull(context);
+	}
+
 	value = g_key_file_get_boolean(keyfile, section, key, &err);
 
 	if (err) {
@@ -1200,7 +1209,6 @@ static const JSStaticValue lightdm_greeter_values[] = {
 	{"autologin_user",      get_autologin_user_cb,      NULL,          kJSPropertyAttributeReadOnly},
 	{"autologin_guest",     get_autologin_guest_cb,     NULL,          kJSPropertyAttributeReadOnly},
 	{"autologin_timeout",   get_autologin_timeout_cb,   NULL,          kJSPropertyAttributeReadOnly},
-	{"iconsdir",            get_iconsdir_cb,            NULL,          kJSPropertyAttributeReadOnly},
 	{NULL,                  NULL,                       NULL,          0}};
 
 static const JSStaticFunction lightdm_greeter_functions[] = {
