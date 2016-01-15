@@ -1,165 +1,161 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html>
-  <head>
-    <style type="text/css">
-      td
-      {
-        font-size: 24px;
-        vertical-align: middle;
-      }
+<head>
+	<style>
+		html, body {
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			margin: 0;
+		}
 
-      input
-      {
-        font-size: 24px;
-      }
+		body {
+			background: linear-gradient(white, SlateGray);
+			font-size: 24px;
+		}
 
-      html
-      {
-        height: 100%;
-      }
+		.container {
+			width: 100%;
+			height: 100%;
+			display: -webkit-flex;
+			display: flex;
+			-webkit-flex-direction: column;
+			flex-direction: column;
+		}
 
-      body
-      {
-        background: linear-gradient(white, SlateGray);
-      }
+		.topBox, .inputBox, .messageBox {
+			width: 100%;
+			height: 33.33%;
+			text-align: center;
+		}
 
-      .topBox
-      {
-        height: 490px;
-      }
+		.inputBox {
+			position: relative;
+		}
 
-      .inputBox
-      {
-        width: 100%;
-      }
+		.wrapper {
+			height: 85px;
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			margin: auto;
+		}
 
-      .messageBox
-      {
-        font-size: 24px;
-        width: 60%;
-        margin-left: auto;
-        margin-right: auto;
-        display: block;
-        text-align: center;
-        visibility: hidden;
-      }
-    </style>
+		.topBox {
+			text-align: right;
+			padding: 15px;
+			box-sizing: border-box;
+		}
 
-    <script type="text/javascript">
+		.messageBox {
+			text-align: center;
+			visibility: hidden;
+		}
+	</style>
+</head>
 
-      /*********************************************************************/
-      /*                Callbacks for lightdm-webkit-greeter               */
-      /*********************************************************************/
+<body>
+<div class="container">
+	<div class="topBox">
+		<img onclick="javascript:lightdm.shutdown();" src="power_button.png"/>
+	</div>
+	<div class="inputBox">
+		<div class="wrapper">
+			<div id="prompt"></div>
+			<form action="javascript: handle_input()">
+				<input id="entry" />
+			</form>
+		</div>
+	</div>
+	<div class="messageBox" id="messages"></div>
+</div>
+<script>
+	/*********************************************************************/
+	/*                Callbacks for lightdm-webkit-greeter               */
+	/*********************************************************************/
 
+	/**
+	 * show_prompt callback.
+	 */
+	function show_prompt(text, type) {
+		// type is either "text" or "password"
+		prompt = document.getElementById("prompt");
+		prompt.innerHTML = text;
+		entry = document.getElementById("entry");
+		entry.value = "";    // clear entry
+		entry.type = type;
+		entry.focus();
+	}
 
-      /*
-       * show_prompt callback.
-       */
+	/**
+	 * show_message callback.
+	 */
+	function show_message(text, type) {
+		if (text.length == 0)
+			return;
+		messages = document.getElementById("messages");
+		messages.style.visibility = "visible";
+		// type is either "info" or "error"
+		if (type == "error") {
+			text = "<font color=\"red\">" + text + "</font>";
+		}
+		text = text + "<br>";
+		messages.innerHTML = messages.innerHTML + text;
+	}
 
-      function show_prompt(text, type)
-      {
-        // type is either "text" or "password"
-        prompt = document.getElementById("prompt");
-        prompt.innerHTML = text;
-        entry = document.getElementById("entry");
-        entry.value = "";    // clear entry
-        entry.type = type;
-        entry.focus();
-      }
+	/**
+	 * authentication_complete callback.
+	 */
+	function authentication_complete() {
+		if (lightdm.is_authenticated) {
+			lightdm.start_session_sync(); // Start default session
+		} else {
+			show_message("Authentication Failed", "error");
+			setTimeout(start_authentication, 3000);
+		}
+	}
 
-      /*
-       * show_message callback.
-       */
+	/**
+	 * autologin_timer_expired callback.
+	 */
+	function autologin_timer_expired(username) {
+		/* Stub.  Does nothing. */
+	}
 
-      function show_message(text, type)
-      {
-        if (text.length == 0)
-          return;
-        messages = document.getElementById("messages");
-        messages.style.visibility = "visible";
-        // type is either "info" or "error"
-        if (type == "error") {
-          text = "<font color=\"red\">" + text + "</font>";
-        }
-        text = text + "<br>";
-        messages.innerHTML = messages.innerHTML + text;
-      }
+	/*********************************************************************/
+	/*                Functions local to this greeter                    */
+	/*********************************************************************/
 
-      /*
-       * authentication_complete callback.
-       */
+	/**
+	 * clear_messages
+	 */
+	function clear_messages() {
+		messages = document.getElementById("messages");
+		messages.innerHTML = "";
+		messages.style.visibility = "hidden";
+	}
 
-      function authentication_complete()
-      {
-        if (lightdm.is_authenticated) {
-          lightdm.start_session_sync (); // Start default session
-        } else {
-          show_message ("Authentication Failed", "error");
-          setTimeout (start_authentication, 3000);
-        }
-      }
+	/**
+	 * Kickoff the authentication process
+	 */
+	function start_authentication() {
+		clear_messages();
+		lightdm.start_authentication();   // start with null userid, have pam prompt for userid.
+	}
 
-      /*
-       * autologin_timer_expired callback.
-       */
-
-      function autologin_timer_expired(username)
-      {
-        /* Stub.  Does nothing. */
-      }
-
-      /*********************************************************************/
-      /*                Functions local to this greeter                    */
-      /*********************************************************************/
-
-      /*
-       * clear_messages
-       */
-
-      function clear_messages()
-      {
-        messages = document.getElementById("messages");
-        messages.innerHTML = "";
-        messages.style.visibility = "hidden";
-      }
-
-      /*
-       * Kickoff the authentication process
-       */
-
-      function start_authentication()
-      {
-        clear_messages();
-        lightdm.authenticate();   // start with null userid, have pam prompt for userid.
-      }
-
-      /*
-       * handle the input from the entry field.
-       */
-
-      function handle_input()
-      {
-        entry = document.getElementById("entry");
-        lightdm.respond(entry.value);
-      }
-    </script>
-  </head>
-
-  <body>
-    <img style="float: right;" onclick="javascript:lightdm.shutdown();" src="power_button.png" />
-    <div class="topBox"></div>
-    <div class="inputBox">
-      <table id="input_table" width="100%">
-        <tr>
-          <td id="prompt" width="45%" align="right"></td>
-          <td width="55%"><form action="javascript: handle_input()"><input id="entry"></form></td>
-        </tr>
-      </table>
-    </div>
-    <div class="messageBox" id="messages"></div>
-
-    <script type="text/javascript">
-      start_authentication();
-    </script>
-  </body>
+	/**
+	 * handle the input from the entry field.
+	 */
+	function handle_input() {
+		entry = document.getElementById("entry");
+		lightdm.respond(entry.value);
+	}
+</script>
+<script src="../antergos/js/mock.js"></script>
+<script>
+	start_authentication();
+</script>
+</body>
 </html>

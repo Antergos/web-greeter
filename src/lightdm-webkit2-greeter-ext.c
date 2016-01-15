@@ -89,11 +89,6 @@ string_or_null(JSContextRef context, const gchar *str) {
 }
 
 
-/*
- * Makes an Exception.
- *
- * Convert a const string to an exception which can be passed back to webkit.
- */
 static void
 _mkexception(JSContextRef context, JSValueRef *exception, const gchar *str) {
 	JSValueRef result;
@@ -108,6 +103,11 @@ _mkexception(JSContextRef context, JSValueRef *exception, const gchar *str) {
 }
 
 
+/*
+ * Makes an Exception.
+ *
+ * Convert a const string to an exception which can be passed back to webkit.
+ */
 static JSValueRef
 mkexception(JSContextRef context, JSValueRef *exception, const gchar *str) {
 	_mkexception(context, exception, str);
@@ -899,8 +899,8 @@ start_session_sync_cb(JSContextRef context,
 
 	/* FIXME: old API required lightdm.login(username, session), but the username
 	 * is never actually used.  At some point, deprecate the old usage.  For now,
-	 * simply work around it. */
-
+	 * simply work around it.
+	 */
 	if (argumentCount == 1) {
 		session = arg_to_string(context, arguments[0], exception);
 	} else if (argumentCount == 2) {
@@ -1020,7 +1020,7 @@ ngettext_cb(JSContextRef context,
 /*
  * Gets a key's value from config file.
  *
- * Returns config key's value as string.
+ * Returns value as a string.
  */
 static JSValueRef
 get_conf_str_cb(JSContextRef context,
@@ -1067,7 +1067,7 @@ get_conf_str_cb(JSContextRef context,
 /*
  * Gets a key's value from config file.
  *
- * Returns config key's value as number.
+ * Returns value as a number.
  */
 static JSValueRef
 get_conf_num_cb(JSContextRef context,
@@ -1110,7 +1110,7 @@ get_conf_num_cb(JSContextRef context,
 /*
  * Gets a key's value from config file.
  *
- * Returns config key's value as bool.
+ * Returns value as a bool.
  */
 static JSValueRef
 get_conf_bool_cb(JSContextRef context,
@@ -1301,15 +1301,6 @@ static const JSClassDefinition config_file_definition = {
 	NULL,                   /* Static values    */
 	config_file_functions,  /* Static functions */
 };
-
-/*static void
-web_page_created_callback(WebKitWebExtension *extension, WebKitWebPage *web_page, gpointer user_data) {
-	#define G_GUINT64_FORMAT "lu"
-	g_print("Page %" G_GUINT64_FORMAT "created for %s\n",
-			webkit_web_page_get_id(web_page),
-			webkit_web_page_get_uri(web_page)
-	);
-}*/
 
 
 static void
