@@ -33,108 +33,144 @@
 
 <p><a href="https://github.com/Antergos/lightdm-webkit2-greeter/releases"><img src="https://img.shields.io/github/release/Antergos/lightdm-webkit2-greeter.svg?style=flat-square" alt="Latest Release"></a>     <a href="https://scan.coverity.com/projects/antergos-lightdm-webkit2-greeter"><img src="https://img.shields.io/coverity/scan/6871.svg?style=flat-square" alt="Coverity Scan Build Status"></a></p>
 
-<h3>
-<a id="dependencies" class="anchor" href="#dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dependencies</h3>
+<h2>
+<a id="install-it" class="anchor" href="#install-it" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install It</h2>
+
+<h4>
+<a id="official-distro-packages" class="anchor" href="#official-distro-packages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Official Distro Packages</h4>
+
+<ul>
+<li>
+<img src="https://dl.dropboxusercontent.com/u/60521097/logo-square26x26.png" alt="antergos">  <code>sudo pacman -S lightdm-webkit2-greeter</code>
+</li>
+</ul>
+
+<h4>
+<a id="unofficial-distro-packages" class="anchor" href="#unofficial-distro-packages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Unofficial Distro Packages</h4>
+
+<ul>
+<li>
+<img src="https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png" alt="arch">  <code>yaourt -S lightdm-webkit2-greeter</code>
+</li>
+<li>
+<img src="https://dl.dropboxusercontent.com/u/60521097/fedora-logo.png" alt="fedora">  <a href="https://software.opensuse.org/download.html?project=home:antergos&amp;package=lightdm-webkit2-greeter">OBS Repo</a>
+</li>
+<li>
+<img src="https://dl.dropboxusercontent.com/u/60521097/Geeko-button-bling7.png" alt="openSUSE">  <a href="https://software.opensuse.org/ymp/home:antergos/openSUSE_Leap_42.1/lightdm-webkit2-greeter.ymp?base=openSUSE%3ALeap%3A42.1&amp;query=lightdm-webkit2-greeter">1 Click Install</a>  |  <a href="https://software.opensuse.org/download.html?project=home:antergos&amp;package=lightdm-webkit2-greeter">OBS Repo</a>
+</li>
+</ul>
+
+<h2>
+<a id="build-it" class="anchor" href="#build-it" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build It</h2>
+
+<h4>
+<a id="dependencies" class="anchor" href="#dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dependencies</h4>
 
 <table>
 <thead>
 <tr>
-<th>Name</th>
-<th>Arch Pkg</th>
-<th>Ubuntu Pkg</th>
+<th></th>
+<th><img src="https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png" alt="arch"></th>
+<th><img src="https://dl.dropboxusercontent.com/u/60521097/openlogo-nd-25.png" alt="debian"></th>
+<th><img src="https://dl.dropboxusercontent.com/u/60521097/fedora-logo.png" alt="fedora"></th>
+<th><img src="https://dl.dropboxusercontent.com/u/60521097/Geeko-button-bling7.png" alt="openSUSE"></th>
+<th><img src="https://dl.dropboxusercontent.com/u/60521097/ubuntu_orange_hex.png" alt="ubuntu"></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>liblightdm-gobject-1</td>
+<td><strong>liblightdm-gobject-1</strong></td>
 <td>lightdm</td>
-<td>liblightdm-gobject-1</td>
+<td>liblightdm-gobject-dev</td>
+<td>lightdm-gobject-devel</td>
+<td>liblightdm-gobject-1-0</td>
+<td>liblightdm-gobject-dev</td>
 </tr>
 <tr>
-<td>gtk+ 3</td>
+<td><strong>gtk+ 3</strong></td>
+<td>gtk3</td>
+<td>libgtk-3-0</td>
+<td>gtk3</td>
 <td>gtk3</td>
 <td>libgtk-3-0</td>
 </tr>
 <tr>
-<td>webkit2gtk-4.0</td>
+<td><strong>webkit2gtk-4.0</strong></td>
 <td>webkitgtk</td>
-<td>libwebkit2gtk</td>
+<td>libwebkit2gtk-4.0-dev</td>
+<td>webkitgtk4</td>
+<td>webkit2gtk3</td>
+<td>libwebkit2gtk-4.0-dev</td>
 </tr>
 <tr>
-<td>dbus-glib-1</td>
+<td><strong>dbus-glib-1</strong></td>
 <td>dbus-glib</td>
+<td>libdbus-glib-1-dev</td>
 <td>dbus-glib</td>
+<td>dbus-1-glib</td>
+<td>libdbus-glib-1-dev</td>
 </tr>
 <tr>
-<td><a href="http://antergos.com/antergos-wallpapers-0.6.zip">antergos-wallpapers</a></td>
-<td>antergos-wallpapers</td>
+<td><strong>exo-csource</strong></td>
+<td>exo</td>
+<td>exo-utils</td>
+<td>exo-devel</td>
+<td>exo-tools</td>
+<td>exo-utils</td>
+</tr>
+<tr>
+<td><a href="http://antergos.com/antergos-wallpapers-0.6.zip"><strong>antergos-wallpapers</strong></a></td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
 <td>N/A</td>
 </tr>
 </tbody>
 </table>
 
-<ul>
-<li>Notes:
-
-<ul>
-<li>antergos-wallpapers should be installed to <code>/usr/share/antergos/wallpapers</code>
-</li>
-</ul>
-</li>
-</ul>
-
-<h3>
-<a id="build-dependencies" class="anchor" href="#build-dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build Dependencies</h3>
-
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Arch Pkg</th>
-<th>Ubuntu Pkg</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>exo-csource</td>
-<td>exo</td>
-<td>libexo</td>
-</tr>
-</tbody>
-</table>
-
-<h3>
-<a id="how-to-build" class="anchor" href="#how-to-build" aria-hidden="true"><span class="octicon octicon-link"></span></a>How To Build</h3>
+<h4>
+<a id="how-to-build" class="anchor" href="#how-to-build" aria-hidden="true"><span class="octicon octicon-link"></span></a>How To Build</h4>
 
 <p>The process is slightly different depending on how you obtain the source.</p>
 
-<h4>
-<a id="use-git-to-clone-this-repo" class="anchor" href="#use-git-to-clone-this-repo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Use Git To Clone This Repo</h4>
+<h5>
+<a id="use-git-to-clone-this-repo" class="anchor" href="#use-git-to-clone-this-repo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Use Git To Clone This Repo</h5>
 
-<div class="highlight highlight-source-shell"><pre>git clone https://github.com/Antergos/lightdm-webkit2-greeter.git greeter
+<div class="highlight highlight-source-shell"><pre><span class="pl-c1">cd</span> /tmp
+git clone https://github.com/Antergos/lightdm-webkit2-greeter.git greeter
 <span class="pl-c1">cd</span> greeter
 git submodule init <span class="pl-k">&amp;&amp;</span> git submodule update
 ./autogen.sh --prefix=/usr
-make
-sudo make install</pre></div>
+make</pre></div>
 
-<h4>
-<a id="download-repo-in-archive-format-targz-zip-etc" class="anchor" href="#download-repo-in-archive-format-targz-zip-etc" aria-hidden="true"><span class="octicon octicon-link"></span></a>Download Repo In Archive Format (tar.gz, zip, etc)</h4>
+<h5>
+<a id="download-repo-in-archive-format-targz-zip-etc" class="anchor" href="#download-repo-in-archive-format-targz-zip-etc" aria-hidden="true"><span class="octicon octicon-link"></span></a>Download Repo In Archive Format (tar.gz, zip, etc)</h5>
 
-<div class="highlight highlight-source-shell"><pre>wget https://github.com/Antergos/lightdm-webkit2-greeter/archive/master.zip
-unzip master.zip
-<span class="pl-c1">cd</span> lightdm-web<span class="pl-k">**</span>/themes
+<div class="highlight highlight-source-shell"><pre><span class="pl-c1">cd</span> /tmp
+wget https://github.com/Antergos/lightdm-webkit2-greeter/archive/release/latest.zip
+unzip latest.zip
+<span class="pl-c1">cd</span> lightdm<span class="pl-k">**</span>/themes
 rm -rf antergos
-wget https://github.com/Antergos/lightdm-webkit-theme-antergos/archive/master.zip
-unzip master.zip
+wget https://github.com/Antergos/lightdm-webkit-theme-antergos/archive/latest.zip
+unzip latest.zip
 mv lightdm<span class="pl-k">**</span> antergos
 <span class="pl-c1">cd</span> ..
 ./autogen.sh --prefix=/usr
-make
-sudo make install</pre></div>
+make</pre></div>
 
-<h3>
-<a id="theme-javascript-api" class="anchor" href="#theme-javascript-api" aria-hidden="true"><span class="octicon octicon-link"></span></a>Theme JavaScript API:</h3>
+<h4>
+<a id="how-to-install" class="anchor" href="#how-to-install" aria-hidden="true"><span class="octicon octicon-link"></span></a>How To Install</h4>
+
+<div class="highlight highlight-source-shell"><pre><span class="pl-c1">cd</span> themes/antergos
+sed -i <span class="pl-s"><span class="pl-pds">'</span>s|/usr/share/|/usr/share/lightdm-webkit/themes/|g<span class="pl-pds">'</span></span> index.html
+wget http://antergos.com/antergos-wallpapers-0.6.zip
+unzip antergos<span class="pl-k">**</span>.zip
+sudo make install --prefix=/usr
+sudo cp -R antergos-wa<span class="pl-k">**</span> /usr/share/lightdm-webkit/themes/antergos/wallpapers</pre></div>
+
+<h2>
+<a id="theme-javascript-api" class="anchor" href="#theme-javascript-api" aria-hidden="true"><span class="octicon octicon-link"></span></a>Theme JavaScript API:</h2>
 
 <p>The greeter exposes a JavaScript API to greeter themes which they must use to interact with the greeter (in order to facilitate the user login process). The <a href="https://antergos.com/wiki/development/lightdm-webkit2-greeter-theme-javascript-api/">API Documentation</a> is a W.I.P. </p>
       </section>
