@@ -44,6 +44,7 @@ if (typeof lightdm == 'undefined') {
 	lightdm.can_hibernate= true;
 	lightdm.can_restart= true;
 	lightdm.can_shutdown= true;
+	lightdm.awaiting_username = false;
 
 	lightdm.users = [
         { name: "clarkk", real_name: "Superman", display_name: "Clark Kent", image: "", language: "en_US", layout: null, session: "gnome", logged_in: false },
@@ -85,6 +86,11 @@ if (typeof lightdm == 'undefined') {
 	};
 
 	lightdm.start_authentication= function(username) {
+		if ('undefined' === typeof username) {
+			show_prompt("Username?", 'text');
+			lightdm.awaiting_username = true;
+			return;
+		}
 		_lightdm_mock_check_argument_length(arguments, 1);
 		if (lightdm._username) {
 			throw "Already authenticating!";
@@ -135,6 +141,20 @@ if (typeof lightdm == 'undefined') {
 		}
 		alert("logged in successfully!!");
 		document.location.reload(true);
+	};
+	lightdm.authenticate = function(session) {
+		lightdm.login(null, session);
+	};
+	lightdm.respond = function(response) {
+		if (true === lightdm.awaiting_username) {
+			lightdm.awaiting_username = false;
+			lightdm.start_authentication(response);
+		} else {
+			lightdm.provide_secret(response);
+		}
+	};
+	lightdm.start_session_sync = function() {
+		lightdm.login(null, null);
 	};
 
 	if (lightdm.timed_login_delay > 0) {
