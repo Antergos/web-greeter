@@ -4,17 +4,17 @@
 ## Install It
 
 ### Official Distro Packages
-* [!antergos](https://dl.dropboxusercontent.com/u/60521097/logo-square26x26.png): `sudo pacman -S lightdm-webkit2-greeter`
+* ![](https://dl.dropboxusercontent.com/u/60521097/logo-square26x26.png|antergos): `sudo pacman -S lightdm-webkit2-greeter`
 
 ### Unofficial Distro Packages
-* [!arch](https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png): `yaourt -S lightdm-webkit2-greeter`
-* [!fedora](https://dl.dropboxusercontent.com/u/60521097/fedora-logo.png): [OBS Repo](https://software.opensuse.org/download.html?project=home:antergos&package=lightdm-webkit2-greeter)
-* [!openSUSE](https://dl.dropboxusercontent.com/u/60521097/Geeko-button-bling7.png): [1 Click Install](https://software.opensuse.org/ymp/home:antergos/openSUSE_Leap_42.1/lightdm-webkit2-greeter.ymp?base=openSUSE%3ALeap%3A42.1&query=lightdm-webkit2-greeter) | [OBS Repo](https://software.opensuse.org/download.html?project=home:antergos&package=lightdm-webkit2-greeter)
+* ![]https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png|arch): `yaourt -S lightdm-webkit2-greeter`
+* ![](https://dl.dropboxusercontent.com/u/60521097/fedora-logo.png|fedora): [OBS Repo](https://software.opensuse.org/download.html?project=home:antergos&package=lightdm-webkit2-greeter)
+* ![](https://dl.dropboxusercontent.com/u/60521097/Geeko-button-bling7.png|openSUSE): [1 Click Install](https://software.opensuse.org/ymp/home:antergos/openSUSE_Leap_42.1/lightdm-webkit2-greeter.ymp?base=openSUSE%3ALeap%3A42.1&query=lightdm-webkit2-greeter) | [OBS Repo](https://software.opensuse.org/download.html?project=home:antergos&package=lightdm-webkit2-greeter)
 
 ## Build It
 
 ### Dependencies
-| Name                  | [!arch](https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png) | [!debian](https://dl.dropboxusercontent.com/u/60521097/openlogo-nd-25.png) | [!fedora](https://dl.dropboxusercontent.com/u/60521097/fedora-logo.png) | [!openSUSE](https://dl.dropboxusercontent.com/u/60521097/Geeko-button-bling7.png) | [!ubuntu](https://dl.dropboxusercontent.com/u/60521097/ubuntu_orange_hex.png)  | 
+| Name                  | ![arch](https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png) | ![debian](https://dl.dropboxusercontent.com/u/60521097/openlogo-nd-25.png) | ![fedora](https://dl.dropboxusercontent.com/u/60521097/fedora-logo.png) | ![openSUSE](https://dl.dropboxusercontent.com/u/60521097/Geeko-button-bling7.png) | ![ubuntu](https://dl.dropboxusercontent.com/u/60521097/ubuntu_orange_hex.png)  | 
 |-----------------------|-------------------------------------------------------------------------|----------------------------------------------------------------------------|-------------------------------------------------------------------------|-----------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
 |liblightdm-gobject-1   |lightdm|liblightdm-gobject-dev | lightdm-gobject-devel | liblightdm-gobject-1-0 | liblightdm-gobject-dev |
 |gtk+ 3                 |gtk3   |libgtk-3-0             | gtk3 | gtk3 | libgtk-3-0 |
