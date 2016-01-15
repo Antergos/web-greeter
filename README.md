@@ -34,7 +34,6 @@ cd greeter
 git submodule init && git submodule update
 ./autogen.sh --prefix=/usr
 make
-sudo make install
 ```
 
 ##### Download Repo In Archive Format (tar.gz, zip, etc)
@@ -50,7 +49,17 @@ mv lightdm** antergos
 cd ..
 ./autogen.sh --prefix=/usr
 make
-sudo make install
 ```
+
+#### How To Install
+```sh
+cd themes/antergos
+sed -i 's|/usr/share/|/usr/share/lightdm-webkit/themes/|g' index.html
+wget http://antergos.com/antergos-wallpapers-0.6.zip
+unzip antergos**.zip
+sudo make install --prefix=/usr
+sudo cp -R antergos-wa** /usr/share/lightdm-webkit/themes/antergos/wallpapers
+```
+
 ## Theme JavaScript API:
 The greeter exposes a JavaScript API to greeter themes which they must use to interact with the greeter (in order to facilitate the user login process). The [API Documentation](https://antergos.com/wiki/development/lightdm-webkit2-greeter-theme-javascript-api/) is a W.I.P. 
