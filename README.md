@@ -4,12 +4,12 @@
 ## Install It
 
 ### Official Distro Packages
-* ![antergos](https://dl.dropboxusercontent.com/u/60521097/logo-square26x26.png): `sudo pacman -S lightdm-webkit2-greeter`
+* ![antergos](https://dl.dropboxusercontent.com/u/60521097/logo-square26x26.png) `sudo pacman -S lightdm-webkit2-greeter`
 
 ### Unofficial Distro Packages
-* ![arch]https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png): `yaourt -S lightdm-webkit2-greeter`
-* ![fedora](https://dl.dropboxusercontent.com/u/60521097/fedora-logo.png): [OBS Repo](https://software.opensuse.org/download.html?project=home:antergos&package=lightdm-webkit2-greeter)
-* ![openSUSE](https://dl.dropboxusercontent.com/u/60521097/Geeko-button-bling7.png): [1 Click Install](https://software.opensuse.org/ymp/home:antergos/openSUSE_Leap_42.1/lightdm-webkit2-greeter.ymp?base=openSUSE%3ALeap%3A42.1&query=lightdm-webkit2-greeter) | [OBS Repo](https://software.opensuse.org/download.html?project=home:antergos&package=lightdm-webkit2-greeter)
+* ![arch](https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png) `yaourt -S lightdm-webkit2-greeter`
+* ![fedora](https://dl.dropboxusercontent.com/u/60521097/fedora-logo.png) [OBS Repo](https://software.opensuse.org/download.html?project=home:antergos&package=lightdm-webkit2-greeter)
+* ![openSUSE](https://dl.dropboxusercontent.com/u/60521097/Geeko-button-bling7.png) [1 Click Install](https://software.opensuse.org/ymp/home:antergos/openSUSE_Leap_42.1/lightdm-webkit2-greeter.ymp?base=openSUSE%3ALeap%3A42.1&query=lightdm-webkit2-greeter) | [OBS Repo](https://software.opensuse.org/download.html?project=home:antergos&package=lightdm-webkit2-greeter)
 
 ## Build It
 
