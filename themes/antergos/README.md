@@ -49,3 +49,7 @@ To change users icons:
 
 This theme works well with 96x96 images.
 
+### Translations
+
+Translations are managed through [Transifex](https://www.transifex.com/faidoc/antergos). Please do not submit PR for translations.
+
