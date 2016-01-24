@@ -9,6 +9,7 @@ indent_cli_options = -bad -bap -bbo -nbc -br -brs -brf -c33 -cd33 -cdb -ce -ci4 
 [C]
 bears = CPPLintBear,ClangASTPrintBear,ClangBear,ClangCloneDetectionBear,ClangFunctionDifferenceBear
 files = **/*.(c|h|cpp)
+cpplint_ignore = whitespace/tab
 
 [JavaScript]
 bears = JSHintBear
