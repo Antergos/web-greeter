@@ -1,1 +1,14 @@
-{"auth_failed":"UH oh! Autenticació fallida. Siusplau torna-ho a provar.","background_options":"opcions de fons","cancel":"Cancel","confirm_system_action":"Estàs segur?","debug_log":"Registre de depuració","greeting":"Benvingut!","hibernate":"Hiberna","random":"random","reset":"restablir","restart":"Reinicia","shutdown":"Apagar","suspend":"suspendre"}
+{
+    "auth_failed": "Uh! Oh! Autenticació fallida. Si us plau, torneu-ho a provar.",
+    "background_options": "Opcions del fons",
+    "cancel": "Cancel·la",
+    "confirm_system_action": "N'esteu segur?",
+    "debug_log": "Registre de depuració",
+    "greeting": "Benvinguts!",
+    "hibernate": "Hiberna",
+    "random": "Aleatori",
+    "reset": "Restableix",
+    "restart": "Reinicia",
+    "shutdown": "Atura",
+    "suspend": "Suspèn"
+}
