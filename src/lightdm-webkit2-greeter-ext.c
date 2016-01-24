@@ -129,7 +129,7 @@ arg_to_string(JSContextRef context, JSValueRef arg, JSValueRef *exception) {
 	gchar *result;
 
 	if (JSValueGetType(context, arg) != kJSTypeString) {
-		_mkexception(context, exception, "Expected a string");
+		_mkexception(context, exception, _("Expected a string"));
 
 		return NULL;
 	}
@@ -651,7 +651,7 @@ get_hint_cb(JSContextRef context,
 	JSValueRef result;
 
 	if (argumentCount != 1) {
-		return mkexception(context, exception, "Hint argument not supplied");
+		return mkexception(context, exception, _("Hint argument not supplied"));
 	}
 
 	hint_name = arg_to_string(context, arguments[0], exception);
@@ -678,7 +678,7 @@ respond_cb(JSContextRef context,
 	gchar *response;
 
 	if (argumentCount != 1) {
-		return mkexception(context, exception, "Response not supplied");
+		return mkexception(context, exception, _("Response not supplied"));
 	}
 
 	response = arg_to_string(context, arguments[0], exception);
@@ -908,7 +908,7 @@ start_session_sync_cb(JSContextRef context,
 	} else if (argumentCount == 0) {
 		session = NULL;
 	} else {
-		_mkexception(context, exception, "Incorrect parameters");
+		_mkexception(context, exception, _("Incorrect parameters"));
 		return JSValueMakeBoolean(context, FALSE);
 	}
 
@@ -935,7 +935,7 @@ set_language_cb(JSContextRef context,
 	gchar *language;
 
 	if (argumentCount != 1) {
-		return mkexception(context, exception, "Language not supplied");
+		return mkexception(context, exception, _("Language not supplied"));
 	}
 
 	language = arg_to_string(context, arguments[0], exception);
@@ -964,7 +964,7 @@ gettext_cb(JSContextRef context,
 	JSValueRef result;
 
 	if (argumentCount != 1) {
-		return mkexception(context, exception, "Argument not supplied");
+		return mkexception(context, exception, _("Argument not supplied"));
 	}
 
 	string = arg_to_string(context, arguments[0], exception);
@@ -993,7 +993,7 @@ ngettext_cb(JSContextRef context,
 	JSValueRef result;
 
 	if (argumentCount != 3) {
-		return mkexception(context, exception, "Needs 3 arguments");
+		return mkexception(context, exception, _("Needs 3 arguments"));
 	}
 
 	string = arg_to_string(context, arguments[0], exception);
@@ -1035,7 +1035,7 @@ get_conf_str_cb(JSContextRef context,
 	JSValueRef result;
 
 	if (argumentCount != 2) {
-		return mkexception(context, exception, "Needs 2 arguments");
+		return mkexception(context, exception, _("Needs 2 arguments"));
 	}
 
 	section = arg_to_string(context, arguments[0], exception);
@@ -1082,7 +1082,7 @@ get_conf_num_cb(JSContextRef context,
 	GError *err = NULL;
 
 	if (argumentCount != 2) {
-		return mkexception(context, exception, "Needs 2 arguments");
+		return mkexception(context, exception, _("Needs 2 arguments"));
 	}
 
 	section = arg_to_string(context, arguments[0], exception);
@@ -1125,7 +1125,7 @@ get_conf_bool_cb(JSContextRef context,
 	GError *err = NULL;
 
 	if (argumentCount != 2) {
-		return mkexception(context, exception, "Needs 2 arguments");
+		return mkexception(context, exception, _("Needs 2 arguments"));
 	}
 
 	section = arg_to_string(context, arguments[0], exception);
