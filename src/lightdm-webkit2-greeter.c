@@ -105,9 +105,9 @@ create_new_webkit_settings_object(void) {
 		"enable-dns-prefetching", TRUE,
 		"javascript-can-open-windows-automatically", TRUE,
 		"allow-file-access-from-file-urls", TRUE,
-		"enable-accelerated-2d-canvas", FALSE,
+		"enable-accelerated-2d-canvas", TRUE,
 		"enable-smooth-scrolling", FALSE,
-		"enable-webgl", FALSE,
+		"enable-webgl", TRUE,
 		"enable-write-console-messages-to-stdout", TRUE,
 		NULL
 	);
