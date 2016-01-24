@@ -1,0 +1,52 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-01-24 11:48-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../src/lightdm-webkit2-greeter-ext.c:132
+msgid "Expected a string"
+msgstr ""
+
+#: ../src/lightdm-webkit2-greeter-ext.c:654
+msgid "Hint argument not supplied"
+msgstr ""
+
+#: ../src/lightdm-webkit2-greeter-ext.c:681
+msgid "Response not supplied"
+msgstr ""
+
+#: ../src/lightdm-webkit2-greeter-ext.c:911
+msgid "Incorrect parameters"
+msgstr ""
+
+#: ../src/lightdm-webkit2-greeter-ext.c:938
+msgid "Language not supplied"
+msgstr ""
+
+#: ../src/lightdm-webkit2-greeter-ext.c:967
+msgid "Argument not supplied"
+msgstr ""
+
+#: ../src/lightdm-webkit2-greeter-ext.c:996
+msgid "Needs 3 arguments"
+msgstr ""
+
+#: ../src/lightdm-webkit2-greeter-ext.c:1038
+#: ../src/lightdm-webkit2-greeter-ext.c:1085
+#: ../src/lightdm-webkit2-greeter-ext.c:1128
+msgid "Needs 2 arguments"
+msgstr ""
