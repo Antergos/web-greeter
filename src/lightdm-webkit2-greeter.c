@@ -41,6 +41,7 @@
 #include <webkit2/webkit2.h>
 #include <JavaScriptCore/JavaScript.h>
 #include <glib/gi18n.h>
+#include <sys/mman.h>
 
 #include <lightdm.h>
 
@@ -201,6 +202,13 @@ main(int argc, char **argv) {
 	WebKitWebContext *context;
 	GtkCssProvider *css_provider;
 
+	/*
+	 * Prevent memory from being swapped out, since we see unencrypted
+	 * passwords.
+	 */
+	mlockall (MCL_CURRENT | MCL_FUTURE);
+
+	/* Initialize i18n */
 	setlocale (LC_ALL, "");
 	bindtextdomain (GETTEXT_PACKAGE, LOCALE_DIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
