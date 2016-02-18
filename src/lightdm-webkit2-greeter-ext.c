@@ -55,6 +55,13 @@ GKeyFile *keyfile;
 #define GREETER  ((LightDMGreeter *)  JSObjectGetPrivate (thisObject))
 #define LANGUAGE ((LightDMLanguage *) JSObjectGetPrivate (thisObject))
 
+/*
+ * Put all our translatable strings up top
+ */
+
+#define EXPECTSTRING   _("Expected a string")
+#define ARGNOTSUPPLIED _("Argument(s) not supplied")
+
 static JSClassRef
 	lightdm_greeter_class,
 	gettext_class,
@@ -129,7 +136,7 @@ arg_to_string(JSContextRef context, JSValueRef arg, JSValueRef *exception) {
 	gchar *result;
 
 	if (JSValueGetType(context, arg) != kJSTypeString) {
-		_mkexception(context, exception, _("Expected a string"));
+		_mkexception(context, exception, EXPECTSTRING);
 
 		return NULL;
 	}
@@ -651,7 +658,7 @@ get_hint_cb(JSContextRef context,
 	JSValueRef result;
 
 	if (argumentCount != 1) {
-		return mkexception(context, exception, _("Hint argument not supplied"));
+		return mkexception(context, exception, ARGNOTSUPPLIED);
 	}
 
 	hint_name = arg_to_string(context, arguments[0], exception);
@@ -678,7 +685,7 @@ respond_cb(JSContextRef context,
 	gchar *response;
 
 	if (argumentCount != 1) {
-		return mkexception(context, exception, _("Response not supplied"));
+		return mkexception(context, exception, ARGNOTSUPPLIED);
 	}
 
 	response = arg_to_string(context, arguments[0], exception);
@@ -905,11 +912,6 @@ start_session_sync_cb(JSContextRef context,
 		session = arg_to_string(context, arguments[0], exception);
 	} else if (argumentCount == 2) {
 		session = arg_to_string(context, arguments[1], exception);
-	} else if (argumentCount == 0) {
-		session = NULL;
-	} else {
-		_mkexception(context, exception, _("Incorrect parameters"));
-		return JSValueMakeBoolean(context, FALSE);
 	}
 
 	result = lightdm_greeter_start_session_sync(GREETER, session, &err);
@@ -935,7 +937,7 @@ set_language_cb(JSContextRef context,
 	gchar *language;
 
 	if (argumentCount != 1) {
-		return mkexception(context, exception, _("Language not supplied"));
+		return mkexception(context, exception, ARGNOTSUPPLIED);
 	}
 
 	language = arg_to_string(context, arguments[0], exception);
@@ -964,7 +966,7 @@ gettext_cb(JSContextRef context,
 	JSValueRef result;
 
 	if (argumentCount != 1) {
-		return mkexception(context, exception, _("Argument not supplied"));
+		return mkexception(context, exception, ARGNOTSUPPLIED);
 	}
 
 	string = arg_to_string(context, arguments[0], exception);
@@ -993,7 +995,7 @@ ngettext_cb(JSContextRef context,
 	JSValueRef result;
 
 	if (argumentCount != 3) {
-		return mkexception(context, exception, _("Needs 3 arguments"));
+		return mkexception(context, exception, ARGNOTSUPPLIED);
 	}
 
 	string = arg_to_string(context, arguments[0], exception);
@@ -1035,7 +1037,7 @@ get_conf_str_cb(JSContextRef context,
 	JSValueRef result;
 
 	if (argumentCount != 2) {
-		return mkexception(context, exception, _("Needs 2 arguments"));
+		return mkexception(context, exception, ARGNOTSUPPLIED);
 	}
 
 	section = arg_to_string(context, arguments[0], exception);
@@ -1082,7 +1084,7 @@ get_conf_num_cb(JSContextRef context,
 	GError *err = NULL;
 
 	if (argumentCount != 2) {
-		return mkexception(context, exception, _("Needs 2 arguments"));
+		return mkexception(context, exception, ARGNOTSUPPLIED);
 	}
 
 	section = arg_to_string(context, arguments[0], exception);
@@ -1125,7 +1127,7 @@ get_conf_bool_cb(JSContextRef context,
 	GError *err = NULL;
 
 	if (argumentCount != 2) {
-		return mkexception(context, exception, _("Needs 2 arguments"));
+		return mkexception(context, exception, ARGNOTSUPPLIED);
 	}
 
 	section = arg_to_string(context, arguments[0], exception);

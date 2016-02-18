@@ -201,7 +201,10 @@ main(int argc, char **argv) {
 	WebKitWebContext *context;
 	GtkCssProvider *css_provider;
 
-	g_unix_signal_add(SIGTERM, (GSourceFunc) quit_cb, /* is_callback */ GINT_TO_POINTER(TRUE));
+	setlocale (LC_ALL, "");
+	bindtextdomain (GETTEXT_PACKAGE, LOCALE_DIR);
+	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+	textdomain (GETTEXT_PACKAGE);
 
 	gtk_init(&argc, &argv);
 
