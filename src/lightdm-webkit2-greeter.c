@@ -225,7 +225,6 @@ main(int argc, char **argv) {
 	gdk_screen_get_monitor_geometry(screen, gdk_screen_get_primary_monitor(screen), &geometry);
 	gtk_window_set_default_size(GTK_WINDOW(window), geometry.width, geometry.height);
 	gtk_window_move(GTK_WINDOW(window), geometry.x, geometry.y);
-	gdk_window_set_cursor(root_window, gdk_cursor_new_for_display(default_display, GDK_LEFT_PTR));
 
 	/* There is no window manager, so we need to implement some of its functionality */
 	gdk_window_set_events(root_window, gdk_window_get_events(root_window) | GDK_SUBSTRUCTURE_MASK);
@@ -280,6 +279,7 @@ main(int argc, char **argv) {
 							 g_strdup_printf("file://%s/%s/index.html", THEME_DIR, theme));
 
 	gtk_widget_show_all(window);
+	gdk_window_set_cursor(gtk_widget_get_window (GTK_WIDGET (window)), gdk_cursor_new_for_display(default_display, GDK_LEFT_PTR));
 
 	gtk_main();
 
