@@ -654,7 +654,7 @@ get_hint_cb(JSContextRef context,
 			const JSValueRef arguments[],
 			JSValueRef *exception) {
 
-	gchar *hint_name;
+	gchar *hint_name = NULL;
 	JSValueRef result;
 
 	if (argumentCount != 1) {
@@ -682,7 +682,7 @@ respond_cb(JSContextRef context,
 		   const JSValueRef arguments[],
 		   JSValueRef *exception) {
 
-	gchar *response;
+	gchar *response = NULL;
 
 	if (argumentCount != 1) {
 		return mkexception(context, exception, ARGNOTSUPPLIED);
@@ -934,7 +934,7 @@ set_language_cb(JSContextRef context,
 				const JSValueRef arguments[],
 				JSValueRef *exception) {
 
-	gchar *language;
+	gchar *language = NULL;
 
 	if (argumentCount != 1) {
 		return mkexception(context, exception, ARGNOTSUPPLIED);
@@ -962,7 +962,7 @@ gettext_cb(JSContextRef context,
 		   const JSValueRef arguments[],
 		   JSValueRef *exception) {
 
-	gchar *string;
+	gchar *string = NULL;
 	JSValueRef result;
 
 	if (argumentCount != 1) {
@@ -990,8 +990,8 @@ ngettext_cb(JSContextRef context,
 			const JSValueRef arguments[],
 			JSValueRef *exception) {
 
-	gchar *string, *plural_string;
-	unsigned int n;
+	gchar *string = NULL, *plural_string = NULL;
+	unsigned int n = 0;
 	JSValueRef result;
 
 	if (argumentCount != 3) {
