@@ -2,6 +2,10 @@
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /*
@@ -33,9 +37,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  */
 
 /**
- * This is used to access our main class from within jQuery callbacks.
+ * This is used to access our classes from within jQuery callbacks.
  */
 var _self = null;
+var _bg_self = null;
+
+/**
+ * This is used so we don't ask the greeter for config values more than once.
+ */
+var _have_config_values = false;
 
 /**
  * Capitalize a string.
@@ -47,29 +57,14 @@ String.prototype.capitalize = function () {
 };
 
 /**
- * This is the theme's main class object. It contains almost all the theme's logic.
+ * This class handles the theme's background switcher.
  */
 
-var AntergosTheme = (function () {
-	function AntergosTheme() {
-		_classCallCheck(this, AntergosTheme);
+var GreeterThemeComponent = (function () {
+	function GreeterThemeComponent() {
+		_classCallCheck(this, GreeterThemeComponent);
 
-		if (null !== _self) {
-			return _self;
-		} else {
-			_self = this;
-		}
 		this.debug = this.cache_get('debug', 'enabled');
-		this.user_list_visible = false;
-		this.auth_pending = false;
-		this.selected_user = null;
-		this.$user_list = $('#user-list2');
-		this.$session_list = $('#sessions');
-		this.$clock_container = $('#collapseOne');
-		this.$clock = $("#current_time");
-		this.$actions_container = $("#actionsArea");
-		this.$msg_area_container = $('#statusArea');
-		this.$msg_area = $('#showMsg');
 		this.lang = window.navigator.language.split('-')[0].toLowerCase();
 		this.translations = window.ant_translations;
 
@@ -77,30 +72,16 @@ var AntergosTheme = (function () {
 			window.navigator.languages = [window.navigator.language];
 		}
 
-		this.initialize();
+		this.init_config_values();
 	}
 
-	_createClass(AntergosTheme, [{
-		key: 'initialize',
-		value: function initialize() {
-			this.prepare_translations();
-			this.do_static_translations();
-			this.initialize_clock();
-			this.prepare_login_panel_header();
-			this.prepare_user_list();
-			this.prepare_session_list();
-			this.prepare_system_action_buttons();
+	/**
+  * Add text to the debug log element (accessible from the login screen).
+  *
+  * @param {string} text - To be added to the log.
+  */
 
-			this.register_callbacks();
-		}
-
-		/**
-   * Add text to the debug log element (accessible from the login screen).
-   *
-   * @param {string} text - To be added to the log.
-   */
-
-	}, {
+	_createClass(GreeterThemeComponent, [{
 		key: 'log',
 		value: function log(text) {
 			if ('true' === this.debug) {
@@ -119,8 +100,7 @@ var AntergosTheme = (function () {
 	}, {
 		key: 'cache_get',
 		value: function cache_get() {
-			var key = 'ant',
-			    index = 0;
+			var key = 'ant';
 
 			for (var _len = arguments.length, key_parts = Array(_len), _key = 0; _key < _len; _key++) {
 				key_parts[_key] = arguments[_key];
@@ -135,7 +115,6 @@ var AntergosTheme = (function () {
 					var part = _step.value;
 
 					key += ':' + part;
-					index += 1;
 				}
 			} catch (err) {
 				_didIteratorError = true;
@@ -166,8 +145,7 @@ var AntergosTheme = (function () {
 	}, {
 		key: 'cache_set',
 		value: function cache_set(value) {
-			var key = 'ant',
-			    index = 0;
+			var key = 'ant';
 
 			for (var _len2 = arguments.length, key_parts = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
 				key_parts[_key2 - 1] = arguments[_key2];
@@ -182,7 +160,6 @@ var AntergosTheme = (function () {
 					var part = _step2.value;
 
 					key += ':' + part;
-					index += 1;
 				}
 			} catch (err) {
 				_didIteratorError2 = true;
@@ -203,6 +180,169 @@ var AntergosTheme = (function () {
 		}
 
 		/**
+   * Get some values from `lightdm-webkit2-greeter.conf` and save them for later.
+   */
+
+	}, {
+		key: 'init_config_values',
+		value: function init_config_values() {
+			var logo = '',
+			    background_images = '',
+			    background_images_dir = '';
+
+			if ('undefined' !== typeof config) {
+				if (this instanceof AntergosTheme) {
+					logo = config.get_str('branding', 'logo_image') || '';
+				} else if (this instanceof AntergosBackgroundManager) {
+					background_images = config.get_str('branding', 'background_images_array') || '';
+					background_images = background_images.length ? background_images.split(',') : [];
+					background_images_dir = config.get_str('branding', 'background_images') || '';
+				}
+			}
+
+			this.logo = logo;
+			this.background_images = background_images;
+			this.background_images_dir = background_images_dir;
+		}
+	}]);
+
+	return GreeterThemeComponent;
+})();
+
+/**
+ * This class handles the theme's background switcher.
+ */
+
+var AntergosBackgroundManager = (function (_GreeterThemeComponen) {
+	_inherits(AntergosBackgroundManager, _GreeterThemeComponen);
+
+	function AntergosBackgroundManager() {
+		var _ret;
+
+		_classCallCheck(this, AntergosBackgroundManager);
+
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AntergosBackgroundManager).call(this));
+
+		if (null === _bg_self) {
+			_bg_self = _this;
+		}
+
+		_this.current_background = _this.cache_get('background_config', 'current_background');
+
+		if (!_this.background_images_dir.length || !_this.background_images.length) {
+			_this.log('AntergosBackgroundManager: [ERROR] No background images detected.');
+		}
+
+		_this.initialize();
+
+		return _ret = _bg_self, _possibleConstructorReturn(_this, _ret);
+	}
+
+	_createClass(AntergosBackgroundManager, [{
+		key: 'initialize',
+		value: function initialize() {
+			if (!this.current_background) {
+				// For backwards compatibility
+				if (null !== localStorage.getItem('bgsaved') && '0' === localStorage.getItem('bgrandom')) {
+					this.current_background = localStorage.getItem('bgsaved');
+					this.cache_set(this.current_background, 'background_manager', 'current_background');
+					localStorage.removeItem('bgrandom');
+					localStorage.removeItem('bgsaved');
+				} else if ('0' === localStorage.getItem('bgrandom')) {
+					this.current_background = this.get_random_image();
+					this.cache_set('true', 'background_manager', 'random_background');
+					localStorage.removeItem('bgrandom');
+				}
+			}
+
+			if (!this.current_background) {
+				// For current and future versions
+				var current_background = this.cache_get('background_manager', 'current_background'),
+				    random_background = this.cache_get('background_manager', 'random_background');
+
+				if ('true' === random_background) {}
+			}
+
+			$('.header').fadeTo(300, 0.5, function () {
+				$('.header').css("background", this.current_background);
+			}).fadeTo(300, 1);
+		}
+	}, {
+		key: 'get_random_image',
+		value: function get_random_image() {
+			var background = undefined,
+			    random_bg = undefined;
+
+			if (this.background_images.length) {
+				random_bg = Math.floor(Math.random() * this.background_images.length);
+				background = this.background_images[random_bg];
+			}
+		}
+	}, {
+		key: 'get_old_backgrounds',
+		value: function get_old_backgrounds() {
+			var old_backgrounds = [];
+
+			$('.bgs .clearfix').each(function (i) {
+				if (i > 0) {
+					old_backgrounds.push($(this).attr('data-img'));
+				}
+			});
+		}
+	}]);
+
+	return AntergosBackgroundManager;
+})(GreeterThemeComponent);
+
+/**
+ * This is the theme's main class object. It contains almost all the theme's logic.
+ */
+
+var AntergosTheme = (function (_GreeterThemeComponen2) {
+	_inherits(AntergosTheme, _GreeterThemeComponen2);
+
+	function AntergosTheme() {
+		var _ret2;
+
+		_classCallCheck(this, AntergosTheme);
+
+		var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(AntergosTheme).call(this));
+
+		if (null === _self) {
+			_self = _this2;
+		}
+		_this2.user_list_visible = false;
+		_this2.auth_pending = false;
+		_this2.selected_user = null;
+		_this2.$user_list = $('#user-list2');
+		_this2.$session_list = $('#sessions');
+		_this2.$clock_container = $('#collapseOne');
+		_this2.$clock = $("#current_time");
+		_this2.$actions_container = $("#actionsArea");
+		_this2.$msg_area_container = $('#statusArea');
+		_this2.$msg_area = $('#showMsg');
+		_this2.background_manager = new AntergosBackgroundManager();
+
+		_this2.initialize();
+
+		return _ret2 = _self, _possibleConstructorReturn(_this2, _ret2);
+	}
+
+	_createClass(AntergosTheme, [{
+		key: 'initialize',
+		value: function initialize() {
+			this.prepare_translations();
+			this.do_static_translations();
+			this.initialize_clock();
+			this.prepare_login_panel_header();
+			this.prepare_user_list();
+			this.prepare_session_list();
+			this.prepare_system_action_buttons();
+
+			this.register_callbacks();
+		}
+
+		/**
    * Register callbacks for the LDM Greeter as well as any others that haven't been registered
    * elsewhere.
    */
@@ -210,14 +350,19 @@ var AntergosTheme = (function () {
 	}, {
 		key: 'register_callbacks',
 		value: function register_callbacks() {
+			var events = 'shown.bs.collapse, hidden.bs.collapse';
+
+			this.$user_list.parents('.collapse').on(events, this.user_list_collapse_handler);
 			$(document).keydown(this.key_press_handler);
 			$('.cancel_auth').click(this.cancel_authentication);
 			$('.submit_passwd').click(this.submit_password);
+
 			window.show_prompt = this.show_prompt;
 			window.show_message = this.show_message;
 			window.start_authentication = this.start_authentication;
 			window.cancel_authentication = this.cancel_authentication;
 			window.authentication_complete = this.authentication_complete;
+			window.autologin_timer_expired = this.cancel_authentication;
 		}
 
 		/**
@@ -258,7 +403,7 @@ var AntergosTheme = (function () {
 					template = '\n\t\t\t\t<a href="#" id="' + user.name + '" class="list-group-item ' + user.name + '" data-session="' + last_session + '">\n\t\t\t\t\t<img src="' + image_src + '" class="img-circle" alt="' + user.display_name + '" />\n\t\t\t\t\t<span>' + user.display_name + '</span>\n\t\t\t\t\t<span class="badge"><i class="fa fa-check"></i></span>\n\t\t\t\t</a>';
 
 					// Register event handler here so we don't have to iterate over the users again later.
-					$(template).appendTo(this.$user_list).click(this.start_authentication).children('img').on('error', this.image_not_found);
+					$(template).appendTo(this.$user_list).click(this.start_authentication);
 				} // END for ( var user of lightdm.users )
 			} catch (err) {
 				_didIteratorError3 = true;
@@ -376,52 +521,16 @@ var AntergosTheme = (function () {
 	}, {
 		key: 'initialize_clock',
 		value: function initialize_clock() {
-			var _this = this;
+			var _this3 = this;
 
 			var saved_format = this.cache_get('clock', 'time_format'),
-			    format = null !== saved_format ? saved_format : 'LT',
-			    detected_language = this.lang;
+			    format = null !== saved_format ? saved_format : 'LT';
 
-			// Workaround for moment.js bug: https://github.com/moment/moment/issues/2856
-			var _iteratorNormalCompletion6 = true;
-			var _didIteratorError6 = false;
-			var _iteratorError6 = undefined;
-
-			try {
-				for (var _iterator6 = window.navigator.languages[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-					var lang = _step6.value;
-
-					try {
-						detected_language = lang.split('-')[0].toLowerCase();
-						break;
-					} catch (err) {
-						this.log(String(err));
-					}
-				}
-			} catch (err) {
-				_didIteratorError6 = true;
-				_iteratorError6 = err;
-			} finally {
-				try {
-					if (!_iteratorNormalCompletion6 && _iterator6.return) {
-						_iterator6.return();
-					}
-				} finally {
-					if (_didIteratorError6) {
-						throw _iteratorError6;
-					}
-				}
-			}
-
-			if (null === detected_language) {
-				detected_language = 'en';
-			}
-
-			moment.locale(detected_language);
+			moment.locale(window.navigator.languages);
 			this.$clock.html(moment().format(format));
 
 			setInterval(function () {
-				_this.$clock.html(moment().format(format));
+				_this3.$clock.html(moment().format(format));
 			}, 60000);
 		}
 
@@ -435,7 +544,6 @@ var AntergosTheme = (function () {
 		value: function show_user_list() {
 			if ($(this.$clock_container).hasClass('in')) {
 				$('#trigger').trigger('click');
-				this.user_list_visible = true;
 			}
 			if ($(this.$user_list).length <= 1) {
 				$(this.$user_list).find('a').trigger('click', this);
@@ -444,7 +552,8 @@ var AntergosTheme = (function () {
 	}, {
 		key: 'prepare_login_panel_header',
 		value: function prepare_login_panel_header() {
-			var greeting = this.translations.greeting ? this.translations.greeting : 'Welcome!';
+			var greeting = this.translations.greeting ? this.translations.greeting : 'Welcome!',
+			    logo = '' !== this.logo ? this.logo : 'img/antergos.png';
 
 			$('.welcome').text(greeting);
 			$('#hostname').append(lightdm.hostname);
@@ -453,13 +562,13 @@ var AntergosTheme = (function () {
 		key: 'prepare_translations',
 		value: function prepare_translations() {
 			if (!this.translations.hasOwnProperty(this.lang)) {
-				var _iteratorNormalCompletion7 = true;
-				var _didIteratorError7 = false;
-				var _iteratorError7 = undefined;
+				var _iteratorNormalCompletion6 = true;
+				var _didIteratorError6 = false;
+				var _iteratorError6 = undefined;
 
 				try {
-					for (var _iterator7 = window.navigator.languages[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-						var lang = _step7.value;
+					for (var _iterator6 = window.navigator.languages[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+						var lang = _step6.value;
 
 						if (this.translations.hasOwnProperty(lang)) {
 							this.lang = lang;
@@ -467,16 +576,16 @@ var AntergosTheme = (function () {
 						}
 					}
 				} catch (err) {
-					_didIteratorError7 = true;
-					_iteratorError7 = err;
+					_didIteratorError6 = true;
+					_iteratorError6 = err;
 				} finally {
 					try {
-						if (!_iteratorNormalCompletion7 && _iterator7.return) {
-							_iterator7.return();
+						if (!_iteratorNormalCompletion6 && _iterator6.return) {
+							_iterator6.return();
 						}
 					} finally {
-						if (_didIteratorError7) {
-							throw _iteratorError7;
+						if (_didIteratorError6) {
+							throw _iteratorError6;
 						}
 					}
 				}
@@ -546,7 +655,7 @@ var AntergosTheme = (function () {
 
 			_self.auth_pending = true;
 
-			lightdm.start_authentication(user_id);
+			lightdm.authenticate(user_id);
 		}
 
 		/**
@@ -560,27 +669,27 @@ var AntergosTheme = (function () {
 		value: function cancel_authentication(event) {
 			var selectors = ['#statusArea', '#timerArea', '#passwordArea', '#session-list'];
 
-			var _iteratorNormalCompletion8 = true;
-			var _didIteratorError8 = false;
-			var _iteratorError8 = undefined;
+			var _iteratorNormalCompletion7 = true;
+			var _didIteratorError7 = false;
+			var _iteratorError7 = undefined;
 
 			try {
-				for (var _iterator8 = selectors[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
-					var selector = _step8.value;
+				for (var _iterator7 = selectors[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+					var selector = _step7.value;
 
 					$(selector).hide();
 				}
 			} catch (err) {
-				_didIteratorError8 = true;
-				_iteratorError8 = err;
+				_didIteratorError7 = true;
+				_iteratorError7 = err;
 			} finally {
 				try {
-					if (!_iteratorNormalCompletion8 && _iterator8.return) {
-						_iterator8.return();
+					if (!_iteratorNormalCompletion7 && _iterator7.return) {
+						_iterator7.return();
 					}
 				} finally {
-					if (_didIteratorError8) {
-						throw _iteratorError8;
+					if (_didIteratorError7) {
+						throw _iteratorError7;
 					}
 				}
 			}
@@ -629,7 +738,7 @@ var AntergosTheme = (function () {
 	}, {
 		key: 'submit_password',
 		value: function submit_password(event) {
-			lightdm.provide_secret($('#passwordField').val());
+			lightdm.respond($('#passwordField').val());
 			$('#passwordArea').hide();
 			$('#timerArea').show();
 		}
@@ -666,60 +775,55 @@ var AntergosTheme = (function () {
 	}, {
 		key: 'system_action_handler',
 		value: function system_action_handler() {
-			var _this2 = this;
+			var _this4 = this;
 
 			var action = $(this).attr('id'),
 			    $modal = $('.modal');
 
 			$modal.find('.btn-primary').text(_self.translations[action]).click(action, function (event) {
-				$(_this2).off('click');
+				$(_this4).off('click');
 				lightdm[event.data]();
 			});
 			$modal.find('.btn-default').click(function () {
-				$(_this2).next().off('click');
+				$(_this4).next().off('click');
 			});
 
 			$modal.modal('toggle');
 		}
-
-		/**
-   * User image on('error') handler.
-   */
-
 	}, {
-		key: 'image_not_found',
-		value: function image_not_found(source) {
-			source.onerror = "";
-			source.src = 'img/antergos-logo-user.png';
-			return true;
+		key: 'user_list_collapse_handler',
+		value: function user_list_collapse_handler() {
+			_self.user_list_visible = _self.$user_list.hasClass('in') ? true : false;
 		}
 
 		/**
    * LightDM Callback - Show password prompt to user.
    *
    * @param text
+   * @param type
    */
 
 	}, {
 		key: 'show_prompt',
-		value: function show_prompt(text) {
-
-			$('#passwordField').val("");
-			$('#passwordArea').show();
-			$('#passwordField').focus();
+		value: function show_prompt(text, type) {
+			if ('password' === type) {
+				$('#passwordField').val("");
+				$('#passwordArea').show();
+				$('#passwordField').focus();
+			}
 		}
 
 		/**
    * LightDM Callback - Show message to user.
    *
-   * @param msg
+   * @param text
    */
 
 	}, {
 		key: 'show_message',
-		value: function show_message(msg) {
-			if (msg.length > 0) {
-				$(this.$msg_area).html(msg);
+		value: function show_message(text, type) {
+			if (text.length > 0) {
+				$(this.$msg_area).html(text);
 				$('#passwordArea').hide();
 				$(this.$msg_area_container).show();
 			}
@@ -727,7 +831,7 @@ var AntergosTheme = (function () {
 	}]);
 
 	return AntergosTheme;
-})();
+})(GreeterThemeComponent);
 
 /**
  * Initialize the theme once the window has loaded.

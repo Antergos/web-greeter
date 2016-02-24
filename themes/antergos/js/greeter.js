@@ -28,9 +28,15 @@
 
 
 /**
- * This is used to access our main class from within jQuery callbacks.
+ * This is used to access our classes from within jQuery callbacks.
  */
-var _self = null;
+let _self = null;
+let _bg_self = null;
+
+/**
+ * This is used so we don't ask the greeter for config values more than once.
+ */
+let _have_config_values = false;
 
 
 /**
@@ -43,18 +49,200 @@ String.prototype.capitalize = function() {
 };
 
 
+
+
+
+
+
+
+/**
+ * This class handles the theme's background switcher.
+ */
+class GreeterThemeComponent {
+
+	constructor() {
+		this.debug = this.cache_get( 'debug', 'enabled' );
+		this.lang = window.navigator.language.split( '-' )[ 0 ].toLowerCase();
+		this.translations = window.ant_translations;
+
+		if ( 'undefined' === typeof window.navigator.languages ) {
+			window.navigator.languages = [ window.navigator.language ];
+		}
+
+		this.init_config_values();
+	}
+
+
+	/**
+	 * Add text to the debug log element (accessible from the login screen).
+	 *
+	 * @param {string} text - To be added to the log.
+	 */
+	log( text ) {
+		if ( 'true' === this.debug ) {
+			console.log( text );
+		}
+		$( '#logArea' ).append( `${text}<br/>` );
+	}
+
+
+	/**
+	 * Get a key's value from localStorage. Keys can have two or more parts.
+	 * For example: "ant:user:john:session".
+	 *
+	 * @param {...string} key_parts - Strings that are combined to form the key.
+	 */
+	cache_get( ...key_parts ) {
+		var key = `ant`;
+
+		for ( var part of key_parts ) {
+			key += `:${part}`;
+		}
+		return localStorage.getItem( key );
+	}
+
+
+	/**
+	 * Set a key's value in localStorage. Keys can have two or more parts.
+	 * For example: "ant:user:john:session".
+	 *
+	 * @param {string} value - The value to set.
+	 * @param {...string} key_parts - Strings that are combined to form the key.
+	 */
+	cache_set( value, ...key_parts ) {
+		var key = `ant`;
+
+		for ( var part of key_parts ) {
+			key += `:${part}`;
+		}
+		return localStorage.setItem( key, value );
+	}
+
+
+	/**
+	 * Get some values from `lightdm-webkit2-greeter.conf` and save them for later.
+	 */
+	init_config_values() {
+		let logo = '', background_images = '', background_images_dir = '';
+
+		if ( 'undefined' !== typeof config ) {
+			if ( this instanceof AntergosTheme ) {
+				logo = config.get_str( 'branding', 'logo_image' ) || '';
+
+			} else if ( this instanceof AntergosBackgroundManager ) {
+				background_images = config.get_str( 'branding', 'background_images_array' ) || '';
+				background_images = ( background_images.length ) ? background_images.split( ',' ) : [];
+				background_images_dir = config.get_str( 'branding', 'background_images' ) || '';
+			}
+		}
+
+		this.logo = logo;
+		this.background_images = background_images;
+		this.background_images_dir = background_images_dir;
+	}
+}
+
+
+
+
+
+
+/**
+ * This class handles the theme's background switcher.
+ */
+class AntergosBackgroundManager extends GreeterThemeComponent {
+
+	constructor() {
+		super();
+
+		if ( null === _bg_self ) {
+			_bg_self = this;
+		}
+
+		this.current_background = this.cache_get( 'background_config', 'current_background' );
+
+		if ( ! this.background_images_dir.length || ! this.background_images.length ) {
+			this.log('AntergosBackgroundManager: [ERROR] No background images detected.');
+		}
+
+		this.initialize();
+
+		return _bg_self;
+	}
+
+
+	initialize() {
+		if ( ! this.current_background ) {
+			// For backwards compatibility
+			if ( null !== localStorage.getItem( 'bgsaved' ) && '0' === localStorage.getItem( 'bgrandom' ) ) {
+				this.current_background = localStorage.getItem( 'bgsaved' );
+				this.cache_set( this.current_background, 'background_manager', 'current_background' );
+				localStorage.removeItem( 'bgrandom' );
+				localStorage.removeItem( 'bgsaved' );
+			} else if ( '0' === localStorage.getItem( 'bgrandom' ) ) {
+				this.current_background = this.get_random_image();
+				this.cache_set( 'true', 'background_manager', 'random_background' );
+				localStorage.removeItem( 'bgrandom' );
+			}
+		}
+
+		if ( ! this.current_background ) {
+			// For current and future versions
+			let current_background = this.cache_get('background_manager', 'current_background' ),
+				random_background = this.cache_get('background_manager', 'random_background' );
+
+			if ( 'true' === random_background ) {
+				
+			}
+		}
+
+		$( '.header' ).fadeTo( 300, 0.5, function() {
+			$( '.header' ).css( "background", this.current_background );
+		} ).fadeTo( 300, 1 );
+	}
+
+
+	get_random_image() {
+		let background, random_bg;
+
+		if ( this.background_images.length ) {
+			random_bg = Math.floor( Math.random() * this.background_images.length );
+			background = this.background_images[ random_bg ];
+		}
+
+	}
+
+
+	get_old_backgrounds() {
+		var old_backgrounds = [];
+
+		$( '.bgs .clearfix' ).each( function(i) {
+			if ( i > 0 ) {
+				old_backgrounds.push( $( this ).attr( 'data-img' ) );
+			}
+		});
+	}
+
+
+}
+
+
+
+
+
+
+
+
 /**
  * This is the theme's main class object. It contains almost all the theme's logic.
  */
-class AntergosTheme {
+class AntergosTheme extends GreeterThemeComponent {
 
 	constructor() {
-		if ( null !== _self ) {
-			return _self;
-		} else {
+		super();
+		if ( null === _self ) {
 			_self = this;
 		}
-		this.debug = this.cache_get( 'debug', 'enabled' );
 		this.user_list_visible = false;
 		this.auth_pending = false;
 		this.selected_user = null;
@@ -65,14 +253,11 @@ class AntergosTheme {
 		this.$actions_container = $( "#actionsArea" );
 		this.$msg_area_container = $( '#statusArea' );
 		this.$msg_area = $( '#showMsg' );
-		this.lang = window.navigator.language.split( '-' )[ 0 ].toLowerCase();
-		this.translations = window.ant_translations;
-
-		if ( 'undefined' === typeof window.navigator.languages ) {
-			window.navigator.languages = [ window.navigator.language ];
-		}
+		this.background_manager = new AntergosBackgroundManager();
 
 		this.initialize();
+
+		return _self;
 	}
 
 	initialize() {
@@ -87,66 +272,25 @@ class AntergosTheme {
 		this.register_callbacks();
 	}
 
-	/**
-	 * Add text to the debug log element (accessible from the login screen).
-	 *
-	 * @param {string} text - To be added to the log.
-	 */
-	log( text ) {
-		if ( 'true' === this.debug ) {
-			console.log( text );
-		}
-		$( '#logArea' ).append( `${text}<br/>` );
-	}
-
-	/**
-	 * Get a key's value from localStorage. Keys can have two or more parts.
-	 * For example: "ant:user:john:session".
-	 *
-	 * @param {...string} key_parts - Strings that are combined to form the key.
-	 */
-	cache_get( ...key_parts ) {
-		var key = `ant`,
-			index = 0;
-
-		for ( var part of key_parts ) {
-			key += `:${part}`;
-			index += 1;
-		}
-		return localStorage.getItem( key );
-	}
-
-	/**
-	 * Set a key's value in localStorage. Keys can have two or more parts.
-	 * For example: "ant:user:john:session".
-	 *
-	 * @param {string} value - The value to set.
-	 * @param {...string} key_parts - Strings that are combined to form the key.
-	 */
-	cache_set( value, ...key_parts ) {
-		var key = `ant`,
-			index = 0;
-
-		for ( var part of key_parts ) {
-			key += `:${part}`;
-			index += 1;
-		}
-		return localStorage.setItem( key, value );
-	}
 
 	/**
 	 * Register callbacks for the LDM Greeter as well as any others that haven't been registered
 	 * elsewhere.
 	 */
 	register_callbacks() {
+		var events = 'shown.bs.collapse, hidden.bs.collapse';
+
+		this.$user_list.parents( '.collapse' ).on( events, this.user_list_collapse_handler );
 		$( document ).keydown( this.key_press_handler );
 		$( '.cancel_auth' ).click( this.cancel_authentication );
 		$( '.submit_passwd' ).click( this.submit_password );
+
 		window.show_prompt = this.show_prompt;
 		window.show_message = this.show_message;
 		window.start_authentication = this.start_authentication;
 		window.cancel_authentication = this.cancel_authentication;
 		window.authentication_complete = this.authentication_complete;
+		window.autologin_timer_expired = this.cancel_authentication;
 	}
 
 	/**
@@ -182,7 +326,7 @@ class AntergosTheme {
 				</a>`;
 
 			// Register event handler here so we don't have to iterate over the users again later.
-			$( template ).appendTo( this.$user_list ).click( this.start_authentication ).children( 'img' ).on( 'error', this.image_not_found );
+			$( template ).appendTo( this.$user_list ).click( this.start_authentication );
 
 		} // END for ( var user of lightdm.users )
 
@@ -247,24 +391,9 @@ class AntergosTheme {
 
 	initialize_clock() {
 		var saved_format = this.cache_get( 'clock', 'time_format' ),
-			format = (null !== saved_format) ? saved_format : 'LT',
-			detected_language = this.lang;
+			format = (null !== saved_format) ? saved_format : 'LT';
 
-		// Workaround for moment.js bug: https://github.com/moment/moment/issues/2856
-		for ( var lang of window.navigator.languages ) {
-			try {
-				detected_language = lang.split( '-' )[ 0 ].toLowerCase();
-				break;
-			} catch ( err ) {
-				this.log( String( err ) );
-			}
-		}
-
-		if ( null === detected_language ) {
-			detected_language = 'en';
-		}
-
-		moment.locale( detected_language );
+		moment.locale( window.navigator.languages );
 		this.$clock.html( moment().format( format ) );
 
 		setInterval( () => {
@@ -280,7 +409,6 @@ class AntergosTheme {
 	show_user_list() {
 		if ( $( this.$clock_container ).hasClass( 'in' ) ) {
 			$( '#trigger' ).trigger( 'click' );
-			this.user_list_visible = true;
 		}
 		if ( $( this.$user_list ).length <= 1 ) {
 			$( this.$user_list ).find( 'a' ).trigger( 'click', this );
@@ -289,7 +417,10 @@ class AntergosTheme {
 
 
 	prepare_login_panel_header() {
-		var greeting = (this.translations.greeting) ? this.translations.greeting : 'Welcome!';
+		var greeting = (this.translations.greeting) ? this.translations.greeting : 'Welcome!',
+			logo = ( '' !== this.logo ) ? this.logo : 'img/antergos.png';
+
+
 
 		$( '.welcome' ).text( greeting );
 		$( '#hostname' ).append( lightdm.hostname );
@@ -366,7 +497,7 @@ class AntergosTheme {
 
 		_self.auth_pending = true;
 
-		lightdm.start_authentication( user_id );
+		lightdm.authenticate( user_id );
 	}
 
 
@@ -424,7 +555,7 @@ class AntergosTheme {
 	}
 
 	submit_password( event ) {
-		lightdm.provide_secret( $( '#passwordField' ).val() );
+		lightdm.respond( $( '#passwordField' ).val() );
 		$( '#passwordArea' ).hide();
 		$( '#timerArea' ).show();
 	}
@@ -472,35 +603,34 @@ class AntergosTheme {
 		$modal.modal('toggle');
 	}
 
-	/**
-	 * User image on('error') handler.
-	 */
-	image_not_found( source ) {
-		source.onerror = "";
-		source.src = 'img/antergos-logo-user.png';
-		return true;
+
+	user_list_collapse_handler() {
+		_self.user_list_visible = _self.$user_list.hasClass( 'in' ) ? true : false;
 	}
+
 
 	/**
 	 * LightDM Callback - Show password prompt to user.
 	 *
 	 * @param text
+	 * @param type
 	 */
-	show_prompt( text ) {
-
-		$( '#passwordField' ).val( "" );
-		$( '#passwordArea' ).show();
-		$( '#passwordField' ).focus();
+	show_prompt( text, type ) {
+		if ( 'password' === type ) {
+			$( '#passwordField' ).val( "" );
+			$( '#passwordArea' ).show();
+			$( '#passwordField' ).focus();
+		}
 	}
 
 	/**
 	 * LightDM Callback - Show message to user.
 	 *
-	 * @param msg
+	 * @param text
 	 */
-	show_message( msg ) {
-		if ( msg.length > 0 ) {
-			$( this.$msg_area ).html( msg );
+	show_message( text, type ) {
+		if ( text.length > 0 ) {
+			$( this.$msg_area ).html( text );
 			$( '#passwordArea' ).hide();
 			$( this.$msg_area_container ).show();
 		}
