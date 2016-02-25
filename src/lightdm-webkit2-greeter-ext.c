@@ -69,7 +69,8 @@ static JSClassRef
 	lightdm_language_class,
 	lightdm_layout_class,
 	lightdm_session_class,
-	config_file_class;
+	config_file_class,
+	greeter_util_class;
 
 
 /*
@@ -1136,6 +1137,61 @@ get_conf_bool_cb(JSContextRef context,
 	return JSValueMakeBoolean(context, value);
 }
 
+static JSValueRef
+get_dirlist_cb(JSContextRef context,
+			JSObjectRef function,
+			JSObjectRef thisObject,
+			size_t argumentCount,
+			const JSValueRef arguments[],
+			JSValueRef *exception) {
+	JSObjectRef array;
+	guint n_entries = 0;
+	JSValueRef *args = NULL;
+	GDir *dir;
+	gchar *path, *fullpath;
+	const gchar *dirent;
+	GError *err = NULL;
+
+	if (argumentCount != 1) {
+		return mkexception(context, exception, ARGNOTSUPPLIED);
+	}
+
+	path = arg_to_string(context, arguments[0], exception);
+	if (!path) {
+		return JSValueMakeNull(context);
+	}
+
+	dir = g_dir_open (path, 0, &err);
+
+	if (err) {
+		_mkexception(context, exception, err->message);
+		g_error_free(err);
+		return JSValueMakeNull(context);
+	}
+
+	/*
+	 * Create the lis of the directory entries
+	 */
+
+	while ((dirent = g_dir_read_name (dir)) != NULL) {
+		n_entries++;
+		args = g_realloc (args, sizeof (JSValueRef) * (n_entries + 1));
+		fullpath = g_build_filename (path, dirent, NULL); /* Give theme developer full pathname */
+		args[(n_entries - 1)] = string_or_null (context, fullpath);
+		g_free (fullpath);
+	}
+
+	g_dir_close (dir);
+
+	array = JSObjectMakeArray (context, n_entries, args, exception);
+	g_free (args);
+	if (array == NULL) {
+		return JSValueMakeNull (context);
+	} else {
+		return array;
+	}
+}
+
 
 static const JSStaticValue lightdm_user_values[] = {
 	{"name",           get_user_name_cb,           NULL, kJSPropertyAttributeReadOnly},
@@ -1230,6 +1286,11 @@ static const JSStaticFunction config_file_functions[] = {
 	{NULL,       NULL,             0}};
 
 
+static const JSStaticFunction greeter_util_functions[] = {
+	{"dirlist",  get_dirlist_cb,   kJSPropertyAttributeReadOnly},
+	{NULL,       NULL,             0}};
+
+
 static const JSClassDefinition lightdm_user_definition = {
 	0,                     /* Version       */
 	kJSClassAttributeNone, /* Attributes    */
@@ -1289,6 +1350,15 @@ static const JSClassDefinition config_file_definition = {
 	config_file_functions,  /* Static functions */
 };
 
+static const JSClassDefinition greeter_util_definition = {
+	0,                      /* Version          */
+	kJSClassAttributeNone,  /* Attributes       */
+	"GreeterUtil",          /* Class name       */
+	NULL,                   /* Parent class     */
+	NULL,                   /* Static values    */
+	greeter_util_functions, /* Static functions */
+};
+
 
 static void
 window_object_cleared_callback(WebKitScriptWorld *world,
@@ -1296,7 +1366,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 							   WebKitFrame *frame,
 							   LightDMGreeter *greeter) {
 
-	JSObjectRef gettext_object, lightdm_greeter_object, config_file_object;
+	JSObjectRef gettext_object, lightdm_greeter_object, config_file_object, greeter_util_object;
 	JSGlobalContextRef jsContext;
 	JSObjectRef globalObject;
 	WebKitDOMDocument *dom_document;
@@ -1315,6 +1385,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	lightdm_layout_class = JSClassCreate(&lightdm_layout_definition);
 	lightdm_session_class = JSClassCreate(&lightdm_session_definition);
 	config_file_class = JSClassCreate(&config_file_definition);
+	greeter_util_class = JSClassCreate(&greeter_util_definition);
 
 	gettext_object = JSObjectMake(jsContext, gettext_class, NULL);
 
@@ -1342,6 +1413,17 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 						config_file_object,
 						kJSPropertyAttributeNone,
 						NULL);
+
+	greeter_util_object = JSObjectMake(context, greeter_util_class, NULL);
+
+	JSObjectSetProperty(context,
+						globalObject,
+						JSStringCreateWithUTF8CString("greeterutil"),
+						greeter_util_object,
+						kJSPropertyAttributeNone,
+						NULL);
+
+
 
 	/* If the greeter was started as a lock-screen, send message to our UI process. */
 	if (lightdm_greeter_get_lock_hint(greeter)) {

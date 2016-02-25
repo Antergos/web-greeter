@@ -258,6 +258,15 @@ config\&.get_bool(section, key)\fR
 Returns the boolean value associated with key under the "section" in the configuration file\&.
 .RE
 .PP
+The greeterutil object has some utility functions associated with it which
+are intended to make a theme author's work easier\&.
+.PP
+greeterutil\&.dirlist(path)\fR
+.RS 4
+Returns an array of strings of filenames present at "path", or Null if the
+path does not exist\&.
+.RE
+.PP
 Please see the LightDM API documentation for the complete list of calls
 available\&.  The lightdm-webkit2-greeter implements all of the LightDM API\&.
 .PP
