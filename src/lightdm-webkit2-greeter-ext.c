@@ -170,39 +170,24 @@ arg_to_string(JSContextRef context, JSValueRef arg, JSValueRef *exception) {
  * quote characters escaped.
  */
 static char *
-escape(const gchar *text) {
-	size_t len;
-	size_t i, j;
-	int count = 0;
+	escape(const gchar *text) {
 	gchar *escaped;
+	gchar **split;
+	gchar *result;
 
-	len = strlen(text);
+	/* Make sure all newlines, tabs, etc. are escaped. */
+	escaped = g_strescape (text, NULL);
 
-	for (i = 0; i < len; i++) {
-		if (text[i] == '\'') {
-			count++;
-		}
-	}
+	/* Split the string up on the single quote character (') */
+	split = g_strsplit (escaped, "'", -1);
 
-	if (count == 0) {
+	/* Rejoin, substituting the escaped single quote for the separator. */
+	result = g_strjoinv ("\\'", split);
 
-		return g_strdup(text);
-	}
+	g_free (escaped);
+	g_strfreev (split);
 
-	escaped = g_malloc(len + count + 1);
-
-	j = 0;
-
-	for (i = 0; i <= len; i++) {
-		if (text[i] == '\'') {
-			escaped[j] = '\\';
-			j++;
-		}
-		escaped[j] = text[i];
-		j++;
-	}
-
-	return escaped;
+	return result;
 }
 
 
