@@ -1420,7 +1420,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 
 	greeter_util_object = JSObjectMake(jsContext, greeter_util_class, NULL);
 
-	JSObjectSetProperty(context,
+	JSObjectSetProperty(jsContext,
 						globalObject,
 						JSStringCreateWithUTF8CString("greeterutil"),
 						greeter_util_object,
