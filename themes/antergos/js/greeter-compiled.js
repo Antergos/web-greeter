@@ -52,7 +52,7 @@ String.prototype.capitalize = function () {
 };
 
 /**
- * This class handles the theme's background switcher.
+ * This is the base class for the theme's components.
  */
 
 var GreeterThemeComponent = (function () {
@@ -187,11 +187,43 @@ var GreeterThemeComponent = (function () {
 
 			if ('undefined' !== typeof config) {
 				if (this instanceof AntergosTheme) {
-					logo = config.get_str('branding', 'logo_image') || '';
+					logo = config.get_str('branding', 'logo') || '';
 				} else if (this instanceof AntergosBackgroundManager) {
 					background_images_dir = config.get_str('branding', 'background_images') || '';
 					if (background_images_dir) {
 						background_images = greeterutil.dirlist(background_images_dir) || [];
+					}
+
+					if (background_images.length) {
+						var images = [];
+						var _iteratorNormalCompletion3 = true;
+						var _didIteratorError3 = false;
+						var _iteratorError3 = undefined;
+
+						try {
+							for (var _iterator3 = background_images[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+								file = _step3.value;
+
+								if (file.match(/(png|PNG)|(jpg|JPEG)|(bmp|BMP)/)) {
+									images.push(file);
+								}
+							}
+						} catch (err) {
+							_didIteratorError3 = true;
+							_iteratorError3 = err;
+						} finally {
+							try {
+								if (!_iteratorNormalCompletion3 && _iterator3.return) {
+									_iterator3.return();
+								}
+							} finally {
+								if (_didIteratorError3) {
+									throw _iteratorError3;
+								}
+							}
+						}
+
+						background_images = images;
 					}
 				}
 			}
@@ -213,7 +245,7 @@ var AntergosBackgroundManager = (function (_GreeterThemeComponen) {
 	_inherits(AntergosBackgroundManager, _GreeterThemeComponen);
 
 	function AntergosBackgroundManager() {
-		var _ret2;
+		var _ret;
 
 		_classCallCheck(this, AntergosBackgroundManager);
 
@@ -226,18 +258,16 @@ var AntergosBackgroundManager = (function (_GreeterThemeComponen) {
 		_this.current_background = _this.cache_get('background_config', 'current_background');
 
 		if (!_this.background_images_dir.length || !_this.background_images.length) {
-			var _ret;
-
 			_this.log('AntergosBackgroundManager: [ERROR] No background images detected.');
+
 			$('.header').fadeTo(300, 0.5, function () {
 				$('.header').css("background", '#000000');
 			}).fadeTo(300, 1);
-			return _ret = _bg_self, _possibleConstructorReturn(_this, _ret);
+		} else {
+			_this.initialize();
 		}
 
-		_this.initialize();
-
-		return _ret2 = _bg_self, _possibleConstructorReturn(_this, _ret2);
+		return _ret = _bg_self, _possibleConstructorReturn(_this, _ret);
 	}
 
 	_createClass(AntergosBackgroundManager, [{
@@ -282,15 +312,40 @@ var AntergosBackgroundManager = (function (_GreeterThemeComponen) {
 			return this.background_images[random_bg];
 		}
 	}, {
-		key: 'get_old_backgrounds',
-		value: function get_old_backgrounds() {
-			var old_backgrounds = [];
+		key: 'setup_background_thumbnails',
+		value: function setup_background_thumbnails() {
+			if (this.background_images.length) {
+				var _iteratorNormalCompletion4 = true;
+				var _didIteratorError4 = false;
+				var _iteratorError4 = undefined;
 
-			$('.bgs .clearfix').each(function (i) {
-				if (i > 0) {
-					old_backgrounds.push($(this).attr('data-img'));
+				try {
+					for (var _iterator4 = this.background_images[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+						image_file = _step4.value;
+
+						var $link = $('<a href="#"><img>'),
+						    $img_el = $link.children('img');
+
+						$link.addClass('bg clearfix').attr('data-img', image_file);
+						$img_el.attr('src', image_file);
+
+						$link.appendTo($('.bgs'));
+					}
+				} catch (err) {
+					_didIteratorError4 = true;
+					_iteratorError4 = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion4 && _iterator4.return) {
+							_iterator4.return();
+						}
+					} finally {
+						if (_didIteratorError4) {
+							throw _iteratorError4;
+						}
+					}
 				}
-			});
+			}
 		}
 	}]);
 
@@ -305,7 +360,7 @@ var AntergosTheme = (function (_GreeterThemeComponen2) {
 	_inherits(AntergosTheme, _GreeterThemeComponen2);
 
 	function AntergosTheme() {
-		var _ret3;
+		var _ret2;
 
 		_classCallCheck(this, AntergosTheme);
 
@@ -328,7 +383,7 @@ var AntergosTheme = (function (_GreeterThemeComponen2) {
 
 		_this2.initialize();
 
-		return _ret3 = _self, _possibleConstructorReturn(_this2, _ret3);
+		return _ret2 = _self, _possibleConstructorReturn(_this2, _ret2);
 	}
 
 	_createClass(AntergosTheme, [{
@@ -341,8 +396,9 @@ var AntergosTheme = (function (_GreeterThemeComponen2) {
 			this.prepare_user_list();
 			this.prepare_session_list();
 			this.prepare_system_action_buttons();
-
+			$("#login").addClass("in");
 			this.register_callbacks();
+			this.background_manager.setup_background_thumbnails();
 		}
 
 		/**
@@ -379,13 +435,13 @@ var AntergosTheme = (function (_GreeterThemeComponen2) {
 			    template;
 
 			// Loop through the array of LightDMUser objects to create our user list.
-			var _iteratorNormalCompletion3 = true;
-			var _didIteratorError3 = false;
-			var _iteratorError3 = undefined;
+			var _iteratorNormalCompletion5 = true;
+			var _didIteratorError5 = false;
+			var _iteratorError5 = undefined;
 
 			try {
-				for (var _iterator3 = lightdm.users[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-					var user = _step3.value;
+				for (var _iterator5 = lightdm.users[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+					var user = _step5.value;
 
 					var last_session = this.cache_get('user', user.name, 'session'),
 					    image_src = user.image.length ? user.image : tux;
@@ -409,16 +465,16 @@ var AntergosTheme = (function (_GreeterThemeComponen2) {
 					$(template).appendTo(this.$user_list).click(this.start_authentication);
 				} // END for ( var user of lightdm.users )
 			} catch (err) {
-				_didIteratorError3 = true;
-				_iteratorError3 = err;
+				_didIteratorError5 = true;
+				_iteratorError5 = err;
 			} finally {
 				try {
-					if (!_iteratorNormalCompletion3 && _iterator3.return) {
-						_iterator3.return();
+					if (!_iteratorNormalCompletion5 && _iterator5.return) {
+						_iterator5.return();
 					}
 				} finally {
-					if (_didIteratorError3) {
-						throw _iteratorError3;
+					if (_didIteratorError5) {
+						throw _iteratorError5;
 					}
 				}
 			}
@@ -437,13 +493,13 @@ var AntergosTheme = (function (_GreeterThemeComponen2) {
 		key: 'prepare_session_list',
 		value: function prepare_session_list() {
 			// Loop through the array of LightDMSession objects to create our session list.
-			var _iteratorNormalCompletion4 = true;
-			var _didIteratorError4 = false;
-			var _iteratorError4 = undefined;
+			var _iteratorNormalCompletion6 = true;
+			var _didIteratorError6 = false;
+			var _iteratorError6 = undefined;
 
 			try {
-				for (var _iterator4 = lightdm.sessions[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-					var session = _step4.value;
+				for (var _iterator6 = lightdm.sessions[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+					var session = _step6.value;
 
 					var css_class = session.name.replace(/ /g, ''),
 					    template;
@@ -455,16 +511,16 @@ var AntergosTheme = (function (_GreeterThemeComponen2) {
 					$(template).appendTo(this.$session_list).click(this.session_toggle_handler);
 				} // END for (var session of lightdm.sessions)
 			} catch (err) {
-				_didIteratorError4 = true;
-				_iteratorError4 = err;
+				_didIteratorError6 = true;
+				_iteratorError6 = err;
 			} finally {
 				try {
-					if (!_iteratorNormalCompletion4 && _iterator4.return) {
-						_iterator4.return();
+					if (!_iteratorNormalCompletion6 && _iterator6.return) {
+						_iterator6.return();
 					}
 				} finally {
-					if (_didIteratorError4) {
-						throw _iteratorError4;
+					if (_didIteratorError6) {
+						throw _iteratorError6;
 					}
 				}
 			}
@@ -487,13 +543,13 @@ var AntergosTheme = (function (_GreeterThemeComponen2) {
 			},
 			    template;
 
-			var _iteratorNormalCompletion5 = true;
-			var _didIteratorError5 = false;
-			var _iteratorError5 = undefined;
+			var _iteratorNormalCompletion7 = true;
+			var _didIteratorError7 = false;
+			var _iteratorError7 = undefined;
 
 			try {
-				for (var _iterator5 = Object.keys(actions)[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-					var action = _step5.value;
+				for (var _iterator7 = Object.keys(actions)[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+					var action = _step7.value;
 
 					var cmd = 'can_' + action;
 
@@ -504,16 +560,16 @@ var AntergosTheme = (function (_GreeterThemeComponen2) {
 					}
 				} // END for (var [action, icon] of actions)
 			} catch (err) {
-				_didIteratorError5 = true;
-				_iteratorError5 = err;
+				_didIteratorError7 = true;
+				_iteratorError7 = err;
 			} finally {
 				try {
-					if (!_iteratorNormalCompletion5 && _iterator5.return) {
-						_iterator5.return();
+					if (!_iteratorNormalCompletion7 && _iterator7.return) {
+						_iterator7.return();
 					}
 				} finally {
-					if (_didIteratorError5) {
-						throw _iteratorError5;
+					if (_didIteratorError7) {
+						throw _iteratorError7;
 					}
 				}
 			}
@@ -560,18 +616,19 @@ var AntergosTheme = (function (_GreeterThemeComponen2) {
 
 			$('.welcome').text(greeting);
 			$('#hostname').append(lightdm.hostname);
+			$('[data-greeter-config="logo"]').attr('src', logo);
 		}
 	}, {
 		key: 'prepare_translations',
 		value: function prepare_translations() {
 			if (!this.translations.hasOwnProperty(this.lang)) {
-				var _iteratorNormalCompletion6 = true;
-				var _didIteratorError6 = false;
-				var _iteratorError6 = undefined;
+				var _iteratorNormalCompletion8 = true;
+				var _didIteratorError8 = false;
+				var _iteratorError8 = undefined;
 
 				try {
-					for (var _iterator6 = window.navigator.languages[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-						var lang = _step6.value;
+					for (var _iterator8 = window.navigator.languages[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+						var lang = _step8.value;
 
 						if (this.translations.hasOwnProperty(lang)) {
 							this.lang = lang;
@@ -579,16 +636,16 @@ var AntergosTheme = (function (_GreeterThemeComponen2) {
 						}
 					}
 				} catch (err) {
-					_didIteratorError6 = true;
-					_iteratorError6 = err;
+					_didIteratorError8 = true;
+					_iteratorError8 = err;
 				} finally {
 					try {
-						if (!_iteratorNormalCompletion6 && _iterator6.return) {
-							_iterator6.return();
+						if (!_iteratorNormalCompletion8 && _iterator8.return) {
+							_iterator8.return();
 						}
 					} finally {
-						if (_didIteratorError6) {
-							throw _iteratorError6;
+						if (_didIteratorError8) {
+							throw _iteratorError8;
 						}
 					}
 				}
@@ -672,27 +729,27 @@ var AntergosTheme = (function (_GreeterThemeComponen2) {
 		value: function cancel_authentication(event) {
 			var selectors = ['#statusArea', '#timerArea', '#passwordArea', '#session-list'];
 
-			var _iteratorNormalCompletion7 = true;
-			var _didIteratorError7 = false;
-			var _iteratorError7 = undefined;
+			var _iteratorNormalCompletion9 = true;
+			var _didIteratorError9 = false;
+			var _iteratorError9 = undefined;
 
 			try {
-				for (var _iterator7 = selectors[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-					var selector = _step7.value;
+				for (var _iterator9 = selectors[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+					var selector = _step9.value;
 
 					$(selector).hide();
 				}
 			} catch (err) {
-				_didIteratorError7 = true;
-				_iteratorError7 = err;
+				_didIteratorError9 = true;
+				_iteratorError9 = err;
 			} finally {
 				try {
-					if (!_iteratorNormalCompletion7 && _iterator7.return) {
-						_iterator7.return();
+					if (!_iteratorNormalCompletion9 && _iterator9.return) {
+						_iterator9.return();
 					}
 				} finally {
-					if (_didIteratorError7) {
-						throw _iteratorError7;
+					if (_didIteratorError9) {
+						throw _iteratorError9;
 					}
 				}
 			}
@@ -732,7 +789,7 @@ var AntergosTheme = (function (_GreeterThemeComponen2) {
 
 			if (lightdm.is_authenticated) {
 				// The user entered the correct password. Let's log them in.
-				$('body').fadeOut();
+				$('body').fadeOut(1000);
 				lightdm.login(lightdm.authentication_user, selected_session);
 			} else {
 				// The user did not enter the correct password. Show error message.

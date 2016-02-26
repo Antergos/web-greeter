@@ -49,7 +49,7 @@ String.prototype.capitalize = function() {
 
 
 /**
- * This class handles the theme's background switcher.
+ * This is the base class for the theme's components.
  */
 class GreeterThemeComponent {
 
@@ -120,12 +120,22 @@ class GreeterThemeComponent {
 
 		if ( 'undefined' !== typeof config ) {
 			if ( this instanceof AntergosTheme ) {
-				logo = config.get_str( 'branding', 'logo_image' ) || '';
+				logo = config.get_str( 'branding', 'logo' ) || '';
 
 			} else if ( this instanceof AntergosBackgroundManager ) {
 				background_images_dir = config.get_str( 'branding', 'background_images' ) || '';
 				if (background_images_dir) {
 					background_images = greeterutil.dirlist(background_images_dir) || [];
+				}
+
+				if (background_images.length) {
+					let images = [];
+					for (file of background_images) {
+						if (file.match(/(png|PNG)|(jpg|JPEG)|(bmp|BMP)/)) {
+							images.push(file);
+						}
+					}
+					background_images = images;
 				}
 			}
 		}
@@ -157,13 +167,14 @@ class AntergosBackgroundManager extends GreeterThemeComponent {
 
 		if ( ! this.background_images_dir.length || ! this.background_images.length ) {
 			this.log('AntergosBackgroundManager: [ERROR] No background images detected.');
+
 			$( '.header' ).fadeTo( 300, 0.5, function() {
 				$( '.header' ).css( "background", '#000000' );
 			} ).fadeTo( 300, 1 );
-			return _bg_self;
-		}
 
-		this.initialize();
+		} else {
+			this.initialize();
+		}
 
 		return _bg_self;
 	}
@@ -209,18 +220,19 @@ class AntergosBackgroundManager extends GreeterThemeComponent {
 		return this.background_images[ random_bg ];
 	}
 
+	setup_background_thumbnails() {
+		if (this.background_images.length) {
+			for ( image_file of this.background_images) {
+				let $link = $('<a href="#"><img>'),
+					$img_el = $link.children('img');
 
-	get_old_backgrounds() {
-		var old_backgrounds = [];
+				$link.addClass('bg clearfix').attr('data-img', image_file);
+				$img_el.attr('src', image_file);
 
-		$( '.bgs .clearfix' ).each( function(i) {
-			if ( i > 0 ) {
-				old_backgrounds.push( $( this ).attr( 'data-img' ) );
+				$link.appendTo($('.bgs'));
 			}
-		});
+		}
 	}
-
-
 }
 
 
@@ -263,8 +275,9 @@ class AntergosTheme extends GreeterThemeComponent {
 		this.prepare_user_list();
 		this.prepare_session_list();
 		this.prepare_system_action_buttons();
-
+		$( "#login" ).addClass( "in" );
 		this.register_callbacks();
+		this.background_manager.setup_background_thumbnails();
 	}
 
 
@@ -415,10 +428,9 @@ class AntergosTheme extends GreeterThemeComponent {
 		var greeting = (this.translations.greeting) ? this.translations.greeting : 'Welcome!',
 			logo = ( '' !== this.logo ) ? this.logo : 'img/antergos.png';
 
-
-
 		$( '.welcome' ).text( greeting );
 		$( '#hostname' ).append( lightdm.hostname );
+		$('[data-greeter-config="logo"]').attr('src', logo);
 	}
 
 
@@ -542,7 +554,7 @@ class AntergosTheme extends GreeterThemeComponent {
 
 		if ( lightdm.is_authenticated ) {
 			// The user entered the correct password. Let's log them in.
-			$('body').fadeOut();
+			$('body').fadeOut(1000);
 			lightdm.login( lightdm.authentication_user, selected_session );
 		} else {
 			// The user did not enter the correct password. Show error message.

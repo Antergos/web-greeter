@@ -55,137 +55,31 @@
 	<script type="text/javascript" src="js/translations.js"></script>
 	<script type="text/javascript" src="js/greeter-compiled.js"></script>
 
-	<script type="text/javascript">
-		function randomBG() {
-			localStorage.setItem( "bgsaved", '' );
-			$( ".bgs .bg .random" ).first().addClass( 'active' );
-			var arrayBackground = [];
-			$( '.bgs .clearfix' ).each( function( i ) {
-				if ( i > 0 ) {
-					arrayBackground.push( $( this ).attr( 'data-img' ) );
-				}
-			} );
-			var randBG = arrayBackground[ Math.floor( Math.random() * arrayBackground.length ) ];
-			$( '.header' ).fadeTo( 300, 0.5, function() {
-				$( ".header" ).css( "background", "url('/usr/share/antergos/wallpapers/" + randBG + "')" );
-			} ).fadeTo( 300, 1 );
-		}
-
-		$( function() {
-			// bg switcher
-			var $btns = $( ".bg-switch .bg" );
-			$btns.click( function( e ) {
-				e.preventDefault();
-				$btns.removeClass( "active" );
-				$( ".bgs .bg .random" ).first().removeClass( 'active' );
-				$( this ).addClass( "active" );
-				var bg = $( this ).data( "img" );
-				if ( bg == 'random' ) {
-					console.log( "Sets random background" );
-					localStorage.setItem( "bgrandom", '1' );
-					randomBG();
-				} else {
-					console.log( "Turn off random" );
-					localStorage.setItem( "bgrandom", '0' );
-					$( '.header' ).fadeTo( 300, 0.5, function() {
-						$( ".header" ).css( "background", "url('/usr/share/antergos/wallpapers/" + bg + "')" );
-					} ).fadeTo( 300, 1 );
-					var bgurl = "url('/usr/share/antergos/wallpapers/" + bg + "')";
-					localStorage.setItem( "bgsaved", bgurl )
-				}
-			} );
-
-		} );
-
-		$( document ).ready( function() {
-			if ( (localStorage.getItem( "bgsaved" ) !== null) && (localStorage.getItem( "bgrandom" ) == '0') ) {
-				$( '.header' ).fadeTo( 300, 0.5, function() {
-					$( ".header" ).css( "background", localStorage.getItem( 'bgsaved' ) );
-				} ).fadeTo( 300, 1 );
-			}
-			if ( localStorage.getItem( "bgrandom" ) !== '0' ) {
-				console.log( "Is random" );
-				randomBG();
-			}
-			if ( localStorage.getItem( "bgrandom" ) == null ) {
-				localStorage.setItem( "bgrandom", "1" );
-			}
-			$( '.dropdown-toggle' ).dropdown();
-		} );
-
-		function showAlert() {
-			$( "#login" ).addClass( "in" );
-		}
-
-		window.setTimeout( function() {
-			showAlert();
-		}, 500 );
-
-		function showLog() {
-			$( "#logArea" ).show();
-		}
-	</script>
-
 </head>
 
 <body>
 
 <!-- BG Switcher -->
-<a id="bg-switch-toggle" href="#" class="btn btn-primary btn-lg toggle close_wallpapers"> <i class="fa fa-bars"></i>
+<a id="bg-switch-toggle" href="#" class="btn btn-primary btn-lg toggle close_wallpapers">
+	<i class="fa fa-bars"></i>
 </a>
 
 <div id="bg-switch-wrapper">
 	<div class="bg-switch-container">
 		<a id="bg-switch-close" href="#" class="btn btn-default btn-lg pull-right toggle close_wallpapers">
-			<i class="fa fa-times"></i> </a>
+			<i class="fa fa-times"></i>
+		</a>
 
 		<div class="bg-switch">
 			<h3 data-i18n="background_options">${i18n}</h3>
-
 			<div class="clearfix"></div>
 			<div class="bgs">
 				<a href="#" data-img="random" class="bg clearfix">
 					<div class="random">
 						<span data-i18n="random">${i18n}</span>
 					</div>
-				</a> <a href="#" data-img="antergos-wallpaper.png" class="bg clearfix">
-				<img src="img/thumbs/antergos-wallpaper.png"/> </a>
-				<a href="#" data-img="83II_by_bo0xVn.jpg" class="bg clearfix">
-					<img src="img/thumbs/83II_by_bo0xVn.jpg"/> </a>
-				<a href="#" data-img="as_time_goes_by____by_moskanon-d5dgvt8.jpg" class="bg clearfix">
-					<img src="img/thumbs/as_time_goes_by____by_moskanon-d5dgvt8.jpg"/> </a>
-				<a href="#" data-img="autumn_hike___plant_details_by_aoiban-d5l7y83.jpg" class="bg clearfix">
-					<img src="img/thumbs/autumn_hike___plant_details_by_aoiban-d5l7y83.jpg"/> </a>
-				<a href="#" data-img="blossom_by_snipes2.jpg" class="bg clearfix">
-					<img src="img/thumbs/blossom_by_snipes2.jpg"/> </a>
-				<a href="#" data-img="c65sk3mshowxrtlljbvh.jpg" class="bg clearfix">
-					<img src="img/thumbs/c65sk3mshowxrtlljbvh.jpg"/> </a>
-				<a href="#" data-img="early_morning_by_kylekc.jpg" class="bg clearfix">
-					<img src="img/thumbs/early_morning_by_kylekc.jpg"/> </a>
-				<a href="#" data-img="extinction_by_signcropstealer-d5j4y84.jpg" class="bg clearfix">
-					<img src="img/thumbs/extinction_by_signcropstealer-d5j4y84.jpg"/> </a>
-				<a href="#" data-img="field_by_stevenfields-d59ap2i.jpg" class="bg clearfix">
-					<img src="img/thumbs/field_by_stevenfields-d59ap2i.jpg"/> </a>
-				<a href="#" data-img="Grass_by_masha_darkelf666.jpg" class="bg clearfix">
-					<img src="img/thumbs/Grass_by_masha_darkelf666.jpg"/> </a>
-				<a href="#" data-img="Grass_Fullscreen.jpg" class="bg clearfix">
-					<img src="img/thumbs/Grass_Fullscreen.jpg"/> </a>
-				<a href="#" data-img="humble_by_splendidofsun-d5g47hb.jpg" class="bg clearfix">
-					<img src="img/thumbs/humble_by_splendidofsun-d5g47hb.jpg"/> </a>
-				<a href="#" data-img="In_the_Grass.jpg" class="bg clearfix"> <img src="img/thumbs/In_the_Grass.jpg"/>
-				</a> <a href="#" data-img="morning_light.jpg" class="bg clearfix">
-				<img src="img/thumbs/morning_light.jpg"/> </a>
-				<a href="#" data-img="Nautilus_Fullscreen.jpg" class="bg clearfix">
-					<img src="img/thumbs/Nautilus_Fullscreen.jpg"/> </a>
-				<a href="#" data-img="nikon_d40.jpg" class="bg clearfix"> <img src="img/thumbs/nikon_d40.jpg"/> </a>
-				<a href="#" data-img="solely_by_stevenfields.jpg" class="bg clearfix">
-					<img src="img/thumbs/solely_by_stevenfields.jpg"/> </a>
-				<a href="#" data-img="sky_full_of_stars.jpg" class="bg clearfix">
-					<img src="img/thumbs/sky_full_of_stars.jpg"/> </a>
-				<a href="#" data-img="the_world_inside_my_lens__by_moskanon-d5fsiqs.jpg" class="bg clearfix">
-					<img src="img/thumbs/the_world_inside_my_lens__by_moskanon-d5fsiqs.jpg"/> </a>
-				<a href="#" data-img="white_line_by_snipes2.jpg" class="bg clearfix">
-					<img src="img/thumbs/white_line_by_snipes2.jpg"/> </a>
+				</a>
+				<!--Background thumbnails will be added here dynamically -->
 			</div>
 		</div>
 	</div>
@@ -202,9 +96,9 @@
 						<!-- Login Dialog -->
 						<div id="login" class="panel panel-default login-box fade">
 							<div class="panel-heading text-center">
-                                    <span class="pull-left">
-                                        <img src="img/antergos.png" data-greeter-config="logo" alt="Antergos"/>
-                                    </span> <span class="welcome"></span>
+									<span class="pull-left">
+										<img src="img/antergos.png" data-greeter-config="logo" alt="Antergos"/>
+									</span> <span class="welcome"></span>
 								<span id="hostname" class="pull-right"></span>
 							</div>
 							<div id="panelfix" class="panel-body panel-shadow">
