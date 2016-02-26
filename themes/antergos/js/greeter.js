@@ -33,11 +33,6 @@
 let _self = null;
 let _bg_self = null;
 
-/**
- * This is used so we don't ask the greeter for config values more than once.
- */
-let _have_config_values = false;
-
 
 /**
  * Capitalize a string.
@@ -47,8 +42,6 @@ let _have_config_values = false;
 String.prototype.capitalize = function() {
 	return this.charAt( 0 ).toUpperCase() + this.slice( 1 );
 };
-
-
 
 
 
@@ -123,16 +116,17 @@ class GreeterThemeComponent {
 	 * Get some values from `lightdm-webkit2-greeter.conf` and save them for later.
 	 */
 	init_config_values() {
-		let logo = '', background_images = '', background_images_dir = '';
+		let logo = '', background_images = [], background_images_dir = '';
 
 		if ( 'undefined' !== typeof config ) {
 			if ( this instanceof AntergosTheme ) {
 				logo = config.get_str( 'branding', 'logo_image' ) || '';
 
 			} else if ( this instanceof AntergosBackgroundManager ) {
-				background_images = config.get_str( 'branding', 'background_images_array' ) || '';
-				background_images = ( background_images.length ) ? background_images.split( ',' ) : [];
 				background_images_dir = config.get_str( 'branding', 'background_images' ) || '';
+				if (background_images_dir) {
+					background_images = greeterutil.dirlist(background_images_dir) || [];
+				}
 			}
 		}
 
@@ -163,6 +157,10 @@ class AntergosBackgroundManager extends GreeterThemeComponent {
 
 		if ( ! this.background_images_dir.length || ! this.background_images.length ) {
 			this.log('AntergosBackgroundManager: [ERROR] No background images detected.');
+			$( '.header' ).fadeTo( 300, 0.5, function() {
+				$( '.header' ).css( "background", '#000000' );
+			} ).fadeTo( 300, 1 );
+			return _bg_self;
 		}
 
 		this.initialize();
@@ -191,9 +189,10 @@ class AntergosBackgroundManager extends GreeterThemeComponent {
 			let current_background = this.cache_get('background_manager', 'current_background' ),
 				random_background = this.cache_get('background_manager', 'random_background' );
 
-			if ( 'true' === random_background ) {
-				
+			if ( 'true' === random_background || ! current_background ) {
+				current_background = this.get_random_image();
 			}
+			this.current_background = current_background;
 		}
 
 		$( '.header' ).fadeTo( 300, 0.5, function() {
@@ -203,13 +202,11 @@ class AntergosBackgroundManager extends GreeterThemeComponent {
 
 
 	get_random_image() {
-		let background, random_bg;
+		let random_bg;
 
-		if ( this.background_images.length ) {
-			random_bg = Math.floor( Math.random() * this.background_images.length );
-			background = this.background_images[ random_bg ];
-		}
+		random_bg = Math.floor( Math.random() * this.background_images.length );
 
+		return this.background_images[ random_bg ];
 	}
 
 
@@ -225,8 +222,6 @@ class AntergosBackgroundManager extends GreeterThemeComponent {
 
 
 }
-
-
 
 
 
@@ -547,6 +542,7 @@ class AntergosTheme extends GreeterThemeComponent {
 
 		if ( lightdm.is_authenticated ) {
 			// The user entered the correct password. Let's log them in.
+			$('body').fadeOut();
 			lightdm.login( lightdm.authentication_user, selected_session );
 		} else {
 			// The user did not enter the correct password. Show error message.

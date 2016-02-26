@@ -43,11 +43,6 @@ var _self = null;
 var _bg_self = null;
 
 /**
- * This is used so we don't ask the greeter for config values more than once.
- */
-var _have_config_values = false;
-
-/**
  * Capitalize a string.
  *
  * @returns {string}
@@ -187,16 +182,17 @@ var GreeterThemeComponent = (function () {
 		key: 'init_config_values',
 		value: function init_config_values() {
 			var logo = '',
-			    background_images = '',
+			    background_images = [],
 			    background_images_dir = '';
 
 			if ('undefined' !== typeof config) {
 				if (this instanceof AntergosTheme) {
 					logo = config.get_str('branding', 'logo_image') || '';
 				} else if (this instanceof AntergosBackgroundManager) {
-					background_images = config.get_str('branding', 'background_images_array') || '';
-					background_images = background_images.length ? background_images.split(',') : [];
 					background_images_dir = config.get_str('branding', 'background_images') || '';
+					if (background_images_dir) {
+						background_images = greeterutil.dirlist(background_images_dir) || [];
+					}
 				}
 			}
 
@@ -217,7 +213,7 @@ var AntergosBackgroundManager = (function (_GreeterThemeComponen) {
 	_inherits(AntergosBackgroundManager, _GreeterThemeComponen);
 
 	function AntergosBackgroundManager() {
-		var _ret;
+		var _ret2;
 
 		_classCallCheck(this, AntergosBackgroundManager);
 
@@ -230,12 +226,18 @@ var AntergosBackgroundManager = (function (_GreeterThemeComponen) {
 		_this.current_background = _this.cache_get('background_config', 'current_background');
 
 		if (!_this.background_images_dir.length || !_this.background_images.length) {
+			var _ret;
+
 			_this.log('AntergosBackgroundManager: [ERROR] No background images detected.');
+			$('.header').fadeTo(300, 0.5, function () {
+				$('.header').css("background", '#000000');
+			}).fadeTo(300, 1);
+			return _ret = _bg_self, _possibleConstructorReturn(_this, _ret);
 		}
 
 		_this.initialize();
 
-		return _ret = _bg_self, _possibleConstructorReturn(_this, _ret);
+		return _ret2 = _bg_self, _possibleConstructorReturn(_this, _ret2);
 	}
 
 	_createClass(AntergosBackgroundManager, [{
@@ -260,7 +262,10 @@ var AntergosBackgroundManager = (function (_GreeterThemeComponen) {
 				var current_background = this.cache_get('background_manager', 'current_background'),
 				    random_background = this.cache_get('background_manager', 'random_background');
 
-				if ('true' === random_background) {}
+				if ('true' === random_background || !current_background) {
+					current_background = this.get_random_image();
+				}
+				this.current_background = current_background;
 			}
 
 			$('.header').fadeTo(300, 0.5, function () {
@@ -270,13 +275,11 @@ var AntergosBackgroundManager = (function (_GreeterThemeComponen) {
 	}, {
 		key: 'get_random_image',
 		value: function get_random_image() {
-			var background = undefined,
-			    random_bg = undefined;
+			var random_bg = undefined;
 
-			if (this.background_images.length) {
-				random_bg = Math.floor(Math.random() * this.background_images.length);
-				background = this.background_images[random_bg];
-			}
+			random_bg = Math.floor(Math.random() * this.background_images.length);
+
+			return this.background_images[random_bg];
 		}
 	}, {
 		key: 'get_old_backgrounds',
@@ -302,7 +305,7 @@ var AntergosTheme = (function (_GreeterThemeComponen2) {
 	_inherits(AntergosTheme, _GreeterThemeComponen2);
 
 	function AntergosTheme() {
-		var _ret2;
+		var _ret3;
 
 		_classCallCheck(this, AntergosTheme);
 
@@ -325,7 +328,7 @@ var AntergosTheme = (function (_GreeterThemeComponen2) {
 
 		_this2.initialize();
 
-		return _ret2 = _self, _possibleConstructorReturn(_this2, _ret2);
+		return _ret3 = _self, _possibleConstructorReturn(_this2, _ret3);
 	}
 
 	_createClass(AntergosTheme, [{
@@ -729,6 +732,7 @@ var AntergosTheme = (function (_GreeterThemeComponen2) {
 
 			if (lightdm.is_authenticated) {
 				// The user entered the correct password. Let's log them in.
+				$('body').fadeOut();
 				lightdm.login(lightdm.authentication_user, selected_session);
 			} else {
 				// The user did not enter the correct password. Show error message.
