@@ -171,7 +171,7 @@ arg_to_string(JSContextRef context, JSValueRef arg, JSValueRef *exception) {
  * quote characters escaped.
  */
 static char *
-	escape(const gchar *text) {
+escape(const gchar *text) {
 	gchar *escaped;
 	gchar **split;
 	gchar *result;
@@ -1137,13 +1137,15 @@ get_conf_bool_cb(JSContextRef context,
 	return JSValueMakeBoolean(context, value);
 }
 
+
 static JSValueRef
 get_dirlist_cb(JSContextRef context,
-			JSObjectRef function,
-			JSObjectRef thisObject,
-			size_t argumentCount,
-			const JSValueRef arguments[],
-			JSValueRef *exception) {
+			   JSObjectRef function,
+			   JSObjectRef thisObject,
+			   size_t argumentCount,
+			   const JSValueRef arguments[],
+			   JSValueRef *exception) {
+
 	JSObjectRef array;
 	guint n_entries = 0;
 	JSValueRef *args = NULL;
@@ -1157,11 +1159,12 @@ get_dirlist_cb(JSContextRef context,
 	}
 
 	path = arg_to_string(context, arguments[0], exception);
+
 	if (!path) {
 		return JSValueMakeNull(context);
 	}
 
-	dir = g_dir_open (path, 0, &err);
+	dir = g_dir_open(path, 0, &err);
 
 	if (err) {
 		_mkexception(context, exception, err->message);
@@ -1170,23 +1173,24 @@ get_dirlist_cb(JSContextRef context,
 	}
 
 	/*
-	 * Create the lis of the directory entries
+	 * Create the list of the directory entries
 	 */
-
-	while ((dirent = g_dir_read_name (dir)) != NULL) {
+	while ( ( dirent = g_dir_read_name(dir) ) != NULL) {
 		n_entries++;
-		args = g_realloc (args, sizeof (JSValueRef) * (n_entries + 1));
-		fullpath = g_build_filename (path, dirent, NULL); /* Give theme developer full pathname */
-		args[(n_entries - 1)] = string_or_null (context, fullpath);
-		g_free (fullpath);
+		args = g_realloc( args, sizeof(JSValueRef) * ( n_entries + 1 ) );
+		fullpath = g_build_filename(path, dirent, NULL); /* Give theme developer full pathname */
+		args[( n_entries - 1 )] = string_or_null(context, fullpath);
+		g_free(fullpath);
 	}
 
-	g_dir_close (dir);
+	g_dir_close(dir);
 
-	array = JSObjectMakeArray (context, n_entries, args, exception);
-	g_free (args);
+	array = JSObjectMakeArray(context, n_entries, args, exception);
+
+	g_free(args);
+
 	if (array == NULL) {
-		return JSValueMakeNull (context);
+		return JSValueMakeNull(context);
 	} else {
 		return array;
 	}
