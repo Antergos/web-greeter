@@ -1418,7 +1418,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 						kJSPropertyAttributeNone,
 						NULL);
 
-	greeter_util_object = JSObjectMake(jscontext, greeter_util_class, NULL);
+	greeter_util_object = JSObjectMake(jsContext, greeter_util_class, NULL);
 
 	JSObjectSetProperty(context,
 						globalObject,
