@@ -202,7 +202,7 @@ var GreeterThemeComponent = (function () {
 
 						try {
 							for (var _iterator3 = background_images[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-								file = _step3.value;
+								var file = _step3.value;
 
 								if (file.match(/(png|PNG)|(jpg|JPEG)|(bmp|BMP)/)) {
 									images.push(file);
@@ -321,7 +321,7 @@ var AntergosBackgroundManager = (function (_GreeterThemeComponen) {
 
 				try {
 					for (var _iterator4 = this.background_images[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-						image_file = _step4.value;
+						var image_file = _step4.value;
 
 						var $link = $('<a href="#"><img>'),
 						    $img_el = $link.children('img');

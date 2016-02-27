@@ -130,7 +130,7 @@ class GreeterThemeComponent {
 
 				if (background_images.length) {
 					let images = [];
-					for (file of background_images) {
+					for (var file of background_images) {
 						if (file.match(/(png|PNG)|(jpg|JPEG)|(bmp|BMP)/)) {
 							images.push(file);
 						}
@@ -222,7 +222,7 @@ class AntergosBackgroundManager extends GreeterThemeComponent {
 
 	setup_background_thumbnails() {
 		if (this.background_images.length) {
-			for ( image_file of this.background_images) {
+			for ( var image_file of this.background_images ) {
 				let $link = $('<a href="#"><img>'),
 					$img_el = $link.children('img');
 
