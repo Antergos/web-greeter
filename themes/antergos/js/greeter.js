@@ -116,11 +116,12 @@ class GreeterThemeComponent {
 	 * Get some values from `lightdm-webkit2-greeter.conf` and save them for later.
 	 */
 	init_config_values() {
-		let logo = '', background_images = [], background_images_dir = '';
+		let logo = '', user_image = '', background_images = [], background_images_dir = '';
 
 		if ( 'undefined' !== typeof config ) {
 			if ( this instanceof AntergosTheme ) {
 				logo = config.get_str( 'branding', 'logo' ) || '';
+				user_image = config.get_str( 'branding', 'user_image' ) || '';
 
 			} else if ( this instanceof AntergosBackgroundManager ) {
 				background_images_dir = config.get_str( 'branding', 'background_images' ) || '';
@@ -141,6 +142,7 @@ class GreeterThemeComponent {
 		}
 
 		this.logo = logo;
+		this.user_image = user_image;
 		this.background_images = background_images;
 		this.background_images_dir = background_images_dir;
 	}
@@ -163,7 +165,7 @@ class AntergosBackgroundManager extends GreeterThemeComponent {
 			_bg_self = this;
 		}
 
-		this.current_background = this.cache_get( 'background_config', 'current_background' );
+		this.current_background = this.cache_get( 'background_manager', 'current_background' );
 
 		if ( ! this.background_images_dir.length || ! this.background_images.length ) {
 			this.log('AntergosBackgroundManager: [ERROR] No background images detected.');
@@ -172,10 +174,7 @@ class AntergosBackgroundManager extends GreeterThemeComponent {
 				$( '.header' ).css( "background", '#000000' );
 			} ).fadeTo( 300, 1 );
 
-		} else {
-			this.initialize();
 		}
-
 		return _bg_self;
 	}
 
@@ -203,11 +202,18 @@ class AntergosBackgroundManager extends GreeterThemeComponent {
 			if ( 'true' === random_background || ! current_background ) {
 				current_background = this.get_random_image();
 			}
+
 			this.current_background = current_background;
 		}
 
+		this.do_background();
+	}
+
+
+	do_background() {
 		$( '.header' ).fadeTo( 300, 0.5, function() {
-			$( '.header' ).css( "background", this.current_background );
+			let tpl = `url('file://${this.current_background}')`;
+			$( '.header' ).css( "background-image", tpl );
 		} ).fadeTo( 300, 1 );
 	}
 
@@ -224,14 +230,31 @@ class AntergosBackgroundManager extends GreeterThemeComponent {
 		if (this.background_images.length) {
 			for ( var image_file of this.background_images ) {
 				let $link = $('<a href="#"><img>'),
-					$img_el = $link.children('img');
+					$img_el = $link.children('img'),
+					tpl = `file://${image_file}`;
 
-				$link.addClass('bg clearfix').attr('data-img', image_file);
-				$img_el.attr('src', image_file);
+				$link.addClass('bg clearfix').attr('data-img', tpl);
+				$img_el.attr('src', tpl);
 
-				$link.appendTo($('.bgs'));
+				$link.appendTo($('.bgs')).click( this.background_selected_handler );
 			}
 		}
+	}
+
+
+	background_selected_handler( event ) {
+		let img = $(this).attr('data-img');
+
+		if ('random' === img) {
+			this.cache_set('true', 'background_manager', 'randmom_background' );
+			img = this.get_random_image();
+		}
+
+		this.cache_set(img, 'background_manager', 'current_background' );
+		this.current_background = img;
+
+		this.do_background();
+
 	}
 }
 
@@ -250,6 +273,7 @@ class AntergosTheme extends GreeterThemeComponent {
 		if ( null === _self ) {
 			_self = this;
 		}
+		this.tux = 'img/antergos-logo-user.png';
 		this.user_list_visible = false;
 		this.auth_pending = false;
 		this.selected_user = null;
@@ -262,6 +286,7 @@ class AntergosTheme extends GreeterThemeComponent {
 		this.$msg_area = $( '#showMsg' );
 		this.background_manager = new AntergosBackgroundManager();
 
+		this.background_manager.initialize();
 		this.initialize();
 
 		return _self;
@@ -305,13 +330,12 @@ class AntergosTheme extends GreeterThemeComponent {
 	 * Initialize the user list.
 	 */
 	prepare_user_list() {
-		var tux = 'img/antergos-logo-user.png',
-			template;
+		var template;
 
 		// Loop through the array of LightDMUser objects to create our user list.
 		for ( var user of lightdm.users ) {
 			var last_session = this.cache_get( 'user', user.name, 'session' ),
-				image_src = user.image.length ? user.image : tux;
+				image_src = user.image.length ? user.image : this.user_image;
 
 			if ( null === last_session ) {
 				// For backwards compatibility
@@ -334,7 +358,7 @@ class AntergosTheme extends GreeterThemeComponent {
 				</a>`;
 
 			// Register event handler here so we don't have to iterate over the users again later.
-			$( template ).appendTo( this.$user_list ).click( this.start_authentication );
+			$( template ).appendTo( this.$user_list ).click( this.start_authentication ).on('error.antergos', this.user_image_error_handler);
 
 		} // END for ( var user of lightdm.users )
 
@@ -614,6 +638,12 @@ class AntergosTheme extends GreeterThemeComponent {
 
 	user_list_collapse_handler() {
 		_self.user_list_visible = _self.$user_list.hasClass( 'in' ) ? true : false;
+	}
+
+
+	user_image_error_handler( event ) {
+		$(this).off('error.antergos');
+		$(this).attr('src', _self.tux);
 	}
 
 

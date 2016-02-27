@@ -29,13 +29,12 @@
 /* Global Styles */
 
 @font-face {
-	font-family: Lato;
-	src: url('../fonts/TTF/Lato-Regular.ttf');
+	font-family: 'Open Sans';
+	src: url('../fonts/TTF/OpenSans-Regular.ttf');
 }
-
 @font-face {
-	font-family: LatoLight;
-	src: url('../fonts/TTF/Lato-Light.ttf');
+	font-family: 'Open Sans Light';
+	src: url('../fonts/TTF/OpenSans-Light.ttf');
 }
 
 *:focus {
@@ -89,7 +88,7 @@ body {
 	height: 100%;
 	width: 100%;
 	background-color: #000000;
-	font-family: "Lato", "Open Sans", sans-serif;
+	font-family: "Open Sans", sans-serif;
 }
 
 i {
@@ -97,7 +96,7 @@ i {
 }
 
 h3, .panel-heading {
-	font-family: "Lato", "Open Sans", sans-serif;
+	font-family: "Open Sans", sans-serif;
 	font-size: 16px;
 	text-align: center;
 	font-weight: 400;
@@ -203,7 +202,7 @@ a {
 	height: 100%;
 	width: 100%;
 	position: relative;
-	background-image: url('');
+	background-color: #000000;
 	background-size: cover !important;
 	background-repeat: no-repeat !important;
 	background-position: center !important;
@@ -230,7 +229,7 @@ a {
 /* Clock Widget */
 
 .time {
-	font-family: "LatoLight", "Open Sans", sans-serif;
+	font-family: "Open Sans Light", sans-serif;
 	font-size: 96px;
 	line-height: 1em;
 	text-decoration: none;
