@@ -35,6 +35,8 @@
 #include <config.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
+#include <glib.h>
+#include <glib/gstdio.h>
 
 #include <webkit2/webkit-web-extension.h>
 #include <webkitdom/WebKitDOMCustom.h>
@@ -233,7 +235,24 @@ get_user_image_cb(JSContextRef context,
 				  JSObjectRef thisObject,
 				  JSStringRef propertyName,
 				  JSValueRef *exception) {
-	return string_or_null(context, lightdm_user_get_image(USER));
+	const gchar *image_uri = lightdm_user_get_image(USER);
+	gchar *image_path;
+	gint  result;
+
+	image_path = g_filename_from_uri(image_uri, NULL, NULL);
+	if (image_path) {
+		result = g_access(image_path, R_OK);
+		g_free(image_path);
+	} else {
+		result = g_access(image_uri, R_OK);
+	}
+
+	if (result) {
+		/* Couldn't access */
+		return JSValueMakeNull(context);
+	} else {
+		return string_or_null(context, image_uri);
+	}
 }
 
 
