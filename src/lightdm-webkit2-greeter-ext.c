@@ -167,6 +167,26 @@ arg_to_string(JSContextRef context, JSValueRef arg, JSValueRef *exception) {
 
 
 /*
+ * g_strreplace
+ *
+ * Replace one substring with another.  NOTE:  This has the side effect
+ * of freeing it's passed text.
+ */
+
+static gchar *
+g_strreplace (gchar *txt, gchar *from, gchar *to) {
+	gchar **split;
+	gchar *result;
+
+	split = g_strsplit (txt, from, -1);
+	g_free (txt);
+	result = g_strjoinv (to, split);
+	g_strfreev (split);
+	return result;
+}
+
+
+/*
  * Escapes single quote characters in a string.
  *
  * Simple escape function to make sure strings have any/all single
@@ -175,20 +195,13 @@ arg_to_string(JSContextRef context, JSValueRef arg, JSValueRef *exception) {
 static char *
 escape(const gchar *text) {
 	gchar *escaped;
-	gchar **split;
 	gchar *result;
 
 	/* Make sure all newlines, tabs, etc. are escaped. */
 	escaped = g_strescape (text, NULL);
 
-	/* Split the string up on the single quote character (') */
-	split = g_strsplit (escaped, "'", -1);
-
-	/* Rejoin, substituting the escaped single quote for the separator. */
-	result = g_strjoinv ("\\'", split);
-
-	g_free (escaped);
-	g_strfreev (split);
+	/* Replace ' with \\' */
+	result = g_strreplace (escaped, "'", "\\'");
 
 	return result;
 }
