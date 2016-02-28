@@ -29,8 +29,8 @@
 /**
  * This is used to access our classes from within jQuery callbacks.
  */
-let _self = null;
-let _bg_self = null;
+var _self = null,
+    _bg_self = null;
 
 /**
  * Capitalize a string.
@@ -47,7 +47,7 @@ String.prototype.capitalize = function () {
 class GreeterThemeComponent {
 
 	constructor() {
-		this.debug = this.cache_get('debug', 'enabled');
+		this.debug = true;
 		this.lang = window.navigator.language.split('-')[0].toLowerCase();
 		this.translations = window.ant_translations;
 
@@ -64,7 +64,7 @@ class GreeterThemeComponent {
   * @param {string} text - To be added to the log.
   */
 	log(text) {
-		if ('true' === this.debug) {
+		if (true === this.debug) {
 			console.log(text);
 		}
 		$('#logArea').append(`${ text }<br/>`);
@@ -76,8 +76,12 @@ class GreeterThemeComponent {
   *
   * @param {...string} key_parts - Strings that are combined to form the key.
   */
-	cache_get(...key_parts) {
+	cache_get() {
 		var key = `ant`;
+
+		for (var _len = arguments.length, key_parts = Array(_len), _key = 0; _key < _len; _key++) {
+			key_parts[_key] = arguments[_key];
+		}
 
 		for (var part of key_parts) {
 			key += `:${ part }`;
@@ -92,8 +96,12 @@ class GreeterThemeComponent {
   * @param {string} value - The value to set.
   * @param {...string} key_parts - Strings that are combined to form the key.
   */
-	cache_set(value, ...key_parts) {
+	cache_set(value) {
 		var key = `ant`;
+
+		for (var _len2 = arguments.length, key_parts = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+			key_parts[_key2 - 1] = arguments[_key2];
+		}
 
 		for (var part of key_parts) {
 			key += `:${ part }`;
@@ -105,7 +113,7 @@ class GreeterThemeComponent {
   * Get some values from `lightdm-webkit2-greeter.conf` and save them for later.
   */
 	init_config_values() {
-		let logo = '',
+		var logo = '',
 		    user_image = '',
 		    background_images = [],
 		    background_images_dir = '';
@@ -146,7 +154,6 @@ class AntergosBackgroundManager extends GreeterThemeComponent {
 
 	constructor() {
 		super();
-
 		if (null === _bg_self) {
 			_bg_self = this;
 		}
@@ -185,23 +192,27 @@ class AntergosBackgroundManager extends GreeterThemeComponent {
 
 			if ('true' === random_background || !current_background) {
 				current_background = this.get_random_image();
+				this.cache_set('true', 'background_manager', 'random_background');
 			}
 
 			this.current_background = current_background;
+			this.cache_set(this.current_background, 'background_manager', 'current_background');
 		}
 
 		this.do_background();
 	}
 
 	do_background() {
-		$('.header').fadeTo(300, 0.5, function () {
-			let tpl = `url('file://${ this.current_background }')`;
-			$('.header').css("background-image", tpl);
-		}).fadeTo(300, 1);
+		if ('undefined' !== typeof this.current_background) {
+			$('.header').fadeTo(300, 0.5, function () {
+				var tpl = `url(${ this.current_background })`;
+				$('.header').css("background-image", tpl);
+			}).fadeTo(300, 1);
+		}
 	}
 
 	get_random_image() {
-		let random_bg;
+		var random_bg;
 
 		random_bg = Math.floor(Math.random() * this.background_images.length);
 
@@ -211,7 +222,7 @@ class AntergosBackgroundManager extends GreeterThemeComponent {
 	setup_background_thumbnails() {
 		if (this.background_images.length) {
 			for (var image_file of this.background_images) {
-				let $link = $('<a href="#"><img>'),
+				var $link = $('<a href="#"><img>'),
 				    $img_el = $link.children('img'),
 				    tpl = `file://${ image_file }`;
 
@@ -224,17 +235,17 @@ class AntergosBackgroundManager extends GreeterThemeComponent {
 	}
 
 	background_selected_handler(event) {
-		let img = $(this).attr('data-img');
+		var img = $(this).attr('data-img');
 
 		if ('random' === img) {
-			this.cache_set('true', 'background_manager', 'randmom_background');
-			img = this.get_random_image();
+			_bg_self.cache_set('true', 'background_manager', 'random_background');
+			img = _bg_self.get_random_image();
 		}
 
-		this.cache_set(img, 'background_manager', 'current_background');
-		this.current_background = img;
+		_bg_self.cache_set(img, 'background_manager', 'current_background');
+		_bg_self.current_background = img;
 
-		this.do_background();
+		_bg_self.do_background();
 	}
 }
 
@@ -400,7 +411,7 @@ class AntergosTheme extends GreeterThemeComponent {
 		this.$clock.html(moment().format(format));
 
 		setInterval(() => {
-			this.$clock.html(moment().format(format));
+			_self.$clock.html(moment().format(format));
 		}, 60000);
 	}
 

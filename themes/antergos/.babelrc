@@ -1,10 +1,14 @@
 {
 	"plugins": [
 		[
-			"/usr/lib/node_modules/babel-plugin-transform-es2015-spread",
+			"transform-es2015-spread",
 			{
 				"loose": true
 			}
-		]
+		],
+		["transform-object-rest-spread"],
+		["syntax-class-constructor-call"],
+		["syntax-class-properties"],
+		["transform-es2015-parameters"]
 	]
 }
