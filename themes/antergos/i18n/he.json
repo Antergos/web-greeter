@@ -1,14 +1,14 @@
 {
-    "auth_failed": ".בוש הסנ השקבב .לשכנ תומיא !וה וא",
-    "background_options": "עקר תויורשפא",
-    "cancel": "לֵטַבְל",
-    "confirm_system_action": "?חוטב התא",
-    "debug_log": "Debug רבחתה",
-    "greeting": "!ךאוב ךורב",
-    "hibernate": "ףֹורֲחַל",
-    "random": "יִאַרקַא",
-    "reset": "לּוחתִא",
-    "restart": "לוחתיא",
-    "shutdown": "תובכל",
-    "suspend": "תֹועְׁשַהְל"
+    "auth_failed": "אוי לא! האימות נכשל. נא לנסות שוב.",
+    "background_options": "אפשרויות רקע",
+    "cancel": "ביטול",
+    "confirm_system_action": "האם אתם בטוחים?",
+    "debug_log": "תיעוד Debug",
+    "greeting": "ברוכים הבאים!",
+    "hibernate": "מצב שינה",
+    "random": "אקראי",
+    "reset": "אתחול",
+    "restart": "הפעלה מחדש",
+    "shutdown": "כיבוי",
+    "suspend": "השעייה"
 }
