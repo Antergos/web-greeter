@@ -31,7 +31,8 @@
  * This is used to access our classes from within jQuery callbacks.
  */
 var _self = null,
-	_bg_self = null;
+	_bg_self = null,
+	_util = null;
 
 
 /**
@@ -51,9 +52,14 @@ String.prototype.capitalize = function() {
 /**
  * This is the base class for the theme's components.
  */
-class GreeterThemeComponent {
+class AntergosThemeUtils {
 
 	constructor() {
+		if ( null !== _util ) {
+			return _util;
+		}
+		_util = this;
+
 		this.debug = true;
 		this.lang = window.navigator.language.split( '-' )[ 0 ].toLowerCase();
 		this.translations = window.ant_translations;
@@ -85,8 +91,12 @@ class GreeterThemeComponent {
 	 *
 	 * @param {...string} key_parts - Strings that are combined to form the key.
 	 */
-	cache_get( ...key_parts ) {
+	cache_get() {
 		var key = `ant`;
+
+		for (var _len = arguments.length, key_parts = new Array(_len), _key = 0; _key < _len; _key++) {
+			key_parts[_key] = arguments[_key];
+		}
 
 		for ( var part of key_parts ) {
 			key += `:${part}`;
@@ -102,8 +112,12 @@ class GreeterThemeComponent {
 	 * @param {string} value - The value to set.
 	 * @param {...string} key_parts - Strings that are combined to form the key.
 	 */
-	cache_set( value, ...key_parts ) {
+	cache_set( value ) {
 		var key = `ant`;
+
+		for (var _len2 = arguments.length, key_parts = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+			key_parts[_key2 - 1] = arguments[_key2];
+		}
 
 		for ( var part of key_parts ) {
 			key += `:${part}`;
@@ -119,26 +133,26 @@ class GreeterThemeComponent {
 		var logo = '', user_image = '', background_images = [], background_images_dir = '';
 
 		if ( 'undefined' !== typeof config ) {
-			if ( this instanceof AntergosTheme ) {
-				logo = config.get_str( 'branding', 'logo' ) || '';
-				user_image = config.get_str( 'branding', 'user_image' ) || '';
 
-			} else if ( this instanceof AntergosBackgroundManager ) {
-				background_images_dir = config.get_str( 'branding', 'background_images' ) || '';
-				if (background_images_dir) {
-					background_images = greeterutil.dirlist(background_images_dir) || [];
-				}
+			logo = config.get_str( 'branding', 'logo' ) || '';
+			user_image = config.get_str( 'branding', 'user_image' ) || '';
 
-				if (background_images.length) {
-					let images = [];
-					for (var file of background_images) {
-						if (file.match(/(png|PNG)|(jpg|JPEG)|(bmp|BMP)/)) {
-							images.push(file);
-						}
-					}
-					background_images = images;
-				}
+
+			background_images_dir = config.get_str( 'branding', 'background_images' ) || '';
+			if ( background_images_dir ) {
+				background_images = greeterutil.dirlist( background_images_dir ) || [];
 			}
+
+			if ( background_images && background_images.length ) {
+				var images = [];
+				for ( var file of background_images ) {
+					if ( file.match( /(png|PNG)|(jpg|JPEG)|(bmp|BMP)/ ) ) {
+						images.push( file );
+					}
+				}
+				background_images = images;
+			}
+
 		}
 
 		this.logo = logo;
@@ -156,24 +170,26 @@ class GreeterThemeComponent {
 /**
  * This class handles the theme's background switcher.
  */
-class AntergosBackgroundManager extends GreeterThemeComponent {
+class AntergosBackgroundManager {
 
 	constructor() {
-		super();
-		if ( null === _bg_self ) {
-			_bg_self = this;
+		if ( null !== _bg_self ) {
+			return _bg_self;
 		}
 
-		this.current_background = this.cache_get( 'background_manager', 'current_background' );
+		_bg_self = this;
 
-		if ( ! this.background_images_dir.length || ! this.background_images.length ) {
-			this.log('AntergosBackgroundManager: [ERROR] No background images detected.');
+		this.current_background = _util.cache_get( 'background_manager', 'current_background' );
+
+		if ( ! _util.background_images_dir.length || ! _util.background_images.length ) {
+			this.log( 'AntergosBackgroundManager: [ERROR] No background images detected.' );
 
 			$( '.header' ).fadeTo( 300, 0.5, function() {
 				$( '.header' ).css( "background", '#000000' );
 			} ).fadeTo( 300, 1 );
 
 		}
+
 		return _bg_self;
 	}
 
@@ -183,28 +199,30 @@ class AntergosBackgroundManager extends GreeterThemeComponent {
 			// For backwards compatibility
 			if ( null !== localStorage.getItem( 'bgsaved' ) && '0' === localStorage.getItem( 'bgrandom' ) ) {
 				this.current_background = localStorage.getItem( 'bgsaved' );
-				this.cache_set( this.current_background, 'background_manager', 'current_background' );
+				_util.cache_set( this.current_background, 'background_manager', 'current_background' );
 				localStorage.removeItem( 'bgrandom' );
 				localStorage.removeItem( 'bgsaved' );
-			} else if ( '0' === localStorage.getItem( 'bgrandom' ) ) {
-				this.current_background = this.get_random_image();
-				this.cache_set( 'true', 'background_manager', 'random_background' );
-				localStorage.removeItem( 'bgrandom' );
+			} else {
+				if ( '0' === localStorage.getItem( 'bgrandom' ) ) {
+					this.current_background = this.get_random_image();
+					_util.cache_set( 'true', 'background_manager', 'random_background' );
+					localStorage.removeItem( 'bgrandom' );
+				}
 			}
 		}
 
 		if ( ! this.current_background ) {
 			// For current and future versions
-			let current_background = this.cache_get('background_manager', 'current_background' ),
-				random_background = this.cache_get('background_manager', 'random_background' );
+			let current_background = _util.cache_get( 'background_manager', 'current_background' ),
+				random_background = _util.cache_get( 'background_manager', 'random_background' );
 
 			if ( 'true' === random_background || ! current_background ) {
 				current_background = this.get_random_image();
-				this.cache_set( 'true', 'background_manager', 'random_background' );
+				_util.cache_set( 'true', 'background_manager', 'random_background' );
 			}
 
 			this.current_background = current_background;
-			this.cache_set( this.current_background, 'background_manager', 'current_background' );
+			_util.cache_set( this.current_background, 'background_manager', 'current_background' );
 		}
 
 		this.do_background();
@@ -212,48 +230,48 @@ class AntergosBackgroundManager extends GreeterThemeComponent {
 
 
 	do_background() {
-		if ('undefined' !== typeof this.current_background) {
 			$( '.header' ).fadeTo( 300, 0.5, function() {
-				var tpl = `url(${this.current_background})`;
-				$( '.header' ).css("background-image", tpl );
+				var tpl = `url(${_bg_self.current_background})`;
+				$( '.header' ).css( "background-image", tpl );
 			} ).fadeTo( 300, 1 );
-		}
 	}
 
 
 	get_random_image() {
 		var random_bg;
 
-		random_bg = Math.floor( Math.random() * this.background_images.length );
+		random_bg = Math.floor( Math.random() * _util.background_images.length );
 
-		return this.background_images[ random_bg ];
+		return _util.background_images[ random_bg ];
 	}
 
 	setup_background_thumbnails() {
-		if (this.background_images.length) {
-			for ( var image_file of this.background_images ) {
-				var $link = $('<a href="#"><img>'),
-					$img_el = $link.children('img'),
+		if ( _util.background_images.length ) {
+			$('[data-img="random"]').click(this.background_selected_handler);
+
+			for ( var image_file of _util.background_images ) {
+				var $link = $( '<a href="#"><img>' ),
+					$img_el = $link.children( 'img' ),
 					tpl = `file://${image_file}`;
 
-				$link.addClass('bg clearfix').attr('data-img', tpl);
-				$img_el.attr('src', tpl);
+				$link.addClass( 'bg clearfix' ).attr( 'data-img', tpl );
+				$img_el.attr( 'src', tpl );
 
-				$link.appendTo($('.bgs')).click( this.background_selected_handler );
+				$link.appendTo( $( '.bgs' ) ).click( this.background_selected_handler );
 			}
 		}
 	}
 
 
 	background_selected_handler( event ) {
-		var img = $(this).attr('data-img');
+		var img = $( this ).attr( 'data-img' );
 
-		if ('random' === img) {
-			_bg_self.cache_set('true', 'background_manager', 'random_background' );
+		if ( 'random' === img ) {
+			_util.cache_set( 'true', 'background_manager', 'random_background' );
 			img = _bg_self.get_random_image();
 		}
 
-		_bg_self.cache_set(img, 'background_manager', 'current_background' );
+		_util.cache_set( img, 'background_manager', 'current_background' );
 		_bg_self.current_background = img;
 
 		_bg_self.do_background();
@@ -268,13 +286,14 @@ class AntergosBackgroundManager extends GreeterThemeComponent {
 /**
  * This is the theme's main class object. It contains almost all the theme's logic.
  */
-class AntergosTheme extends GreeterThemeComponent {
+class AntergosTheme {
 
 	constructor() {
-		super();
-		if ( null === _self ) {
-			_self = this;
+		if ( null !== _self ) {
+			return _self;
 		}
+		_self = this;
+
 		this.tux = 'img/antergos-logo-user.png';
 		this.user_list_visible = false;
 		this.auth_pending = false;
@@ -286,9 +305,10 @@ class AntergosTheme extends GreeterThemeComponent {
 		this.$actions_container = $( "#actionsArea" );
 		this.$msg_area_container = $( '#statusArea' );
 		this.$msg_area = $( '#showMsg' );
-		this.background_manager = new AntergosBackgroundManager();
 
+		this.background_manager = new AntergosBackgroundManager();
 		this.background_manager.initialize();
+
 		this.initialize();
 
 		return _self;
@@ -302,7 +322,6 @@ class AntergosTheme extends GreeterThemeComponent {
 		this.prepare_user_list();
 		this.prepare_session_list();
 		this.prepare_system_action_buttons();
-		$( "#login" ).addClass( "in" );
 		this.register_callbacks();
 		this.background_manager.setup_background_thumbnails();
 	}
@@ -336,8 +355,8 @@ class AntergosTheme extends GreeterThemeComponent {
 
 		// Loop through the array of LightDMUser objects to create our user list.
 		for ( var user of lightdm.users ) {
-			var last_session = this.cache_get( 'user', user.name, 'session' ),
-				image_src = user.image.length ? user.image : this.user_image;
+			var last_session = _util.cache_get( 'user', user.name, 'session' ),
+				image_src = user.image.length ? user.image : _util.user_image;
 
 			if ( null === last_session ) {
 				// For backwards compatibility
@@ -347,10 +366,10 @@ class AntergosTheme extends GreeterThemeComponent {
 					// session.
 					last_session = lightdm.default_session;
 				}
-				this.cache_set( last_session, 'user', user.name, 'session' );
+				_util.cache_set( last_session, 'user', user.name, 'session' );
 			}
 
-			this.log( `Last session for ${user.name} was: ${last_session}` );
+			_util.log( `Last session for ${user.name} was: ${last_session}` );
 
 			template = `
 				<a href="#" id="${user.name}" class="list-group-item ${user.name}" data-session="${last_session}">
@@ -360,7 +379,7 @@ class AntergosTheme extends GreeterThemeComponent {
 				</a>`;
 
 			// Register event handler here so we don't have to iterate over the users again later.
-			$( template ).appendTo( this.$user_list ).click( this.start_authentication ).on('error.antergos', this.user_image_error_handler);
+			$( template ).appendTo( this.$user_list ).click( this.start_authentication ).on( 'error.antergos', this.user_image_error_handler );
 
 		} // END for ( var user of lightdm.users )
 
@@ -380,7 +399,7 @@ class AntergosTheme extends GreeterThemeComponent {
 			var css_class = session.name.replace( / /g, '' ),
 				template;
 
-			this.log( `Adding ${session.name} to the session list...` );
+			_util.log( `Adding ${session.name} to the session list...` );
 
 			template = `
 				<li>
@@ -420,11 +439,11 @@ class AntergosTheme extends GreeterThemeComponent {
 		} // END for (var [action, icon] of actions)
 
 		$( '[data-toggle=tooltip]' ).tooltip();
-		$('.modal').modal({show: false});
+		$( '.modal' ).modal( { show: false } );
 	}
 
 	initialize_clock() {
-		var saved_format = this.cache_get( 'clock', 'time_format' ),
+		var saved_format = _util.cache_get( 'clock', 'time_format' ),
 			format = (null !== saved_format) ? saved_format : 'LT';
 
 		moment.locale( window.navigator.languages );
@@ -451,29 +470,29 @@ class AntergosTheme extends GreeterThemeComponent {
 
 
 	prepare_login_panel_header() {
-		var greeting = (this.translations.greeting) ? this.translations.greeting : 'Welcome!',
-			logo = ( '' !== this.logo ) ? this.logo : 'img/antergos.png';
+		var greeting = (_util.translations.greeting) ? _util.translations.greeting : 'Welcome!',
+			logo = ( '' !== _util.logo ) ? _util.logo : 'img/antergos.png';
 
 		$( '.welcome' ).text( greeting );
 		$( '#hostname' ).append( lightdm.hostname );
-		$('[data-greeter-config="logo"]').attr('src', logo);
+		$( '[data-greeter-config="logo"]' ).attr( 'src', logo );
 	}
 
 
 	prepare_translations() {
-		if ( ! this.translations.hasOwnProperty( this.lang ) ) {
+		if ( ! _util.translations.hasOwnProperty( this.lang ) ) {
 			for ( var lang of window.navigator.languages ) {
-				if ( this.translations.hasOwnProperty( lang ) ) {
+				if ( _util.translations.hasOwnProperty( lang ) ) {
 					this.lang = lang;
 					break;
 				}
 			}
 		}
-		if ( ! this.translations.hasOwnProperty( this.lang ) ) {
+		if ( ! _util.translations.hasOwnProperty( this.lang ) ) {
 			this.lang = 'en';
 		}
 
-		this.translations = this.translations[ this.lang ];
+		_util.translations = _util.translations[ this.lang ];
 	}
 
 
@@ -486,7 +505,7 @@ class AntergosTheme extends GreeterThemeComponent {
 		$( '[data-i18n]' ).each( function() {
 			var key = $( this ).attr( 'data-i18n' ),
 				html = $( this ).html(),
-				translated = _self.translations[ key ],
+				translated = _util.translations[ key ],
 				new_html = html.replace( '${i18n}', translated );
 
 			$( this ).html( new_html );
@@ -502,15 +521,15 @@ class AntergosTheme extends GreeterThemeComponent {
 	start_authentication( event ) {
 		var user_id = $( this ).attr( 'id' ),
 			selector = `.${user_id}`,
-			user_session = _self.cache_get( 'user', user_id, 'session' );
+			user_session = _util.cache_get( 'user', user_id, 'session' );
 
 		if ( _self.auth_pending || null !== _self.selected_user ) {
 			lightdm.cancel_authentication();
-			_self.log( `Authentication cancelled for ${_self.selected_user}` );
+			_util.log( `Authentication cancelled for ${_self.selected_user}` );
 			_self.selected_user = null;
 		}
 
-		_self.log( `Starting authentication for ${user_id}.` );
+		_util.log( `Starting authentication for ${user_id}.` );
 		_self.selected_user = user_id;
 
 		// CSS hack to workaround webkit bug
@@ -520,7 +539,7 @@ class AntergosTheme extends GreeterThemeComponent {
 		$( selector ).addClass( 'hovered' ).siblings().hide();
 		$( '.fa-toggle-down' ).hide();
 
-		_self.log( `Session for ${user_id} is ${user_session}` );
+		_util.log( `Session for ${user_id} is ${user_session}` );
 
 		$( `[data-session-id="${user_session}"]` ).parent().trigger( 'click', this );
 
@@ -548,7 +567,7 @@ class AntergosTheme extends GreeterThemeComponent {
 
 		lightdm.cancel_authentication();
 
-		_self.log( 'Cancelled authentication.' );
+		_util.log( 'Cancelled authentication.' );
 
 		// CSS hack to work-around webkit bug
 		if ( $( _self.$user_list ).children().length > 3 ) {
@@ -571,17 +590,18 @@ class AntergosTheme extends GreeterThemeComponent {
 	 */
 	authentication_complete() {
 		var selected_session = $( '.selected' ).attr( 'data-session-id' ),
-			err_msg = _self.translations.auth_failed[ _self.lang ];
+			err_msg = _util.translations.auth_failed[ _self.lang ];
 
 		_self.auth_pending = false;
-		_self.cache_set( selected_session, 'user', lightdm.authentication_user, 'session' );
+		_util.cache_set( selected_session, 'user', lightdm.authentication_user, 'session' );
 
 		$( '#timerArea' ).hide();
 
 		if ( lightdm.is_authenticated ) {
 			// The user entered the correct password. Let's log them in.
-			$('body').fadeOut(1000);
-			lightdm.login( lightdm.authentication_user, selected_session );
+			$( 'body' ).fadeOut( 1000, () => {
+				lightdm.login( lightdm.authentication_user, selected_session );
+			} );
 		} else {
 			// The user did not enter the correct password. Show error message.
 			$( '#statusArea' ).show();
@@ -626,7 +646,7 @@ class AntergosTheme extends GreeterThemeComponent {
 		var action = $( this ).attr( 'id' ),
 			$modal = $( '.modal' );
 
-		$modal.find( '.btn-primary' ).text( _self.translations[ action ] ).click( action, ( event ) => {
+		$modal.find( '.btn-primary' ).text( _util.translations[ action ] ).click( action, ( event ) => {
 			$( this ).off( 'click' );
 			lightdm[ event.data ]();
 		} );
@@ -634,7 +654,7 @@ class AntergosTheme extends GreeterThemeComponent {
 			$( this ).next().off( 'click' );
 		} );
 
-		$modal.modal('toggle');
+		$modal.modal( 'toggle' );
 	}
 
 
@@ -644,8 +664,8 @@ class AntergosTheme extends GreeterThemeComponent {
 
 
 	user_image_error_handler( event ) {
-		$(this).off('error.antergos');
-		$(this).attr('src', _self.tux);
+		$( this ).off( 'error.antergos' );
+		$( this ).attr( 'src', _self.tux );
 	}
 
 
@@ -682,6 +702,7 @@ class AntergosTheme extends GreeterThemeComponent {
  * Initialize the theme once the window has loaded.
  */
 $( window ).load( () => {
-	_self = new AntergosTheme();
+	new AntergosThemeUtils();
+	new AntergosTheme();
 } );
 
