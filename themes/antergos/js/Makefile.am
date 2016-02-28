@@ -1,8 +1,6 @@
 javascriptdir = $(THEME_DIR)/antergos/js
 javascript_DATA = \
 	greeter.js \
-	greeter-compiled.js \
-	greeter-compiled.js.map \
 	translations.js \
 	mock.js
 
