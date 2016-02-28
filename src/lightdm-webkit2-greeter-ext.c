@@ -1615,3 +1615,5 @@ webkit_web_extension_initialize(WebKitWebExtension *extension) {
 							  CONFIG_DIR "/lightdm-webkit2-greeter.conf",
 							  G_KEY_FILE_NONE, NULL);
 }
+
+/* vim: set ts=4 sw=4 tw=0 noet : */
