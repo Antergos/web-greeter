@@ -263,6 +263,7 @@ class AntergosBackgroundManager extends GreeterThemeComponent {
 
 
 
+
 /**
  * This is the theme's main class object. It contains almost all the theme's logic.
  */
