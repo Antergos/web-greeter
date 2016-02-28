@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(lightdm-webkit2-greeter, 2.0.0)
+AC_INIT(lightdm-webkit2-greeter, 2.1.0rc1)
 AC_SUBST(THEME_DIR)
 AC_CONFIG_HEADER(config.h)
 AC_PREREQ([2.59])
@@ -128,7 +128,6 @@ themes/antergos/fonts/TTF/Makefile
 themes/antergos/js/vendor/Makefile
 themes/antergos/js/Makefile
 themes/antergos/img/Makefile
-themes/antergos/img/thumbs/Makefile
 themes/simple/Makefile
 ])
 
