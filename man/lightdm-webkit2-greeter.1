@@ -267,6 +267,13 @@ Returns an array of strings of filenames present at "path", or Null if the
 path does not exist\&.
 .RE
 .PP
+greeterutil\&.txt2html(txt)\fR
+.RS 4
+Returns a simple HTML conversion of the passed text\&.  Newlines are replaced
+with <br>, and the characters \&&, <, >, and " are replaced with their HTML
+equivalents\&.
+.RE
+.PP
 Please see the LightDM API documentation for the complete list of calls
 available\&.  The lightdm-webkit2-greeter implements all of the LightDM API\&.
 .PP

@@ -1228,6 +1228,46 @@ get_dirlist_cb(JSContextRef context,
 	}
 }
 
+static JSValueRef
+txt2html_cb(JSContextRef context,
+			JSObjectRef function,
+			JSObjectRef thisObject,
+			size_t argumentCount,
+			const JSValueRef arguments[],
+			JSValueRef *exception) {
+	gchar *txt;
+	JSValueRef result;
+
+	if (argumentCount != 1) {
+		return mkexception(context, exception, ARGNOTSUPPLIED);
+	}
+
+	txt = arg_to_string(context, arguments[0], exception);
+	if (!txt) {
+		return JSValueMakeNull(context);
+	}
+
+	/* Replace & with &amp; */
+	txt = g_strreplace (txt, "&", "&amp;");
+
+	/* Replace " with &quot; */
+	txt = g_strreplace (txt, "\"", "&quot;");
+
+	/* Replace < with &lt; */
+	txt = g_strreplace (txt, "<", "&lt;");
+
+	/* Replace > with &gt; */
+	txt = g_strreplace (txt, ">", "&gt;");
+
+	/* Replace newlines with <br> */
+	txt = g_strreplace (txt, "\n", "<br>");
+
+	result = string_or_null (context, txt);
+	g_free (txt);
+
+	return result;
+}
+
 
 static const JSStaticValue lightdm_user_values[] = {
 	{"name",           get_user_name_cb,           NULL, kJSPropertyAttributeReadOnly},
@@ -1324,6 +1364,7 @@ static const JSStaticFunction config_file_functions[] = {
 
 static const JSStaticFunction greeter_util_functions[] = {
 	{"dirlist",  get_dirlist_cb,   kJSPropertyAttributeReadOnly},
+	{"txt2html", txt2html_cb,      kJSPropertyAttributeReadOnly},
 	{NULL,       NULL,             0}};
 
 
