@@ -47,10 +47,10 @@ String.prototype.capitalize = function() {
 
 
 
-
-
 /**
- * This is the base class for the theme's components.
+ * This should be the base class for all the theme's components. However, webkit's
+ * support of extending (subclassing) ES6 classes is not stable enough to use.
+ * For now we simply bind this class to a global variable for use in our other classes.
  */
 class AntergosThemeUtils {
 
@@ -60,9 +60,10 @@ class AntergosThemeUtils {
 		}
 		_util = this;
 
-		this.debug = true;
+		this.debug = false;
 		this.lang = window.navigator.language.split( '-' )[ 0 ].toLowerCase();
 		this.translations = window.ant_translations;
+		this.$log_container = $('#logArea');
 
 		if ( 'undefined' === typeof window.navigator.languages ) {
 			window.navigator.languages = [ window.navigator.language ];
@@ -136,6 +137,8 @@ class AntergosThemeUtils {
 
 			logo = config.get_str( 'branding', 'logo' ) || '';
 			user_image = config.get_str( 'branding', 'user_image' ) || '';
+			this.debug = config.get_str( 'greeter', 'debug_mode' );
+			this.debug = (null !== this.debug) ? this.debug : false;
 
 
 			background_images_dir = config.get_str( 'branding', 'background_images' ) || '';
@@ -194,6 +197,9 @@ class AntergosBackgroundManager {
 	}
 
 
+	/**
+	 * Determine which background image should be displayed and apply it.
+	 */
 	initialize() {
 		if ( ! this.current_background ) {
 			// For backwards compatibility
@@ -229,6 +235,9 @@ class AntergosBackgroundManager {
 	}
 
 
+	/**
+	 * Set the background image to the value of `this.current_background`
+	 */
 	do_background() {
 			$( '.header' ).fadeTo( 300, 0.5, function() {
 				var tpl = `url(${_bg_self.current_background})`;
@@ -237,6 +246,11 @@ class AntergosBackgroundManager {
 	}
 
 
+	/**
+	 * Get a random background image from our images array.
+	 *
+	 * @returns str The absolute path to a background image.
+	 */
 	get_random_image() {
 		var random_bg;
 
@@ -245,6 +259,10 @@ class AntergosBackgroundManager {
 		return _util.background_images[ random_bg ];
 	}
 
+
+	/**
+	 * Setup the background switcher widget.
+	 */
 	setup_background_thumbnails() {
 		if ( _util.background_images.length ) {
 			$('[data-img="random"]').click(this.background_selected_handler);
@@ -263,6 +281,11 @@ class AntergosBackgroundManager {
 	}
 
 
+	/**
+	 * Handle background image selected event.
+	 *
+	 * @param event jQuery event object.
+	 */
 	background_selected_handler( event ) {
 		var img = $( this ).attr( 'data-img' );
 
@@ -284,7 +307,7 @@ class AntergosBackgroundManager {
 
 
 /**
- * This is the theme's main class object. It contains almost all the theme's logic.
+ * This is the theme's main class object. It contains most of the theme's logic.
  */
 class AntergosTheme {
 
@@ -314,6 +337,10 @@ class AntergosTheme {
 		return _self;
 	}
 
+
+	/**
+	 * Initialize the theme.
+	 */
 	initialize() {
 		this.prepare_translations();
 		this.do_static_translations();
@@ -328,8 +355,8 @@ class AntergosTheme {
 
 
 	/**
-	 * Register callbacks for the LDM Greeter as well as any others that haven't been registered
-	 * elsewhere.
+	 * Register callbacks for the LDM Greeter as well as any others that haven't
+	 * been registered elsewhere.
 	 */
 	register_callbacks() {
 		var events = 'shown.bs.collapse, hidden.bs.collapse';
@@ -338,6 +365,7 @@ class AntergosTheme {
 		$( document ).keydown( this.key_press_handler );
 		$( '.cancel_auth' ).click( this.cancel_authentication );
 		$( '.submit_passwd' ).click( this.submit_password );
+		$('[data-i18n="debug_log"]').click( this.show_log_handler );
 
 		window.show_prompt = this.show_prompt;
 		window.show_message = this.show_message;
@@ -442,6 +470,11 @@ class AntergosTheme {
 		$( '.modal' ).modal( { show: false } );
 	}
 
+
+
+	/**
+	 * Setup the clock widget.
+	 */
 	initialize_clock() {
 		var saved_format = _util.cache_get( 'clock', 'time_format' ),
 			format = (null !== saved_format) ? saved_format : 'LT';
@@ -584,7 +617,7 @@ class AntergosTheme {
 
 
 	/**
-	 * Called when the user attempts to authenticate (inputs password).
+	 * Called when the user attempts to authenticate (submits password).
 	 * We check to see if the user successfully authenticated and if so tell the LDM
 	 * Greeter to log them in with the session they selected.
 	 */
@@ -608,11 +641,13 @@ class AntergosTheme {
 		}
 	}
 
+
 	submit_password( event ) {
 		lightdm.respond( $( '#passwordField' ).val() );
 		$( '#passwordArea' ).hide();
 		$( '#timerArea' ).show();
 	}
+
 
 	session_toggle_handler( event ) {
 		var $session = $( this ).children( 'a' ),
@@ -621,6 +656,7 @@ class AntergosTheme {
 
 		$session.parents( '.btn-group' ).find( '.selected' ).attr( 'data-session-id', session_key ).html( session_name );
 	}
+
 
 	key_press_handler( event ) {
 		var action;
@@ -641,6 +677,7 @@ class AntergosTheme {
 				break;
 		}
 	}
+
 
 	system_action_handler() {
 		var action = $( this ).attr( 'id' ),
@@ -669,8 +706,17 @@ class AntergosTheme {
 	}
 
 
+	show_log_handler( event ) {
+		if ( _util.$log_container.is( ':visible' ) ) {
+			_util.$log_container.hide();
+		} else {
+			_util.$log_container.show();
+		}
+	}
+
+
 	/**
-	 * LightDM Callback - Show password prompt to user.
+	 * LightDM Callback - Show prompt to user.
 	 *
 	 * @param text
 	 * @param type

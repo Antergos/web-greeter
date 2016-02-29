@@ -17,7 +17,6 @@ This is the default theme included with [lightdm-webkit2-greeter](http://github.
 
 ### Prerequisites
 * lightdm-webkit-greeter
-* antergos-wallpapers (used for the background switcher)
 
 ### Installation
 Antergos users have this theme installed by default. It can be reinstalled using pacman if needed. Arch users can install [lightdm-webkit2-greeter](https://aur.archlinux.org/packages/lightdm-webkit2-greeter/) from the AUR.
