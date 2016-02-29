@@ -182,14 +182,6 @@ fade_timer_cb(gpointer data) {
 }
 
 
-static void
-quit_cb(void) {
-	// Fade out the greeter
-	g_timeout_add(40, (GSourceFunc) fade_timer_cb, NULL);
-
-}
-
-
 int
 main(int argc, char **argv) {
 	GdkScreen *screen;
@@ -215,7 +207,6 @@ main(int argc, char **argv) {
 	textdomain (GETTEXT_PACKAGE);
 
 	gtk_init(&argc, &argv);
-	// g_unix_signal_add(SIGTERM, (GSourceFunc) quit_cb, /* is callback */ NULL);
 
 	/* Apply greeter settings from config file */
 	keyfile = g_key_file_new();
