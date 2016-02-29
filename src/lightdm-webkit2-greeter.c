@@ -100,7 +100,7 @@ initialize_web_extensions_cb(WebKitWebContext *context, gpointer user_data) {
 static void
 create_new_webkit_settings_object(void) {
 	webkit_settings = webkit_settings_new_with_settings(
-		"enable-developer-extras", FALSE,
+		"enable-developer-extras", TRUE, /* TODO: Disable this for release. */
 		"enable-fullscreen", TRUE,
 		"enable-site-specific-quirks", TRUE,
 		"enable-dns-prefetching", TRUE,
@@ -274,6 +274,7 @@ main(int argc, char **argv) {
 	webkit_web_view_set_background_color(WEBKIT_WEB_VIEW(web_view), gdk_rgba_copy(&bg_color));
 
 	/* Disable the context (right-click) menu. */
+	/* TODO: Uncomment next line for release */
 	//g_signal_connect(web_view, "context-menu", G_CALLBACK(context_menu_cb), NULL);
 
 	/* There's no turning back now, let's go! */
