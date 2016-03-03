@@ -100,7 +100,7 @@ initialize_web_extensions_cb(WebKitWebContext *context, gpointer user_data) {
 static void
 create_new_webkit_settings_object(void) {
 	webkit_settings = webkit_settings_new_with_settings(
-		"enable-developer-extras", TRUE, /* TODO: Disable this for release. */
+		"enable-developer-extras", FALSE,
 		"enable-fullscreen", TRUE,
 		"enable-site-specific-quirks", TRUE,
 		"enable-dns-prefetching", TRUE,
@@ -162,23 +162,6 @@ message_received_cb(WebKitUserContentManager *manager,
 	 */
 	lock_hint_enabled_handler();
 
-}
-
-
-static gboolean
-fade_timer_cb(gpointer data) {
-	gdouble opacity;
-	opacity = gtk_widget_get_opacity(web_view);
-	opacity -= 0.1;
-
-	if (opacity <= 0) {
-		gtk_main_quit();
-		return FALSE;
-	}
-
-	gtk_widget_set_opacity(web_view, opacity);
-
-	return TRUE;
 }
 
 
@@ -275,8 +258,7 @@ main(int argc, char **argv) {
 	webkit_web_view_set_background_color(WEBKIT_WEB_VIEW(web_view), gdk_rgba_copy(&bg_color));
 
 	/* Disable the context (right-click) menu. */
-	/* TODO: Uncomment next line for release */
-	//g_signal_connect(web_view, "context-menu", G_CALLBACK(context_menu_cb), NULL);
+	g_signal_connect(web_view, "context-menu", G_CALLBACK(context_menu_cb), NULL);
 
 	/* There's no turning back now, let's go! */
 	gtk_container_add(GTK_CONTAINER(window), web_view);
