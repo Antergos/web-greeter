@@ -137,8 +137,8 @@ class AntergosThemeUtils {
 
 			logo = config.get_str( 'branding', 'logo' ) || '';
 			user_image = config.get_str( 'branding', 'user_image' ) || '';
-			this.debug = config.get_str( 'greeter', 'debug_mode' );
-			this.debug = (null !== this.debug) ? this.debug : false;
+			this.debug = config.get_bool( 'greeter', 'debug_mode' );
+			this.debug = (true === this.debug) ? this.debug : false;
 
 
 			background_images_dir = config.get_str( 'branding', 'background_images' ) || '';
