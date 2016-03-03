@@ -209,7 +209,7 @@ class AntergosBackgroundManager {
 				localStorage.removeItem( 'bgrandom' );
 				localStorage.removeItem( 'bgsaved' );
 			} else {
-				if ( '0' === localStorage.getItem( 'bgrandom' ) ) {
+				if ( '1' === localStorage.getItem( 'bgrandom' ) ) {
 					this.current_background = this.get_random_image();
 					_util.cache_set( 'true', 'background_manager', 'random_background' );
 					localStorage.removeItem( 'bgrandom' );
@@ -317,6 +317,8 @@ class AntergosBackgroundManager {
 		if ( 'random' === img ) {
 			_util.cache_set( 'true', 'background_manager', 'random_background' );
 			img = _bg_self.get_random_image();
+		} else {
+			_util.cache_set( 'false', 'background_manager', 'random_background' );
 		}
 
 		_util.cache_set( img, 'background_manager', 'current_background' );

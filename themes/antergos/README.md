@@ -4,7 +4,7 @@
 
 ### Overview
 
-This is the default theme included with [lightdm-webkit2-greeter](http://github.com/Antergos/lightdm-webkit2-greeter). If you are using the Webkit2 greeter, you already have this theme. The theme can also be used with the legacy Webkit1 greeter.
+This is the default theme included with [lightdm-webkit2-greeter](http://github.com/Antergos/lightdm-webkit2-greeter). If you are using the Webkit2 greeter, you already have this theme.
 
 ### Screenshots
 <center>
@@ -19,14 +19,18 @@ This is the default theme included with [lightdm-webkit2-greeter](http://github.
 * lightdm-webkit-greeter
 
 ### Installation
-Antergos users have this theme installed by default. It can be reinstalled using pacman if needed. Arch users can install [lightdm-webkit2-greeter](https://aur.archlinux.org/packages/lightdm-webkit2-greeter/) from the AUR.
+This theme is included with `lightdm-webkit2-greeter` which is installed by default for Antergos users. Non-Antergos users should see [lightdm-webkit2-greeter](https://github.com/Antergos/lightdm-webkit2-greeter/) for install details.
 
-To use this theme with the legacy Webkit1 greeter:
+#### ***NOTE:*** 
+The last version of this theme which supports the legacy Webkit1 greeter is [v2.3.2](https://github.com/Antergos/lightdm-webkit-theme-antergos/releases/tag/2.3.2).
+Versions of this theme later than ***2.3.2*** will not work with the legacy Webkit1 greeter. If you want to use the latest version of the theme you must use the Webkit2 greeter.
 
-1. Download [Antergos Theme](https://github.com/Antergos/lightdm-webkit-theme-antergos/zipball/master)
-2. Unzip it. This should create a folder named like `Antergos-lightdm-webkit-theme-antergos-28c4b13`.
+#### To use [v2.3.2](https://github.com/Antergos/lightdm-webkit-theme-antergos/releases/tag/2.3.2) of this theme with the legacy Webkit1 greeter:
+
+1. Download [Antergos Theme](https://github.com/Antergos/lightdm-webkit-theme-antergos/archive/2.3.2.zip)
+2. Unzip it. This should create a folder named like `Antergos-lightdm-webkit-theme-antergos-2.3.2`.
 3. Rename this folder to `antergos` and copy move it to the themes directory (so that the complete path becomes `/usr/share/lightdm-webkit/themes/antergos`)
-4. Edit  `/etc/lightdm/lightdm-webkit2-greeter.conf` and set the `webkit-theme` property to `antergos`:
+4. Edit  `/etc/lightdm/lightdm-webkit-greeter.conf` and set the `webkit-theme` property to `antergos`:
 
 ```
 [greeter]
