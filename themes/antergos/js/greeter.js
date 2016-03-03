@@ -188,7 +188,7 @@ class AntergosBackgroundManager {
 			this.log( 'AntergosBackgroundManager: [ERROR] No background images detected.' );
 
 			$( '.header' ).fadeTo( 300, 0.5, function() {
-				$( '.header' ).css( "background", '#000000' );
+				$( '.header' ).css( "background-image", 'url(img/fallback_bg.jpg)' );
 			} ).fadeTo( 300, 1 );
 
 		}
@@ -265,17 +265,39 @@ class AntergosBackgroundManager {
 	 */
 	setup_background_thumbnails() {
 		if ( _util.background_images.length ) {
+			var old_bg_tpl = `url(${this.current_background})`;
+
+			/* TODO: Implement some form of pagination
+			 */
+			if ( _util.background_images.length > 20 ) {
+				_util.background_images = _util.background_images.splice(0, 20);
+			}
+
 			$('[data-img="random"]').click(this.background_selected_handler);
 
 			for ( var image_file of _util.background_images ) {
 				var $link = $( '<a href="#"><img>' ),
 					$img_el = $link.children( 'img' ),
-					tpl = `file://${image_file}`;
+					img_url_tpl = `file://${image_file}`;
 
-				$link.addClass( 'bg clearfix' ).attr( 'data-img', tpl );
-				$img_el.attr( 'src', tpl );
+				$link.addClass( 'bg clearfix' ).attr( 'data-img', img_url_tpl );
+
+				if ( image_file === this.current_background || image_file === old_bg_tpl ) {
+					var is_random = _util.cache_get( 'background_manager', 'random_background' );
+					if ('true' !== is_random ) {
+						$link.addClass( 'active' );
+					} else if ( 'true' === is_random ) {
+						$('[data-img="random"]').addClass('active');
+					}
+				}
+
+				$img_el.attr( 'src', img_url_tpl );
 
 				$link.appendTo( $( '.bgs' ) ).click( this.background_selected_handler );
+			}
+
+			if ( ! $('.bg.active').length ) {
+				$('[data-img="random"]').addClass('active');
 			}
 		}
 	}
@@ -288,6 +310,9 @@ class AntergosBackgroundManager {
 	 */
 	background_selected_handler( event ) {
 		var img = $( this ).attr( 'data-img' );
+
+		$('.bg.active').removeClass('active');
+		$(this).addClass('active');
 
 		if ( 'random' === img ) {
 			_util.cache_set( 'true', 'background_manager', 'random_background' );

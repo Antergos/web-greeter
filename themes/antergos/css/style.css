@@ -123,10 +123,17 @@ a {
 .bg-switch .bgs .bg {
 	text-align: center;
 	text-decoration: none;
+	display: block;
+	max-height: 95px;
+	transition: background 0.4s ease-in;
+	margin-bottom: 18px;
+}
+.bg-switch .bgs .bg:hover {
+	background: rgba(255,255,255,0.3);
 }
 
-.bg-switch .bgs .bg.active img {
-	border-color: #3D73C5;
+.bg-switch .bgs .bg.active div, .bg-switch .bgs .bg.active img {
+	border-color: #d6004b;
 }
 
 .bg-switch .bgs .bg img {
@@ -135,6 +142,11 @@ a {
 	border: 2px solid #FFFFFF;
 	margin-bottom: 10px;
 	cursor: pointer;
+	transition: all 0.3s linear;
+}
+
+.bg-switch .bgs .bg img:hover {
+	border-color: #ececec;
 }
 
 .hovered {
@@ -319,11 +331,13 @@ a {
 .panel-heading {
 	padding: 10px 20px !important;
 	background: #F1F1F1;
+	border-bottom-color: rgba(221,221,221, 0.35) !important;
 }
 
 .panel-footer {
 	height: 50px;
 	background: #F1F1F1;
+	border-top-color: rgba(221,221,221, 0.35);
 }
 
 #accordion {
@@ -365,6 +379,9 @@ div.password, div.status, div.timer {
 
 .input-group-btn {
 	width: auto;
+}
+.form-control {
+	border-color: transparent !important;
 }
 
 input.password.form-control {
@@ -433,7 +450,7 @@ input.password.form-control:focus {
 	border: 2px solid #FFFFFF;
 	margin-bottom: 10px;
 	cursor: pointer;
-	padding-top: 35px;
+	padding-top: 28.5px;
 }
 
 .random span {
