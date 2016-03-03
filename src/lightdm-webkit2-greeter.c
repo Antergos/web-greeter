@@ -207,6 +207,7 @@ main(int argc, char **argv) {
 	textdomain (GETTEXT_PACKAGE);
 
 	gtk_init(&argc, &argv);
+	g_unix_signal_add(SIGTERM, gtk_main_quit, NULL);
 
 	/* Apply greeter settings from config file */
 	keyfile = g_key_file_new();
