@@ -733,6 +733,7 @@ class AntergosTheme {
 	 * LightDM Callback - Show message to user.
 	 *
 	 * @param text
+	 * @param type
 	 */
 	show_message( text, type ) {
 		if ( text.length > 0 ) {
