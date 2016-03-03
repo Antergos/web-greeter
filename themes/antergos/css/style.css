@@ -126,7 +126,7 @@ a {
 	display: block;
 	max-height: 95px;
 	transition: background 0.4s ease-in;
-	margin-bottom: 18px;
+	margin-bottom: 12px;
 }
 .bg-switch .bgs .bg:hover {
 	background: rgba(255,255,255,0.3);
@@ -143,10 +143,6 @@ a {
 	margin-bottom: 10px;
 	cursor: pointer;
 	transition: all 0.3s linear;
-}
-
-.bg-switch .bgs .bg img:hover {
-	border-color: #ececec;
 }
 
 .hovered {
