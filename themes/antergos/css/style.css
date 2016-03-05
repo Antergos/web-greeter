@@ -46,7 +46,7 @@
 }
 
 ::-webkit-scrollbar {
-	width: 12px;
+	width: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -59,7 +59,7 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background-color: #B3B3B3;
+	background-color: #757575;
 }
 
 .user-wrap2::-webkit-scrollbar {
@@ -120,6 +120,10 @@ a {
 	color: #F5F5F5;
 }
 
+.bg-switch h3 {
+	color: #f5f5f5;
+}
+
 .bg-switch .bgs .bg {
 	text-align: center;
 	text-decoration: none;
@@ -165,15 +169,14 @@ a {
 }
 
 #bg-switch-wrapper {
-	margin-right: -250px;
-	right: 0;
+	right: -250px;
 	width: 250px;
 	background: rgba(0, 0, 0, 0.5);
 	position: fixed;
 	height: 100%;
 	overflow-y: auto;
 	z-index: 1000;
-	transition: all 0.4s ease 0s;
+	transition: right 0.8s cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 .bg-switch-container {
@@ -193,9 +196,8 @@ a {
 }
 
 #bg-switch-wrapper.active {
-	right: 250px;
+	right: 0px;
 	width: 250px;
-	transition: all 0.4s ease 0s;
 	overflow-x: hidden;
 }
 
@@ -214,6 +216,8 @@ a {
 	background-size: cover !important;
 	background-repeat: no-repeat !important;
 	background-position: center !important;
+	transition: left 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+
 }
 
 #user-target2 {
@@ -284,6 +288,11 @@ a {
 	font-size: 17px;
 	position: relative;
 	right: 9px;
+}
+
+.panel-heading img {
+	max-height: 30px;
+	width: auto;
 }
 
 .login-wrapper {

@@ -64,6 +64,7 @@ class AntergosThemeUtils {
 		this.lang = window.navigator.language.split( '-' )[ 0 ].toLowerCase();
 		this.translations = window.ant_translations;
 		this.$log_container = $('#logArea');
+		this.recursion = 0;
 
 		if ( 'undefined' === typeof window.navigator.languages ) {
 			window.navigator.languages = [ window.navigator.language ];
@@ -144,16 +145,11 @@ class AntergosThemeUtils {
 			background_images_dir = config.get_str( 'branding', 'background_images' ) || '';
 			if ( background_images_dir ) {
 				background_images = greeterutil.dirlist( background_images_dir ) || [];
+				this.log(background_images);
 			}
 
 			if ( background_images && background_images.length ) {
-				var images = [];
-				for ( var file of background_images ) {
-					if ( file.match( /(png|PNG)|(jpg|JPEG)|(bmp|BMP)/ ) ) {
-						images.push( file );
-					}
-				}
-				background_images = images;
+				background_images = this.find_images( background_images );
 			}
 
 		}
@@ -162,6 +158,33 @@ class AntergosThemeUtils {
 		this.user_image = user_image;
 		this.background_images = background_images;
 		this.background_images_dir = background_images_dir;
+	}
+
+
+	find_images( dirlist ) {
+		var images = [],
+			subdirs = [];
+
+		for ( var file of dirlist ) {
+			if ( file.match( /(png|PNG)|(jpg|JPEG)|(bmp|BMP)/ ) ) {
+				images.push( file );
+			} else if ( ! file.match( /\w+\.\w+/ ) ) {
+				subdirs.push( file )
+			}
+		}
+
+		if ( subdirs.length && ! images.length && this.recursion < 3 ) {
+			this.recursion++;
+			for ( var dir of subdirs ) {
+				var list = config.dirlist( dir );
+
+				if ( null !== list && list.length ) {
+					images.push.apply( images, this.find_images( list ) );
+				}
+			}
+		}
+
+		return images;
 	}
 }
 
@@ -185,7 +208,7 @@ class AntergosBackgroundManager {
 		this.current_background = _util.cache_get( 'background_manager', 'current_background' );
 
 		if ( ! _util.background_images_dir.length || ! _util.background_images.length ) {
-			this.log( 'AntergosBackgroundManager: [ERROR] No background images detected.' );
+			_util.log( 'AntergosBackgroundManager: [ERROR] No background images detected.' );
 
 			$( '.header' ).fadeTo( 300, 0.5, function() {
 				$( '.header' ).css( "background-image", 'url(img/fallback_bg.jpg)' );
@@ -690,15 +713,15 @@ class AntergosTheme {
 		switch ( event.which ) {
 			case 13:
 				action = _self.auth_pending ? _self.submit_password() : ! _self.user_list_visible ? _self.show_user_list() : 0;
-				_self.log( action );
+				_util.log( action );
 				break;
 			case 27:
 				action = _self.auth_pending ? _self.cancel_authentication() : 0;
-				_self.log( action );
+				_util.log( action );
 				break;
 			case 32:
 				action = (! _self.user_list_visible && ! _self.auth_pending) ? _self.show_user_list() : 0;
-				_self.log( action );
+				_util.log( action );
 				break;
 			default:
 				break;

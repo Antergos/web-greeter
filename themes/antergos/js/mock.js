@@ -251,6 +251,10 @@ if ( typeof lightdm == 'undefined' ) {
 			return branding[ key ];
 		}
 	};
+	config.get_bool = function( section, key ) {
+			return true;
+	};
+
 
 	greeterutil.dirlist = function( directory ) {
 		if ( '/usr/share/antergos/wallpapers' === directory ) {
