@@ -5,19 +5,19 @@
   ~
   ~ index.html
   ~
-  ~ This file is part of lightdm-webkit-theme-antergos
+  ~ This file is part of lightdm-webkit2-greeter
   ~
-  ~ lightdm-webkit-theme-antergos is free software: you can redistribute it and/or modify
+  ~ lightdm-webkit2-greeter is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 3 of the License,
   ~ or any later version.
   ~
-  ~ lightdm-webkit-theme-antergos is distributed in the hope that it will be useful,
+  ~ lightdm-webkit2-greeter is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~ GNU General Public License for more details.
   ~
-  ~ The following additional terms are in effect as per Section 7 of this license:
+  ~ The following additional terms are in effect as per Section 7 of the license:
   ~
   ~ The preservation of all legal notices and author attributions in
   ~ the material or in the Appropriate Legal Notices displayed
@@ -37,7 +37,7 @@
 	<meta name="author" content="Dustin Falgout">
 
 	<!--For testing the theme in a web browser -->
-	<script type="text/javascript" src="js/mock.js"></script>
+	<script type="text/javascript" src="../tools/mock.js"></script>
 
 	<!-- Vendor CSS -->
 	<link rel="stylesheet" type="text/css" href="css/vendor/bootstrap.min.css"/>
@@ -136,27 +136,27 @@
 														<tr>
 															<td>
 																<div class="input-group">
-																	<input id="passwordField" type="password" class="password form-control"/>
+																	<input id="passwordField" title="input password" type="password" class="password form-control"/>
 
 																	<div class="input-group-btn">
 																		<div class="btn-group">
-																			<button class="btn btn-primary submit_passwd" type="button">
+																			<button class="btn btn-primary submit_passwd" type="button" title="submit password">
 																				<i class="fa fa-sign-in"></i>
 																			</button>
-																			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+																			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" title="show options menu">
 																				<i class="fa fa-caret-down"></i>
 																			</button>
-																			<ul class="dropdown-menu pull-right">
+																			<ul class="dropdown-menu pull-right" title="options menu">
 																				<li>
-																					<a href="#" class="cancel_auth" data-i18n="cancel">
+																					<a href="#" class="cancel_auth" data-i18n="cancel" title="cancel">
 																						<i class="fa fa-times"></i> ${i18n}</a>
 																				</li>
 																				<li>
-																					<a href="#" onclick="$(document.location.reload(true))" data-i18n="reset">
+																					<a href="#" onclick="$(document.location.reload(true))" data-i18n="reset" title="reset">
 																						<i class="fa fa-refresh"></i> ${i18n}</a>
 																				</li>
 																				<li>
-																					<a href="#" data-i18n="debug_log">
+																					<a href="#" data-i18n="debug_log" title="debug log">
 																						<i class="fa fa-bug"></i> ${i18n}</a>
 																				</li>
 																			</ul>

@@ -4,7 +4,7 @@
  *
  * mock.js
  *
- * This file is part of lightdm-webkit-theme-antergos
+ * This file is part of lightdm-webkit2-greeter
  *
  * lightdm-webkit-theme-antergos is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

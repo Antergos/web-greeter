@@ -1,22 +1,21 @@
 /*
- *
  * Copyright © 2015-2016 Antergos
  *
  * combine_translations.js
  *
- * This file is part of lightdm-webkit-theme-antergos
+ * This file is part of lightdm-webkit2-greeter
  *
- * lightdm-webkit-theme-antergos is free software: you can redistribute it and/or modify
+ * lightdm-webkit2-greeter is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License,
  * or any later version.
  *
- * lightdm-webkit-theme-antergos is distributed in the hope that it will be useful,
+ * lightdm-webkit2-greeter is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * The following additional terms are in effect as per Section 7 of this license:
+ * The following additional terms are in effect as per Section 7 of the license:
  *
  * The preservation of all legal notices and author attributions in
  * the material or in the Appropriate Legal Notices displayed

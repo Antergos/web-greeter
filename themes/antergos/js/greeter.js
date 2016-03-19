@@ -4,22 +4,22 @@
  *
  * greeter.js
  *
- * This file is part of lightdm-webkit-theme-antergos
+ * This file is part of lightdm-webkit2-greeter
  *
- * lightdm-webkit-theme-antergos is free software: you can redistribute it and/or modify
+ * lightdm-webkit2-greeter is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License,
  * or any later version.
  *
- * lightdm-webkit-theme-antergos is distributed in the hope that it will be useful,
+ * lightdm-webkit2-greeter is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * The following additional terms are in effect as per Section 7 of this license:
+ * The following additional terms are in effect as per Section 7 of the license:
  *
  * The preservation of all legal notices and author attributions in
- * the material or in the Appropriate Legal Notices displayed
+ * the material or in the Appropriate Legal Notices displayed 
  * by works containing it is required.
  *
  * You should have received a copy of the GNU General Public License
@@ -145,7 +145,7 @@ class AntergosThemeUtils {
 			background_images_dir = config.get_str( 'branding', 'background_images' ) || '';
 			if ( background_images_dir ) {
 				background_images = greeterutil.dirlist( background_images_dir ) || [];
-				this.log(background_images);
+				_util.log(background_images);
 			}
 
 			if ( background_images && background_images.length ) {
@@ -299,8 +299,8 @@ class AntergosBackgroundManager {
 			$('[data-img="random"]').click(this.background_selected_handler);
 
 			for ( var image_file of _util.background_images ) {
-				var $link = $( '<a href="#"><img>' ),
-					$img_el = $link.children( 'img' ),
+				var $link = $( '<a href="#"><div>' ),
+					$img_el = $link.children( 'div' ),
 					img_url_tpl = `file://${image_file}`;
 
 				$link.addClass( 'bg clearfix' ).attr( 'data-img', img_url_tpl );
@@ -434,7 +434,7 @@ class AntergosTheme {
 		// Loop through the array of LightDMUser objects to create our user list.
 		for ( var user of lightdm.users ) {
 			var last_session = _util.cache_get( 'user', user.name, 'session' ),
-				image_src = user.image.length ? user.image : _util.user_image;
+				image_src = ( user.hasOwnProperty('image') && user.image.length ) ? user.image : _util.user_image;
 
 			if ( null === last_session ) {
 				// For backwards compatibility

@@ -1,5 +1,5 @@
 # lightdm-webkit-theme-antergos
-[![Latest Release](https://img.shields.io/github/release/Antergos/lightdm-webkit-theme-antergos.svg)](https://github.com/Antergos/lightdm-webkit-theme-antergos/releases/tag/2.3.0) [![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/Antergos/lightdm-webkit2-greeter/blob/master/LICENSE)
+
 
 
 ### Overview
@@ -16,13 +16,13 @@ This is the default theme included with [lightdm-webkit2-greeter](http://github.
 </center>
 
 ### Prerequisites
-* lightdm-webkit-greeter
+* lightdm-webkit2-greeter
 
 ### Installation
-This theme is included with `lightdm-webkit2-greeter` which is installed by default for Antergos users. Non-Antergos users should see [lightdm-webkit2-greeter](https://github.com/Antergos/lightdm-webkit2-greeter/) for install details.
+This theme is included with `lightdm-webkit2-greeter` which is installed by default for Antergos users. Non-Antergos users should see [lightdm-webkit2-greeter](https://github.com/Antergos/lightdm-webkit2-greeter/) for installation details.
 
 #### ***NOTE:*** 
-The last version of this theme which supports the legacy Webkit1 greeter is [v2.3.2](https://github.com/Antergos/lightdm-webkit-theme-antergos/releases/tag/2.3.2).
+The last version of this theme which supported the legacy Webkit1 greeter was [v2.3.2](https://github.com/Antergos/lightdm-webkit-theme-antergos/releases/tag/2.3.2).
 Versions of this theme later than ***2.3.2*** will not work with the legacy Webkit1 greeter. If you want to use the latest version of the theme you must use the Webkit2 greeter.
 
 #### To use [v2.3.2](https://github.com/Antergos/lightdm-webkit-theme-antergos/releases/tag/2.3.2) of this theme with the legacy Webkit1 greeter:
@@ -38,7 +38,7 @@ webkit-theme=antergos
 
 ```
 
-Optionally you can install the included font `Lato`.
+Optionally you can install the included font `Open Sans`.
 
 Now if you restart your computer (or at least if you restart lightdm), the antergos greeter theme should be activated. 
 

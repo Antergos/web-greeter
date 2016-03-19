@@ -1,6 +1,5 @@
 [theme]
 name=Antergos
-version=2.4.1
 description=Antergos Theme
 engine=lightdm-webkit2-greeter
 url=index.html
