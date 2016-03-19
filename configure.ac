@@ -129,6 +129,7 @@ themes/antergos/js/vendor/Makefile
 themes/antergos/js/Makefile
 themes/antergos/img/Makefile
 themes/simple/Makefile
+themes/tools/Makefile
 ])
 
 dnl ###########################################################################
