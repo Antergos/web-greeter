@@ -17,6 +17,10 @@ Overview of changes in lightdm-webkit2-greeter 2.1.0
             * greeterutil.text2html() - Escape HTML entities in a string.
         - Themes should now query the config file for the distro logo to use. See
           the default antergos theme for an implementation example.
+    * Default theme:
+        - Theme is no longer compiled to ES2015 as Webkit2Gtk now supports ES6.
+        - The logo can now be configured in lightdm-webkit2-greeter.conf.
+        - The background images directory can also be configured in lightdm-webkit2-greeter.conf.
     * Several small bug fixes, enhancements, and code cleanup commits also made it into this release.
 
 Overview of changes in lightdm-webkit2-greeter 2.0.0
