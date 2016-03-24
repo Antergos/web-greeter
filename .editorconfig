@@ -15,6 +15,7 @@ tab_width = 4
 # UTF-8
 charset = utf-8
 
+
 max_line_length = 99
 continuation_indent_size = 8
 indent_brace_style = 1TBS
