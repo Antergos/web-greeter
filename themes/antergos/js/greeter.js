@@ -19,7 +19,7 @@
  * The following additional terms are in effect as per Section 7 of the license:
  *
  * The preservation of all legal notices and author attributions in
- * the material or in the Appropriate Legal Notices displayed 
+ * the material or in the Appropriate Legal Notices displayed
  * by works containing it is required.
  *
  * You should have received a copy of the GNU General Public License
@@ -134,7 +134,7 @@ class AntergosThemeUtils {
 	init_config_values() {
 		var logo = '', user_image = '', background_images = [], background_images_dir = '';
 
-		if ( 'undefined' !== typeof config ) {
+		if ( 'undefined' !== typeof( config ) ) {
 
 			logo = config.get_str( 'branding', 'logo' ) || '';
 			user_image = config.get_str( 'branding', 'user_image' ) || '';
@@ -176,9 +176,9 @@ class AntergosThemeUtils {
 		if ( subdirs.length && ! images.length && this.recursion < 3 ) {
 			this.recursion++;
 			for ( var dir of subdirs ) {
-				var list = config.dirlist( dir );
+				var list = greeterutil.dirlist( dir );
 
-				if ( null !== list && list.length ) {
+				if ( list && list.length ) {
 					images.push.apply( images, this.find_images( list ) );
 				}
 			}
@@ -207,7 +207,7 @@ class AntergosBackgroundManager {
 
 		this.current_background = _util.cache_get( 'background_manager', 'current_background' );
 
-		if ( ! _util.background_images_dir.length || ! _util.background_images.length ) {
+		if ( ! _util.background_images_dir || ! _util.background_images ) {
 			_util.log( 'AntergosBackgroundManager: [ERROR] No background images detected.' );
 
 			$( '.header' ).fadeTo( 300, 0.5, function() {
@@ -262,10 +262,10 @@ class AntergosBackgroundManager {
 	 * Set the background image to the value of `this.current_background`
 	 */
 	do_background() {
-			$( '.header' ).fadeTo( 300, 0.5, function() {
-				var tpl = `url(${_bg_self.current_background})`;
-				$( '.header' ).css( "background-image", tpl );
-			} ).fadeTo( 300, 1 );
+		$( '.header' ).fadeTo( 300, 0.5, function() {
+			var tpl = `url(${_bg_self.current_background})`;
+			$( '.header' ).css( "background-image", tpl );
+		} ).fadeTo( 300, 1 );
 	}
 
 
@@ -287,7 +287,7 @@ class AntergosBackgroundManager {
 	 * Setup the background switcher widget.
 	 */
 	setup_background_thumbnails() {
-		if ( _util.background_images.length ) {
+		if ( _util.background_images && _util.background_images.length ) {
 			var old_bg_tpl = `url(${this.current_background})`;
 
 			/* TODO: Implement some form of pagination
@@ -434,7 +434,7 @@ class AntergosTheme {
 		// Loop through the array of LightDMUser objects to create our user list.
 		for ( var user of lightdm.users ) {
 			var last_session = _util.cache_get( 'user', user.name, 'session' ),
-				image_src = ( user.hasOwnProperty('image') && user.image.length ) ? user.image : _util.user_image;
+				image_src = ( user.hasOwnProperty('image') && user.image && user.image.length ) ? user.image : _util.user_image;
 
 			if ( null === last_session ) {
 				// For backwards compatibility
@@ -687,6 +687,7 @@ class AntergosTheme {
 			} );
 		} else {
 			// The user did not enter the correct password. Show error message.
+			$('#showMsg').text(err_msg);
 			$( '#statusArea' ).show();
 		}
 	}
