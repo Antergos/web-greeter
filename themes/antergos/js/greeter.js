@@ -301,7 +301,7 @@ class AntergosBackgroundManager {
 			for ( var image_file of _util.background_images ) {
 				var $link = $( '<a href="#"><div>' ),
 					$img_el = $link.children( 'div' ),
-					img_url_tpl = `file://${image_file}`;
+					img_url_tpl = `url(file://${image_file})`;
 
 				$link.addClass( 'bg clearfix' ).attr( 'data-img', img_url_tpl );
 
@@ -314,7 +314,7 @@ class AntergosBackgroundManager {
 					}
 				}
 
-				$img_el.attr( 'src', img_url_tpl );
+				$img_el.css( 'background-image', img_url_tpl );
 
 				$link.appendTo( $( '.bgs' ) ).click( this.background_selected_handler );
 			}
