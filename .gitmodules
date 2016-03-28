@@ -1,3 +1,0 @@
-[submodule "themes/antergos"]
-	path = themes/antergos
-	url = git@github.com:antergos/lightdm-webkit-theme-antergos.git
