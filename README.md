@@ -21,44 +21,19 @@
 |**webkit2gtk-4.0**       |webkitgtk|libwebkit2gtk-4.0-dev  | webkitgtk4            | webkit2gtk3            |
 |**dbus-glib-1**         |dbus-glib|libdbus-glib-1-dev     | dbus-glib             | dbus-1-glib            |
 |**exo-csource**          |exo      |exo-utils              | exo-devel             | exo-tools              |
-|[**antergos-wallpapers**](http://antergos.com/antergos-wallpapers-0.6.zip)| N/A | N/A| N/A | N/A| N/A |
 
 #### How To Build
-The process is slightly different depending on how you obtain the source.
-
-##### Use Git To Clone This Repo
 ```sh
 cd /tmp
 git clone https://github.com/Antergos/lightdm-webkit2-greeter.git greeter
 cd greeter
-git submodule init && git submodule update
-./autogen.sh --prefix=/usr
-make
-```
-
-##### Download Repo In Archive Format (tar.gz, zip, etc)
-```sh
-cd /tmp
-wget https://github.com/Antergos/lightdm-webkit2-greeter/archive/release/latest.zip
-unzip latest.zip
-cd lightdm**/themes
-rm -rf antergos
-wget https://github.com/Antergos/lightdm-webkit-theme-antergos/archive/latest.zip
-unzip latest.zip
-mv lightdm** antergos
-cd ..
 ./autogen.sh --prefix=/usr
 make
 ```
 
 #### How To Install
 ```sh
-cd themes/antergos
-sed -i 's|/usr/share/|/usr/share/lightdm-webkit/themes/|g' index.html
-wget http://antergos.com/antergos-wallpapers-0.6.zip
-unzip antergos**.zip
 sudo make install --prefix=/usr
-sudo cp -R antergos-wa** /usr/share/lightdm-webkit/themes/antergos/wallpapers
 ```
 
 ## Theme JavaScript API:
