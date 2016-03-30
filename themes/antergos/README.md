@@ -47,8 +47,19 @@ Now if you restart your computer (or at least if you restart lightdm), the anter
 
 To change users icons:
 
-* Create a resource named with the user's login in `/var/lib/AccountsService/icons/`
-* Edit `/var/lib/AccountsService/users/<userLogin>` and add a property `Icon` targeting the icon resource you just created.
+1. Put an image file with the same name as the user's login into `/var/lib/AccountsService/icons/`
+  * eg. For user `john` whose home directory is `/home/john` the the full path to the user image would be:
+    `/var/lib/AccountsService/icons/john`
+2. Create or edit `/var/lib/AccountsService/users/<userLogin>` and add a `Icon` property targeting the icon image you just created.
+  * eg. `/var/lib/AccountsService/users/john` would contain:
+
+    ```
+    [User]
+Language=en_US.utf8
+XSession=cinnamon
+SystemAccount=false
+Icon=/var/lib/AccountsService/icons/john
+```
 
 This theme works well with 96x96 images.
 
