@@ -71,6 +71,8 @@ class AntergosThemeUtils {
 		}
 
 		this.init_config_values();
+
+		return _util;
 	}
 
 
@@ -132,17 +134,15 @@ class AntergosThemeUtils {
 	 * Get some values from `lightdm-webkit2-greeter.conf` and save them for later.
 	 */
 	init_config_values() {
-		var logo = '', user_image = '', background_images = [], background_images_dir = '';
+		var logo, user_image, debug, background_images, background_images_dir;
 
 		if ( 'undefined' !== typeof( config ) ) {
 
-			logo = config.get_str( 'branding', 'logo' ) || '';
-			user_image = config.get_str( 'branding', 'user_image' ) || '';
-			this.debug = config.get_bool( 'greeter', 'debug_mode' );
-			this.debug = (true === this.debug) ? this.debug : false;
+			logo = config.get_str( 'branding', 'logo' ) || 'img/antergos.png';
+			user_image = config.get_str( 'branding', 'user_image' ) || 'img/antergos-logo-user.png';
+			background_images_dir = config.get_str( 'branding', 'background_images' ) || '/usr/share/backgrounds';
+			debug = config.get_bool( 'greeter', 'debug_mode' ) || false;
 
-
-			background_images_dir = config.get_str( 'branding', 'background_images' ) || '';
 			if ( background_images_dir ) {
 				background_images = greeterutil.dirlist( background_images_dir ) || [];
 				_util.log(background_images);
@@ -155,6 +155,7 @@ class AntergosThemeUtils {
 		}
 
 		this.logo = logo;
+		this.debug = debug;
 		this.user_image = user_image;
 		this.background_images = background_images;
 		this.background_images_dir = background_images_dir;
@@ -207,7 +208,7 @@ class AntergosBackgroundManager {
 
 		this.current_background = _util.cache_get( 'background_manager', 'current_background' );
 
-		if ( ! _util.background_images_dir || ! _util.background_images ) {
+		if ( ! _util.background_images_dir || ! _util.background_images || ! _util.background_images.length ) {
 			_util.log( 'AntergosBackgroundManager: [ERROR] No background images detected.' );
 
 			$( '.header' ).fadeTo( 300, 0.5, function() {
@@ -546,7 +547,7 @@ class AntergosTheme {
 		if ( $( this.$clock_container ).hasClass( 'in' ) ) {
 			$( '#trigger' ).trigger( 'click' );
 		}
-		if ( $( this.$user_list ).length <= 1 ) {
+		if ( $( this.$user_list ).children().length <= 1 ) {
 			$( this.$user_list ).find( 'a' ).trigger( 'click', this );
 		}
 	}
