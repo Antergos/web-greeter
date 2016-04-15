@@ -1,3 +1,9 @@
+Overview of changes in lightdm-webkit2-greeter 2.1.2
+
+    * Allow access to right-click context menu when debug mode is enabled in lightdm-webkit2-greeter.conf.
+    * Add additional debug messages to the default theme to help identify points of failure.
+    * Fix issue with screen blanking functionality when greeter is used as a lockscreen.
+
 Overview of changes in lightdm-webkit2-greeter 2.1.1
 
     * Fix default theme initialization failure if config file values are missing.

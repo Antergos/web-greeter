@@ -393,15 +393,25 @@ class AntergosTheme {
 	 * Initialize the theme.
 	 */
 	initialize() {
+		_util.log('initialize() starting.');
 		this.prepare_translations();
+		_util.log('initialize() 1.');
 		this.do_static_translations();
+		_util.log('initialize() 2.');
 		this.initialize_clock();
+		_util.log('initialize() 3.');
 		this.prepare_login_panel_header();
+		_util.log('initialize() 4.');
 		this.prepare_user_list();
+		_util.log('initialize() 5.');
 		this.prepare_session_list();
+		_util.log('initialize() 6.');
 		this.prepare_system_action_buttons();
+		_util.log('initialize() 7.');
 		this.register_callbacks();
+		_util.log('initialize() 8.');
 		this.background_manager.setup_background_thumbnails();
+		_util.log('initialize() finished.');
 	}
 
 

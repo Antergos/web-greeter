@@ -58,6 +58,7 @@ static GdkDisplay *default_display;
 static int timeout, interval, prefer_blanking, allow_exposures;
 static gint config_timeout;
 
+static gboolean debug_mode;
 
 static GdkFilterReturn
 wm_window_filter(GdkXEvent *gxevent, GdkEvent *event, gpointer data) {
@@ -100,15 +101,9 @@ initialize_web_extensions_cb(WebKitWebContext *context, gpointer user_data) {
 static void
 create_new_webkit_settings_object(void) {
 	webkit_settings = webkit_settings_new_with_settings(
-		"enable-developer-extras", FALSE,
-		"enable-fullscreen", TRUE,
-		"enable-site-specific-quirks", TRUE,
-		"enable-dns-prefetching", TRUE,
+		"enable-developer-extras", TRUE,
 		"javascript-can-open-windows-automatically", TRUE,
 		"allow-file-access-from-file-urls", TRUE,
-		"enable-accelerated-2d-canvas", TRUE,
-		"enable-smooth-scrolling", FALSE,
-		"enable-webgl", TRUE,
 		"enable-write-console-messages-to-stdout", TRUE,
 		NULL
 	);
@@ -122,7 +117,11 @@ context_menu_cb(WebKitWebView *view,
 				WebKitHitTestResult *hit_test_result,
 				gpointer user_data) {
 
-	return TRUE;
+	/* Returning true without creating a custom context menu results in no context
+	 * menu being shown. Thus, we are returning the opposite of debug_mode to get
+	 * desired result (which is only show menu when debug_mode is enabled.
+	 */
+	return (! debug_mode);
 }
 
 
@@ -135,10 +134,11 @@ context_menu_cb(WebKitWebView *view,
 static void
 lock_hint_enabled_handler(void) {
 	Display *display = gdk_x11_display_get_xdisplay(default_display);
+	config_timeout = (0 != config_timeout) ? config_timeout : 300;
 
 	XGetScreenSaver(display, &timeout, &interval, &prefer_blanking, &allow_exposures);
 	XForceScreenSaver(display, ScreenSaverActive);
-	XSetScreenSaver(display, config_timeout, 0, ScreenSaverActive, DefaultExposures);
+	XSetScreenSaver(display, config_timeout, 0, PreferBlanking, DefaultExposures);
 }
 
 
@@ -201,6 +201,7 @@ main(int argc, char **argv) {
 
 	theme = g_key_file_get_string(keyfile, "greeter", "webkit-theme", NULL);
 	config_timeout = g_key_file_get_integer(keyfile, "greeter", "screensaver-timeout", NULL);
+	debug_mode = g_key_file_get_boolean(keyfile, "greeter", "debug_mode", NULL);
 
 	/* Setup the main window */
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
