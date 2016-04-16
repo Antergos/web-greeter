@@ -176,7 +176,6 @@ main(int argc, char **argv) {
 	WebKitUserContentManager *manager;
 	WebKitWebContext *context;
 	GtkCssProvider *css_provider;
-	WebKitWebsiteDataManager *data_manager;
 
 	/*
 	 * Prevent memory from being swapped out, since we see unencrypted
