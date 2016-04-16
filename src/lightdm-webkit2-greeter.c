@@ -176,6 +176,7 @@ main(int argc, char **argv) {
 	WebKitUserContentManager *manager;
 	WebKitWebContext *context;
 	GtkCssProvider *css_provider;
+	WebKitWebsiteDataManager *data_manager;
 
 	/*
 	 * Prevent memory from being swapped out, since we see unencrypted
@@ -229,10 +230,16 @@ main(int argc, char **argv) {
 											  GTK_STYLE_PROVIDER(css_provider),
 											  GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
+	/* Create a website data manager object to configure our cache and data dirs */
+	data_manager = webkit_website_data_manager_new(
+			"base-cache-directory",  g_strconcat(g_get_user_cache_dir(), "/", g_get_prgname(), NULL),
+			"base-data-directory", g_strconcat(g_get_user_data_dir(), "/", g_get_prgname(), NULL)
+	);
+
 	/* Register and connect handler that will set the web extensions directory
 	 * so webkit can find our extension.
 	 */
-	context = webkit_web_context_get_default();
+	context = webkit_web_context_new_with_website_data_manager(data_manager);
 	g_signal_connect(context,
 					 "initialize-web-extensions",
 					 G_CALLBACK(initialize_web_extensions_cb), NULL);

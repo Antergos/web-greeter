@@ -3,8 +3,5 @@ css_DATA = style.css
 
 EXTRA_DIST = $(css_DATA)
 
-SUBDIRS = vendor
-
-
 DISTCLEANFILES = \
 	Makefile.in

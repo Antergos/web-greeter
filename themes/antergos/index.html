@@ -37,19 +37,20 @@
 	<meta name="author" content="Dustin Falgout">
 
 	<!--For testing the theme in a web browser -->
-	<script type="text/javascript" src="../tools/mock.js"></script>
+	<script type="text/javascript" src="../_vendor/js/mock.js"></script>
 
 	<!-- Vendor CSS -->
-	<link rel="stylesheet" type="text/css" href="css/vendor/bootstrap.min.css"/>
-	<link rel="stylesheet" type="text/css" href="fonts/font-awesome/font-awesome.min.css"/>
+	<link rel="stylesheet" type="text/css" href="../_vendor/css/bootswatch-paper.bootstrap.min.css"/>
+	<link rel="stylesheet" type="text/css" href="../_vendor/fonts/font-awesome/font-awesome.min.css"/>
 
 	<!-- Theme's CSS -->
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 
 	<!-- Vendor JavaScript -->
-	<script src="js/vendor/jquery-2.1.4.min.js"></script>
-	<script src="js/vendor/bootstrap.min.js"></script>
-	<script src="js/vendor/moment-with-locales.min.js"></script>
+	<script src="../_vendor/js/jquery.min.js"></script>
+	<script src="../_vendor/js/bootstrap.min.js"></script>
+	<script src="../_vendor/js/moment-with-locales.min.js"></script>
+	<script src="../_vendor/js/js.cookie.min.js"></script>
 
 	<!-- Theme JavaScript -->
 	<script type="text/javascript" src="js/translations.js"></script>
@@ -233,6 +234,7 @@
 
 <!-- Custom JavaScript for the BG Switcher & Clock Toggle -->
 <script>
+	// TODO: Move this stuff into greeter.js
 	$( "#bg-switch-close" ).click( function( e ) {
 		e.preventDefault();
 		$( "#bg-switch-wrapper" ).toggleClass( "active" );

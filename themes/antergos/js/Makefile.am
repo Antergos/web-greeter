@@ -5,7 +5,5 @@ javascript_DATA = \
 
 EXTRA_DIST = $(javascript_DATA)
 
-SUBDIRS = vendor
-
 DISTCLEANFILES = \
 	Makefile.in

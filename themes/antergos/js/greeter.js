@@ -65,14 +65,34 @@ class AntergosThemeUtils {
 		this.translations = window.ant_translations;
 		this.$log_container = $('#logArea');
 		this.recursion = 0;
+		this.cache_available = false;
 
 		if ( 'undefined' === typeof window.navigator.languages ) {
 			window.navigator.languages = [ window.navigator.language ];
 		}
 
+		this.check_cache_availability();
 		this.init_config_values();
 
 		return _util;
+	}
+
+
+	check_cache_availability() {
+		try {
+			localStorage.setItem('testing', 'test');
+			let test = localStorage.getItem('testing');
+
+			if ('test' === test) {
+				this.cache_available = true;
+			}
+
+			localStorage.removeItem('testing');
+
+		} catch(err) {
+			this.log(err);
+			this.log('ERROR: Cache is not available. Unable to access persistent data.');
+		}
 	}
 
 
@@ -98,6 +118,10 @@ class AntergosThemeUtils {
 	cache_get() {
 		var key = `ant`;
 
+		if (false === this.cache_available) {
+			return null;
+		}
+
 		for (var _len = arguments.length, key_parts = new Array(_len), _key = 0; _key < _len; _key++) {
 			key_parts[_key] = arguments[_key];
 		}
@@ -105,6 +129,7 @@ class AntergosThemeUtils {
 		for ( var part of key_parts ) {
 			key += `:${part}`;
 		}
+		console.log(`cache_get() called with key: ${key}`);
 		return localStorage.getItem( key );
 	}
 
@@ -119,6 +144,10 @@ class AntergosThemeUtils {
 	cache_set( value ) {
 		var key = `ant`;
 
+		if (false === this.cache_available) {
+			return;
+		}
+
 		for (var _len2 = arguments.length, key_parts = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
 			key_parts[_key2 - 1] = arguments[_key2];
 		}
@@ -126,6 +155,7 @@ class AntergosThemeUtils {
 		for ( var part of key_parts ) {
 			key += `:${part}`;
 		}
+		console.log(`cache_set() called with key: ${key} and value: ${value}`);
 		return localStorage.setItem( key, value );
 	}
 
@@ -225,7 +255,7 @@ class AntergosBackgroundManager {
 	 * Determine which background image should be displayed and apply it.
 	 */
 	initialize() {
-		if ( ! this.current_background ) {
+		if ( ! this.current_background && true === _util.cache_available ) {
 			// For backwards compatibility
 			if ( null !== localStorage.getItem( 'bgsaved' ) && '0' === localStorage.getItem( 'bgrandom' ) ) {
 				this.current_background = localStorage.getItem( 'bgsaved' );
@@ -449,7 +479,9 @@ class AntergosTheme {
 
 			if ( null === last_session ) {
 				// For backwards compatibility
-				last_session = localStorage.getItem( user.name );
+				if (true === _util.cache_available) {
+					last_session = localStorage.getItem( user.name );
+				}
 				if ( null === last_session ) {
 					// This user has never logged in before let's enable the system's default
 					// session.

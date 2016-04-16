@@ -1,4 +1,4 @@
-ttffontsdir = $(THEME_DIR)/antergos/fonts/TTF
+ttffontsdir = $(THEME_DIR)/vendor/fonts/TTF
 ttffonts_DATA = \
 	OpenSans-Light.ttf \
 	OpenSans-Regular.ttf

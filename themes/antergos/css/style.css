@@ -30,11 +30,11 @@
 
 @font-face {
 	font-family: 'Open Sans';
-	src: url('../fonts/TTF/OpenSans-Regular.ttf');
+	src: url('../../_vendor/fonts/TTF/OpenSans-Regular.ttf');
 }
 @font-face {
 	font-family: 'Open Sans Light';
-	src: url('../fonts/TTF/OpenSans-Light.ttf');
+	src: url('../../_vendor/fonts/TTF/OpenSans-Light.ttf');
 }
 
 *:focus {
