@@ -1,6 +1,8 @@
 Overview of changes in lightdm-webkit2-greeter 2.1.3
 
-    * Implement work-around in default theme for webkit2gtk localStorage bug.
+    * Implemented work-around in default theme for webkit2gtk localStorage bug.
+    * Moved vendor css, js, & font files into top level _vendor directory for
+      easy access from any theme that needs them.
 
 Overview of changes in lightdm-webkit2-greeter 2.1.2
 

@@ -65,33 +65,41 @@ class AntergosThemeUtils {
 		this.translations = window.ant_translations;
 		this.$log_container = $('#logArea');
 		this.recursion = 0;
-		this.cache_available = false;
+		this.cache_backend = '';
 
 		if ( 'undefined' === typeof window.navigator.languages ) {
 			window.navigator.languages = [ window.navigator.language ];
 		}
 
-		this.check_cache_availability();
+		this.setup_cache_backend();
 		this.init_config_values();
 
 		return _util;
 	}
 
 
-	check_cache_availability() {
+	setup_cache_backend() {
+		// Do we have access to localStorage?
 		try {
 			localStorage.setItem('testing', 'test');
 			let test = localStorage.getItem('testing');
 
 			if ('test' === test) {
-				this.cache_available = true;
+				// We have access to localStorage
+				this.cache_backend = 'localStorage';
 			}
-
 			localStorage.removeItem('testing');
 
 		} catch(err) {
+			// We do not have access to localStorage. Fallback to cookies.
 			this.log(err);
-			this.log('ERROR: Cache is not available. Unable to access persistent data.');
+			this.log('INFO: localStorage is not available. Using cookies for cache backend.');
+			this.cache_backend = 'Cookies';
+		}
+
+		// Just in case...
+		if ('' === this.cache_backend) {
+			this.cache_backend = 'Cookies';
 		}
 	}
 
@@ -116,11 +124,7 @@ class AntergosThemeUtils {
 	 * @param {...string} key_parts - Strings that are combined to form the key.
 	 */
 	cache_get() {
-		var key = `ant`;
-
-		if (false === this.cache_available) {
-			return null;
-		}
+		var key = `ant`, value;
 
 		for (var _len = arguments.length, key_parts = new Array(_len), _key = 0; _key < _len; _key++) {
 			key_parts[_key] = arguments[_key];
@@ -129,8 +133,18 @@ class AntergosThemeUtils {
 		for ( var part of key_parts ) {
 			key += `:${part}`;
 		}
-		console.log(`cache_get() called with key: ${key}`);
-		return localStorage.getItem( key );
+
+		this.log(`cache_get() called with key: ${key}`);
+
+		if ('localStorage' === this.cache_backend) {
+			value = localStorage.getItem(key);
+		} else if ('Cookies' === this.cache_backend) {
+			value = Cookies.get(key);
+		} else {
+			value = null;
+		}
+
+		return value;
 	}
 
 
@@ -142,11 +156,7 @@ class AntergosThemeUtils {
 	 * @param {...string} key_parts - Strings that are combined to form the key.
 	 */
 	cache_set( value ) {
-		var key = `ant`;
-
-		if (false === this.cache_available) {
-			return;
-		}
+		var key = `ant`, res;
 
 		for (var _len2 = arguments.length, key_parts = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
 			key_parts[_key2 - 1] = arguments[_key2];
@@ -155,8 +165,17 @@ class AntergosThemeUtils {
 		for ( var part of key_parts ) {
 			key += `:${part}`;
 		}
-		console.log(`cache_set() called with key: ${key} and value: ${value}`);
-		return localStorage.setItem( key, value );
+		this.log(`cache_set() called with key: ${key} and value: ${value}`);
+
+		if ('localStorage' === this.cache_backend) {
+			res = localStorage.setItem( key, value );
+		} else if ('Cookies' === this.cache_backend) {
+			res = Cookies.set(key, value);
+		} else {
+			res = null;
+		}
+
+		return res;
 	}
 
 
@@ -255,7 +274,7 @@ class AntergosBackgroundManager {
 	 * Determine which background image should be displayed and apply it.
 	 */
 	initialize() {
-		if ( ! this.current_background && true === _util.cache_available ) {
+		if ( ! this.current_background && 'localStorage' === _util.cache_backend ) {
 			// For backwards compatibility
 			if ( null !== localStorage.getItem( 'bgsaved' ) && '0' === localStorage.getItem( 'bgrandom' ) ) {
 				this.current_background = localStorage.getItem( 'bgsaved' );
@@ -479,7 +498,7 @@ class AntergosTheme {
 
 			if ( null === last_session ) {
 				// For backwards compatibility
-				if (true === _util.cache_available) {
+				if ('localStorage' === _util.cache_backend) {
 					last_session = localStorage.getItem( user.name );
 				}
 				if ( null === last_session ) {
