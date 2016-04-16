@@ -1,6 +1,6 @@
 SUBDIRS = \
-	css
-	fonts
+	css \
+	fonts \
 	js
 
 DISTCLEANFILES = \

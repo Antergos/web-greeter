@@ -1,4 +1,4 @@
-vendorjsdir = $(THEME_DIR)/vendor/js
+vendorjsdir = $(THEME_DIR)/_vendor/js
 vendorjs_DATA = \
 	bootstrap.min.js \
 	jquery.min.js \
