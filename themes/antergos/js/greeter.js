@@ -144,7 +144,7 @@ class AntergosThemeUtils {
 			value = null;
 		}
 
-		return value;
+		return ('undefined' !== typeof(value)) ? value : null;
 	}
 
 
@@ -666,7 +666,8 @@ class AntergosTheme {
 	start_authentication( event ) {
 		var user_id = $( this ).attr( 'id' ),
 			selector = `.${user_id}`,
-			user_session = _util.cache_get( 'user', user_id, 'session' );
+			user_session_cached = _util.cache_get( 'user', user_id, 'session' ),
+			user_session = (null !== user_session_cached) ? user_session_cached : lightdm.default_session;
 
 		if ( _self.auth_pending || null !== _self.selected_user ) {
 			lightdm.cancel_authentication();
