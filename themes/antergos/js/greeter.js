@@ -60,12 +60,15 @@ class AntergosThemeUtils {
 		}
 		_util = this;
 
+		this.initialize_theme_heartbeat();
+
 		this.debug = false;
 		this.lang = window.navigator.language.split( '-' )[ 0 ].toLowerCase();
 		this.translations = window.ant_translations;
 		this.$log_container = $('#logArea');
 		this.recursion = 0;
 		this.cache_backend = '';
+		this.heartbeat = '';
 
 		if ( 'undefined' === typeof window.navigator.languages ) {
 			window.navigator.languages = [ window.navigator.language ];
@@ -75,6 +78,14 @@ class AntergosThemeUtils {
 		this.init_config_values();
 
 		return _util;
+	}
+
+
+	initialize_theme_heartbeat() {
+		this.log('Initializing theme heartbeat.');
+		this.heartbeat = setInterval(() => {
+			window.webkit.messageHandlers.GreeterBridge.postMessage('Heartbeat');
+		}, 5000);
 	}
 
 
@@ -101,6 +112,7 @@ class AntergosThemeUtils {
 		if ('' === this.cache_backend) {
 			this.cache_backend = 'Cookies';
 		}
+		console.log(`this.cache_backend is: ${this.cache_backend}`);
 	}
 
 

@@ -36,6 +36,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 #include <glib.h>
+#include <glib/gprintf.h>
 #include <glib-unix.h>
 #include <gtk/gtkx.h>
 #include <webkit2/webkit2.h>
@@ -56,9 +57,10 @@ static GdkDisplay *default_display;
 
 /* Screensaver values */
 static int timeout, interval, prefer_blanking, allow_exposures;
+
 static gint config_timeout;
 
-static gboolean debug_mode;
+static gboolean debug_mode, heartbeat;
 
 static GdkFilterReturn
 wm_window_filter(GdkXEvent *gxevent, GdkEvent *event, gpointer data) {
@@ -105,6 +107,7 @@ create_new_webkit_settings_object(void) {
 		"javascript-can-open-windows-automatically", TRUE,
 		"allow-file-access-from-file-urls", TRUE,
 		"enable-write-console-messages-to-stdout", TRUE,
+		"allow-universal-access-from-file-urls", TRUE,
 		NULL
 	);
 }
@@ -122,6 +125,45 @@ context_menu_cb(WebKitWebView *view,
 	 * desired result (which is only show menu when debug_mode is enabled.
 	 */
 	return (! debug_mode);
+}
+
+
+/**
+ * Callback for Theme Heartbeat. Themes start the heartbeat by sending a post message
+ * via JavaScript. Once started, the heartbeat will schedule a check to ensure that the
+ * theme has sent a subsequent heartbeat message. If heartbeat message was not received,
+ * we assume that there has been an error in the web process and fallback to the simple theme.
+ */
+static void
+theme_heartbeat_cb(void) {
+	if (! heartbeat) {
+		/* Setup g_timeout callback for theme heartbeat check */
+		g_timeout_add_seconds(G_PRIORITY_DEFAULT, 8, (GSourceFunc) check_theme_heartbeat_cb, NULL);
+		heartbeat = TRUE;
+	}
+}
+
+
+static gboolean
+check_theme_heartbeat_cb(void) {
+	if (! heartbeat) {
+			/* Theme heartbeat not received. We assume that an error has occured
+			 * which broke script execution. We will fallback to the simple theme
+			 * so the user won't be stuck with a broken login screen.
+			 */
+			g_print('%s%s',
+					'[ERROR] :: A problem was detected with the current theme. ',
+					'Falling back to simple theme...'
+			);
+			webkit_web_view_load_uri(
+					WEBKIT_WEB_VIEW(web_view),
+					g_strdup_printf("file://%s/simple/index.html", THEME_DIR)
+			);
+	}
+
+	heartbeat = FALSE;
+
+	return heartbeat;
 }
 
 
@@ -156,11 +198,23 @@ message_received_cb(WebKitUserContentManager *manager,
 					WebKitJavascriptResult *message,
 					gpointer user_data) {
 
-	/* TODO:
-	 * Abstract this by using JSON for exchanging messages so the handler can
-	 * be used for more than one task/event.
-	 */
-	lock_hint_enabled_handler();
+	gchar *message_str, *lock_hint_str, *heartbeat_str;
+
+	message_str = get_js_result_as_string(message);
+	lock_hint_str = "LockHint";
+	heartbeat_str = "Heartbeat";
+
+	switch(message_str) {
+		case lock_hint_str :
+			lock_hint_enabled_handler();
+			break;
+
+		case heartbeat_str :
+			theme_heartbeat_cb();
+			break;
+	}
+
+	g_free(message_str); g_free(lock_hint_str); g_free(heartbeat_str);
 
 }
 

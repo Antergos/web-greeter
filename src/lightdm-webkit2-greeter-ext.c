@@ -60,7 +60,6 @@ GKeyFile *keyfile;
 /*
  * Put all our translatable strings up top
  */
-
 #define EXPECTSTRING   _("Expected a string")
 #define ARGNOTSUPPLIED _("Argument(s) not supplied")
 
