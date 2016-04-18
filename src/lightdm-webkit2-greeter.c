@@ -230,6 +230,7 @@ main(int argc, char **argv) {
 	WebKitUserContentManager *manager;
 	WebKitWebContext *context;
 	GtkCssProvider *css_provider;
+	WebKitCookieManager *cookie_manager;
 
 	/*
 	 * Prevent memory from being swapped out, since we see unencrypted
@@ -290,6 +291,10 @@ main(int argc, char **argv) {
 	g_signal_connect(context,
 					 "initialize-web-extensions",
 					 G_CALLBACK(initialize_web_extensions_cb), NULL);
+
+	/* Set cookie policy */
+	cookie_manager = webkit_web_context_get_cookie_manager(context);
+	webkit_cookie_manager_set_accept_policy(cookie_manager, WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
 
 	/* Register and connect handler of any messages we send from our web extension process. */
 	manager = webkit_user_content_manager_new();
