@@ -82,9 +82,15 @@ class AntergosThemeUtils {
 
 
 	initialize_theme_heartbeat() {
+		var heartbeats = 0;
+
 		this.log('Initializing theme heartbeat.');
 		this.heartbeat = setInterval(() => {
+			++heartbeats;
 			window.webkit.messageHandlers.GreeterBridge.postMessage('Heartbeat');
+			if (heartbeats < 20) {
+				console.log('Sending heartbeat...');
+			}
 		}, 5000);
 	}
 

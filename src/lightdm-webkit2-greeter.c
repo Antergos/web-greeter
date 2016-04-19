@@ -216,7 +216,7 @@ message_received_cb(WebKitUserContentManager *manager,
 		message_str = "";
 		printf("Error running javascript: unexpected return value");
 	}
-quit
+
 	if (strcmp(message_str, "LockHint") == 0) {
 		lock_hint_enabled_handler();
 	} else if (strcmp(message_str, "Heartbeat") == 0) {
