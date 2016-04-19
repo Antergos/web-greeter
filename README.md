@@ -8,7 +8,7 @@
 
 #### Unofficial Distro Packages
 * ![arch](https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png)&nbsp; `yaourt -S lightdm-webkit2-greeter`
-* ![fedora](https://dl.dropboxusercontent.com/u/60521097/fedora-logo.png)&nbsp; [OBS Repo](https://software.opensuse.org/download.html?project=home:antergos&package=lightdm-webkit2-greeter)
+* ![fedora](https://dl.dropboxusercontent.com/u/60521097/fedora-logo.png)&nbsp; [copr](https://copr.fedorainfracloud.org/coprs/antergos/lightdm-webkit2-greeter/) &nbsp;|&nbsp; [OBS Repo](https://software.opensuse.org/download.html?project=home:antergos&package=lightdm-webkit2-greeter)
 * ![openSUSE](https://dl.dropboxusercontent.com/u/60521097/Geeko-button-bling7.png)&nbsp; [1 Click Install](https://software.opensuse.org/ymp/home:antergos/openSUSE_Leap_42.1/lightdm-webkit2-greeter.ymp?base=openSUSE%3ALeap%3A42.1&query=lightdm-webkit2-greeter) &nbsp;|&nbsp; [OBS Repo](https://software.opensuse.org/download.html?project=home:antergos&package=lightdm-webkit2-greeter)
 
 ## Build It
