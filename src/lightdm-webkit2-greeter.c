@@ -128,6 +128,26 @@ context_menu_cb(WebKitWebView *view,
 }
 
 
+static gboolean
+check_theme_heartbeat_cb(void) {
+	if (! heartbeat) {
+			/* Theme heartbeat not received. We assume that an error has occured
+			 * which broke script execution. We will fallback to the simple theme
+			 * so the user won't be stuck with a broken login screen.
+			 */
+			g_warning("[ERROR] :: A problem was detected with the current theme. Falling back to simple theme...");
+			webkit_web_view_load_uri(
+					WEBKIT_WEB_VIEW(web_view),
+					g_strdup_printf("file://%s/simple/index.html", THEME_DIR)
+			);
+	}
+
+	heartbeat = FALSE;
+
+	return heartbeat;
+}
+
+
 /**
  * Callback for Theme Heartbeat. Themes start the heartbeat by sending a post message
  * via JavaScript. Once started, the heartbeat will schedule a check to ensure that the
@@ -138,32 +158,9 @@ static void
 theme_heartbeat_cb(void) {
 	if (! heartbeat) {
 		/* Setup g_timeout callback for theme heartbeat check */
-		g_timeout_add_seconds(G_PRIORITY_DEFAULT, 8, (GSourceFunc) check_theme_heartbeat_cb, NULL);
+		g_timeout_add_seconds(8, (GSourceFunc) check_theme_heartbeat_cb, NULL);
 		heartbeat = TRUE;
 	}
-}
-
-
-static gboolean
-check_theme_heartbeat_cb(void) {
-	if (! heartbeat) {
-			/* Theme heartbeat not received. We assume that an error has occured
-			 * which broke script execution. We will fallback to the simple theme
-			 * so the user won't be stuck with a broken login screen.
-			 */
-			g_print('%s%s',
-					'[ERROR] :: A problem was detected with the current theme. ',
-					'Falling back to simple theme...'
-			);
-			webkit_web_view_load_uri(
-					WEBKIT_WEB_VIEW(web_view),
-					g_strdup_printf("file://%s/simple/index.html", THEME_DIR)
-			);
-	}
-
-	heartbeat = FALSE;
-
-	return heartbeat;
 }
 
 
@@ -199,19 +196,33 @@ message_received_cb(WebKitUserContentManager *manager,
 					gpointer user_data) {
 
 	gchar *message_str, *lock_hint_str, *heartbeat_str;
+	JSGlobalContextRef context;
+	JSValueRef message_val;
+	JSStringRef js_str_val;
+	gsize message_str_length;
 
-	message_str = get_js_result_as_string(message);
+	context = webkit_javascript_result_get_global_context(message);
+	message_val = webkit_javascript_result_get_value(message);
+
+	if (JSValueIsString(context, message_val)) {
+		js_str_val = JSValueToStringCopy(context, message_val, NULL);
+		message_str_length = JSStringGetMaximumUTF8CStringSize(js_str_val);
+		message_str = (gchar *)g_malloc (message_str_length);
+		JSStringGetUTF8CString(js_str_val, message_str, message_str_length);
+		JSStringRelease(js_str_val);
+
+	} else {
+		message_str = "";
+		g_warning("Error running javascript: unexpected return value");
+	}
+
 	lock_hint_str = "LockHint";
 	heartbeat_str = "Heartbeat";
 
-	switch(message_str) {
-		case lock_hint_str :
-			lock_hint_enabled_handler();
-			break;
-
-		case heartbeat_str :
-			theme_heartbeat_cb();
-			break;
+	if (message_str == lock_hint_str) {
+		lock_hint_enabled_handler();
+	} else if (message_str == heartbeat_str) {
+		theme_heartbeat_cb();
 	}
 
 	g_free(message_str); g_free(lock_hint_str); g_free(heartbeat_str);
