@@ -156,6 +156,10 @@ class AntergosThemeUtils {
 			value = null;
 		}
 
+		if (null !== value) {
+			this.log(`cache_get() key: ${key} value is: ${value}`);
+		}
+
 		return ('undefined' !== typeof(value)) ? value : null;
 	}
 
@@ -325,7 +329,9 @@ class AntergosBackgroundManager {
 	 */
 	do_background() {
 		$( '.header' ).fadeTo( 300, 0.5, function() {
-			var tpl = `url(${_bg_self.current_background})`;
+			var bg = _bg_self.current_background,
+				tpl = (bg.indexOf('url(') > -1) ? bg : `url(${_bg_self.current_background})`;
+
 			$( '.header' ).css( "background-image", tpl );
 		} ).fadeTo( 300, 1 );
 	}

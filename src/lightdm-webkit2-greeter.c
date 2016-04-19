@@ -107,7 +107,7 @@ create_new_webkit_settings_object(void) {
 		"javascript-can-open-windows-automatically", TRUE,
 		"allow-file-access-from-file-urls", TRUE,
 		"enable-write-console-messages-to-stdout", TRUE,
-		"allow-universal-access-from-file-urls", TRUE,
+		//"allow-universal-access-from-file-urls", TRUE,
 		NULL
 	);
 }
@@ -151,8 +151,9 @@ check_theme_heartbeat_cb(void) {
 /**
  * Callback for Theme Heartbeat. Themes start the heartbeat by sending a post message
  * via JavaScript. Once started, the heartbeat will schedule a check to ensure that the
- * theme has sent a subsequent heartbeat message. If heartbeat message was not received,
- * we assume that there has been an error in the web process and fallback to the simple theme.
+ * theme has sent a subsequent heartbeat message. Once started, if a heartbeat message was not
+ * received by the time our check runs we assume that there has been an error in the web
+ * process and fallback to the simple theme.
  */
 static void
 theme_heartbeat_cb(void) {
@@ -195,7 +196,7 @@ message_received_cb(WebKitUserContentManager *manager,
 					WebKitJavascriptResult *message,
 					gpointer user_data) {
 
-	gchar *message_str, *lock_hint_str, *heartbeat_str;
+	gchar *message_str;
 	JSGlobalContextRef context;
 	JSValueRef message_val;
 	JSStringRef js_str_val;
@@ -213,19 +214,16 @@ message_received_cb(WebKitUserContentManager *manager,
 
 	} else {
 		message_str = "";
-		g_warning("Error running javascript: unexpected return value");
+		printf("Error running javascript: unexpected return value");
 	}
-
-	lock_hint_str = "LockHint";
-	heartbeat_str = "Heartbeat";
-
-	if (message_str == lock_hint_str) {
+quit
+	if (strcmp(message_str, "LockHint") == 0) {
 		lock_hint_enabled_handler();
-	} else if (message_str == heartbeat_str) {
+	} else if (strcmp(message_str, "Heartbeat") == 0) {
 		theme_heartbeat_cb();
 	}
 
-	g_free(message_str); g_free(lock_hint_str); g_free(heartbeat_str);
+	g_free(message_str);
 
 }
 
@@ -309,10 +307,8 @@ main(int argc, char **argv) {
 
 	/* Register and connect handler of any messages we send from our web extension process. */
 	manager = webkit_user_content_manager_new();
+	g_signal_connect(manager, "script-message-received::GreeterBridge", G_CALLBACK(message_received_cb), NULL);
 	webkit_user_content_manager_register_script_message_handler(manager, "GreeterBridge");
-	g_signal_connect(manager,
-					 "script-message-received::GreeterBridge",
-					 G_CALLBACK(message_received_cb), NULL);
 
 	/* Create the web_view */
 	web_view = webkit_web_view_new_with_user_content_manager(manager);
@@ -328,7 +324,7 @@ main(int argc, char **argv) {
 	gdk_rgba_parse(&bg_color, "#000000");
 	webkit_web_view_set_background_color(WEBKIT_WEB_VIEW(web_view), gdk_rgba_copy(&bg_color));
 
-	/* Disable the context (right-click) menu. */
+	/* Maybe disable the context (right-click) menu. */
 	g_signal_connect(web_view, "context-menu", G_CALLBACK(context_menu_cb), NULL);
 
 	/* There's no turning back now, let's go! */
@@ -337,7 +333,10 @@ main(int argc, char **argv) {
 							 g_strdup_printf("file://%s/%s/index.html", THEME_DIR, theme));
 
 	gtk_widget_show_all(window);
-	gdk_window_set_cursor(gtk_widget_get_window (GTK_WIDGET (window)), gdk_cursor_new_for_display(default_display, GDK_LEFT_PTR));
+	gdk_window_set_cursor(
+			gtk_widget_get_window(GTK_WIDGET(window)),
+			gdk_cursor_new_for_display(default_display, GDK_LEFT_PTR)
+	);
 
 	gtk_main();
 
