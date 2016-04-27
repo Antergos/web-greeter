@@ -1,14 +1,14 @@
 {
-    "auth_failed": "Uh Oh! Неуспешна идентификация. Моля, опитайте отново.",
-    "background_options": "Опции Предистория",
+    "auth_failed": "Опа! Неуспешна идентификация. Моля, опитайте отново.",
+    "background_options": "Опции на фона",
     "cancel": "Отказ",
     "confirm_system_action": "Сигурен ли си?",
-    "debug_log": "Debug Log",
-    "greeting": "Добре дошла!",
-    "hibernate": "спя зимен сън",
-    "random": "произволен",
+    "debug_log": "Лог за отстраняване на грешки",
+    "greeting": "Добре дошли!",
+    "hibernate": "Хибернация",
+    "random": "Произволен",
     "reset": "Нулиране",
-    "restart": "Рестарт",
-    "shutdown": "Изключвам",
-    "suspend": "Задържане"
+    "restart": "Рестартиране",
+    "shutdown": "Изключване",
+    "suspend": "Преустановяване"
 }

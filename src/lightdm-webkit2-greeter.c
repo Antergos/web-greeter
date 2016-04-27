@@ -60,7 +60,7 @@ static int timeout, interval, prefer_blanking, allow_exposures;
 
 static gint config_timeout;
 
-static gboolean debug_mode, heartbeat;
+static gboolean debug_mode, heartbeat, heartbeat_exit;
 
 static GdkFilterReturn
 wm_window_filter(GdkXEvent *gxevent, GdkEvent *event, gpointer data) {
@@ -130,7 +130,7 @@ context_menu_cb(WebKitWebView *view,
 
 static gboolean
 check_theme_heartbeat_cb(void) {
-	if (! heartbeat) {
+	if (! heartbeat && ! heartbeat_exit) {
 			/* Theme heartbeat not received. We assume that an error has occured
 			 * which broke script execution. We will fallback to the simple theme
 			 * so the user won't be stuck with a broken login screen.
@@ -161,7 +161,20 @@ theme_heartbeat_cb(void) {
 		/* Setup g_timeout callback for theme heartbeat check */
 		g_timeout_add_seconds(8, (GSourceFunc) check_theme_heartbeat_cb, NULL);
 		heartbeat = TRUE;
+		heartbeat_exit = FALSE;
 	}
+}
+
+
+/**
+ * Heartbeat exit callback.
+ *
+ * Before starting the user's session, themes should exit the heartbeat
+ * to prevent a race condition while the greeter is shutting down.
+ */
+static void
+theme_heartbeat_exit_cb(void) {
+	heartbeat_exit = TRUE;
 }
 
 
@@ -221,6 +234,8 @@ message_received_cb(WebKitUserContentManager *manager,
 		lock_hint_enabled_handler();
 	} else if (strcmp(message_str, "Heartbeat") == 0) {
 		theme_heartbeat_cb();
+	} else if (strcmp(message_str, "Heartbeat::Exit") == 0) {
+		theme_heartbeat_exit_cb();
 	}
 
 	g_free(message_str);
