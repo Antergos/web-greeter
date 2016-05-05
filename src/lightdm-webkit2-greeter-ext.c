@@ -171,7 +171,6 @@ arg_to_string(JSContextRef context, JSValueRef arg, JSValueRef *exception) {
  * Replace one substring with another.  NOTE:  This has the side effect
  * of freeing it's passed text.
  */
-
 static gchar *
 g_strreplace (gchar *txt, gchar *from, gchar *to) {
 	gchar **split;
@@ -1659,6 +1658,10 @@ webkit_web_extension_initialize(WebKitWebExtension *extension) {
 	g_signal_connect(G_OBJECT(greeter), "show-prompt", G_CALLBACK(show_prompt_cb), extension);
 	g_signal_connect(G_OBJECT(greeter), "show-message", G_CALLBACK(show_message_cb), extension);
 
+	/* TODO: This function was deprecated in lightdm 1.11.x.
+	 * New function is lightdm_greeter_connect_to_daemon_sync
+	 * Wait until it makes it into Debian Stable before making the change.
+	 */
 	lightdm_greeter_connect_sync(greeter, NULL);
 
 	/* load greeter settings from config file */

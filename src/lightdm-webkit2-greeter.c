@@ -243,6 +243,14 @@ message_received_cb(WebKitUserContentManager *manager,
 }
 
 
+static void
+quit_cb(void) {
+	gtk_widget_destroy(WEBKIT_WEB_VIEW(web_view));
+	gtk_widget_destroy(GTK_WINDOW(window));
+	gtk_main_quit();
+}
+
+
 int
 main(int argc, char **argv) {
 	GdkScreen *screen;
@@ -269,7 +277,7 @@ main(int argc, char **argv) {
 	textdomain (GETTEXT_PACKAGE);
 
 	gtk_init(&argc, &argv);
-	g_unix_signal_add(SIGTERM, (GSourceFunc) gtk_main_quit, NULL);
+	g_unix_signal_add(SIGTERM, (GSourceFunc) quit_cb, NULL);
 
 	/* Apply greeter settings from config file */
 	keyfile = g_key_file_new();
