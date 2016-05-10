@@ -1469,17 +1469,19 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 							   WebKitFrame *frame,
 							   LightDMGreeter *greeter) {
 
-	JSObjectRef gettext_object, lightdm_greeter_object, config_file_object, greeter_util_object;
 	JSGlobalContextRef jsContext;
-	JSObjectRef globalObject;
-	WebKitDOMDocument *dom_document;
 	WebKitDOMDOMWindow *dom_window;
+	WebKitDOMDocument *dom_document;
+	JSObjectRef gettext_object,
+				lightdm_greeter_object,
+				config_file_object,
+				greeter_util_object,
+				globalObject;
+	gboolean report_errors;
 	gchar *message = "LockHint";
 	gchar *theme;
-	gboolean report_errors;
 
 	page_id = webkit_web_page_get_id(web_page);
-
 	jsContext = webkit_frame_get_javascript_context_for_script_world(frame, world);
 	globalObject = JSContextGetGlobalObject(jsContext);
 
@@ -1493,7 +1495,6 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	greeter_util_class = JSClassCreate(&greeter_util_definition);
 
 	gettext_object = JSObjectMake(jsContext, gettext_class, NULL);
-
 	JSObjectSetProperty(jsContext,
 						globalObject,
 						JSStringCreateWithUTF8CString("gettext"),
@@ -1502,7 +1503,6 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 						NULL);
 
 	lightdm_greeter_object = JSObjectMake(jsContext, lightdm_greeter_class, greeter);
-
 	JSObjectSetProperty(jsContext,
 						globalObject,
 						JSStringCreateWithUTF8CString("lightdm"),
@@ -1511,7 +1511,6 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 						NULL);
 
 	config_file_object = JSObjectMake(jsContext, config_file_class, greeter);
-
 	JSObjectSetProperty(jsContext,
 						globalObject,
 						JSStringCreateWithUTF8CString("config"),
@@ -1520,7 +1519,6 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 						NULL);
 
 	greeter_util_object = JSObjectMake(jsContext, greeter_util_class, NULL);
-
 	JSObjectSetProperty(jsContext,
 						globalObject,
 						JSStringCreateWithUTF8CString("greeterutil"),
@@ -1549,7 +1547,6 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	}
 
 	g_free(theme);
-
 }
 
 
