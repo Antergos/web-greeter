@@ -245,8 +245,8 @@ message_received_cb(WebKitUserContentManager *manager,
 
 static void
 quit_cb(void) {
-	gtk_widget_destroy(WEBKIT_WEB_VIEW(web_view));
-	gtk_widget_destroy(GTK_WINDOW(window));
+	gtk_widget_destroy(GTK_WIDGET(web_view));
+	gtk_widget_destroy(GTK_WIDGET(window));
 	gtk_main_quit();
 }
 

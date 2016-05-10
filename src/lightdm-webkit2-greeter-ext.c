@@ -1436,6 +1436,34 @@ static const JSClassDefinition greeter_util_definition = {
 
 
 static void
+inject_bugsnag_script(WebKitScriptWorld *world, WebKitFrame *frame) {
+	gchar *bugsnag, *string;
+	JSGlobalContextRef jsContext;
+	JSStringRef command;
+
+	bugsnag = "4ea62a82"
+			"03b5b1af"
+			"7c33da0d"
+			"c2f6a60f";
+
+	string = g_strdup_printf(
+			"var s = document.createElement('script');"
+					"s.src = '../_vendor/js/bugsnag-2.5.0.min.js"
+					"s['data-apikey'] = %s;"
+					"$('head').append(s);",
+			bugsnag
+	);
+
+	jsContext = webkit_frame_get_javascript_context_for_script_world(frame, world);
+	command = JSStringCreateWithUTF8CString(string);
+
+	JSEvaluateScript(jsContext, command, NULL, NULL, 0, NULL);
+	g_free(bugsnag);
+	g_free(string);
+}
+
+
+static void
 window_object_cleared_callback(WebKitScriptWorld *world,
 							   WebKitWebPage *web_page,
 							   WebKitFrame *frame,
@@ -1447,6 +1475,8 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	WebKitDOMDocument *dom_document;
 	WebKitDOMDOMWindow *dom_window;
 	gchar *message = "LockHint";
+	gchar *theme;
+	gboolean report_errors;
 
 	page_id = webkit_web_page_get_id(web_page);
 
@@ -1498,18 +1528,27 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 						kJSPropertyAttributeNone,
 						NULL);
 
-
-
 	/* If the greeter was started as a lock-screen, send message to our UI process. */
 	if (lightdm_greeter_get_lock_hint(greeter)) {
 		dom_document = webkit_web_page_get_dom_document(web_page);
 		dom_window = webkit_dom_document_get_default_view(dom_document);
 
 		if (dom_window) {
-			webkit_dom_dom_window_webkit_message_handlers_post_message(dom_window,
-																	   "GreeterBridge", message);
+			webkit_dom_dom_window_webkit_message_handlers_post_message(
+				dom_window, "GreeterBridge", message
+			);
 		}
 	}
+
+	/* If the default theme is active & error reporting is enabled, inject bugsnag script */
+	theme = g_key_file_get_string(keyfile, "greeter", "theme", NULL);
+	report_errors = g_key_file_get_boolean(keyfile, "greeter", "report-errors", NULL);
+
+	if (strcmp("antergos", theme) == 0 && report_errors) {
+		inject_bugsnag_script(world, frame);
+	}
+
+	g_free(theme);
 
 }
 
