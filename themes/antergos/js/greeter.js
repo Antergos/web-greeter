@@ -46,7 +46,6 @@ String.prototype.capitalize = function() {
 
 
 
-
 /**
  * This should be the base class for all the theme's components. However, webkit's
  * support of extending (subclassing) ES6 classes is not stable enough to use.
@@ -95,7 +94,7 @@ class AntergosThemeUtils {
 		this.heartbeat = setInterval(() => {
 			++heartbeats;
 			window.webkit.messageHandlers.GreeterBridge.postMessage('Heartbeat');
-			if (heartbeats < 20) {
+			if (heartbeats < 5) {
 				console.log('Sending heartbeat...');
 			}
 		}, 5000);
@@ -894,8 +893,6 @@ class AntergosTheme {
 		}
 	}
 }
-
-
 
 
 

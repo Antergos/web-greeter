@@ -348,7 +348,7 @@ main(int argc, char **argv) {
 	webkit_web_view_set_background_color(WEBKIT_WEB_VIEW(web_view), gdk_rgba_copy(&bg_color));
 
 	/* Maybe disable the context (right-click) menu. */
-	g_signal_connect(web_view, "context-menu", G_CALLBACK(context_menu_cb), NULL);
+	//g_signal_connect(web_view, "context-menu", G_CALLBACK(context_menu_cb), NULL);
 
 	/* There's no turning back now, let's go! */
 	gtk_container_add(GTK_CONTAINER(window), web_view);

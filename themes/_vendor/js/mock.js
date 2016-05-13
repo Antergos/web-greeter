@@ -300,3 +300,13 @@ function _lightdm_mock_get_user( username ) {
 	}
 	return user;
 }
+
+window._inject_bugsnag = function(num, ver) {
+	var s = document.createElement('script');
+	s.src = '../_vendor/js/bugsnag-2.5.0.min.js';
+	jQuery('head').append(s);
+	setTimeout(function() {
+		Bugsnag.apiKey = num;
+		Bugsnag.appVersion = ver;
+	}, 500);
+};

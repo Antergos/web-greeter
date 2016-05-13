@@ -1436,34 +1436,6 @@ static const JSClassDefinition greeter_util_definition = {
 
 
 static void
-inject_bugsnag_script(WebKitScriptWorld *world, WebKitFrame *frame) {
-	gchar *bugsnag, *string;
-	JSGlobalContextRef jsContext;
-	JSStringRef command;
-
-	bugsnag = "4ea62a82"
-			"03b5b1af"
-			"7c33da0d"
-			"c2f6a60f";
-
-	string = g_strdup_printf(
-			"var s = document.createElement('script');"
-					"s.src = '../_vendor/js/bugsnag-2.5.0.min.js"
-					"s['data-apikey'] = %s;"
-					"$('head').append(s);",
-			bugsnag
-	);
-
-	jsContext = webkit_frame_get_javascript_context_for_script_world(frame, world);
-	command = JSStringCreateWithUTF8CString(string);
-
-	JSEvaluateScript(jsContext, command, NULL, NULL, 0, NULL);
-	g_free(bugsnag);
-	g_free(string);
-}
-
-
-static void
 window_object_cleared_callback(WebKitScriptWorld *world,
 							   WebKitWebPage *web_page,
 							   WebKitFrame *frame,
@@ -1477,11 +1449,11 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 				config_file_object,
 				greeter_util_object,
 				globalObject;
+	JSStringRef command;
 	gboolean report_errors;
 	gchar *message = "LockHint";
-	gchar *theme;
+	gchar *theme, *bugsnag, *string;;
 
-	page_id = webkit_web_page_get_id(web_page);
 	jsContext = webkit_frame_get_javascript_context_for_script_world(frame, world);
 	globalObject = JSContextGetGlobalObject(jsContext);
 
@@ -1542,8 +1514,18 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	theme = g_key_file_get_string(keyfile, "greeter", "theme", NULL);
 	report_errors = g_key_file_get_boolean(keyfile, "greeter", "report-errors", NULL);
 
-	if (strcmp("antergos", theme) == 0 && report_errors) {
-		inject_bugsnag_script(world, frame);
+	if (report_errors && strcmp("antergos", theme) == 0) {
+		bugsnag = "4ea62a82"
+				"03b5b1af"
+				"7c33da0d"
+				"c2f6a60f";
+
+		string = g_strdup_printf("window._inject_bugsnag('%s', '%s');", bugsnag, GREETER_VERSION);
+		command = JSStringCreateWithUTF8CString(string);
+
+		JSEvaluateScript(jsContext, command, NULL, NULL, 0, NULL);
+		g_free(bugsnag);
+		g_free(string);
 	}
 
 	g_free(theme);
