@@ -1452,7 +1452,6 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	JSStringRef command;
 	gboolean report_errors;
 	gchar *message = "LockHint";
-	gchar *theme, *bugsnag, *string;;
 
 	jsContext = webkit_frame_get_javascript_context_for_script_world(frame, world);
 	globalObject = JSContextGetGlobalObject(jsContext);
@@ -1498,6 +1497,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 						kJSPropertyAttributeNone,
 						NULL);
 
+
 	/* If the greeter was started as a lock-screen, send message to our UI process. */
 	if (lightdm_greeter_get_lock_hint(greeter)) {
 		dom_document = webkit_web_page_get_dom_document(web_page);
@@ -1510,25 +1510,6 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 		}
 	}
 
-	/* If the default theme is active & error reporting is enabled, inject bugsnag script */
-	theme = g_key_file_get_string(keyfile, "greeter", "theme", NULL);
-	report_errors = g_key_file_get_boolean(keyfile, "greeter", "report-errors", NULL);
-
-	if (report_errors && strcmp("antergos", theme) == 0) {
-		bugsnag = "4ea62a82"
-				"03b5b1af"
-				"7c33da0d"
-				"c2f6a60f";
-
-		string = g_strdup_printf("window._inject_bugsnag('%s', '%s');", bugsnag, GREETER_VERSION);
-		command = JSStringCreateWithUTF8CString(string);
-
-		JSEvaluateScript(jsContext, command, NULL, NULL, 0, NULL);
-		g_free(bugsnag);
-		g_free(string);
-	}
-
-	g_free(theme);
 }
 
 
