@@ -83,9 +83,9 @@ class AntergosThemeUtils {
 	/**
 	 * Initialize greeter theme heartbeat. Themes start the heartbeat by sending a post message
 	 * via JavaScript. Once started, the heartbeat will schedule a check to ensure that the
-	 * theme has sent a subsequent heartbeat message. Once started, if a heartbeat message was not
-	 * received by the time greeter's check runs it will assume that there has been an error
-	 * in the web process and fallback to the simple theme.
+	 * theme has sent a subsequent heartbeat message. Once started, if a heartbeat message is not
+	 * received by the time any of the greeter's subsequent checks run it will assume that there
+	 * has been an error in the web process and fallback to the simple theme.
 	 */
 	initialize_theme_heartbeat() {
 		var heartbeats = 0;
@@ -136,7 +136,7 @@ class AntergosThemeUtils {
 		if ('' === this.cache_backend) {
 			this.cache_backend = 'Cookies';
 		}
-		console.log(`this.cache_backend is: ${this.cache_backend}`);
+		console.log(`AntergosThemeUtils.cache_backend is: ${this.cache_backend}`);
 	}
 
 
