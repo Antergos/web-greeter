@@ -250,6 +250,14 @@ quit_cb(void) {
 	gtk_main_quit();
 }
 
+static gchar *
+remove_comments(gchar *str) {
+	gchar *ptr;
+
+	if (str && (ptr = strchr(str, '#')))
+		*ptr = 0;
+	return g_strstrip(str);
+}
 
 int
 main(int argc, char **argv) {
@@ -287,6 +295,7 @@ main(int argc, char **argv) {
 							  G_KEY_FILE_NONE, NULL);
 
 	theme = g_key_file_get_string(keyfile, "greeter", "webkit-theme", NULL);
+	theme = remove_comments(theme);
 	config_timeout = g_key_file_get_integer(keyfile, "greeter", "screensaver-timeout", NULL);
 	debug_mode = g_key_file_get_boolean(keyfile, "greeter", "debug_mode", NULL);
 
