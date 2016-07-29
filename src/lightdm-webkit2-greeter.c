@@ -317,6 +317,9 @@ main(int argc, char **argv) {
 	gdk_window_set_events(root_window, gdk_window_get_events(root_window) | GDK_SUBSTRUCTURE_MASK);
 	gdk_window_add_filter(root_window, wm_window_filter, NULL);
 
+	/* Set default cursor */
+	gdk_window_set_cursor(root_window, gdk_cursor_new_for_display(default_display, GDK_LEFT_PTR));
+
 	/* Setup CSS provider. We use CSS to set the window background to black instead
 	 * of default white so the screen doesnt flash during startup.
 	 */
@@ -368,10 +371,6 @@ main(int argc, char **argv) {
 							 g_strdup_printf("file://%s/%s/index.html", THEME_DIR, theme));
 
 	gtk_widget_show_all(window);
-	gdk_window_set_cursor(
-			gtk_widget_get_window(GTK_WIDGET(window)),
-			gdk_cursor_new_for_display(default_display, GDK_LEFT_PTR)
-	);
 
 	gtk_main();
 
