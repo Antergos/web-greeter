@@ -250,14 +250,20 @@ quit_cb(void) {
 	gtk_main_quit();
 }
 
-static gchar *
-remove_comments(gchar *str) {
-	gchar *ptr;
 
-	if (str && (ptr = strchr(str, '#')))
-		*ptr = 0;
+static gchar *
+rtrim_comments(gchar *str) {
+	gchar *ptr = NULL;
+
+	ptr = strchr(str, '#');
+
+	if (NULL != ptr) {
+		*ptr = '\0';
+	}
+
 	return g_strstrip(str);
 }
+
 
 int
 main(int argc, char **argv) {
@@ -272,10 +278,7 @@ main(int argc, char **argv) {
 	GtkCssProvider *css_provider;
 	WebKitCookieManager *cookie_manager;
 
-	/*
-	 * Prevent memory from being swapped out, since we see unencrypted
-	 * passwords.
-	 */
+	/* Prevent memory from being swapped out, since we see unencrypted passwords. */
 	mlockall (MCL_CURRENT | MCL_FUTURE);
 
 	/* Initialize i18n */
