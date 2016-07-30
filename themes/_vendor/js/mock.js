@@ -80,6 +80,7 @@ const LightDMSession = class {
 const lightdm = class LightDMGreeter {
 
 	constructor() {
+		this._mock_data = MockData;
 		this._initialize_properties();
 	}
 
@@ -87,23 +88,14 @@ const lightdm = class LightDMGreeter {
 	 * @ignore
 	 */
 	_initialize_properties() {
-		let default_values = {'string': '', 'int': 0, 'bool': false, 'list': [], 'null': null},
-			properties = {
-				'string': ['authentication_user', 'autologin_user', 'default_session', 'hostname', 'num_users'],
-				'int': ['autologin_timeout'],
-				'bool': [
-					'autologin_guest', 'can_hibernate', 'can_restart', 'can_shutdown', 'can_suspend',
-					'has_guest_account', 'hide_users', 'in_authentication', 'is_authenticated',
-					'lock_hint', 'select_guest_hint', 'select_user_hint'
-				],
-				'list': ['languages', 'layouts', 'sessions', 'users'],
-				'null': ['language', 'layout']
-			};
-
-		for ( let property_type of properties.keys() ) {
-			for ( let property of properties[property_type] ) {
-				this[`_${property}`] = default_values[property_type];
+		for ( let property_type of this._mock_data.properties.keys() ) {
+			for ( let property of this._mock_data.properties[property_type] ) {
+				this[`_${property}`] = this._mock_data.default_values[property_type];
 			}
+		}
+
+		for ( let list_key of ['users', 'sessions', 'languages', 'layouts'] ) {
+			this[list_key] = this._mock_data[list_key];
 		}
 	}
 
@@ -378,7 +370,8 @@ const lightdm = class LightDMGreeter {
 
 	/**
 	 * Set the language for the currently authenticated user.
-	 * @arg {String} language The language in the form of a locale specification (e.g. 'de_DE.UTF-8')
+	 * @arg {String} language The language in the form of a locale specification (e.g.
+	 *     'de_DE.UTF-8')
 	 * @returns {Boolean} {@link true} if successful, otherwise {@link false}
 	 */
 	set_language( language ) {}
@@ -402,127 +395,90 @@ const lightdm = class LightDMGreeter {
 	 */
 	suspend() {}
 
-}
+};
+
+const MockData = {
+	greeter: {
+		default_values: {string: '', int: 0, bool: false, list: [], 'null': null},
+		hostname: 'Mock Greeter',
+		properties: {
+			string: ['authentication_user', 'autologin_user', 'default_session', 'hostname', 'num_users'],
+			int: ['autologin_timeout'],
+			bool: [
+				'autologin_guest', 'can_hibernate', 'can_restart', 'can_shutdown', 'can_suspend',
+				'has_guest_account', 'hide_users', 'in_authentication', 'is_authenticated',
+				'lock_hint', 'select_guest_hint', 'select_user_hint'
+			],
+			list: ['languages', 'layouts', 'sessions', 'users'],
+			'null': ['language', 'layout']
+		}
+	},
+	languages: [
+		{name: 'English', code: 'en_US.utf8', territory: 'USA'},
+		{name: 'Catalan', code: 'ca_ES.utf8', territory: 'Spain'},
+		{name: 'French', code: 'fr_FR.utf8', territory: 'France'}
+	],
+	layouts: [
+		{name: 'us', short_description: 'en', description: 'English (US)'},
+		{name: 'at', short_description: 'de', description: 'German (Austria)'},
+		{name: 'us rus', short_description: 'ru', description: 'Russian (US, phonetic)'}
+	],
+	sessions: [
+		{key: 'gnome', name: 'GNOME', comment: 'This session logs you into GNOME'},
+		{key: 'cinnamon', name: 'Cinnamon', comment: 'This session logs you into Cinnamon'},
+		{key: 'plasma', name: 'Plasma', comment: 'Plasma by KDE'},
+		{key: 'mate', name: 'MATE', comment: 'This session logs you into MATE'},
+		{key: 'openbox', name: 'Openbox', comment: 'This session logs you into Openbox'}
+	],
+	users: [
+		{
+			display_name: 'Clark Kent',
+			language: null,
+			layout: null,
+			image: '/usr/share/lightdm-webkit/themes/antergos/img/antergos-logo-user',
+			home_directory: '/home/superman',
+			username: 'superman',
+			logged_in: false,
+			session: 'gnome',
+			/* --->> DEPRECATED! <<--- */
+			name: 'superman',
+			real_name: 'Clark Kent'
+			/* --->> DEPRECATED! <<--- */
+		},
+		{
+			display_name: 'Bruce Wayne',
+			language: null,
+			layout: null,
+			image: '/usr/share/lightdm-webkit/themes/antergos/img/antergos-logo-user',
+			home_directory: '/home/batman',
+			username: 'batman',
+			logged_in: false,
+			session: 'cinnamon',
+			/* --->> DEPRECATED! <<--- */
+			name: 'batman',
+			real_name: 'Bruce Wayne'
+			/* --->> DEPRECATED! <<--- */
+		},
+		{
+			display_name: 'Peter Parker',
+			language: null,
+			layout: null,
+			image: '/usr/share/lightdm-webkit/themes/antergos/img/antergos-logo-user',
+			home_directory: '/home/spiderman',
+			username: 'spiderman',
+			logged_in: false,
+			session: 'MATE',
+			/* --->> DEPRECATED! <<--- */
+			name: 'spiderman',
+			real_name: 'Peter Parker'
+			/* --->> DEPRECATED! <<--- */
+		}
+	]
+};
+
 
 // mock lighdm for testing
 /*
-if (typeof lightdm == 'undefined') {
-	lightdm = {};
-	lightdm.hostname = "test-host";
-	lightdm.languages = [{
-		code: "en_US",
-		name: "English(US)",
-		territory: "USA"
-	}, {
-		code: "en_UK",
-		name: "English(UK)",
-		territory: "UK"
-	}];
-	lightdm.default_language = lightdm.languages[0];
-	lightdm.layouts = [{
-		name: "test",
-		short_description: "test description",
-		short_description: "really long epic description"
-	}];
-	lightdm.default_layout = lightdm.layouts[0];
-	lightdm.layout = lightdm.layouts[0];
-	lightdm.sessions = [{
-		key: "gnome",
-		name: "gnome",
-		comment: "no comment"
-	}, {
-		key: "cinnamon",
-		name: "cinnamon",
-		comment: "no comment"
-	}, {
-		key: "openbox",
-		name: "openbox",
-		comment: "no comment"
-	}, {
-		key: "key4",
-		name: "kde",
-		comment: "no comment"
-	}];
-
-	lightdm.default_session = lightdm.sessions[0]['name'];
-	lightdm.authentication_user = null;
-	lightdm.is_authenticated = false;
-	lightdm.can_suspend = true;
-	lightdm.can_hibernate = true;
-	lightdm.can_restart = true;
-	lightdm.can_shutdown = true;
-	lightdm.awaiting_username = false;
-
-	lightdm.users = [{
-		name: "clarkk",
-		real_name: "Superman",
-		display_name: "Clark Kent",
-		image: "",
-		language: "en_US",
-		layout: null,
-		session: "gnome",
-		logged_in: false
-	}, {
-		name: "brucew",
-		real_name: "Batman",
-		display_name: "Bruce Wayne",
-		image: "",
-		language: "en_US",
-		layout: null,
-		session: "cinnamon",
-		logged_in: false
-	}, {
-		name: "peterp",
-		real_name: "Spiderman",
-		display_name: "Peter Parker",
-		image: "",
-		language: "en_US",
-		layout: null,
-		session: "gnome",
-		logged_in: true
-	}, {
-		name: "clarkk2",
-		real_name: "Superman",
-		display_name: "Clark Kent",
-		image: "",
-		language: "en_US",
-		layout: null,
-		session: "gnome",
-		logged_in: false
-	}, {
-		name: "brucew2",
-		real_name: "Batman",
-		display_name: "Bruce Wayne",
-		image: "",
-		language: "en_US",
-		layout: null,
-		session: "cinnamon",
-		logged_in: false
-	}, {
-		name: "peterp2",
-		real_name: "Spiderman",
-		display_name: "Peter Parker",
-		image: "",
-		language: "en_US",
-		layout: null,
-		session: "gnome",
-		logged_in: true
-	}];
-
-	lightdm.num_users = lightdm.users.length;
-	lightdm.timed_login_delay = 0; //set to a number higher than 0 for timed login simulation
-	lightdm.timed_login_user = lightdm.timed_login_delay > 0 ? lightdm.users[0] : null;
-
-	lightdm.get_string_property = function () {
-	};
-	lightdm.get_integer_property = function () {
-	};
-	lightdm.get_boolean_property = function () {
-	};
-	lightdm.cancel_timed_login = function () {
-		_lightdm_mock_check_argument_length(arguments, 0);
-		lightdm._timed_login_cancelled = true;
-	};
 
 	lightdm.provide_secret = function (secret) {
 		if (typeof lightdm._username == 'undefined' || !lightdm._username) {
