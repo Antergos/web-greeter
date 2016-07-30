@@ -909,7 +909,7 @@ shutdown_cb(JSContextRef context,
 
 
 static JSValueRef
-start_session_sync_cb(JSContextRef context,
+start_session_cb(JSContextRef context,
 					  JSObjectRef function,
 					  JSObjectRef thisObject,
 					  size_t argumentCount,
@@ -1298,53 +1298,58 @@ static const JSStaticValue lightdm_session_values[] = {
 	{NULL,      NULL,                   NULL, 0}};
 
 static const JSStaticValue lightdm_greeter_values[] = {
-	{"hostname",            get_hostname_cb,            NULL,          kJSPropertyAttributeReadOnly},
-	{"users",               get_users_cb,               NULL,          kJSPropertyAttributeReadOnly},
-	{"default_language",    get_language_cb,            NULL,          kJSPropertyAttributeReadOnly}, /* Deprecated */
-	{"language",            get_language_cb,            NULL,          kJSPropertyAttributeReadOnly},
-	{"languages",           get_languages_cb,           NULL,          kJSPropertyAttributeReadOnly},
-	{"default_layout",      get_layout_cb,              NULL,          kJSPropertyAttributeReadOnly}, /* Deprecated */
-	{"layouts",             get_layouts_cb,             NULL,          kJSPropertyAttributeReadOnly},
-	{"layout",              get_layout_cb,              set_layout_cb, kJSPropertyAttributeNone},
-	{"sessions",            get_sessions_cb,            NULL,          kJSPropertyAttributeReadOnly},
-	{"num_users",           get_num_users_cb,           NULL,          kJSPropertyAttributeReadOnly},
-	{"default_session",     get_default_session_cb,     NULL,          kJSPropertyAttributeReadOnly},
-	{"timed_login_user",    get_autologin_user_cb,      NULL,          kJSPropertyAttributeReadOnly}, /* Deprecated */
-	{"timed_login_delay",   get_autologin_timeout_cb,   NULL,          kJSPropertyAttributeReadOnly}, /* Deprecated */
 	{"authentication_user", get_authentication_user_cb, NULL,          kJSPropertyAttributeReadOnly},
-	{"in_authentication",   get_in_authentication_cb,   NULL,          kJSPropertyAttributeReadOnly},
-	{"is_authenticated",    get_is_authenticated_cb,    NULL,          kJSPropertyAttributeReadOnly},
-	{"can_suspend",         get_can_suspend_cb,         NULL,          kJSPropertyAttributeReadOnly},
+	{"autologin_guest",     get_autologin_guest_cb,     NULL,          kJSPropertyAttributeReadOnly},
+	{"autologin_timeout",   get_autologin_timeout_cb,   NULL,          kJSPropertyAttributeReadOnly},
+	{"autologin_user",      get_autologin_user_cb,      NULL,          kJSPropertyAttributeReadOnly},
 	{"can_hibernate",       get_can_hibernate_cb,       NULL,          kJSPropertyAttributeReadOnly},
 	{"can_restart",         get_can_restart_cb,         NULL,          kJSPropertyAttributeReadOnly},
 	{"can_shutdown",        get_can_shutdown_cb,        NULL,          kJSPropertyAttributeReadOnly},
-	{"lock_hint",           get_lock_hint_cb,           NULL,          kJSPropertyAttributeReadOnly},
+	{"can_suspend",         get_can_suspend_cb,         NULL,          kJSPropertyAttributeReadOnly},
+	{"default_session",     get_default_session_cb,     NULL,          kJSPropertyAttributeReadOnly},
 	{"has_guest_account",   get_has_guest_account_cb,   NULL,          kJSPropertyAttributeReadOnly},
 	{"hide_users",          get_hide_users_cb,          NULL,          kJSPropertyAttributeReadOnly},
-	{"select_user",         get_select_user_cb,         NULL,          kJSPropertyAttributeReadOnly},
-	{"select_guest",        get_select_guest_cb,        NULL,          kJSPropertyAttributeReadOnly},
-	{"autologin_user",      get_autologin_user_cb,      NULL,          kJSPropertyAttributeReadOnly},
-	{"autologin_guest",     get_autologin_guest_cb,     NULL,          kJSPropertyAttributeReadOnly},
-	{"autologin_timeout",   get_autologin_timeout_cb,   NULL,          kJSPropertyAttributeReadOnly},
+	{"hostname",            get_hostname_cb,            NULL,          kJSPropertyAttributeReadOnly},
+	{"in_authentication",   get_in_authentication_cb,   NULL,          kJSPropertyAttributeReadOnly},
+	{"is_authenticated",    get_is_authenticated_cb,    NULL,          kJSPropertyAttributeReadOnly},
+	{"language",            get_language_cb,            NULL,          kJSPropertyAttributeReadOnly},
+	{"languages",           get_languages_cb,           NULL,          kJSPropertyAttributeReadOnly},
+	{"layout",              get_layout_cb,              set_layout_cb, kJSPropertyAttributeNone},
+	{"layouts",             get_layouts_cb,             NULL,          kJSPropertyAttributeReadOnly},
+	{"lock_hint",           get_lock_hint_cb,           NULL,          kJSPropertyAttributeReadOnly},
+	{"num_users",           get_num_users_cb,           NULL,          kJSPropertyAttributeReadOnly},
+	{"select_guest",        get_select_guest_hint_cb,   NULL,          kJSPropertyAttributeReadOnly},
+	{"select_user",         get_select_user_hint_cb,    NULL,          kJSPropertyAttributeReadOnly},
+	{"sessions",            get_sessions_cb,            NULL,          kJSPropertyAttributeReadOnly},
+	{"users",               get_users_cb,               NULL,          kJSPropertyAttributeReadOnly},
+	/* ------>>> DEPRECATED! <<<----------->>> DEPRECATED! <<<------------>>> DEPRECATED! <<<------*/
+	{"default_language",    get_language_cb,            NULL,          kJSPropertyAttributeReadOnly},
+	{"default_layout",      get_layout_cb,              NULL,          kJSPropertyAttributeReadOnly},
+	{"timed_login_delay",   get_autologin_timeout_cb,   NULL,          kJSPropertyAttributeReadOnly},
+	{"timed_login_user",    get_autologin_user_cb,      NULL,          kJSPropertyAttributeReadOnly},
+	/* ------>>> DEPRECATED! <<<----------->>> DEPRECATED! <<<------------>>> DEPRECATED! <<<------*/
 	{NULL,                  NULL,                       NULL,          0}};
 
 static const JSStaticFunction lightdm_greeter_functions[] = {
-	{"cancel_timed_login",    cancel_autologin_cb,      kJSPropertyAttributeReadOnly}, /* Deprecated */
-	{"cancel_autologin",      cancel_autologin_cb,      kJSPropertyAttributeReadOnly},
-	{"start_authentication",  authenticate_cb,          kJSPropertyAttributeReadOnly}, /* Deprecated */
 	{"authenticate",          authenticate_cb,          kJSPropertyAttributeReadOnly},
 	{"authenticate_as_guest", authenticate_as_guest_cb, kJSPropertyAttributeReadOnly},
-	{"respond",               respond_cb,               kJSPropertyAttributeReadOnly},
-	{"provide_secret",        respond_cb,               kJSPropertyAttributeReadOnly}, /* Deprecated */
 	{"cancel_authentication", cancel_authentication_cb, kJSPropertyAttributeReadOnly},
-	{"suspend",               suspend_cb,               kJSPropertyAttributeReadOnly},
-	{"hibernate",             hibernate_cb,             kJSPropertyAttributeReadOnly},
-	{"restart",               restart_cb,               kJSPropertyAttributeReadOnly},
-	{"shutdown",              shutdown_cb,              kJSPropertyAttributeReadOnly},
-	{"set_language",          set_language_cb,          kJSPropertyAttributeReadOnly},
-	{"login",                 start_session_sync_cb,    kJSPropertyAttributeReadOnly}, /* Deprecated */
-	{"start_session_sync",    start_session_sync_cb,    kJSPropertyAttributeReadOnly},
+	{"cancel_autologin",      cancel_autologin_cb,      kJSPropertyAttributeReadOnly},
 	{"get_hint",              get_hint_cb,              kJSPropertyAttributeReadOnly},
+	{"hibernate",             hibernate_cb,             kJSPropertyAttributeReadOnly},
+	{"respond",               respond_cb,               kJSPropertyAttributeReadOnly},
+	{"restart",               restart_cb,               kJSPropertyAttributeReadOnly},
+	{"set_language",          set_language_cb,          kJSPropertyAttributeReadOnly},
+	{"shutdown",              shutdown_cb,              kJSPropertyAttributeReadOnly},
+	{"start_session",         start_session_cb,         kJSPropertyAttributeReadOnly},
+	{"suspend",               suspend_cb,               kJSPropertyAttributeReadOnly},
+	/* -------->>> DEPRECATED! <<<---------------------->>> DEPRECATED! <<<---------*/
+	{"cancel_timed_login",    cancel_autologin_cb,      kJSPropertyAttributeReadOnly},
+	{"login",                 start_session_cb,         kJSPropertyAttributeReadOnly},
+	{"provide_secret",        respond_cb,               kJSPropertyAttributeReadOnly},
+	{"start_authentication",  authenticate_cb,          kJSPropertyAttributeReadOnly},
+	{"start_session_sync",    start_session_cb,         kJSPropertyAttributeReadOnly},
+	/* -------->>> DEPRECATED! <<<---------------------->>> DEPRECATED! <<<---------*/
 	{NULL,                    NULL,                     0}};
 
 static const JSStaticFunction gettext_functions[] = {

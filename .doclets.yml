@@ -1,0 +1,4 @@
+files:
+  - themes/_vendor/js/mock.js
+articles:
+  - Overview: README.md
