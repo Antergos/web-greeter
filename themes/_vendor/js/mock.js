@@ -30,8 +30,8 @@ if ('undefined' !== typeof lightdm) {
 }
 
 /**
- * Interface for accessing info about a session. {@link LightDMSession} objects are not
- * instantiated by the theme's code, but rather by the {@link LightDMGreeter} class.
+ * Interface for accessing info about a session. Session objects are not
+ * instantiated by the theme's code, but rather by the {@link lightdm} class.
  */
 const LightDMSession = class {
 
@@ -405,6 +405,7 @@ const lightdm = class LightDMGreeter {
 }
 
 // mock lighdm for testing
+/*
 if (typeof lightdm == 'undefined') {
 	lightdm = {};
 	lightdm.hostname = "test-host";
@@ -661,3 +662,4 @@ function _lightdm_mock_get_user(username) {
 	}
 	return user;
 }
+*/
