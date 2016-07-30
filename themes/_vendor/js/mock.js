@@ -33,7 +33,7 @@ if ('undefined' !== typeof lightdm) {
 /**
  * Class which implements the LightDMGreeter Interface.
  */
-class LightDMGreeter {
+const Greeter = class LightDMGreeter {
 
 	constructor() {
 		this._initialize_properties();
