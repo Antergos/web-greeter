@@ -29,11 +29,55 @@ if ('undefined' !== typeof lightdm) {
 	throw new Error('Cannot use LightDM Mock while the greeter is running!');
 }
 
+/**
+ * Interface for accessing info about a session. {@link LightDMSession} objects are not
+ * instantiated by the theme's code, but rather by the {@link LightDMGreeter} class.
+ */
+const LightDMSession = class {
+
+	/**
+	 * @private
+	 */
+	constructor() {
+		this._name = '';
+		this._key = '';
+		this._comment = '';
+	}
+
+	/**
+	 * The comment for the session.
+	 * @type {String}
+	 * @readonly
+	 */
+	get comment() {
+		return this._comment;
+	}
+
+	/**
+	 * The key for the session.
+	 * @type {String}
+	 * @readonly
+	 */
+	get key() {
+		return this._key;
+	}
+
+	/**
+	 * The name for the session.
+	 * @type {String}
+	 * @readonly
+	 */
+	get name() {
+		return this._name;
+	}
+
+};
+
 
 /**
  * Class which implements the LightDMGreeter Interface.
  */
-const Greeter = class LightDMGreeter {
+const lightdm = class LightDMGreeter {
 
 	constructor() {
 		this._initialize_properties();
