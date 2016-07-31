@@ -25,26 +25,184 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+let _greeter = null;
+
 if ('undefined' !== typeof lightdm) {
 	throw new Error('Cannot use LightDM Mock while the greeter is running!');
 }
 
-let LightDMGreeter,
-	LightDMSession,
-	LightDMUser,
-	LightDMLanguage,
-	LightDMLayout;
 
-window.lightdm = {};
+/**
+ * Interface for object that holds info about a session. Session objects are not
+ * created by the theme's code, but rather by the {@link lightdm} class.
+ * @interface
+ */
+let LightDMSession = {
+	/**
+	 * The comment for the session.
+	 * @type {String}
+	 * @readonly
+	 */
+	comment: '',
+
+	/**
+	 * The key for the session.
+	 * @type {String}
+	 * @readonly
+	 */
+	key: '',
+
+	/**
+	 * The name for the session.
+	 * @type {String}
+	 * @readonly
+	 */
+	name: ''
+};
 
 
 /**
- * Class which implements the LightDMGreeter Interface.
+ * Interface for object that holds info about a language on this system. Language objects are not
+ * created by the theme's code, but rather by the {@link lightdm} class.
+ * @interface
  */
-LightDMGreeter = class {
+let LightDMLanguage = {
+	/**
+	 * The code for the language.
+	 * @type {String}
+	 * @readonly
+	 */
+	code: '',
+
+	/**
+	 * The name for the language.
+	 * @type {String}
+	 * @readonly
+	 */
+	name: '',
+
+	/**
+	 * The territory for the language.
+	 * @type {String}
+	 * @readonly
+	 */
+	territory: ''
+};
+
+
+/**
+ * Interface for object that holds info about a keyboard layout on this system. Language
+ * objects are not created by the theme's code, but rather by the {@link lightdm} class.
+ * @interface
+ */
+let LightDMLayout = {
+	/**
+	 * The description for the layout.
+	 * @type {String}
+	 * @readonly
+	 */
+	description: '',
+
+	/**
+	 * The name for the layout.
+	 * @type {String}
+	 * @readonly
+	 */
+	name: '',
+
+	/**
+	 * The territory for the layout.
+	 * @type {String}
+	 * @readonly
+	 */
+	short_description: ''
+};
+
+
+/**
+ * Interface for object that holds info about a user account on this system. User
+ * objects are not created by the theme's code, but rather by the {@link lightdm} class.
+ * @interface
+ */
+let LightDMUser = {
+	/**
+	 * The display name for the user.
+	 * @type {String}
+	 */
+	display_name: '',
+
+	/**
+	 * The language for the user.
+	 * @type {String}
+	 */
+	language: '',
+
+	/**
+	 * The keyboard layout for the user.
+	 * @type {String}
+	 */
+	layout: '',
+
+	/**
+	 * The image for the user.
+	 * @type {String}
+	 */
+	image: '',
+
+	/**
+	 * The home_directory for the user.
+	 * @type {String}
+	 */
+	home_directory: '',
+
+	/**
+	 * The username for the user.
+	 * @type {String}
+	 */
+	username: '',
+
+	/**
+	 * Whether or not the user is currently logged in.
+	 * @type {Boolean}
+	 */
+	logged_in: false,
+
+	/**
+	 * The last session that the user logged into.
+	 * @type {String|null}
+	 */
+	session: '',
+
+	/**
+	 * @deprecated See {@link LightDMUser.username}.
+	 * @type {String}
+	 */
+	name: '',
+
+	/**
+	 * @deprecated See {@link LightDMUser.display_name}.
+	 * @type {String}
+	 */
+	real_name: ''
+};
+
+
+/**
+ * Singleton class which implements the LightDMGreeter Interface. Greeter themes will
+ * interact directly with this class to facilitate the user log in processes.
+ * The greeter will automatically create an instance of this class when it starts.
+ * The instance can be accessed through the {@link lightdm} global variable.
+ */
+window.lightdm = class LightDMGreeter {
 
 	constructor() {
+		if ( null !== _greeter ) {
+			return _greeter;
+		}
+
+		_greeter = this;
 		this._mock_data = MockData;
+
 		this._initialize();
 	}
 
@@ -367,242 +525,9 @@ LightDMGreeter = class {
 };
 
 /**
- * Interface for object that holds info about a session. Session objects are not
- * created by the theme's code, but rather by the {@link lightdm} class.
+ * Mock data to simulate the greeter's API in any web browser.
+ * @type {Object}
  */
-LightDMSession = class {
-	/**
-	 * @private
-	 */
-	constructor( {name, key, comment} ) {
-		this._name = name;
-		this._key = key;
-		this._comment = comment;
-	}
-
-	/**
-	 * The comment for the session.
-	 * @type {String}
-	 * @readonly
-	 */
-	get comment() {
-		return this._comment;
-	}
-
-	/**
-	 * The key for the session.
-	 * @type {String}
-	 * @readonly
-	 */
-	get key() {
-		return this._key;
-	}
-
-	/**
-	 * The name for the session.
-	 * @type {String}
-	 * @readonly
-	 */
-	get name() {
-		return this._name;
-	}
-
-};
-
-
-/**
- * Interface for object that holds info about a language on this system. Language objects are not
- * created by the theme's code, but rather by the {@link lightdm} class.
- */
-LightDMLanguage = class {
-	/**
-	 * @private
-	 */
-	constructor( {name, code, territory} ) {
-		this._name = name;
-		this._code = code;
-		this._territory = territory;
-	}
-
-	/**
-	 * The code for the language.
-	 * @type {String}
-	 * @readonly
-	 */
-	get code() {
-		return this._code;
-	}
-
-	/**
-	 * The name for the language.
-	 * @type {String}
-	 * @readonly
-	 */
-	get name() {
-		return this._name;
-	}
-
-	/**
-	 * The territory for the language.
-	 * @type {String}
-	 * @readonly
-	 */
-	get territory() {
-		return this._territory;
-	}
-
-};
-
-/**
- * Interface for object that holds info about a keyboard layout on this system. Language
- * objects are not created by the theme's code, but rather by the {@link lightdm} class.
- */
-LightDMLayout = class {
-	/**
-	 * @private
-	 */
-	constructor( {name, short_description, description} ) {
-		this._name = name;
-		this._short_description = short_description;
-		this._description = description;
-	}
-
-	/**
-	 * The description for the layout.
-	 * @type {String}
-	 * @readonly
-	 */
-	get description() {
-		return this._description;
-	}
-
-	/**
-	 * The name for the layout.
-	 * @type {String}
-	 * @readonly
-	 */
-	get name() {
-		return this._name;
-	}
-
-	/**
-	 * The territory for the layout.
-	 * @type {String}
-	 * @readonly
-	 */
-	get short_description() {
-		return this._short_description;
-	}
-
-};
-
-
-/**
- * Interface for object that holds info about a user account on this system. User
- * objects are not created by the theme's code, but rather by the {@link lightdm} class.
- */
-LightDMUser = class {
-	/**
-	 * @private
-	 */
-	constructor( user_info ) {
-		for ( let property_name of user_info.keys() ) {
-			this[`_${property_name}`] = user_info[property_name];
-		}
-	}
-
-	/**
-	 * The display name for the user.
-	 * @type {String}
-	 * @readonly
-	 */
-	get display_name() {
-		return this._display_name;
-	}
-
-	/**
-	 * The language for the user.
-	 * @type {String}
-	 * @readonly
-	 */
-	get language() {
-		return this._language;
-	}
-
-	/**
-	 * The keyboard layout for the user.
-	 * @type {String}
-	 * @readonly
-	 */
-	get layout() {
-		return this._layout;
-	}
-
-	/**
-	 * The image for the user.
-	 * @type {String}
-	 * @readonly
-	 */
-	get image() {
-		return this._image;
-	}
-
-	/**
-	 * The home_directory for the user.
-	 * @type {String}
-	 * @readonly
-	 */
-	get home_directory() {
-		return this._home_directory;
-	}
-
-	/**
-	 * The username for the user.
-	 * @type {String}
-	 * @readonly
-	 */
-	get username() {
-		return this._username;
-	}
-
-	/**
-	 * Whether or not the user is currently logged in.
-	 * @type {Boolean}
-	 * @readonly
-	 */
-	get logged_in() {
-		return this._logged_in;
-	}
-
-	/**
-	 * The last session that the user logged into.
-	 * @type {String|null}
-	 * @readonly
-	 */
-	get session() {
-		return this._session;
-	}
-
-	/**
-	 * @deprecated See {@link LightDMUser.username}.
-	 * @type {String}
-	 * @readonly
-	 */
-	get name() {
-		return this._username;
-	}
-
-	/**
-	 * @deprecated See {@link LightDMUser.display_name}.
-	 * @type {String}
-	 * @readonly
-	 */
-	get real_name() {
-		return this._display_name;
-	}
-
-};
-
 const MockData = {
 	greeter: {
 		default_values: {string: '', int: 0, bool: false, list: [], 'null': null},
@@ -619,24 +544,92 @@ const MockData = {
 			'null': ['language', 'layout']
 		}
 	},
+	/**
+	 * @property {Object[]} languages
+	 */
 	languages: [
+		/**
+		 * @implements {LightDMLanguage}
+		 * @instance
+		 */
 		{name: 'English', code: 'en_US.utf8', territory: 'USA'},
+		/**
+		 * @implements {LightDMLanguage}
+		 * @instance
+		 */
 		{name: 'Catalan', code: 'ca_ES.utf8', territory: 'Spain'},
+		/**
+		 * @implements {LightDMLanguage}
+		 * @instance
+		 */
 		{name: 'French', code: 'fr_FR.utf8', territory: 'France'}
 	],
+	/**
+	 * @property {Object[]} layouts
+	 */
 	layouts: [
+		/** @implements {LightDMLayout} */
 		{name: 'us', short_description: 'en', description: 'English (US)'},
+		/** @implements {LightDMLayout} */
 		{name: 'at', short_description: 'de', description: 'German (Austria)'},
+		/** @implements {LightDMLayout} */
 		{name: 'us rus', short_description: 'ru', description: 'Russian (US, phonetic)'}
 	],
-	sessions: [
-		{key: 'gnome', name: 'GNOME', comment: 'This session logs you into GNOME'},
-		{key: 'cinnamon', name: 'Cinnamon', comment: 'This session logs you into Cinnamon'},
-		{key: 'plasma', name: 'Plasma', comment: 'Plasma by KDE'},
-		{key: 'mate', name: 'MATE', comment: 'This session logs you into MATE'},
-		{key: 'openbox', name: 'Openbox', comment: 'This session logs you into Openbox'}
-	],
+	/**
+	 * @property {Object} sessions
+	 */
+	sessions: {
+		/**
+		 * @property {Object} gnome
+		 * @implements {LightDMSession}
+		 */
+		gnome: {
+			key: 'gnome',
+			name: 'GNOME',
+			comment: 'This session logs you into GNOME'
+		},
+		/**
+		 * @property {Object} cinnamon
+		 * @implements {LightDMSession}
+		 */
+		cinnamon: {
+			key: 'cinnamon',
+			name: 'Cinnamon',
+			comment: 'This session logs you into Cinnamon'
+		},
+		/**
+		 * @property {Object} plasma
+		 * @implements {LightDMSession}
+		 */
+		plasma: {
+			key: 'plasma',
+			name: 'Plasma',
+			comment: 'Plasma by KDE'
+		},
+		/**
+		 * @property {Object} mate
+		 * @implements {LightDMSession}
+		 */
+		mate: {
+			key: 'mate',
+			name: 'MATE',
+			comment: 'This session logs you into MATE'
+		},
+		/**
+		 * @property {Object} openbox
+		 * @implements {LightDMSession}
+		 */
+		openbox: {
+			key: 'openbox',
+			name: 'Openbox',
+			comment: 'This session logs you into Openbox'
+		}
+	},
+	/**
+	 * @property {Object[]} users
+	 */
 	users: [
+		/** @implements {LightDMUser} */
 		{
 			display_name: 'Clark Kent',
 			language: null,
@@ -646,11 +639,11 @@ const MockData = {
 			username: 'superman',
 			logged_in: false,
 			session: 'gnome',
-			/* --->> DEPRECATED! <<--- */
+
 			name: 'superman',
 			real_name: 'Clark Kent'
-			/* --->> DEPRECATED! <<--- */
 		},
+		/** @implements {LightDMUser} */
 		{
 			display_name: 'Bruce Wayne',
 			language: null,
@@ -660,11 +653,11 @@ const MockData = {
 			username: 'batman',
 			logged_in: false,
 			session: 'cinnamon',
-			/* --->> DEPRECATED! <<--- */
+
 			name: 'batman',
 			real_name: 'Bruce Wayne'
-			/* --->> DEPRECATED! <<--- */
 		},
+		/** @implements {LightDMUser} */
 		{
 			display_name: 'Peter Parker',
 			language: null,
@@ -674,10 +667,9 @@ const MockData = {
 			username: 'spiderman',
 			logged_in: false,
 			session: 'MATE',
-			/* --->> DEPRECATED! <<--- */
+
 			name: 'spiderman',
 			real_name: 'Peter Parker'
-			/* --->> DEPRECATED! <<--- */
 		}
 	]
 };
@@ -826,4 +818,4 @@ function _lightdm_mock_get_user(username) {
 }
 */
 
-window.lightdm = new LightDMGreeter();
+new window.lightdm();
