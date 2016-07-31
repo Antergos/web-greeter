@@ -29,49 +29,7 @@ if ('undefined' !== typeof lightdm) {
 	throw new Error('Cannot use LightDM Mock while the greeter is running!');
 }
 
-/**
- * Interface for accessing info about a session. Session objects are not
- * instantiated by the theme's code, but rather by the {@link lightdm} class.
- */
-const LightDMSession = class {
-
-	/**
-	 * @private
-	 */
-	constructor() {
-		this._name = '';
-		this._key = '';
-		this._comment = '';
-	}
-
-	/**
-	 * The comment for the session.
-	 * @type {String}
-	 * @readonly
-	 */
-	get comment() {
-		return this._comment;
-	}
-
-	/**
-	 * The key for the session.
-	 * @type {String}
-	 * @readonly
-	 */
-	get key() {
-		return this._key;
-	}
-
-	/**
-	 * The name for the session.
-	 * @type {String}
-	 * @readonly
-	 */
-	get name() {
-		return this._name;
-	}
-
-};
+let LightDMSession, LightDMUser, LightDMLanguage, LightDMLayout;
 
 
 /**
@@ -94,8 +52,13 @@ const lightdm = class LightDMGreeter {
 			}
 		}
 
-		for ( let list_key of ['users', 'sessions', 'languages', 'layouts'] ) {
-			this[list_key] = this._mock_data[list_key];
+		for ( let object_type of ['sessions', 'users', 'languages', 'layouts'] ) {
+			let object_name = object_type.slice(0, -1).capitalize(),
+				ObjectClass = `LightDM${object_name}`;
+
+			for ( let object_info of this._mock_data[object_type] ) {
+				this[object_type].push( new ObjectClass( object_info ) );
+			}
 		}
 	}
 
@@ -394,6 +357,101 @@ const lightdm = class LightDMGreeter {
 	 * @returns {Boolean} {@link true} if suspend/sleep initiated, otherwise {@link false}
 	 */
 	suspend() {}
+
+};
+
+/**
+ * Interface for object that holds info about a session. Session objects are not
+ * created by the theme's code, but rather by the {@link lightdm} class.
+ *
+ * @property {String} name    The name for the session.
+ * @property {String} key     The key for the session.
+ * @property {String} comment The comment for the session.
+ */
+LightDMSession = class {
+	/**
+	 * @private
+	 */
+	constructor( {name, key, comment} ) {
+		this._name = name;
+		this._key = key;
+		this._comment = comment;
+	}
+
+	/**
+	 * The comment for the session.
+	 * @type {String}
+	 * @readonly
+	 */
+	get comment() {
+		return this._comment;
+	}
+
+	/**
+	 * The key for the session.
+	 * @type {String}
+	 * @readonly
+	 */
+	get key() {
+		return this._key;
+	}
+
+	/**
+	 * The name for the session.
+	 * @type {String}
+	 * @readonly
+	 */
+	get name() {
+		return this._name;
+	}
+
+};
+
+
+/**
+ * Interface for object that holds info about a language on this system. Language objects are not
+ * created by the theme's code, but rather by the {@link lightdm} class.
+ *
+ * @property {String} name      The name for the language.
+ * @property {String} code      The code for the language.
+ * @property {String} territory The territory for the language.
+ */
+LightDMLanguage = class {
+	/**
+	 * @private
+	 */
+	constructor( {name, code, territory} ) {
+		this._name = name;
+		this._code = code;
+		this._territory = territory;
+	}
+
+	/**
+	 * The code for the language.
+	 * @type {String}
+	 * @readonly
+	 */
+	get code() {
+		return this._code;
+	}
+
+	/**
+	 * The name for the language.
+	 * @type {String}
+	 * @readonly
+	 */
+	get name() {
+		return this._name;
+	}
+
+	/**
+	 * The territory for the language.
+	 * @type {String}
+	 * @readonly
+	 */
+	get territory() {
+		return this._territory;
+	}
 
 };
 
