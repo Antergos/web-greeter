@@ -29,13 +29,14 @@ if ('undefined' !== typeof lightdm) {
 	throw new Error('Cannot use LightDM Mock while the greeter is running!');
 }
 
-let LightDMSession, LightDMUser, LightDMLanguage, LightDMLayout;
+let LightDMGreeter, LightDMSession, LightDMUser, LightDMLanguage, LightDMLayout, lightdm;
 
 
 /**
  * Class which implements the LightDMGreeter Interface.
+ * @alias lightdm
  */
-const lightdm = class LightDMGreeter {
+LightDMGreeter = class {
 
 	constructor() {
 		this._mock_data = MockData;
