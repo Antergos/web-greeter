@@ -29,7 +29,13 @@ if ('undefined' !== typeof lightdm) {
 	throw new Error('Cannot use LightDM Mock while the greeter is running!');
 }
 
-let LightDMGreeter, LightDMSession, LightDMUser, LightDMLanguage, LightDMLayout, lightdm;
+let LightDMGreeter,
+	LightDMSession,
+	LightDMUser,
+	LightDMLanguage,
+	LightDMLayout;
+
+window.lightdm = {};
 
 
 /**
@@ -40,13 +46,13 @@ LightDMGreeter = class {
 
 	constructor() {
 		this._mock_data = MockData;
-		this._initialize_properties();
+		this._initialize();
 	}
 
 	/**
-	 * @ignore
+	 * @private
 	 */
-	_initialize_properties() {
+	_initialize() {
 		for ( let property_type of this._mock_data.properties.keys() ) {
 			for ( let property of this._mock_data.properties[property_type] ) {
 				this[`_${property}`] = this._mock_data.default_values[property_type];
@@ -364,10 +370,6 @@ LightDMGreeter = class {
 /**
  * Interface for object that holds info about a session. Session objects are not
  * created by the theme's code, but rather by the {@link lightdm} class.
- *
- * @property {String} name    The name for the session.
- * @property {String} key     The key for the session.
- * @property {String} comment The comment for the session.
  */
 LightDMSession = class {
 	/**
@@ -412,10 +414,6 @@ LightDMSession = class {
 /**
  * Interface for object that holds info about a language on this system. Language objects are not
  * created by the theme's code, but rather by the {@link lightdm} class.
- *
- * @property {String} name      The name for the language.
- * @property {String} code      The code for the language.
- * @property {String} territory The territory for the language.
  */
 LightDMLanguage = class {
 	/**
@@ -452,6 +450,156 @@ LightDMLanguage = class {
 	 */
 	get territory() {
 		return this._territory;
+	}
+
+};
+
+/**
+ * Interface for object that holds info about a keyboard layout on this system. Language
+ * objects are not created by the theme's code, but rather by the {@link lightdm} class.
+ */
+LightDMLayout = class {
+	/**
+	 * @private
+	 */
+	constructor( {name, short_description, description} ) {
+		this._name = name;
+		this._short_description = short_description;
+		this._description = description;
+	}
+
+	/**
+	 * The description for the layout.
+	 * @type {String}
+	 * @readonly
+	 */
+	get description() {
+		return this._description;
+	}
+
+	/**
+	 * The name for the layout.
+	 * @type {String}
+	 * @readonly
+	 */
+	get name() {
+		return this._name;
+	}
+
+	/**
+	 * The territory for the layout.
+	 * @type {String}
+	 * @readonly
+	 */
+	get short_description() {
+		return this._short_description;
+	}
+
+};
+
+
+/**
+ * Interface for object that holds info about a user account on this system. User
+ * objects are not created by the theme's code, but rather by the {@link lightdm} class.
+ */
+LightDMUser = class {
+	/**
+	 * @private
+	 */
+	constructor( user_info ) {
+		for ( let property_name of user_info.keys() ) {
+			this[`_${property_name}`] = user_info[property_name];
+		}
+	}
+
+	/**
+	 * The display name for the user.
+	 * @type {String}
+	 * @readonly
+	 */
+	get display_name() {
+		return this._display_name;
+	}
+
+	/**
+	 * The language for the user.
+	 * @type {String}
+	 * @readonly
+	 */
+	get language() {
+		return this._language;
+	}
+
+	/**
+	 * The keyboard layout for the user.
+	 * @type {String}
+	 * @readonly
+	 */
+	get layout() {
+		return this._layout;
+	}
+
+	/**
+	 * The image for the user.
+	 * @type {String}
+	 * @readonly
+	 */
+	get image() {
+		return this._image;
+	}
+
+	/**
+	 * The home_directory for the user.
+	 * @type {String}
+	 * @readonly
+	 */
+	get home_directory() {
+		return this._home_directory;
+	}
+
+	/**
+	 * The username for the user.
+	 * @type {String}
+	 * @readonly
+	 */
+	get username() {
+		return this._username;
+	}
+
+	/**
+	 * Whether or not the user is currently logged in.
+	 * @type {Boolean}
+	 * @readonly
+	 */
+	get logged_in() {
+		return this._logged_in;
+	}
+
+	/**
+	 * The last session that the user logged into.
+	 * @type {String|null}
+	 * @readonly
+	 */
+	get session() {
+		return this._session;
+	}
+
+	/**
+	 * @deprecated See {@link LightDMUser.username}.
+	 * @type {String}
+	 * @readonly
+	 */
+	get name() {
+		return this._username;
+	}
+
+	/**
+	 * @deprecated See {@link LightDMUser.display_name}.
+	 * @type {String}
+	 * @readonly
+	 */
+	get real_name() {
+		return this._display_name;
 	}
 
 };
@@ -678,3 +826,5 @@ function _lightdm_mock_get_user(username) {
 	return user;
 }
 */
+
+window.lightdm = new LightDMGreeter();
