@@ -40,7 +40,6 @@ window.lightdm = {};
 
 /**
  * Class which implements the LightDMGreeter Interface.
- * @alias lightdm
  */
 LightDMGreeter = class {
 
