@@ -209,7 +209,7 @@ let LightDMUser = {
  * The greeter will automatically create an instance of this class when it starts.
  * The instance can be accessed through the {@link window.lightdm} global variable.
  */
-window.lightdm = new (class LightDMGreeter {
+class LightDMGreeter {
 
 	constructor() {
 		if ( null !== _greeter ) {
@@ -538,7 +538,7 @@ window.lightdm = new (class LightDMGreeter {
 	 */
 	suspend() {}
 
-})();
+}
 
 /**
  * Mock data to simulate the greeter's API in any web browser.
@@ -619,6 +619,8 @@ const MockData = {
 		}
 	]
 };
+
+window.lightdm = new LightDMGreeter();
 
 
 // mock lighdm for testing
