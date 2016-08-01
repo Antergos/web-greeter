@@ -25,165 +25,172 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-let _greeter = null;
+let _greeter = null, MockData;
 
 if ('undefined' !== typeof lightdm) {
 	throw new Error('Cannot use LightDM Mock while the greeter is running!');
 }
 
+/**
+ * @ignore
+ */
+String.prototype.capitalize = function() {
+	return this.charAt( 0 ).toUpperCase() + this.slice( 1 );
+};
+
 
 /**
  * Interface for object that holds info about a session. Session objects are not
- * created by the theme's code, but rather by the {@link window.lightdm} class.
+ * created by the theme's code, but rather by the {@link LightDMGreeter} class.
  * @type {Object}
  * @interface
  */
-let LightDMSession = {
+let LightDMSession = ({comment, key, name}) => ({
 	/**
 	 * The comment for the session.
 	 * @type {String}
 	 * @readonly
 	 */
-	comment: '',
+	comment,
 
 	/**
 	 * The key for the session.
 	 * @type {String}
 	 * @readonly
 	 */
-	key: '',
+	key,
 
 	/**
 	 * The name for the session.
 	 * @type {String}
 	 * @readonly
 	 */
-	name: ''
-};
+	name
+});
 
 
 /**
  * Interface for object that holds info about a language on this system. Language objects are not
- * created by the theme's code, but rather by the {@link window.lightdm} class.
+ * created by the theme's code, but rather by the {@link LightDMGreeter} class.
  * @type {Object}
  * @interface
  */
-let LightDMLanguage = {
+let LightDMLanguage = ({code, name, territory}) => ({
 	/**
 	 * The code for the language.
 	 * @type {String}
 	 * @readonly
 	 */
-	code: '',
+	code,
 
 	/**
 	 * The name for the language.
 	 * @type {String}
 	 * @readonly
 	 */
-	name: '',
+	name,
 
 	/**
 	 * The territory for the language.
 	 * @type {String}
 	 * @readonly
 	 */
-	territory: ''
-};
+	territory
+});
 
 
 /**
  * Interface for object that holds info about a keyboard layout on this system. Language
- * objects are not created by the theme's code, but rather by the {@link window.lightdm} class.
+ * objects are not created by the theme's code, but rather by the {@link LightDMGreeter} class.
  * @type {Object}
  * @interface
  */
-let LightDMLayout = {
+let LightDMLayout = ({description, name, short_description}) => ({
 	/**
 	 * The description for the layout.
 	 * @type {String}
 	 * @readonly
 	 */
-	description: '',
+	description,
 
 	/**
 	 * The name for the layout.
 	 * @type {String}
 	 * @readonly
 	 */
-	name: '',
+	name,
 
 	/**
 	 * The territory for the layout.
 	 * @type {String}
 	 * @readonly
 	 */
-	short_description: ''
-};
+	short_description
+});
 
 
 /**
  * Interface for object that holds info about a user account on this system. User
- * objects are not created by the theme's code, but rather by the {@link window.lightdm} class.
+ * objects are not created by the theme's code, but rather by the {@link LightDMGreeter} class.
  * @type {Object}
  * @interface
  */
-let LightDMUser = {
+let LightDMUser = ( user_info ) => ({
 	/**
 	 * The display name for the user.
 	 * @type {String}
 	 * @readonly
 	 */
-	display_name: '',
+	display_name: user_info.display_name || '',
 
 	/**
 	 * The language for the user.
 	 * @type {String}
 	 * @readonly
 	 */
-	language: '',
+	language: user_info.language || '',
 
 	/**
 	 * The keyboard layout for the user.
 	 * @type {String}
 	 * @readonly
 	 */
-	layout: '',
+	layout: user_info.layout || '',
 
 	/**
 	 * The image for the user.
 	 * @type {String}
 	 * @readonly
 	 */
-	image: '',
+	image: user_info.image || '',
 
 	/**
 	 * The home_directory for the user.
 	 * @type {String}
 	 * @readonly
 	 */
-	home_directory: '',
+	home_directory: user_info.home_directory || '',
 
 	/**
 	 * The username for the user.
 	 * @type {String}
 	 * @readonly
 	 */
-	username: '',
+	username: user_info.username || '',
 
 	/**
 	 * Whether or not the user is currently logged in.
 	 * @type {Boolean}
 	 * @readonly
 	 */
-	logged_in: false,
+	logged_in: user_info.logged_in || false,
 
 	/**
 	 * The last session that the user logged into.
 	 * @type {String|null}
 	 * @readonly
 	 */
-	session: '',
+	session: user_info.session || '',
 
 	/**
 	 * DEPRECATED!
@@ -191,7 +198,7 @@ let LightDMUser = {
 	 * @type {String}
 	 * @readonly
 	 */
-	name: '',
+	name: user_info.name || '',
 
 	/**
 	 * DEPRECATED!
@@ -199,7 +206,17 @@ let LightDMUser = {
 	 * @type {String}
 	 * @readonly
 	 */
-	real_name: ''
+	real_name: user_info.real_name || ''
+});
+
+/**
+ * @ignore
+ */
+let MockObjects = {
+	LightDMLanguage: LightDMLanguage,
+	LightDMLayout: LightDMLayout,
+	LightDMSession: LightDMSession,
+	LightDMUser: LightDMUser,
 };
 
 
@@ -207,7 +224,7 @@ let LightDMUser = {
  * Singleton class which implements the LightDMGreeter Interface. Greeter themes will
  * interact directly with this class to facilitate the user log in processes.
  * The greeter will automatically create an instance of this class when it starts.
- * The instance can be accessed through the {@link window.lightdm} global variable.
+ * The instance can be accessed with the global variable: `lightdm`.
  */
 class LightDMGreeter {
 
@@ -217,7 +234,7 @@ class LightDMGreeter {
 		}
 
 		_greeter = this;
-		this._mock_data = MockData;
+		this._mock_data = MockData();
 
 		this._initialize();
 	}
@@ -225,21 +242,49 @@ class LightDMGreeter {
 	/**
 	 * @private
 	 */
-	_initialize() {
-		for ( let property_type of this._mock_data.properties.keys() ) {
-			for ( let property of this._mock_data.properties[property_type] ) {
-				this[`_${property}`] = this._mock_data.default_values[property_type];
-			}
-		}
+	_do_mocked_system_action( action ) {
+		alert(`System ${action} triggered.`);
+		document.location.reload(true);
+		return true;
+	}
 
+	/**
+	 * @private
+	 */
+	_initialize() {
+		this._set_default_property_values();
+	}
+
+	/**
+	 * @private
+	 */
+	_populate_ldm_object_arrays() {
 		for ( let object_type of ['sessions', 'users', 'languages', 'layouts'] ) {
 			let object_name = object_type.slice(0, -1).capitalize(),
-				ObjectClass = `LightDM${object_name}`;
+					ObjectClass = `LightDM${object_name}`;
 
 			for ( let object_info of this._mock_data[object_type] ) {
-				this[object_type].push( new ObjectClass( object_info ) );
+				this[object_type].push( MockObjects[ObjectClass]( object_info ) );
 			}
 		}
+	}
+
+	/**
+	 * @private
+	 */
+	_set_default_property_values() {
+		for ( let property_type of Object.keys( this._mock_data.greeter.properties ) ) {
+			for ( let property of this._mock_data.greeter.properties[property_type] ) {
+				if ( property.indexOf('can_') > -1 ) {
+					// System Power Actions
+					this[`_${property}`] = true;
+				} else {
+					this[`_${property}`] = this._mock_data.greeter.default_values[property_type]();
+				}
+			}
+		}
+
+		this._populate_ldm_object_arrays();
 	}
 
 	/**
@@ -497,7 +542,9 @@ class LightDMGreeter {
 	 * Triggers the system to hibernate.
 	 * @returns {Boolean} {@link true} if hibernation initiated, otherwise {@link false}
 	 */
-	hibernate() {}
+	hibernate() {
+		return this._do_mocked_system_action( 'hibernate' );
+	}
 
 	/**
 	 * Provide a response to a prompt.
@@ -509,7 +556,9 @@ class LightDMGreeter {
 	 * Triggers the system to restart.
 	 * @returns {Boolean} {@link true} if restart initiated, otherwise {@link false}
 	 */
-	restart() {}
+	restart() {
+		return this._do_mocked_system_action( 'restart' );
+	}
 
 	/**
 	 * Set the language for the currently authenticated user.
@@ -523,7 +572,9 @@ class LightDMGreeter {
 	 * Triggers the system to shutdown.
 	 * @returns {Boolean} {@link true} if shutdown initiated, otherwise {@link false}
 	 */
-	shutdown() {}
+	shutdown() {
+		return this._do_mocked_system_action( 'shutdown' );
+	}
 
 	/**
 	 * Start a session for the authenticated user.
@@ -536,7 +587,9 @@ class LightDMGreeter {
 	 * Triggers the system to suspend/sleep.
 	 * @returns {Boolean} {@link true} if suspend/sleep initiated, otherwise {@link false}
 	 */
-	suspend() {}
+	suspend() {
+		return this._do_mocked_system_action( 'suspend' );
+	}
 
 }
 
@@ -544,9 +597,9 @@ class LightDMGreeter {
  * Mock data to simulate the greeter's API in any web browser.
  * @ignore
  */
-const MockData = {
+MockData = () => ({
 	greeter: {
-		default_values: {string: '', int: 0, bool: false, list: [], 'null': null},
+		default_values: {string: () => '', int: () => 0, bool: () => false, list: () => [], 'null': () => null},
 		hostname: 'Mock Greeter',
 		properties: {
 			string: ['authentication_user', 'autologin_user', 'default_session', 'hostname', 'num_users'],
@@ -618,7 +671,7 @@ const MockData = {
 			real_name: 'Peter Parker'
 		}
 	]
-};
+});
 
 window.lightdm = new LightDMGreeter();
 
