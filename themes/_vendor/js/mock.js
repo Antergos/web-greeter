@@ -30,7 +30,7 @@ let lightdm = null,
 	config = null,
 	MockData;
 
-if ('undefined' !== typeof lightdm) {
+if ( 'undefined' !== typeof lightdm ) {
 	throw new Error('Cannot use LightDM Mock while the greeter is running!');
 }
 
@@ -38,7 +38,7 @@ if ('undefined' !== typeof lightdm) {
  * @ignore
  */
 String.prototype.capitalize = function() {
-	return this.charAt( 0 ).toUpperCase() + this.slice( 1 );
+	return this.charAt(0).toUpperCase() + this.slice(1);
 };
 
 
@@ -47,28 +47,30 @@ String.prototype.capitalize = function() {
  * created by the theme's code, but rather by the {@link LightDMGreeter} class.
  * @interface
  */
-let LightDMSession = ({comment, key, name}) => ({
-	/**
-	 * The comment for the session.
-	 * @type {String}
-	 * @readonly
-	 */
-	comment,
+let LightDMSession = function( { comment, key, name } ) {
+	return {
+		/**
+		 * The comment for the session.
+		 * @type {String}
+		 * @readonly
+		 */
+		comment,
 
-	/**
-	 * The key for the session.
-	 * @type {String}
-	 * @readonly
-	 */
-	key,
+		/**
+		 * The key for the session.
+		 * @type {String}
+		 * @readonly
+		 */
+		key,
 
-	/**
-	 * The name for the session.
-	 * @type {String}
-	 * @readonly
-	 */
-	name
-});
+		/**
+		 * The name for the session.
+		 * @type {String}
+		 * @readonly
+		 */
+		name
+	}
+};
 
 
 /**
@@ -76,28 +78,30 @@ let LightDMSession = ({comment, key, name}) => ({
  * created by the theme's code, but rather by the {@link LightDMGreeter} class.
  * @interface
  */
-let LightDMLanguage = ({code, name, territory}) => ({
-	/**
-	 * The code for the language.
-	 * @type {String}
-	 * @readonly
-	 */
-	code,
+let LightDMLanguage = function( { code, name, territory } ) {
+	return {
+		/**
+		 * The code for the language.
+		 * @type {String}
+		 * @readonly
+		 */
+		code,
 
-	/**
-	 * The name for the language.
-	 * @type {String}
-	 * @readonly
-	 */
-	name,
+		/**
+		 * The name for the language.
+		 * @type {String}
+		 * @readonly
+		 */
+		name,
 
-	/**
-	 * The territory for the language.
-	 * @type {String}
-	 * @readonly
-	 */
-	territory
-});
+		/**
+		 * The territory for the language.
+		 * @type {String}
+		 * @readonly
+		 */
+		territory
+	}
+};
 
 
 /**
@@ -105,28 +109,30 @@ let LightDMLanguage = ({code, name, territory}) => ({
  * objects are not created by the theme's code, but rather by the {@link LightDMGreeter} class.
  * @interface
  */
-let LightDMLayout = ({description, name, short_description}) => ({
-	/**
-	 * The description for the layout.
-	 * @type {String}
-	 * @readonly
-	 */
-	description,
+let LightDMLayout = function( { description, name, short_description } ) {
+	return {
+		/**
+		 * The description for the layout.
+		 * @type {String}
+		 * @readonly
+		 */
+		description,
 
-	/**
-	 * The name for the layout.
-	 * @type {String}
-	 * @readonly
-	 */
-	name,
+		/**
+		 * The name for the layout.
+		 * @type {String}
+		 * @readonly
+		 */
+		name,
 
-	/**
-	 * The territory for the layout.
-	 * @type {String}
-	 * @readonly
-	 */
-	short_description
-});
+		/**
+		 * The territory for the layout.
+		 * @type {String}
+		 * @readonly
+		 */
+		short_description
+	}
+};
 
 
 /**
@@ -134,79 +140,81 @@ let LightDMLayout = ({description, name, short_description}) => ({
  * objects are not created by the theme's code, but rather by the {@link LightDMGreeter} class.
  * @interface
  */
-let LightDMUser = ( user_info ) => ({
-	/**
-	 * The display name for the user.
-	 * @type {String}
-	 * @readonly
-	 */
-	display_name: user_info.display_name || '',
+let LightDMUser = function( user_info ) {
+	return {
+		/**
+		 * The display name for the user.
+		 * @type {String}
+		 * @readonly
+		 */
+		display_name: user_info.display_name || '',
 
-	/**
-	 * The language for the user.
-	 * @type {String}
-	 * @readonly
-	 */
-	language: user_info.language || '',
+		/**
+		 * The language for the user.
+		 * @type {String}
+		 * @readonly
+		 */
+		language: user_info.language || '',
 
-	/**
-	 * The keyboard layout for the user.
-	 * @type {String}
-	 * @readonly
-	 */
-	layout: user_info.layout || '',
+		/**
+		 * The keyboard layout for the user.
+		 * @type {String}
+		 * @readonly
+		 */
+		layout: user_info.layout || '',
 
-	/**
-	 * The image for the user.
-	 * @type {String}
-	 * @readonly
-	 */
-	image: user_info.image || '',
+		/**
+		 * The image for the user.
+		 * @type {String}
+		 * @readonly
+		 */
+		image: user_info.image || '',
 
-	/**
-	 * The home_directory for the user.
-	 * @type {String}
-	 * @readonly
-	 */
-	home_directory: user_info.home_directory || '',
+		/**
+		 * The home_directory for the user.
+		 * @type {String}
+		 * @readonly
+		 */
+		home_directory: user_info.home_directory || '',
 
-	/**
-	 * The username for the user.
-	 * @type {String}
-	 * @readonly
-	 */
-	username: user_info.username || '',
+		/**
+		 * The username for the user.
+		 * @type {String}
+		 * @readonly
+		 */
+		username: user_info.username || '',
 
-	/**
-	 * Whether or not the user is currently logged in.
-	 * @type {Boolean}
-	 * @readonly
-	 */
-	logged_in: user_info.logged_in || false,
+		/**
+		 * Whether or not the user is currently logged in.
+		 * @type {Boolean}
+		 * @readonly
+		 */
+		logged_in: user_info.logged_in || false,
 
-	/**
-	 * The last session that the user logged into.
-	 * @type {String|null}
-	 * @readonly
-	 */
-	session: user_info.session || '',
+		/**
+		 * The last session that the user logged into.
+		 * @type {String|null}
+		 * @readonly
+		 */
+		session: user_info.session || '',
 
-	/**
-	 * DEPRECATED!
-	 * @deprecated See {@link LightDMUser.username}.
-	 * @type {String}
-	 * @readonly
-	 */
-	name: user_info.name || '',
+		/**
+		 * DEPRECATED!
+		 * @deprecated See {@link LightDMUser.username}.
+		 * @type {String}
+		 * @readonly
+		 */
+		name: user_info.name || '',
 
-	/**
-	 * DEPRECATED!
-	 * @deprecated See {@link LightDMUser.display_name}.
-	 * @type {String}
-	 * @readonly
-	 */
-	real_name: user_info.real_name || ''
-});
+		/**
+		 * DEPRECATED!
+		 * @deprecated See {@link LightDMUser.display_name}.
+		 * @type {String}
+		 * @readonly
+		 */
+		real_name: user_info.real_name || ''
+	}
+};
 
 
 /**
@@ -228,7 +236,7 @@ let MockObjects = {
 class GreeterUtil {
 
 	constructor() {
-		if (null !== greeter_util) {
+		if ( null !== greeter_util ) {
 			return greeter_util;
 		}
 
@@ -253,9 +261,14 @@ class GreeterUtil {
 	 * @returns {String}
 	 */
 	txt2html( text ) {
-		let entities_map = { '"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;' };
+		let entities_map = {
+			'"': '&quot;',
+			'&': '&amp;',
+			'<': '&lt;',
+			'>': '&gt;'
+		};
 
-		return text.replace(/[\"&<>]/g, a => entities_map[a] );
+		return text.replace(/[\"&<>]/g, a => entities_map[a]);
 	}
 }
 
@@ -269,7 +282,7 @@ class GreeterUtil {
 class ConfigFile {
 
 	constructor() {
-		if (null !== config) {
+		if ( null !== config ) {
 			return config;
 		}
 
@@ -284,7 +297,7 @@ class ConfigFile {
 	 * @returns {Boolean} Config value for `key`.
 	 */
 	getbool( key ) {
-		return ( key in this._mock_data.config ) ? Boolean( this._mock_data.config[key] ) : false;
+		return ( key in this._mock_data.config ) ? Boolean(this._mock_data.config[key]) : false;
 	}
 
 	/**
@@ -294,7 +307,7 @@ class ConfigFile {
 	 * @returns {Number} Config value for `key`.
 	 */
 	getnum( key ) {
-		return ( key in this._mock_data.config ) ? parseInt( this._mock_data.config[key] ) : 0;
+		return ( key in this._mock_data.config ) ? parseInt(this._mock_data.config[key]) : 0;
 	}
 
 	/**
@@ -353,7 +366,7 @@ class LightDMGreeter {
 					ObjectClass = `LightDM${object_name}`;
 
 			for ( let object_info of this._mock_data[object_type] ) {
-				this[object_type].push( MockObjects[ObjectClass]( object_info ) );
+				this[object_type].push(MockObjects[ObjectClass](object_info));
 			}
 		}
 	}
@@ -362,7 +375,7 @@ class LightDMGreeter {
 	 * @private
 	 */
 	_set_default_property_values() {
-		for ( let property_type of Object.keys( this._mock_data.greeter.properties ) ) {
+		for ( let property_type of Object.keys(this._mock_data.greeter.properties) ) {
 			for ( let property of this._mock_data.greeter.properties[property_type] ) {
 				if ( property.indexOf('can_') > -1 ) {
 					// System Power Actions
@@ -530,7 +543,7 @@ class LightDMGreeter {
 		return this._layout;
 	}
 
-	set layout(value) {
+	set layout( value ) {
 		this._layout = value;
 	}
 
@@ -632,7 +645,7 @@ class LightDMGreeter {
 	 * @returns {Boolean} {@link true} if hibernation initiated, otherwise {@link false}
 	 */
 	hibernate() {
-		return this._do_mocked_system_action( 'hibernate' );
+		return this._do_mocked_system_action('hibernate');
 	}
 
 	/**
@@ -646,7 +659,7 @@ class LightDMGreeter {
 	 * @returns {Boolean} {@link true} if restart initiated, otherwise {@link false}
 	 */
 	restart() {
-		return this._do_mocked_system_action( 'restart' );
+		return this._do_mocked_system_action('restart');
 	}
 
 	/**
@@ -662,7 +675,7 @@ class LightDMGreeter {
 	 * @returns {Boolean} {@link true} if shutdown initiated, otherwise {@link false}
 	 */
 	shutdown() {
-		return this._do_mocked_system_action( 'shutdown' );
+		return this._do_mocked_system_action('shutdown');
 	}
 
 	/**
@@ -677,7 +690,7 @@ class LightDMGreeter {
 	 * @returns {Boolean} {@link true} if suspend/sleep initiated, otherwise {@link false}
 	 */
 	suspend() {
-		return this._do_mocked_system_action( 'suspend' );
+		return this._do_mocked_system_action('suspend');
 	}
 
 }
@@ -688,7 +701,13 @@ class LightDMGreeter {
  */
 MockData = () => ({
 	greeter: {
-		default_values: {string: () => '', int: () => 0, bool: () => false, list: () => [], 'null': () => null},
+		default_values: {
+			string: () => '',
+			int: () => 0,
+			bool: () => false,
+			list: () => [],
+			'null': () => null
+		},
 		hostname: 'Mock Greeter',
 		properties: {
 			string: ['authentication_user', 'autologin_user', 'default_session', 'hostname', 'num_users'],
@@ -703,21 +722,65 @@ MockData = () => ({
 		}
 	},
 	languages: [
-		{name: 'English', code: 'en_US.utf8', territory: 'USA'},
-		{name: 'Catalan', code: 'ca_ES.utf8', territory: 'Spain'},
-		{name: 'French', code: 'fr_FR.utf8', territory: 'France'}
+		{
+			name: 'English',
+			code: 'en_US.utf8',
+			territory: 'USA'
+		},
+		{
+			name: 'Catalan',
+			code: 'ca_ES.utf8',
+			territory: 'Spain'
+		},
+		{
+			name: 'French',
+			code: 'fr_FR.utf8',
+			territory: 'France'
+		}
 	],
 	layouts: [
-		{name: 'us', short_description: 'en', description: 'English (US)'},
-		{name: 'at', short_description: 'de', description: 'German (Austria)'},
-		{name: 'us rus', short_description: 'ru', description: 'Russian (US, phonetic)'}
+		{
+			name: 'us',
+			short_description: 'en',
+			description: 'English (US)'
+		},
+		{
+			name: 'at',
+			short_description: 'de',
+			description: 'German (Austria)'
+		},
+		{
+			name: 'us rus',
+			short_description: 'ru',
+			description: 'Russian (US, phonetic)'
+		}
 	],
 	sessions: [
-		{key: 'gnome', name: 'GNOME', comment: 'This session logs you into GNOME'},
-		{key: 'cinnamon', name: 'Cinnamon', comment: 'This session logs you into Cinnamon'},
-		{key: 'plasma', name: 'Plasma', comment: 'Plasma by KDE'},
-		{key: 'mate', name: 'MATE', comment: 'This session logs you into MATE'},
-		{key: 'openbox', name: 'Openbox', comment: 'This session logs you into Openbox'}
+		{
+			key: 'gnome',
+			name: 'GNOME',
+			comment: 'This session logs you into GNOME'
+		},
+		{
+			key: 'cinnamon',
+			name: 'Cinnamon',
+			comment: 'This session logs you into Cinnamon'
+		},
+		{
+			key: 'plasma',
+			name: 'Plasma',
+			comment: 'Plasma by KDE'
+		},
+		{
+			key: 'mate',
+			name: 'MATE',
+			comment: 'This session logs you into MATE'
+		},
+		{
+			key: 'openbox',
+			name: 'Openbox',
+			comment: 'This session logs you into Openbox'
+		}
 	],
 	users: [
 		{
@@ -770,142 +833,142 @@ new LightDMGreeter();
 // mock lighdm for testing
 /*
 
-	lightdm.provide_secret = function (secret) {
-		if (typeof lightdm._username == 'undefined' || !lightdm._username) {
-			throw "must call start_authentication first"
-		}
-		_lightdm_mock_check_argument_length(arguments, 1);
-		var user = _lightdm_mock_get_user(lightdm.username);
+ lightdm.provide_secret = function (secret) {
+ if (typeof lightdm._username == 'undefined' || !lightdm._username) {
+ throw "must call start_authentication first"
+ }
+ _lightdm_mock_check_argument_length(arguments, 1);
+ var user = _lightdm_mock_get_user(lightdm.username);
 
-		if (!user && secret == lightdm._username) {
-			lightdm.is_authenticated = true;
-			lightdm.authentication_user = user;
-		} else {
-			lightdm.is_authenticated = false;
-			lightdm.authentication_user = null;
-			lightdm._username = null;
-		}
-		authentication_complete();
-	};
+ if (!user && secret == lightdm._username) {
+ lightdm.is_authenticated = true;
+ lightdm.authentication_user = user;
+ } else {
+ lightdm.is_authenticated = false;
+ lightdm.authentication_user = null;
+ lightdm._username = null;
+ }
+ authentication_complete();
+ };
 
-	lightdm.start_authentication = function (username) {
-		if ('undefined' === typeof username) {
-			show_prompt("Username?", 'text');
-			lightdm.awaiting_username = true;
-			return;
-		}
-		_lightdm_mock_check_argument_length(arguments, 1);
-		if (lightdm._username) {
-			throw "Already authenticating!";
-		}
-		var user = _lightdm_mock_get_user(username);
-		if (!user) {
-			show_error(username + " is an invalid user");
-		}
-		show_prompt("Password: ");
-		lightdm._username = username;
-	};
+ lightdm.start_authentication = function (username) {
+ if ('undefined' === typeof username) {
+ show_prompt("Username?", 'text');
+ lightdm.awaiting_username = true;
+ return;
+ }
+ _lightdm_mock_check_argument_length(arguments, 1);
+ if (lightdm._username) {
+ throw "Already authenticating!";
+ }
+ var user = _lightdm_mock_get_user(username);
+ if (!user) {
+ show_error(username + " is an invalid user");
+ }
+ show_prompt("Password: ");
+ lightdm._username = username;
+ };
 
-	lightdm.cancel_authentication = function () {
-		_lightdm_mock_check_argument_length(arguments, 0);
-		if (!lightdm._username) {
-			console.log("we are not authenticating");
-		}
-		lightdm._username = null;
-	};
+ lightdm.cancel_authentication = function () {
+ _lightdm_mock_check_argument_length(arguments, 0);
+ if (!lightdm._username) {
+ console.log("we are not authenticating");
+ }
+ lightdm._username = null;
+ };
 
-	lightdm.suspend = function () {
-		alert("System Suspended. Bye Bye");
-		document.location.reload(true);
-	};
+ lightdm.suspend = function () {
+ alert("System Suspended. Bye Bye");
+ document.location.reload(true);
+ };
 
-	lightdm.hibernate = function () {
-		alert("System Hibernated. Bye Bye");
-		document.location.reload(true);
-	};
+ lightdm.hibernate = function () {
+ alert("System Hibernated. Bye Bye");
+ document.location.reload(true);
+ };
 
-	lightdm.restart = function () {
-		alert("System restart. Bye Bye");
-		document.location.reload(true);
-	};
+ lightdm.restart = function () {
+ alert("System restart. Bye Bye");
+ document.location.reload(true);
+ };
 
-	lightdm.shutdown = function () {
-		alert("System Shutdown. Bye Bye");
-		document.location.reload(true);
-	};
+ lightdm.shutdown = function () {
+ alert("System Shutdown. Bye Bye");
+ document.location.reload(true);
+ };
 
-	lightdm.login = function (user, session) {
-		_lightdm_mock_check_argument_length(arguments, 2);
-		if (!lightdm.is_authenticated) {
-			throw "The system is not authenticated";
-		}
-		if (user !== lightdm.authentication_user) {
-			throw "this user is not authenticated";
-		}
-		alert("logged in successfully!!");
-		document.location.reload(true);
-	};
-	lightdm.authenticate = function (session) {
-		lightdm.login(null, session);
-	};
-	lightdm.respond = function (response) {
-		if (true === lightdm.awaiting_username) {
-			lightdm.awaiting_username = false;
-			lightdm.start_authentication(response);
-		} else {
-			lightdm.provide_secret(response);
-		}
-	};
-	lightdm.start_session_sync = function () {
-		lightdm.login(null, null);
-	};
+ lightdm.login = function (user, session) {
+ _lightdm_mock_check_argument_length(arguments, 2);
+ if (!lightdm.is_authenticated) {
+ throw "The system is not authenticated";
+ }
+ if (user !== lightdm.authentication_user) {
+ throw "this user is not authenticated";
+ }
+ alert("logged in successfully!!");
+ document.location.reload(true);
+ };
+ lightdm.authenticate = function (session) {
+ lightdm.login(null, session);
+ };
+ lightdm.respond = function (response) {
+ if (true === lightdm.awaiting_username) {
+ lightdm.awaiting_username = false;
+ lightdm.start_authentication(response);
+ } else {
+ lightdm.provide_secret(response);
+ }
+ };
+ lightdm.start_session_sync = function () {
+ lightdm.login(null, null);
+ };
 
-	if (lightdm.timed_login_delay > 0) {
-		setTimeout(function () {
-			if (!lightdm._timed_login_cancelled()) {
-				timed_login();
-			}
-		}, lightdm.timed_login_delay);
-	}
+ if (lightdm.timed_login_delay > 0) {
+ setTimeout(function () {
+ if (!lightdm._timed_login_cancelled()) {
+ timed_login();
+ }
+ }, lightdm.timed_login_delay);
+ }
 
-	var config = {}, greeterutil = {};
+ var config = {}, greeterutil = {};
 
-	config.get_str = function (section, key) {
-		var branding = {
-			logo: 'img/antergos.png',
-			user_logo: 'ing/antergos-logo-user.png',
-			background_images: '/usr/share/antergos/wallpapers'
-		};
-		if ('branding' === section) {
-			return branding[key];
-		}
-	};
-	config.get_bool = function (section, key) {
-		return true;
-	};
+ config.get_str = function (section, key) {
+ var branding = {
+ logo: 'img/antergos.png',
+ user_logo: 'ing/antergos-logo-user.png',
+ background_images: '/usr/share/antergos/wallpapers'
+ };
+ if ('branding' === section) {
+ return branding[key];
+ }
+ };
+ config.get_bool = function (section, key) {
+ return true;
+ };
 
 
-	greeterutil.dirlist = function (directory) {
-		if ('/usr/share/antergos/wallpapers' === directory) {
-			return ['/usr/share/antergos/wallpapers/83II_by_bo0xVn.jpg', '/usr/share/antergos/wallpapers/antergos-wallpaper.png', '/usr/share/antergos/wallpapers/as_time_goes_by____by_moskanon-d5dgvt8.jpg', '/usr/share/antergos/wallpapers/autumn_hike___plant_details_by_aoiban-d5l7y83.jpg', '/usr/share/antergos/wallpapers/blossom_by_snipes2.jpg', '/usr/share/antergos/wallpapers/c65sk3mshowxrtlljbvh.jpg', '/usr/share/antergos/wallpapers/early_morning_by_kylekc.jpg', '/usr/share/antergos/wallpapers/extinction_by_signcropstealer-d5j4y84.jpg', '/usr/share/antergos/wallpapers/field_by_stevenfields-d59ap2i.jpg', '/usr/share/antergos/wallpapers/Grass_by_masha_darkelf666.jpg', '/usr/share/antergos/wallpapers/Grass_Fullscreen.jpg', '/usr/share/antergos/wallpapers/humble_by_splendidofsun-d5g47hb.jpg', '/usr/share/antergos/wallpapers/In_the_Grass.jpg', '/usr/share/antergos/wallpapers/morning_light.jpg', '/usr/share/antergos/wallpapers/Nautilus_Fullscreen.jpg', '/usr/share/antergos/wallpapers/nikon_d40.jpg', '/usr/share/antergos/wallpapers/sky_full_of_stars.jpg', '/usr/share/antergos/wallpapers/solely_by_stevenfields.jpg', '/usr/share/antergos/wallpapers/the_world_inside_my_lens__by_moskanon-d5fsiqs.jpg', '/usr/share/antergos/wallpapers/white_line_by_snipes2.jpg']
-		}
-	}
-}
+ greeterutil.dirlist = function (directory) {
+ if ('/usr/share/antergos/wallpapers' === directory) {
+ return ['/usr/share/antergos/wallpapers/83II_by_bo0xVn.jpg', '/usr/share/antergos/wallpapers/antergos-wallpaper.png', '/usr/share/antergos/wallpapers/as_time_goes_by____by_moskanon-d5dgvt8.jpg', '/usr/share/antergos/wallpapers/autumn_hike___plant_details_by_aoiban-d5l7y83.jpg', '/usr/share/antergos/wallpapers/blossom_by_snipes2.jpg', '/usr/share/antergos/wallpapers/c65sk3mshowxrtlljbvh.jpg', '/usr/share/antergos/wallpapers/early_morning_by_kylekc.jpg', '/usr/share/antergos/wallpapers/extinction_by_signcropstealer-d5j4y84.jpg', '/usr/share/antergos/wallpapers/field_by_stevenfields-d59ap2i.jpg', '/usr/share/antergos/wallpapers/Grass_by_masha_darkelf666.jpg', '/usr/share/antergos/wallpapers/Grass_Fullscreen.jpg', '/usr/share/antergos/wallpapers/humble_by_splendidofsun-d5g47hb.jpg', '/usr/share/antergos/wallpapers/In_the_Grass.jpg', '/usr/share/antergos/wallpapers/morning_light.jpg', '/usr/share/antergos/wallpapers/Nautilus_Fullscreen.jpg', '/usr/share/antergos/wallpapers/nikon_d40.jpg', '/usr/share/antergos/wallpapers/sky_full_of_stars.jpg', '/usr/share/antergos/wallpapers/solely_by_stevenfields.jpg', '/usr/share/antergos/wallpapers/the_world_inside_my_lens__by_moskanon-d5fsiqs.jpg', '/usr/share/antergos/wallpapers/white_line_by_snipes2.jpg']
+ }
+ }
+ }
 
-function _lightdm_mock_check_argument_length(args, length) {
-	if (args.length != length) {
-		throw "incorrect number of arguments in function call";
-	}
-}
+ function _lightdm_mock_check_argument_length(args, length) {
+ if (args.length != length) {
+ throw "incorrect number of arguments in function call";
+ }
+ }
 
-function _lightdm_mock_get_user(username) {
-	var user = null;
-	for (var i = 0; i < lightdm.users.length; ++i) {
-		if (lightdm.users[i].name == username) {
-			user = lightdm.users[i];
-			break;
-		}
-	}
-	return user;
-}
-*/
+ function _lightdm_mock_get_user(username) {
+ var user = null;
+ for (var i = 0; i < lightdm.users.length; ++i) {
+ if (lightdm.users[i].name == username) {
+ user = lightdm.users[i];
+ break;
+ }
+ }
+ return user;
+ }
+ */
