@@ -25,7 +25,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-let _greeter = null, MockData;
+let lightdm = null,
+	greeter_util = null,
+	config = null,
+	MockData;
 
 if ('undefined' !== typeof lightdm) {
 	throw new Error('Cannot use LightDM Mock while the greeter is running!');
@@ -209,6 +212,7 @@ let LightDMUser = ( user_info ) => ({
 	real_name: user_info.real_name || ''
 });
 
+
 /**
  * @ignore
  */
@@ -221,6 +225,46 @@ let MockObjects = {
 
 
 /**
+ * Provides various utility methods for use by theme authors. The greeter will automatically
+ * create an instance of this class when it starts. The instance can be accessed
+ * with the global variable: `greeter_util`.
+ */
+class GreeterUtil {
+
+	constructor() {
+		if (null !== greeter_util) {
+			return greeter_util;
+		}
+
+		greeter_util = this;
+		this._mock_data = MockData();
+	}
+
+	/**
+	 * Returns the contents of directory at `path`.
+	 *
+	 * @param path
+	 * @returns {String[]} List of abs paths for the files and directories found in `path`.
+	 */
+	dirlist( path ) {
+		return this._mock_data.dirlist;
+	}
+
+	/**
+	 * Escape HTML entities in a string.
+	 *
+	 * @param {String} text
+	 * @returns {String}
+	 */
+	txt2html( text ) {
+		let entities_map = { '"': '&quot;', '&': '&amp;', '<': '&lt;', '>': '&gt;' };
+
+		return text.replace(/[\"&<>]/g, a => entities_map[a] );
+	}
+}
+
+
+/**
  * Singleton class which implements the LightDMGreeter Interface. Greeter themes will
  * interact directly with this class to facilitate the user log in processes.
  * The greeter will automatically create an instance of this class when it starts.
@@ -229,11 +273,11 @@ let MockObjects = {
 class LightDMGreeter {
 
 	constructor() {
-		if ( null !== _greeter ) {
-			return _greeter;
+		if ( null !== lightdm ) {
+			return lightdm;
 		}
 
-		_greeter = this;
+		lightdm = this;
 		this._mock_data = MockData();
 
 		this._initialize();
@@ -673,7 +717,8 @@ MockData = () => ({
 	]
 });
 
-window.lightdm = new LightDMGreeter();
+new GreeterUtil();
+new LightDMGreeter();
 
 
 // mock lighdm for testing

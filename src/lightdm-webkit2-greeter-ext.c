@@ -1497,10 +1497,14 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	greeter_util_object = JSObjectMake(jsContext, greeter_util_class, NULL);
 	JSObjectSetProperty(jsContext,
 						globalObject,
-						JSStringCreateWithUTF8CString("greeterutil"),
+						JSStringCreateWithUTF8CString("greeter_util"),
 						greeter_util_object,
 						kJSPropertyAttributeNone,
 						NULL);
+
+	/* Keep previous variable name for backwards compatibility. Will remove at later date. */
+	command = JSStringCreateWithUTF8CString("window.greeterutil = greeter_util;");
+	JSEvaluateScript(jsContext, command, NULL, NULL, 0, NULL);
 
 
 	/* If the greeter was started as a lock-screen, send message to our UI process. */
