@@ -25,174 +25,181 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-let lightdm = null,
-	greeter_util = null,
-	config = null,
-	MockData;
 
 if ( 'undefined' !== typeof lightdm ) {
 	throw new Error('Cannot use LightDM Mock while the greeter is running!');
 }
 
-/**
- * @ignore
- */
+
+/** @ignore */
 String.prototype.capitalize = function() {
 	return this.charAt(0).toUpperCase() + this.slice(1);
 };
 
 
 /**
+ * @namespace window
+ */
+var lightdm = null,
+	greeter_util = null,
+	config = null;
+
+
+/**
+ * @namespace LightDM
+ */
+
+/**
  * Interface for object that holds info about a session. Session objects are not
  * created by the theme's code, but rather by the {@link LightDMGreeter} class.
  */
-let LightDMSession = function( { comment, key, name } ) {
-	return {
+class LightDMSession  {
+	constructor(  { comment, key, name } ) {
 		/**
 		 * The comment for the session.
 		 * @type {String}
 		 * @readonly
 		 */
-		comment,
+		this.comment = comment;
 
 		/**
 		 * The key for the session.
 		 * @type {String}
 		 * @readonly
 		 */
-		key,
+		this.key = key;
 
 		/**
 		 * The name for the session.
 		 * @type {String}
 		 * @readonly
 		 */
-		name
+		this.name = name;
 	}
-};
+}
 
 
 /**
  * Interface for object that holds info about a language on this system. Language objects are not
  * created by the theme's code, but rather by the {@link LightDMGreeter} class.
  */
-let LightDMLanguage = function( { code, name, territory } ) {
-	return {
+class LightDMLanguage {
+	constructor(  { code, name, territory } ) {
 		/**
 		 * The code for the language.
 		 * @type {String}
 		 * @readonly
 		 */
-		code,
+		this.code = code;
 
 		/**
 		 * The name for the language.
 		 * @type {String}
 		 * @readonly
 		 */
-		name,
+		this.name = name;
 
 		/**
 		 * The territory for the language.
 		 * @type {String}
 		 * @readonly
 		 */
-		territory
+		this.territory = territory;
 	}
-};
+}
 
 
 /**
  * Interface for object that holds info about a keyboard layout on this system. Language
  * objects are not created by the theme's code, but rather by the {@link LightDMGreeter} class.
  */
-let LightDMLayout = function( { description, name, short_description } ) {
-	return {
+class LightDMLayout {
+	constructor(  { description, name, short_description } ) {
 		/**
 		 * The description for the layout.
 		 * @type {String}
 		 * @readonly
 		 */
-		description,
+		this.description = description;
 
 		/**
 		 * The name for the layout.
 		 * @type {String}
 		 * @readonly
 		 */
-		name,
+		this.name = name;
 
 		/**
 		 * The territory for the layout.
 		 * @type {String}
 		 * @readonly
 		 */
-		short_description
+		this.short_description = short_description;
 	}
-};
+}
 
 
 /**
  * Interface for object that holds info about a user account on this system. User
  * objects are not created by the theme's code, but rather by the {@link LightDMGreeter} class.
  */
-let LightDMUser = function( user_info ) {
-	return {
+class LightDMUser {
+	constructor( user_info ) {
 		/**
 		 * The display name for the user.
 		 * @type {String}
 		 * @readonly
 		 */
-		display_name: user_info.display_name || '',
+		this.display_name = user_info.display_name;
 
 		/**
 		 * The language for the user.
 		 * @type {String}
 		 * @readonly
 		 */
-		language: user_info.language || '',
+		this.language = user_info.language;
 
 		/**
 		 * The keyboard layout for the user.
 		 * @type {String}
 		 * @readonly
 		 */
-		layout: user_info.layout || '',
+		this.layout = user_info.layout;
 
 		/**
 		 * The image for the user.
 		 * @type {String}
 		 * @readonly
 		 */
-		image: user_info.image || '',
+		this.image = user_info.image;
 
 		/**
 		 * The home_directory for the user.
 		 * @type {String}
 		 * @readonly
 		 */
-		home_directory: user_info.home_directory || '',
+		this.home_directory = user_info.home_directory;
 
 		/**
 		 * The username for the user.
 		 * @type {String}
 		 * @readonly
 		 */
-		username: user_info.username || '',
+		this.username = user_info.username;
 
 		/**
 		 * Whether or not the user is currently logged in.
 		 * @type {Boolean}
 		 * @readonly
 		 */
-		logged_in: user_info.logged_in || false,
+		this.logged_in = user_info.logged_in;
 
 		/**
 		 * The last session that the user logged into.
 		 * @type {String|null}
 		 * @readonly
 		 */
-		session: user_info.session || '',
+		this.session = user_info.session;
 
 		/**
 		 * DEPRECATED!
@@ -200,7 +207,7 @@ let LightDMUser = function( user_info ) {
 		 * @type {String}
 		 * @readonly
 		 */
-		name: user_info.name || '',
+		this.name = user_info.name;
 
 		/**
 		 * DEPRECATED!
@@ -208,20 +215,9 @@ let LightDMUser = function( user_info ) {
 		 * @type {String}
 		 * @readonly
 		 */
-		real_name: user_info.real_name || ''
+		this.real_name = user_info.real_name;
 	}
-};
-
-
-/**
- * @ignore
- */
-let MockObjects = {
-	LightDMLanguage: LightDMLanguage,
-	LightDMLayout: LightDMLayout,
-	LightDMSession: LightDMSession,
-	LightDMUser: LightDMUser,
-};
+}
 
 
 /**
@@ -316,6 +312,17 @@ class ConfigFile {
 		return ( key in this._mock_data.config ) ? this._mock_data.config[key] : '';
 	}
 }
+
+
+/**
+ * @ignore
+ */
+let MockObjects = {
+	LightDMLanguage( obj ) { return new LightDMLanguage( obj ); },
+	LightDMLayout( obj ) { return new LightDMLayout( obj ); },
+	LightDMSession( obj ) { return new LightDMSession( obj ); },
+	LightDMUser( obj ) { return new LightDMUser( obj ); }
+};
 
 
 /**
