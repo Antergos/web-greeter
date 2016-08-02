@@ -469,7 +469,7 @@ class LightDMGreeter {
 	 * @readonly
 	 */
 	get num_users() {
-		return this._num_users;
+		return this.users.length;
 	}
 
 	/**
