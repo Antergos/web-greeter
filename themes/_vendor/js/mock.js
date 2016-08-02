@@ -40,6 +40,10 @@ String.prototype.capitalize = function() {
 /**
  * @namespace window
  */
+
+/**
+ * @memberOf window
+ */
 var lightdm = null,
 	greeter_util = null,
 	config = null;
@@ -52,6 +56,7 @@ var lightdm = null,
 /**
  * Interface for object that holds info about a session. Session objects are not
  * created by the theme's code, but rather by the {@link LightDMGreeter} class.
+ * @memberOf LightDM
  */
 class LightDMSession  {
 	constructor(  { comment, key, name } ) {
@@ -82,6 +87,7 @@ class LightDMSession  {
 /**
  * Interface for object that holds info about a language on this system. Language objects are not
  * created by the theme's code, but rather by the {@link LightDMGreeter} class.
+ * @memberOf LightDM
  */
 class LightDMLanguage {
 	constructor(  { code, name, territory } ) {
@@ -112,6 +118,7 @@ class LightDMLanguage {
 /**
  * Interface for object that holds info about a keyboard layout on this system. Language
  * objects are not created by the theme's code, but rather by the {@link LightDMGreeter} class.
+ * @memberOf LightDM
  */
 class LightDMLayout {
 	constructor(  { description, name, short_description } ) {
@@ -142,6 +149,7 @@ class LightDMLayout {
 /**
  * Interface for object that holds info about a user account on this system. User
  * objects are not created by the theme's code, but rather by the {@link LightDMGreeter} class.
+ * @memberOf LightDM
  */
 class LightDMUser {
 	constructor( user_info ) {
@@ -224,6 +232,7 @@ class LightDMUser {
  * Provides various utility methods for use by theme authors. The greeter will automatically
  * create an instance of this class when it starts. The instance can be accessed
  * with the global variable: `greeter_util`.
+ * @memberOf LightDM
  */
 class GreeterUtil {
 
@@ -270,6 +279,7 @@ class GreeterUtil {
  * file located at `/etc/lightdm/lightdm-webkit2-greeter.conf`. The greeter will
  * create an instance of this class when it starts. The instance can be accessed
  * with the global variable: `config`.
+ * @memberOf LightDM
  */
 class ConfigFile {
 
@@ -330,6 +340,7 @@ let MockObjects = {
  * interact directly with this class to facilitate the user log in processes.
  * The greeter will automatically create an instance of this class when it starts.
  * The instance can be accessed with the global variable: `lightdm`.
+ * @memberOf LightDM
  */
 class LightDMGreeter {
 
