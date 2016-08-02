@@ -45,7 +45,6 @@ String.prototype.capitalize = function() {
 /**
  * Interface for object that holds info about a session. Session objects are not
  * created by the theme's code, but rather by the {@link LightDMGreeter} class.
- * @type {Object}
  * @interface
  */
 let LightDMSession = ({comment, key, name}) => ({
@@ -75,7 +74,6 @@ let LightDMSession = ({comment, key, name}) => ({
 /**
  * Interface for object that holds info about a language on this system. Language objects are not
  * created by the theme's code, but rather by the {@link LightDMGreeter} class.
- * @type {Object}
  * @interface
  */
 let LightDMLanguage = ({code, name, territory}) => ({
@@ -105,7 +103,6 @@ let LightDMLanguage = ({code, name, territory}) => ({
 /**
  * Interface for object that holds info about a keyboard layout on this system. Language
  * objects are not created by the theme's code, but rather by the {@link LightDMGreeter} class.
- * @type {Object}
  * @interface
  */
 let LightDMLayout = ({description, name, short_description}) => ({
@@ -135,7 +132,6 @@ let LightDMLayout = ({description, name, short_description}) => ({
 /**
  * Interface for object that holds info about a user account on this system. User
  * objects are not created by the theme's code, but rather by the {@link LightDMGreeter} class.
- * @type {Object}
  * @interface
  */
 let LightDMUser = ( user_info ) => ({
