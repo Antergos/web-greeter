@@ -43,10 +43,21 @@ String.prototype.capitalize = function() {
 
 /**
  * @memberOf window
+ * @type {LightDM.LightDMGreeter}
  */
-var lightdm = null,
-	greeter_util = null,
-	config = null;
+var lightdm = null;
+
+/**
+ * @memberOf window
+ * @type {LightDM.GreeterUtil}
+ */
+var greeter_util = null;
+
+/**
+ * @memberOf window
+ * @type {LightDM.ConfigFile}
+ */
+var config = null;
 
 
 /**
