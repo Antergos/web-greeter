@@ -265,6 +265,55 @@ class GreeterUtil {
 
 
 /**
+ * Provides theme authors with a way to retrieve values from the greeter's config
+ * file located at `/etc/lightdm/lightdm-webkit2-greeter.conf`. The greeter will
+ * create an instance of this class when it starts. The instance can be accessed
+ * with the global variable: `config`.
+ */
+class ConfigFile {
+
+	constructor() {
+		if (null !== config) {
+			return config;
+		}
+
+		config = this;
+		this._mock_data = MockData();
+	}
+
+	/**
+	 * Returns the value of `key` from the greeter's config file.
+	 *
+	 * @arg {String} key
+	 * @returns {Boolean} Config value for `key`.
+	 */
+	getbool( key ) {
+		return ( key in this._mock_data.config ) ? Boolean( this._mock_data.config[key] ) : false;
+	}
+
+	/**
+	 * Returns the value of `key` from the greeter's config file.
+	 *
+	 * @arg {String} key
+	 * @returns {Number} Config value for `key`.
+	 */
+	getnum( key ) {
+		return ( key in this._mock_data.config ) ? parseInt( this._mock_data.config[key] ) : 0;
+	}
+
+	/**
+	 * Returns the value of `key` from the greeter's config file.
+	 *
+	 * @arg {String} key
+	 * @returns {String} Config value for `key`.
+	 */
+	getstr( key ) {
+		return ( key in this._mock_data.config ) ? this._mock_data.config[key] : '';
+	}
+}
+
+
+/**
  * Singleton class which implements the LightDMGreeter Interface. Greeter themes will
  * interact directly with this class to facilitate the user log in processes.
  * The greeter will automatically create an instance of this class when it starts.
@@ -717,6 +766,7 @@ MockData = () => ({
 	]
 });
 
+new ConfigFile();
 new GreeterUtil();
 new LightDMGreeter();
 
