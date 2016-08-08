@@ -16,7 +16,7 @@
     <div class="wrapper">
       <header>
         <h1>lightdm-webkit2-greeter</h1>
-        <p>A LightDM greeter that uses webkit2 for theming via HTML/JavaScript</p>
+        <p>A LightDM greeter that uses Webkit2 for theming via HTML/JavaScript</p>
 
         <p class="view"><a href="https://github.com/Antergos/lightdm-webkit2-greeter">View the Project on GitHub <small>Antergos/lightdm-webkit2-greeter</small></a></p>
 
@@ -73,7 +73,9 @@
 <thead>
 <tr>
 <th></th>
-<th><img src="https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png" alt="arch"></th>
+<th>
+<img src="https://dl.dropboxusercontent.com/u/60521097/logo-square26x26.png" alt="antergos">    <img src="https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png" alt="arch">
+</th>
 <th>
 <img src="https://dl.dropboxusercontent.com/u/60521097/openlogo-nd-25.png" alt="debian">    <img src="https://dl.dropboxusercontent.com/u/60521097/ubuntu_orange_hex.png" alt="ubuntu">
 </th>
@@ -126,6 +128,7 @@
 <div class="highlight highlight-source-shell"><pre><span class="pl-c1">cd</span> /tmp
 git clone https://github.com/Antergos/lightdm-webkit2-greeter.git greeter
 <span class="pl-c1">cd</span> greeter
+git checkout <span class="pl-smi">${LATEST_RELEASE_TAG}</span> <span class="pl-c"># eg. git checkout 2.1.4</span>
 ./autogen.sh --prefix=/usr
 make</pre></div>
 
@@ -138,6 +141,11 @@ make</pre></div>
 <a id="theme-javascript-api" class="anchor" href="#theme-javascript-api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Theme JavaScript API:</h2>
 
 <p>The greeter exposes a JavaScript API to themes which they must use to interact with the greeter (in order to facilitate the user login process). For more details, check out the <a href="https://doclets.io/Antergos/lightdm-webkit2-greeter/master">API Documentation</a>. </p>
+
+<h2>
+<a id="translations" class="anchor" href="#translations" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Translations</h2>
+
+<p>Translations are managed through <a href="http://transifex.com">Transifex</a>.</p>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/Antergos">Antergos</a></p>
