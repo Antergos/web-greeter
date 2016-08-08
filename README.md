@@ -28,7 +28,7 @@
 cd /tmp
 git clone https://github.com/Antergos/lightdm-webkit2-greeter.git greeter
 cd greeter
-git checkout <tag for latest release> # eg. git checkout 2.1.4
+git checkout ${LATEST_RELEASE_TAG} # eg. git checkout 2.1.4
 ./autogen.sh --prefix=/usr
 make
 ```
