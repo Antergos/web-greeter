@@ -35,7 +35,7 @@ make
 
 #### How To Install
 ```sh
-sudo make install --prefix=/usr
+sudo make install
 ```
 
 ## Theme JavaScript API:
