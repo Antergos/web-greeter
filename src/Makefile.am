@@ -1,11 +1,7 @@
 webextension_LTLIBRARIES = liblightdm-webkit2-greeter-ext.la
 webextensiondir = $(libdir)/lightdm-webkit2-greeter
 
-if HAVE_GTK320
-ldmcssfile = lightdm-webkit2-greeter-application-3.20.css
-else
 ldmcssfile = lightdm-webkit2-greeter-application.css
-endif
 
 lightdm-webkit2-greeter-css-application.h: $(srcdir)/$(ldmcssfile) Makefile
 	$(AM_V_GEN) exo-csource --static --name=lightdm_webkit2_greeter_css_application $< >$@
