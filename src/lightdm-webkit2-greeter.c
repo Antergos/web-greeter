@@ -131,7 +131,7 @@ context_menu_cb(WebKitWebView *view,
 static gboolean
 check_theme_heartbeat_cb(void) {
 	if (! heartbeat && ! heartbeat_exit) {
-			/* Theme heartbeat not received. We assume that an error has occured
+			/* Theme heartbeat not received. We assume that an error has occurred
 			 * which broke script execution. We will fallback to the simple theme
 			 * so the user won't be stuck with a broken login screen.
 			 */
@@ -355,15 +355,14 @@ main(int argc, char **argv) {
 	create_new_webkit_settings_object();
 	webkit_web_view_set_settings(WEBKIT_WEB_VIEW(web_view), webkit_settings);
 
-	/* The default background is white which causes a flash effect when the greeter starts.
-	 * We make it black instead. This is for backwards compatibility with Gtk versions that
-	 * don't use the new CSS provider.
+	/* The default background color of the web_view is white which causes a flash effect when the greeter starts.
+	 * We make it black instead. This only applies when the theme hasn't set the body background via CSS.
 	 */
 	gdk_rgba_parse(&bg_color, "#000000");
 	webkit_web_view_set_background_color(WEBKIT_WEB_VIEW(web_view), gdk_rgba_copy(&bg_color));
 
 	/* Maybe disable the context (right-click) menu. */
-	//g_signal_connect(web_view, "context-menu", G_CALLBACK(context_menu_cb), NULL);
+	g_signal_connect(web_view, "context-menu", G_CALLBACK(context_menu_cb), NULL);
 
 	/* There's no turning back now, let's go! */
 	gtk_container_add(GTK_CONTAINER(window), web_view);
