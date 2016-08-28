@@ -13,6 +13,6 @@ dependencies:
       libdbus-glib-1-dev
       gnome-common
 
-tests:
+test:
   override:
     - cd ${CIRCLE_PROJECT_REPONAME}; ./autogen.sh && make && sudo make install
