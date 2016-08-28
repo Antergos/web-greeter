@@ -1,0 +1,18 @@
+machine:
+  timezone: America/Chicago
+
+dependencies:
+  post:
+    - >
+      sudo apt-get install -y
+      libgtk-3-0
+      liblightdm-gobject-1-dev
+      libexo-1-dev
+      exo-utils
+      libwebkit2gtk-4.0-dev
+      libdbus-glib-1-dev
+      gnome-common
+
+tests:
+  override:
+    - cd ${CIRCLE_PROJECT_REPONAME}; ./autogen.sh && make && sudo make install
