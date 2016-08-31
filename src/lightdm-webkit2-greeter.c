@@ -298,7 +298,7 @@ main(int argc, char **argv) {
 							  G_KEY_FILE_NONE, NULL);
 
 	theme = g_key_file_get_string(keyfile, "greeter", "webkit-theme", NULL);
-	theme = remove_comments(theme);
+	theme = rtrim_comments(theme);
 	config_timeout = g_key_file_get_integer(keyfile, "greeter", "screensaver-timeout", NULL);
 	debug_mode = g_key_file_get_boolean(keyfile, "greeter", "debug_mode", NULL);
 
