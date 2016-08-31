@@ -759,7 +759,7 @@ get_hide_users_cb(JSContextRef context,
 
 
 static JSValueRef
-get_select_user_cb(JSContextRef context,
+get_select_user_hint_cb(JSContextRef context,
 				   JSObjectRef thisObject,
 				   JSStringRef propertyName,
 				   JSValueRef *exception) {
@@ -768,7 +768,7 @@ get_select_user_cb(JSContextRef context,
 
 
 static JSValueRef
-get_select_guest_cb(JSContextRef context,
+get_select_guest_hint_cb(JSContextRef context,
 					JSObjectRef thisObject,
 					JSStringRef propertyName,
 					JSValueRef *exception) {
@@ -1318,13 +1318,15 @@ static const JSStaticValue lightdm_greeter_values[] = {
 	{"layouts",             get_layouts_cb,             NULL,            kJSPropertyAttributeReadOnly},
 	{"lock_hint",           get_lock_hint_cb,           NULL,            kJSPropertyAttributeReadOnly},
 	{"num_users",           get_num_users_cb,           NULL,            kJSPropertyAttributeReadOnly},
-	{"select_guest",        get_select_guest_hint_cb,   NULL,            kJSPropertyAttributeReadOnly},
-	{"select_user",         get_select_user_hint_cb,    NULL,            kJSPropertyAttributeReadOnly},
+	{"select_guest_hint",   get_select_guest_hint_cb,   NULL,            kJSPropertyAttributeReadOnly},
+	{"select_user_hint",    get_select_user_hint_cb,    NULL,            kJSPropertyAttributeReadOnly},
 	{"sessions",            get_sessions_cb,            NULL,            kJSPropertyAttributeReadOnly},
 	{"users",               get_users_cb,               NULL,            kJSPropertyAttributeReadOnly},
 	/* ------>>> DEPRECATED! <<<----------->>> DEPRECATED! <<<------------>>> DEPRECATED! <<<------*/
 	{"default_language",    get_language_cb,            NULL,            kJSPropertyAttributeReadOnly},
 	{"default_layout",      get_layout_cb,              NULL,            kJSPropertyAttributeReadOnly},
+    {"select_guest",        get_select_guest_hint_cb,   NULL,            kJSPropertyAttributeReadOnly},
+    {"select_user",         get_select_user_hint_cb,    NULL,            kJSPropertyAttributeReadOnly},
 	{"timed_login_delay",   get_autologin_timeout_cb,   NULL,            kJSPropertyAttributeReadOnly},
 	{"timed_login_user",    get_autologin_user_cb,      NULL,            kJSPropertyAttributeReadOnly},
 	/* ------>>> DEPRECATED! <<<----------->>> DEPRECATED! <<<------------>>> DEPRECATED! <<<------*/
