@@ -1268,15 +1268,18 @@ txt2html_cb(JSContextRef context,
 
 
 static const JSStaticValue lightdm_user_values[] = {
-	{"name",           get_user_name_cb,           NULL, kJSPropertyAttributeReadOnly},
-	{"real_name",      get_user_real_name_cb,      NULL, kJSPropertyAttributeReadOnly},
 	{"display_name",   get_user_display_name_cb,   NULL, kJSPropertyAttributeReadOnly},
 	{"home_directory", get_user_home_directory_cb, NULL, kJSPropertyAttributeReadOnly},
 	{"image",          get_user_image_cb,          NULL, kJSPropertyAttributeReadOnly},
 	{"language",       get_user_language_cb,       NULL, kJSPropertyAttributeReadOnly},
 	{"layout",         get_user_layout_cb,         NULL, kJSPropertyAttributeReadOnly},
-	{"session",        get_user_session_cb,        NULL, kJSPropertyAttributeReadOnly},
 	{"logged_in",      get_user_logged_in_cb,      NULL, kJSPropertyAttributeReadOnly},
+	{"session",        get_user_session_cb,        NULL, kJSPropertyAttributeReadOnly},
+	{"username",       get_user_name_cb,           NULL, kJSPropertyAttributeReadOnly},
+	/* ---->>> DEPRECATED! <<<------>>> DEPRECATED! <<<------->>> DEPRECATED! <<<----*/
+	{"name",           get_user_name_cb,           NULL, kJSPropertyAttributeReadOnly},
+	{"real_name",      get_user_real_name_cb,      NULL, kJSPropertyAttributeReadOnly},
+	/* ---->>> DEPRECATED! <<<------>>> DEPRECATED! <<<------->>> DEPRECATED! <<<----*/
 	{NULL,             NULL,                       NULL, 0}};
 
 static const JSStaticValue lightdm_language_values[] = {
