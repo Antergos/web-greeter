@@ -1460,7 +1460,6 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 				greeter_util_object,
 				globalObject;
 	JSStringRef command;
-	gboolean report_errors;
 	gchar *message = "LockHint";
 
 	jsContext = webkit_frame_get_javascript_context_for_script_world(frame, world);
