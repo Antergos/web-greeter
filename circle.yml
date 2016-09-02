@@ -4,9 +4,9 @@ machine:
 dependencies:
   post:
     - sudo apt-get update
-    - sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y upstart
     - >
       sudo apt-get install -y
+      upstart
       libgtk-3-0
       liblightdm-gobject-1-dev
       libexo-1-dev
