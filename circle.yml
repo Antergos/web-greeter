@@ -6,7 +6,6 @@ dependencies:
     - sudo apt-get update
     - >
       sudo apt-get install -y
-      upstart
       libgtk-3-0
       liblightdm-gobject-1-dev
       libexo-1-dev
