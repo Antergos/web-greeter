@@ -1,0 +1,14 @@
+option('with-theme-dir',
+        type : 'string',
+        value : '/usr/share/lightdm-webkit/themes',
+        description : 'Directory to use for greeter themes')
+
+option('with-config-dir',
+        type : 'string',
+        value : '/etc/lightdm/',
+        description : 'LightDM configuration directory')
+
+option('with-desktop-dir',
+        type : 'string',
+        value : '/usr/share/xgreeters/',
+        description : 'LightDM greeters directory')
