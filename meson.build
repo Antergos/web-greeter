@@ -60,7 +60,7 @@ conf.set('DESKTOP_DIR', '"@0@"'.format(get_option('with-desktop-dir')))
 # ------->>> Sub Directories <<<------- #
 # ===================================== #
 
-subdirs = ['src']
+subdirs = ['src', 'man', 'themes', 'data']
 
 foreach s : subdirs
   subdir(s)
