@@ -37,15 +37,9 @@ pkgg.generate(
 # ------->>> LightDM Greeter <<<------- #
 # ===================================== #
 
-greeter_css = gnome.compile_resources(
-    'greeter-css',
-    'greeter.gresource.xml',
-    source_dir : '.',
-    c_name : 'greeter_css')
+greeter_css = gnome.compile_resources('greeter-css', 'greeter.gresource.xml', c_name : 'greeter_css')
 
-greeter_sources = ['lightdm-webkit2-greeter.c']
-
-greeter_incdir = include_directories('.')
+greeter_sources = ['lightdm-webkit2-greeter.c', greeter_css]
 
 extdir = '@0@/@1@'.format(get_option('libdir'), 'lightdm-webkit2-greeter')
 
@@ -57,7 +51,6 @@ greeter_cargs = [
 
 greeter = executable(
     'lightdm-webkit2-greeter',
-    sources: greeter_sources,
-    include_directories: greeter_incdir,
+    greeter_sources,
     dependencies: deps,
     c_args: greeter_cargs)
