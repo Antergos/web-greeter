@@ -48,7 +48,7 @@
 
 #include <config.h>
 
-#include "greeter-css.h"
+#include "greeter-style-css.h"
 
 static GtkWidget *web_view;
 static GtkWidget *window;
@@ -283,7 +283,6 @@ main(int argc, char **argv) {
 	mlockall (MCL_CURRENT | MCL_FUTURE);
 
 	/* Initialize i18n */
-	setlocale (LC_ALL, "");
 	bindtextdomain (GETTEXT_PACKAGE, LOCALE_DIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
