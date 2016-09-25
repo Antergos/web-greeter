@@ -1,4 +1,5 @@
 pkgg = import('pkgconfig')
+gnome = import('gnome')
 
 configure_file(output: 'config.h', configuration: conf)
 
@@ -35,6 +36,12 @@ pkgg.generate(
 # ===================================== #
 # ------->>> LightDM Greeter <<<------- #
 # ===================================== #
+
+greeter_css = gnome.compile_resources(
+    'greeter-css',
+    'greeter.gresource.xml',
+    source_dir : '.',
+    c_name : 'greeter_css')
 
 greeter_sources = ['lightdm-webkit2-greeter.c']
 

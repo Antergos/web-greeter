@@ -48,7 +48,7 @@
 
 #include <config.h>
 
-#include "src/lightdm-webkit2-greeter-css-application.h"
+#include "greeter-css.h"
 
 static GtkWidget *web_view;
 static GtkWidget *window;
@@ -277,6 +277,7 @@ main(int argc, char **argv) {
 	WebKitWebContext *context;
 	GtkCssProvider *css_provider;
 	WebKitCookieManager *cookie_manager;
+	GResource *css_resource;
 
 	/* Prevent memory from being swapped out, since we see unencrypted passwords. */
 	mlockall (MCL_CURRENT | MCL_FUTURE);
@@ -323,13 +324,16 @@ main(int argc, char **argv) {
 	/* Setup CSS provider. We use CSS to set the window background to black instead
 	 * of default white so the screen doesnt flash during startup.
 	 */
+	css_resource = greeter_css_get_resource();
 	css_provider = gtk_css_provider_new();
-	gtk_css_provider_load_from_data(css_provider,
-									lightdm_webkit2_greeter_css_application,
-									lightdm_webkit2_greeter_css_application_length, NULL);
-	gtk_style_context_add_provider_for_screen(screen,
-											  GTK_STYLE_PROVIDER(css_provider),
-											  GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+	g_resources_register(css_resource);
+	gtk_css_provider_load_from_resource(css_provider, "/com/antergos/lightdm-webkit2-greeter");
+	gtk_style_context_add_provider_for_screen(
+		screen,
+		GTK_STYLE_PROVIDER(css_provider),
+		GTK_STYLE_PROVIDER_PRIORITY_APPLICATION
+	);
 
 	/* Register and connect handler that will set the web extensions directory
 	 * so webkit can find our extension.
