@@ -15,7 +15,7 @@ dependencies:
     - sudo apt-get update
     # ignore the error during the installation
     - sudo DEBIAN_FRONTEND=noninteractive apt-get install -y meson libwebkit2gtk-4.0-dev || true
-    - sudo pip install -U meson
+    - sudo pip3 install -U meson
 
 test:
   override:
