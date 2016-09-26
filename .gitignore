@@ -1,5 +1,6 @@
 build/**
 !build/.gitignore
+CMakeLists.txt
 /ChangeLog
 /AUTHORS
 ### ArchLinuxPackages template
