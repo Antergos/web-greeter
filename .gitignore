@@ -1,4 +1,5 @@
-/build
+/build/**
+!/build/.gitignore
 /ChangeLog
 /AUTHORS
 ### ArchLinuxPackages template
