@@ -45,19 +45,19 @@ String.prototype.capitalize = function() {
  * @memberOf window
  * @type {LightDM.LightDMGreeter}
  */
-var lightdm = null;
+let lightdm = null;
 
 /**
  * @memberOf window
  * @type {LightDM.GreeterUtil}
  */
-var greeter_util = null;
+let greeter_util = null;
 
 /**
  * @memberOf window
  * @type {LightDM.ConfigFile}
  */
-var config = null;
+let config = null;
 
 
 /**
@@ -309,7 +309,7 @@ class ConfigFile {
 	 * @arg {String} key
 	 * @returns {Boolean} Config value for `key`.
 	 */
-	getbool( key ) {
+	get_bool( key ) {
 		return ( key in this._mock_data.config ) ? Boolean(this._mock_data.config[key]) : false;
 	}
 
@@ -319,7 +319,7 @@ class ConfigFile {
 	 * @arg {String} key
 	 * @returns {Number} Config value for `key`.
 	 */
-	getnum( key ) {
+	get_num( key ) {
 		return ( key in this._mock_data.config ) ? parseInt(this._mock_data.config[key]) : 0;
 	}
 
@@ -329,7 +329,7 @@ class ConfigFile {
 	 * @arg {String} key
 	 * @returns {String} Config value for `key`.
 	 */
-	getstr( key ) {
+	get_str( key ) {
 		return ( key in this._mock_data.config ) ? this._mock_data.config[key] : '';
 	}
 }
@@ -850,10 +850,12 @@ MockData = () => ({
 	]
 });
 
-new ConfigFile();
-new GreeterUtil();
-new LightDMGreeter();
 
+if ( ! lightdm in window ) {
+	new ConfigFile();
+	new GreeterUtil();
+	new LightDMGreeter();
+}
 
 // mock lighdm for testing
 /*
