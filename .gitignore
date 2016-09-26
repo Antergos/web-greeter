@@ -1,5 +1,5 @@
-/build/**
-!/build/.gitignore
+build/**
+!build/.gitignore
 /ChangeLog
 /AUTHORS
 ### ArchLinuxPackages template
@@ -48,7 +48,6 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
-build/
 develop-eggs/
 dist/
 downloads/
