@@ -10,6 +10,7 @@ dependencies:
       liblightdm-gobject-1-dev
       libdbus-glib-1-dev
       gnome-common
+      pip3
     # use the repository from xenial to get libwebkit2gtk-4.0-dev
     - sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu/ xenial main universe"
     - sudo apt-get update
