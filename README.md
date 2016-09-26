@@ -21,21 +21,24 @@
 |**gtk+ 3**               |gtk3     |libgtk-3-0             | gtk3                  | gtk3                   |
 |**webkit2gtk-4.0**       |webkit2gtk|libwebkit2gtk-4.0-dev  | webkitgtk4            | libwebkit2gtk-4_0-37            |
 |**dbus-glib-1**         |dbus-glib|libdbus-glib-1-dev     | dbus-glib             | dbus-1-glib            |
-|**exo-csource**          |exo      |exo-utils              | exo-devel             | exo-tools              |
+
+#### Build Deps
+|                   | ![antergos](https://dl.dropboxusercontent.com/u/60521097/logo-square26x26.png) &nbsp;&nbsp; ![arch](https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png) &nbsp;&nbsp; ![debian](https://dl.dropboxusercontent.com/u/60521097/openlogo-nd-25.png) &nbsp;&nbsp; ![ubuntu](https://dl.dropboxusercontent.com/u/60521097/ubuntu_orange_hex.png) &nbsp;&nbsp; ![fedora](https://dl.dropboxusercontent.com/u/60521097/fedora-logo.png) &nbsp;&nbsp; ![openSUSE](https://dl.dropboxusercontent.com/u/60521097/Geeko-button-bling7.png) | 
+|-------------------|-------------------------------------------------------------------------|----------------------------------------------------------------------------|-------------------------------------------------------------------------|-----------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+|**Meson Build System**|meson|
 
 #### How To Build
 ```sh
-cd /tmp
-git clone https://github.com/Antergos/lightdm-webkit2-greeter.git greeter
-cd greeter
-git checkout ${LATEST_RELEASE_TAG} # eg. git checkout 2.1.4
-./autogen.sh --prefix=/usr
-make
+git clone https://github.com/Antergos/lightdm-webkit2-greeter.git /tmp/greeter
+cd /tmp/greeter/build
+git checkout ${LATEST_RELEASE_TAG} # eg. git checkout 2.1.5
+meson --prefix=/usr --libdir=lib ..
+ninja
 ```
 
 #### How To Install
 ```sh
-sudo make install
+sudo ninja install
 ```
 
 ## Theme JavaScript API:
