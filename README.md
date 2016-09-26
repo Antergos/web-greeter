@@ -14,7 +14,7 @@
 
 ## Build It
 
-#### Dependencies
+### Dependencies
 |                   | ![antergos](https://dl.dropboxusercontent.com/u/60521097/logo-square26x26.png) &nbsp;&nbsp; ![arch](https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png) | ![debian](https://dl.dropboxusercontent.com/u/60521097/openlogo-nd-25.png) &nbsp;&nbsp; ![ubuntu](https://dl.dropboxusercontent.com/u/60521097/ubuntu_orange_hex.png) | ![fedora](https://dl.dropboxusercontent.com/u/60521097/fedora-logo.png) | ![openSUSE](https://dl.dropboxusercontent.com/u/60521097/Geeko-button-bling7.png) | 
 |-----------------------|-------------------------------------------------------------------------|----------------------------------------------------------------------------|-------------------------------------------------------------------------|-----------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
 |**liblightdm-gobject-1** |lightdm  |liblightdm-gobject-dev | lightdm-gobject-devel | liblightdm-gobject-1-0 |
@@ -27,7 +27,7 @@
 |-------------------|-------------------------------------------------------------------------|----------------------------------------------------------------------------|-------------------------------------------------------------------------|-----------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
 |**Meson Build System**|meson|
 
-#### How To Build
+### How To Build
 ```sh
 git clone https://github.com/Antergos/lightdm-webkit2-greeter.git /tmp/greeter
 cd /tmp/greeter/build
@@ -36,7 +36,7 @@ meson --prefix=/usr --libdir=lib ..
 ninja
 ```
 
-#### How To Install
+### How To Install
 ```sh
 sudo ninja install
 ```
