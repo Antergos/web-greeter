@@ -12,7 +12,7 @@ dependencies:
       gnome-common
       python3-pip
     # use the repository from xenial to get libwebkit2gtk-4.0-dev
-    - sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu/ xenial main universe"
+    - sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu/ yakkety main universe"
     - sudo apt-get update
     # ignore the error during the installation
     - sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ninja-build libwebkit2gtk-4.0-dev || true
