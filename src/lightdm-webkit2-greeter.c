@@ -200,9 +200,9 @@ lock_hint_enabled_handler(void) {
  *
  * Receives messages from our web extension process and calls appropriate handlers.
  *
- * @param: manager The WebKitUserContentManager instance that was created in #main.
- * @param: message The message sent from web extension process.
- * @param: user_data Data that is private to the current user.
+ * @param manager   The user content manager instance that was created in #main.
+ * @param message   The message sent from web extension process.
+ * @param user_data Data that is private to the current user.
  */
 static void
 message_received_cb(WebKitUserContentManager *manager,
