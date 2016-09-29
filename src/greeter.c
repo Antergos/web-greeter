@@ -47,7 +47,6 @@
 #include <lightdm.h>
 
 #include <config.h>
-
 #include "gresource/greeter-resources.h"
 
 static GtkWidget *web_view;
@@ -327,7 +326,7 @@ main(int argc, char **argv) {
 	css_provider = gtk_css_provider_new();
 
 	g_resources_register(greeter_resources);
-	gtk_css_provider_load_from_resource(css_provider, "/com/antergos/lightdm-webkit2-greeter/css");
+	gtk_css_provider_load_from_resource(css_provider, "/com/antergos/lightdm-webkit2-greeter/css/style.css");
 	gtk_style_context_add_provider_for_screen(
 		screen,
 		GTK_STYLE_PROVIDER(css_provider),

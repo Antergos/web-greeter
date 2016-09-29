@@ -45,6 +45,7 @@
 #include <lightdm.h>
 
 #include <config.h>
+#include "gresource/greeter-resources.h"
 
 G_MODULE_EXPORT void webkit_web_extension_initialize(WebKitWebExtension *extension);
 
@@ -72,6 +73,8 @@ static JSClassRef
 	lightdm_session_class,
 	config_file_class,
 	greeter_util_class;
+
+static GResource *greeter_resources;
 
 
 /*
@@ -1446,6 +1449,33 @@ static const JSClassDefinition greeter_util_definition = {
 
 
 static void
+inject_theme_heartbeat_script(JSGlobalContextRef *jsContext) {
+	JSStringRef command;
+	GBytes *resource;
+	GError *err = NULL;
+
+	greeter_resources = greeter_resources_get_resource();
+	resource = g_resource_lookup_data(
+		greeter_resources,
+		"/com/antergos/lightdm-webkit2-greeter/js/heartbeat.js",
+		0,
+		&err
+	);
+
+	if (NULL != err) {
+		fprintf(stderr, "Loading heartbeat.js from GResource failed: %s\n", err->message);
+		g_error_free(err);
+	}
+
+	command = JSStringCreateWithUTF8CString(resource);
+
+	JSEvaluateScript(jsContext, command, NULL, NULL, 0, NULL);
+
+	g_object_unref(resource)
+}
+
+
+static void
 window_object_cleared_callback(WebKitScriptWorld *world,
 							   WebKitWebPage *web_page,
 							   WebKitFrame *frame,
@@ -1460,6 +1490,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 				greeter_util_object,
 				globalObject;
 	JSStringRef command;
+	JSStringRef heartbeat_command;
 	gchar *message = "LockHint";
 
 	jsContext = webkit_frame_get_javascript_context_for_script_world(frame, world);
@@ -1510,6 +1541,12 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	command = JSStringCreateWithUTF8CString("window.greeterutil = greeter_util;");
 	JSEvaluateScript(jsContext, command, NULL, NULL, 0, NULL);
 
+	/* Inject GreeterThemeHeartbeat class */
+	inject_theme_heartbeat_class(jsContext);
+
+	/* Start the heartbeat */
+	heartbeat_command = JSStringCreateWithUTF8CString("new GreeterThemeHeartbeat();");
+	JSEvaluateScript(jsContext, command, NULL, NULL, 0, NULL);
 
 	/* If the greeter was started as a lock-screen, send message to our UI process. */
 	if (lightdm_greeter_get_lock_hint(greeter)) {
