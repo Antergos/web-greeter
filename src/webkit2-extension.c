@@ -1546,7 +1546,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 
 	/* Start the heartbeat */
 	heartbeat_command = JSStringCreateWithUTF8CString("new GreeterThemeHeartbeat();");
-	JSEvaluateScript(jsContext, command, NULL, NULL, 0, NULL);
+	JSEvaluateScript(jsContext, heartbeat_command, NULL, NULL, 0, NULL);
 
 	/* If the greeter was started as a lock-screen, send message to our UI process. */
 	if (lightdm_greeter_get_lock_hint(greeter)) {
