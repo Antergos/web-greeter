@@ -1449,10 +1449,11 @@ static const JSClassDefinition greeter_util_definition = {
 
 
 static void
-inject_theme_heartbeat_script(JSGlobalContextRef *jsContext) {
+inject_theme_heartbeat_script(JSGlobalContextRef jsContext) {
 	JSStringRef command;
 	GBytes *resource;
 	GError *err = NULL;
+	gsize *size = NULL;
 
 	greeter_resources = greeter_resources_get_resource();
 	resource = g_resource_lookup_data(
@@ -1465,13 +1466,15 @@ inject_theme_heartbeat_script(JSGlobalContextRef *jsContext) {
 	if (NULL != err) {
 		fprintf(stderr, "Loading heartbeat.js from GResource failed: %s\n", err->message);
 		g_error_free(err);
+		return;
 	}
 
-	command = JSStringCreateWithUTF8CString(resource);
+	command = JSStringCreateWithCharacters(g_bytes_unref_to_data(resource, size), sizeof size);
 
 	JSEvaluateScript(jsContext, command, NULL, NULL, 0, NULL);
 
-	g_object_unref(resource)
+	g_object_unref(resource);
+	g_free(size);
 }
 
 
@@ -1542,13 +1545,13 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	JSEvaluateScript(jsContext, command, NULL, NULL, 0, NULL);
 
 	/* Inject GreeterThemeHeartbeat class */
-	inject_theme_heartbeat_class(jsContext);
+	inject_theme_heartbeat_script(jsContext);
 
 	/* Start the heartbeat */
 	heartbeat_command = JSStringCreateWithUTF8CString("new GreeterThemeHeartbeat();");
 	JSEvaluateScript(jsContext, heartbeat_command, NULL, NULL, 0, NULL);
 
-	/* If the greeter was started as a lock-screen, send message to our UI process. */
+	/* If the greeter was started as a lock-screen, notify our UI process. */
 	if (lightdm_greeter_get_lock_hint(greeter)) {
 		dom_document = webkit_web_page_get_dom_document(web_page);
 		dom_window = webkit_dom_document_get_default_view(dom_document);
