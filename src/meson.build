@@ -1,12 +1,10 @@
-gnome = import('gnome')
-
 configure_file(output: 'config.h', configuration: conf)
 
 # ======================================= #
 # ------->>> Webkit2 Extension <<<------- #
 # ======================================= #
 
-webext_sources = ['lightdm-webkit2-greeter-ext.c']
+webext_sources = ['webkit2-extension.c']
 
 webext_incdir = include_directories('.')
 
@@ -23,7 +21,7 @@ webext = shared_library(
 # ============================= #
 
 greeter_headers = ['greeter-style-css.h']
-greeter_sources = ['greeter-style-css.c', 'lightdm-webkit2-greeter.c']
+greeter_sources = ['greeter-style-css.c', 'greeter.c']
 
 extdir = '"@0@/@1@"'.format(get_option('libdir'), 'lightdm-webkit2-greeter')
 
