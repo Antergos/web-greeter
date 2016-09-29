@@ -1,5 +1,5 @@
 /*
- * lightdm-webkit2-greeter-ext.c
+ * webkit2-extension.c
  *
  * Copyright © 2014-2016 Antergos Developers <dev@antergos.com>
  *

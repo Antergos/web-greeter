@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+	<gresource prefix="/com/antergos/lightdm-webkit2-greeter/css">
+		<file>style.css</file>
+	</gresource>
+	<gresource prefix="/com/antergos/lightdm-webkit2-greeter/js">
+		<file>heartbeat.js</file>
+	</gresource>
+</gresources>
+
+<!--
+	glib-compile-resources -\-c-name greeter_resources -\-generate -\-target greeter-resources-css.h greeter-resources.gresource.xml
+	glib-compile-resources -\-c-name greeter_resources -\-generate -\-target greeter-resources-css.c greeter-resources.gresource.xml
+-->
+

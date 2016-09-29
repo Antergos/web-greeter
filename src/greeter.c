@@ -1,5 +1,5 @@
 /*
- * lightdm-webkit2-greeter.c
+ * greeter.c
  *
  * Copyright © 2014-2016 Antergos Developers <dev@antergos.com>
  *
@@ -48,7 +48,7 @@
 
 #include <config.h>
 
-#include "gresource/greeter-style-css.h"
+#include "gresource/greeter-resources.h"
 
 static GtkWidget *web_view;
 static GtkWidget *window;
@@ -277,7 +277,7 @@ main(int argc, char **argv) {
 	WebKitWebContext *context;
 	GtkCssProvider *css_provider;
 	WebKitCookieManager *cookie_manager;
-	GResource *css_resource;
+	GResource *greeter_resources;
 
 	/* Prevent memory from being swapped out, since we see unencrypted passwords. */
 	mlockall (MCL_CURRENT | MCL_FUTURE);
@@ -323,11 +323,11 @@ main(int argc, char **argv) {
 	/* Setup CSS provider. We use CSS to set the window background to black instead
 	 * of default white so the screen doesnt flash during startup.
 	 */
-	css_resource = greeter_css_get_resource();
+	greeter_resources = greeter_resources_get_resource();
 	css_provider = gtk_css_provider_new();
 
-	g_resources_register(css_resource);
-	gtk_css_provider_load_from_resource(css_provider, "/com/antergos/lightdm-webkit2-greeter");
+	g_resources_register(greeter_resources);
+	gtk_css_provider_load_from_resource(css_provider, "/com/antergos/lightdm-webkit2-greeter/css");
 	gtk_style_context_add_provider_for_screen(
 		screen,
 		GTK_STYLE_PROVIDER(css_provider),

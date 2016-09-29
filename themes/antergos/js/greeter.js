@@ -1,8 +1,7 @@
 /*
+ * greeter.js
  *
  * Copyright © 2015-2016 Antergos
- *
- * greeter.js
  *
  * This file is part of lightdm-webkit2-greeter
  *
@@ -59,8 +58,6 @@ class AntergosThemeUtils {
 		}
 		_util = this;
 
-		this.initialize_theme_heartbeat();
-
 		this.debug = false;
 		this.lang = window.navigator.language.split( '-' )[ 0 ].toLowerCase();
 		this.translations = window.ant_translations;
@@ -78,40 +75,6 @@ class AntergosThemeUtils {
 
 		return _util;
 	}
-
-
-	/**
-	 * Initialize greeter theme heartbeat. Themes start the heartbeat by sending a post message
-	 * via JavaScript. Once started, the heartbeat will schedule a check to ensure that the
-	 * theme has sent a subsequent heartbeat message. Once started, if a heartbeat message is not
-	 * received by the time any of the greeter's subsequent checks run it will assume that there
-	 * has been an error in the web process and fallback to the simple theme.
-	 */
-	initialize_theme_heartbeat() {
-		var heartbeats = 0;
-
-		this.log('Initializing theme heartbeat.');
-		this.heartbeat = setInterval(() => {
-			++heartbeats;
-			window.webkit.messageHandlers.GreeterBridge.postMessage('Heartbeat');
-			if (heartbeats < 5) {
-				console.log('Sending heartbeat...');
-			}
-		}, 5000);
-	}
-
-
-	/**
-	 * Exits the heartbeat.
-	 *
-	 * Before starting the user's session, themes should exit the heartbeat
-	 * to prevent a race condition when the greeter is shutting down.
-	 */
-	stop_theme_heartbeat() {
-		window.webkit.messageHandlers.GreeterBridge.postMessage('Heartbeat::Exit');
-		clearInterval(this.heartbeat);
-	}
-
 
 	setup_cache_backend() {
 		// Do we have access to localStorage?
