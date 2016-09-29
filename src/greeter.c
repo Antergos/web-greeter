@@ -48,7 +48,7 @@
 
 #include <config.h>
 
-#include "greeter-style-css.h"
+#include "gresource/greeter-style-css.h"
 
 static GtkWidget *web_view;
 static GtkWidget *window;

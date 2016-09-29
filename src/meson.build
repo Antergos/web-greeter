@@ -22,6 +22,7 @@ webext = shared_library(
 
 greeter_headers = ['greeter-style-css.h']
 greeter_sources = ['greeter-style-css.c', 'greeter.c']
+gresource_sources = include_directories('gresource')
 
 extdir = '"@0@/@1@"'.format(get_option('libdir'), 'lightdm-webkit2-greeter')
 
@@ -37,3 +38,14 @@ greeter = executable(
     dependencies: deps,
     c_args: greeter_cargs,
     install: true)
+
+
+# ===================================== #
+# ------->>> Sub Directories <<<------- #
+# ===================================== #
+
+subdirs = ['gresource']
+
+foreach s : subdirs
+  subdir(s)
+endforeach
