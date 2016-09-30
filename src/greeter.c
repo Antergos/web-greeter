@@ -53,6 +53,7 @@ static GtkWidget *web_view;
 static GtkWidget *window;
 static WebKitSettings *webkit_settings;
 static GdkDisplay *default_display;
+static GResource *greeter_resources;
 
 /* Screensaver values */
 static int timeout, interval, prefer_blanking, allow_exposures;
@@ -60,6 +61,7 @@ static int timeout, interval, prefer_blanking, allow_exposures;
 static gint config_timeout;
 
 static gboolean debug_mode, heartbeat, heartbeat_exit;
+
 
 static GdkFilterReturn
 wm_window_filter(GdkXEvent *gxevent, GdkEvent *event, gpointer data) {
@@ -106,7 +108,7 @@ create_new_webkit_settings_object(void) {
 		"javascript-can-open-windows-automatically", TRUE,
 		"allow-file-access-from-file-urls", TRUE,
 		"enable-write-console-messages-to-stdout", TRUE,
-		//"allow-universal-access-from-file-urls", TRUE,
+		"allow-universal-access-from-file-urls", TRUE,
 		NULL
 	);
 }
@@ -128,17 +130,17 @@ context_menu_cb(WebKitWebView *view,
 
 
 static gboolean
-check_theme_heartbeat_cb(void) {
+check_theme_heartbeat(void) {
 	if (! heartbeat && ! heartbeat_exit) {
-			/* Theme heartbeat not received. We assume that an error has occurred
-			 * which broke script execution. We will fallback to the simple theme
-			 * so the user won't be stuck with a broken login screen.
-			 */
-			g_warning("[ERROR] :: A problem was detected with the current theme. Falling back to simple theme...");
-			webkit_web_view_load_uri(
-					WEBKIT_WEB_VIEW(web_view),
-					g_strdup_printf("file://%s/simple/index.html", THEME_DIR)
-			);
+		/* Theme heartbeat not received. We assume that an error has occurred
+		 * which broke script execution. We will fallback to the simple theme
+		 * so the user won't be stuck with a broken login screen.
+		 */
+		g_warning("[ERROR] :: A problem was detected with the current theme. Falling back to simple theme...");
+		webkit_web_view_load_uri(
+			WEBKIT_WEB_VIEW(web_view),
+			g_strdup_printf("file://%s/simple/index.html", THEME_DIR)
+		);
 	}
 
 	heartbeat = FALSE;
@@ -148,17 +150,13 @@ check_theme_heartbeat_cb(void) {
 
 
 /**
- * Callback for Theme Heartbeat. Themes start the heartbeat by sending a post message
- * via JavaScript. Once started, the heartbeat will schedule a check to ensure that the
- * theme has sent a subsequent heartbeat message. Once started, if a heartbeat message was not
- * received by the time our check runs we assume that there has been an error in the web
- * process and fallback to the simple theme.
+ * Callback for Theme Heartbeat.
  */
 static void
-theme_heartbeat_cb(void) {
+theme_heartbeat_handler(void) {
 	if (! heartbeat) {
 		/* Setup g_timeout callback for theme heartbeat check */
-		g_timeout_add_seconds(8, (GSourceFunc) check_theme_heartbeat_cb, NULL);
+		g_timeout_add_seconds(8, (GSourceFunc) check_theme_heartbeat, NULL);
 		heartbeat = TRUE;
 		heartbeat_exit = FALSE;
 	}
@@ -166,20 +164,49 @@ theme_heartbeat_cb(void) {
 
 
 /**
- * Heartbeat exit callback.
- *
- * Before starting the user's session, themes should exit the heartbeat
- * to prevent a race condition while the greeter is shutting down.
+ * Before starting the user's session, the web process will send a signal to exit the hearbeat
+ * in order to prevent a race condition while the greeter is shutting down.
  */
 static void
-theme_heartbeat_exit_cb(void) {
+theme_heartbeat_exit_handler(void) {
 	heartbeat_exit = TRUE;
 }
 
 
+static void
+theme_heartbeat_script_loaded_cb(GObject *object,
+								 GAsyncResult *result,
+								 gpointer user_data) {
+
+	WebKitJavascriptResult *js_result;
+	JSValueRef              value;
+	JSGlobalContextRef      context;
+	GError                 *error = NULL;
+
+	js_result = webkit_web_view_run_javascript_from_gresource_finish(
+		WEBKIT_WEB_VIEW(object),
+		result,
+		&error
+	);
+
+	if (!js_result) {
+		g_warning("Error running javascript: %s", error->message);
+		g_error_free(error);
+		return;
+	}
+
+	context = webkit_javascript_result_get_global_context(js_result);
+	value = webkit_javascript_result_get_value(js_result);
+
+	if (! JSValueIsNull(context, value) && ! JSValueIsUndefined(context, value)) {
+		g_warning("Error running javascript: unexpected return value.");
+	}
+
+	webkit_javascript_result_unref(js_result);
+}
+
+
 /**
- * Lock Hint enabled handler.
- *
  * Makes the greeter behave a bit more like a screensaver if it was launched as
  * a lock-screen by blanking the screen.
  */
@@ -191,6 +218,25 @@ lock_hint_enabled_handler(void) {
 	XGetScreenSaver(display, &timeout, &interval, &prefer_blanking, &allow_exposures);
 	XForceScreenSaver(display, ScreenSaverActive);
 	XSetScreenSaver(display, config_timeout, 0, PreferBlanking, DefaultExposures);
+}
+
+
+static void
+load_theme_heartbeat_script() {
+	webkit_web_view_run_javascript_from_gresource(
+		WEBKIT_WEB_VIEW(web_view),
+		"/com/antergos/lightdm-webkit2-greeter/js/heartbeat.js",
+		NULL,
+		(GAsyncReadyCallback) theme_heartbeat_script_loaded_cb,
+		NULL
+	);
+}
+
+
+
+static void
+page_loaded_handler(void) {
+	load_theme_heartbeat_script();
 }
 
 
@@ -229,12 +275,17 @@ message_received_cb(WebKitUserContentManager *manager,
 		printf("Error running javascript: unexpected return value");
 	}
 
-	if (strcmp(message_str, "LockHint") == 0) {
+	if (strcmp(message_str, "PageLoaded") == 0) {
+		page_loaded_handler();
+
+	} else if (strcmp(message_str, "LockHint") == 0) {
 		lock_hint_enabled_handler();
+
 	} else if (strcmp(message_str, "Heartbeat") == 0) {
-		theme_heartbeat_cb();
+		theme_heartbeat_handler();
+
 	} else if (strcmp(message_str, "Heartbeat::Exit") == 0) {
-		theme_heartbeat_exit_cb();
+		theme_heartbeat_exit_handler();
 	}
 
 	g_free(message_str);
@@ -276,7 +327,6 @@ main(int argc, char **argv) {
 	WebKitWebContext *context;
 	GtkCssProvider *css_provider;
 	WebKitCookieManager *cookie_manager;
-	GResource *greeter_resources;
 
 	/* Prevent memory from being swapped out, since we see unencrypted passwords. */
 	mlockall (MCL_CURRENT | MCL_FUTURE);
@@ -326,7 +376,10 @@ main(int argc, char **argv) {
 	css_provider = gtk_css_provider_new();
 
 	g_resources_register(greeter_resources);
-	gtk_css_provider_load_from_resource(css_provider, "/com/antergos/lightdm-webkit2-greeter/css/style.css");
+	gtk_css_provider_load_from_resource(
+		css_provider,
+		"/com/antergos/lightdm-webkit2-greeter/css/style.css"
+	);
 	gtk_style_context_add_provider_for_screen(
 		screen,
 		GTK_STYLE_PROVIDER(css_provider),

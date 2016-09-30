@@ -45,7 +45,6 @@
 #include <lightdm.h>
 
 #include <config.h>
-#include "gresource/greeter-resources.h"
 
 G_MODULE_EXPORT void webkit_web_extension_initialize(WebKitWebExtension *extension);
 
@@ -73,8 +72,6 @@ static JSClassRef
 	lightdm_session_class,
 	config_file_class,
 	greeter_util_class;
-
-static GResource *greeter_resources;
 
 
 /*
@@ -1449,36 +1446,6 @@ static const JSClassDefinition greeter_util_definition = {
 
 
 static void
-inject_theme_heartbeat_script(JSGlobalContextRef jsContext) {
-	JSStringRef command;
-	GBytes *resource;
-	GError *err = NULL;
-	gsize *size = NULL;
-
-	greeter_resources = greeter_resources_get_resource();
-	resource = g_resource_lookup_data(
-		greeter_resources,
-		"/com/antergos/lightdm-webkit2-greeter/js/heartbeat.js",
-		0,
-		&err
-	);
-
-	if (NULL != err) {
-		fprintf(stderr, "Loading heartbeat.js from GResource failed: %s\n", err->message);
-		g_error_free(err);
-		return;
-	}
-
-	command = JSStringCreateWithCharacters(g_bytes_unref_to_data(resource, size), sizeof size);
-
-	JSEvaluateScript(jsContext, command, NULL, NULL, 0, NULL);
-
-	g_object_unref(resource);
-	g_free(size);
-}
-
-
-static void
 window_object_cleared_callback(WebKitScriptWorld *world,
 							   WebKitWebPage *web_page,
 							   WebKitFrame *frame,
@@ -1494,7 +1461,8 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 				globalObject;
 	JSStringRef command;
 	JSStringRef heartbeat_command;
-	gchar *message = "LockHint";
+	gchar *lock_hint_message = "LockHint";
+	gchar *page_loaded_message = "PageLoaded";
 
 	jsContext = webkit_frame_get_javascript_context_for_script_world(frame, world);
 	globalObject = JSContextGetGlobalObject(jsContext);
@@ -1544,25 +1512,22 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	command = JSStringCreateWithUTF8CString("window.greeterutil = greeter_util;");
 	JSEvaluateScript(jsContext, command, NULL, NULL, 0, NULL);
 
-	/* Inject GreeterThemeHeartbeat class */
-	inject_theme_heartbeat_script(jsContext);
+	dom_document = webkit_web_page_get_dom_document(web_page);
+	dom_window = webkit_dom_document_get_default_view(dom_document);
 
-	/* Start the heartbeat */
-	heartbeat_command = JSStringCreateWithUTF8CString("new GreeterThemeHeartbeat();");
-	JSEvaluateScript(jsContext, heartbeat_command, NULL, NULL, 0, NULL);
+	if (dom_window) {
+		/* Notify the UI process that the page is loaded */
+		webkit_dom_dom_window_webkit_message_handlers_post_message(
+			dom_window, "GreeterBridge", page_loaded_message
+		);
 
-	/* If the greeter was started as a lock-screen, notify our UI process. */
-	if (lightdm_greeter_get_lock_hint(greeter)) {
-		dom_document = webkit_web_page_get_dom_document(web_page);
-		dom_window = webkit_dom_document_get_default_view(dom_document);
-
-		if (dom_window) {
+		/* If the greeter was started as a lock-screen, notify our UI process. */
+		if (lightdm_greeter_get_lock_hint(greeter)) {
 			webkit_dom_dom_window_webkit_message_handlers_post_message(
-				dom_window, "GreeterBridge", message
+				dom_window, "GreeterBridge", lock_hint_message
 			);
 		}
 	}
-
 }
 
 
