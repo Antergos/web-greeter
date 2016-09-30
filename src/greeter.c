@@ -267,13 +267,12 @@ message_received_cb(WebKitUserContentManager *manager,
 	context = webkit_javascript_result_get_global_context(message);
 	message_val = webkit_javascript_result_get_value(message);
 
-	if (TRUE) {
+	if (JSValueIsString(context, message_val)) {
 		js_str_val = JSValueToStringCopy(context, message_val, NULL);
 		message_str_length = JSStringGetMaximumUTF8CStringSize(js_str_val);
 		message_str = (gchar *)g_malloc (message_str_length);
 		JSStringGetUTF8CString(js_str_val, message_str, message_str_length);
 		JSStringRelease(js_str_val);
-		g_message("UI PROCESS - message is: %s", message_str);
 
 	} else {
 		message_str = "";
@@ -384,7 +383,7 @@ main(int argc, char **argv) {
 
 	g_resources_register(greeter_resources);
 	gtk_css_provider_load_from_resource(
-		css_provider,
+		GTK_CSS_PROVIDER(css_provider),
 		"/com/antergos/lightdm-webkit2-greeter/css/style.css"
 	);
 	gtk_style_context_add_provider_for_screen(
@@ -397,7 +396,7 @@ main(int argc, char **argv) {
 	 * so webkit can find our extension.
 	 */
 	context = webkit_web_context_get_default();
-	g_signal_connect(context,
+	g_signal_connect(WEBKIT_WEB_CONTEXT(context),
 					 "initialize-web-extensions",
 					 G_CALLBACK(initialize_web_extensions_cb), NULL);
 
@@ -415,7 +414,7 @@ main(int argc, char **argv) {
 
 	/* Set the web_view's settings. */
 	create_new_webkit_settings_object();
-	webkit_web_view_set_settings(WEBKIT_WEB_VIEW(web_view), webkit_settings);
+	webkit_web_view_set_settings(WEBKIT_WEB_VIEW(web_view), WEBKIT_SETTINGS(webkit_settings));
 
 	/* The default background color of the web_view is white which causes a flash effect when the greeter starts.
 	 * We make it black instead. This only applies when the theme hasn't set the body background via CSS.
@@ -424,7 +423,7 @@ main(int argc, char **argv) {
 	webkit_web_view_set_background_color(WEBKIT_WEB_VIEW(web_view), gdk_rgba_copy(&bg_color));
 
 	/* Maybe disable the context (right-click) menu. */
-	g_signal_connect(web_view, "context-menu", G_CALLBACK(context_menu_cb), NULL);
+	g_signal_connect(WEBKIT_WEB_VIEW(web_view), "context-menu", G_CALLBACK(context_menu_cb), NULL);
 
 	/* There's no turning back now, let's go! */
 	gtk_container_add(GTK_CONTAINER(window), web_view);
