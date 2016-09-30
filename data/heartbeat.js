@@ -67,4 +67,4 @@ class LightDMGreeterHeartbeat {
 }
 
 
-window.LightDMGreeterHeartbeat = LightDMGreeterHeartbeat;
+new LightDMGreeterHeartbeat();

@@ -222,7 +222,7 @@ lock_hint_enabled_handler(void) {
 
 
 static void
-load_theme_heartbeat_script() {
+load_theme_heartbeat_script(void) {
 	webkit_web_view_run_javascript_from_gresource(
 		WEBKIT_WEB_VIEW(web_view),
 		"/com/antergos/lightdm-webkit2-greeter/js/heartbeat.js",
