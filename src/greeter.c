@@ -178,6 +178,7 @@ theme_heartbeat_script_loaded_cb(GObject *object,
 								 GAsyncResult *result,
 								 gpointer user_data) {
 
+	g_message("UI PROCESS - theme heartbeat loaded fired!");
 	WebKitJavascriptResult *js_result;
 	JSValueRef              value;
 	JSGlobalContextRef      context;
@@ -223,6 +224,7 @@ lock_hint_enabled_handler(void) {
 
 static void
 load_theme_heartbeat_script(void) {
+	g_message("UI PROCESS - load theme heartbeat fired!");
 	webkit_web_view_run_javascript_from_gresource(
 		WEBKIT_WEB_VIEW(web_view),
 		"/com/antergos/lightdm-webkit2-greeter/js/heartbeat.js",
@@ -236,6 +238,7 @@ load_theme_heartbeat_script(void) {
 
 static void
 page_loaded_handler(void) {
+	g_message("UI PROCESS - page loaded handler fired!");
 	load_theme_heartbeat_script();
 }
 
@@ -259,16 +262,18 @@ message_received_cb(WebKitUserContentManager *manager,
 	JSValueRef message_val;
 	JSStringRef js_str_val;
 	gsize message_str_length;
+	g_message("UI PROCESS - message received fired!");
 
 	context = webkit_javascript_result_get_global_context(message);
 	message_val = webkit_javascript_result_get_value(message);
 
-	if (JSValueIsString(context, message_val)) {
+	if (TRUE) {
 		js_str_val = JSValueToStringCopy(context, message_val, NULL);
 		message_str_length = JSStringGetMaximumUTF8CStringSize(js_str_val);
 		message_str = (gchar *)g_malloc (message_str_length);
 		JSStringGetUTF8CString(js_str_val, message_str, message_str_length);
 		JSStringRelease(js_str_val);
+		g_message("UI PROCESS - message is: %s", message_str);
 
 	} else {
 		message_str = "";
@@ -286,6 +291,8 @@ message_received_cb(WebKitUserContentManager *manager,
 
 	} else if (strcmp(message_str, "Heartbeat::Exit") == 0) {
 		theme_heartbeat_exit_handler();
+	} else {
+		g_message("UI PROCESS - message received no match!");
 	}
 
 	g_free(message_str);
