@@ -1350,7 +1350,6 @@ static const JSStaticFunction lightdm_greeter_functions[] = {
 	{"cancel_timed_login",    cancel_autologin_cb,      kJSPropertyAttributeReadOnly},
 	{"login",                 start_session_cb,         kJSPropertyAttributeReadOnly},
 	{"provide_secret",        respond_cb,               kJSPropertyAttributeReadOnly},
-	{"start_authentication",  authenticate_cb,          kJSPropertyAttributeReadOnly},
 	{"start_session_sync",    start_session_cb,         kJSPropertyAttributeReadOnly},
 	/* -------->>> DEPRECATED! <<<---------------------->>> DEPRECATED! <<<---------*/
 	{NULL,                    NULL,                     0}};

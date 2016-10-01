@@ -26,7 +26,7 @@
  */
 
 
-if ( 'undefined' !== typeof lightdm ) {
+if ( 'lightdm' in window ) {
 	throw new Error('Cannot use LightDM Mock while the greeter is running!');
 }
 
@@ -851,7 +851,7 @@ MockData = () => ({
 });
 
 
-if ( ! lightdm in window ) {
+if ( ! 'lightdm' in window ) {
 	new ConfigFile();
 	new GreeterUtil();
 	new LightDMGreeter();
