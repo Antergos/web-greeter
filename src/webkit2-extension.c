@@ -1348,7 +1348,7 @@ static const JSStaticValue lightdm_greeter_values[] = {
 	{"hostname",            get_hostname_cb,            NULL,            kJSPropertyAttributeReadOnly},
 	{"in_authentication",   get_in_authentication_cb,   NULL,            kJSPropertyAttributeReadOnly},
 	{"is_authenticated",    get_is_authenticated_cb,    NULL,            kJSPropertyAttributeReadOnly},
-	{"language",            get_language_cb,            NULL,          kJSPropertyAttributeReadOnly},
+	{"language",            get_language_cb,            NULL,            kJSPropertyAttributeReadOnly},
 	{"languages",           get_languages_cb,           NULL,            kJSPropertyAttributeReadOnly},
 	{"layout",              get_layout_cb,              set_layout_cb,   kJSPropertyAttributeNone},
 	{"layouts",             get_layouts_cb,             NULL,            kJSPropertyAttributeReadOnly},
@@ -1357,7 +1357,7 @@ static const JSStaticValue lightdm_greeter_values[] = {
 	{"select_guest_hint",   get_select_guest_hint_cb,   NULL,            kJSPropertyAttributeReadOnly},
 	{"select_user_hint",    get_select_user_hint_cb,    NULL,            kJSPropertyAttributeReadOnly},
 	{"sessions",            get_sessions_cb,            NULL,            kJSPropertyAttributeReadOnly},
-	{"session-starting",    get_session_starting_cb,    NULL,            kJSPropertyAttributeReadOnly},
+	{"session_starting",    get_session_starting_cb,    NULL,            kJSPropertyAttributeReadOnly},
 	{"users",               get_users_cb,               NULL,            kJSPropertyAttributeReadOnly},
 	/* ------>>> DEPRECATED! <<<----------->>> DEPRECATED! <<<------------>>> DEPRECATED! <<<------*/
 	{"default_language",    get_language_cb,            NULL,            kJSPropertyAttributeReadOnly},
