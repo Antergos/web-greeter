@@ -567,7 +567,7 @@ class AntergosTheme {
 					<i class="fa fa-${actions[ action ]}"></i>
 				</a>`;
 
-			if ( lightdm[ cmd ] ) {
+			if ( lightdm[ cmd ]() ) {
 				$( template ).appendTo( $( this.$actions_container ) ).click( this.system_action_handler );
 			}
 		} // END for (var [action, icon] of actions)
@@ -672,8 +672,8 @@ class AntergosTheme {
 		_util.log( `Starting authentication for ${user_id}.` );
 		_self.selected_user = user_id;
 
-		// CSS hack to workaround webkit bug
 		if ( $( _self.$user_list ).children().length > 3 ) {
+			// Reset columns since only the selected user is visible right now.
 			$( _self.$user_list ).css( 'column-count', 'initial' ).parent().css( 'max-width', '50%' );
 		}
 		$( selector ).addClass( 'hovered' ).siblings().hide();
@@ -709,8 +709,8 @@ class AntergosTheme {
 
 		_util.log( 'Cancelled authentication.' );
 
-		// CSS hack to work-around webkit bug
 		if ( $( _self.$user_list ).children().length > 3 ) {
+			// Make the user list two columns instead of one.
 			$( _self.$user_list ).css( 'column-count', '2' ).parent().css( 'max-width', '85%' );
 		}
 
@@ -739,9 +739,6 @@ class AntergosTheme {
 
 		if ( lightdm.is_authenticated ) {
 			// The user entered the correct password. Let's log them in.
-			// But first, we need to exit the theme heartbeat to prevent a race condition.
-			_util.stop_theme_heartbeat();
-
 			$( 'body' ).fadeOut( 1000, () => {
 				lightdm.login( lightdm.authentication_user, selected_session );
 			} );
@@ -754,9 +751,12 @@ class AntergosTheme {
 
 
 	submit_password( event ) {
-		lightdm.respond( $( '#passwordField' ).val() );
+		let passwd =  $( '#passwordField' ).val();
+
 		$( '#passwordArea' ).hide();
 		$( '#timerArea' ).show();
+
+		lightdm.respond( passwd );
 	}
 
 
@@ -796,9 +796,9 @@ class AntergosTheme {
 
 		$modal.find( '.btn-primary' ).text( _util.translations[ action ] ).click( action, ( event ) => {
 			$( this ).off( 'click' );
-			// Stop theme heartbeat to prevent race condition.
-			_util.stop_theme_heartbeat();
-			lightdm[ event.data ]();
+			$( 'body' ).fadeOut( 1000, () => {
+				lightdm[event.data]();
+			});
 		} );
 		$modal.find( '.btn-default' ).click( () => {
 			$( this ).next().off( 'click' );
@@ -809,7 +809,7 @@ class AntergosTheme {
 
 
 	user_list_collapse_handler() {
-		_self.user_list_visible = _self.$user_list.hasClass( 'in' ) ? true : false;
+		_self.user_list_visible = _self.$user_list.hasClass( 'in' );
 	}
 
 

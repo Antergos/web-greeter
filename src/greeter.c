@@ -194,13 +194,6 @@ theme_heartbeat_script_loaded_cb(GObject *object,
 		return;
 	}
 
-	context = webkit_javascript_result_get_global_context(js_result);
-	value = webkit_javascript_result_get_value(js_result);
-
-	if (! JSValueIsNull(context, value) && ! JSValueIsUndefined(context, value)) {
-		g_warning("Error running javascript: unexpected return value.");
-	}
-
 	webkit_javascript_result_unref(js_result);
 }
 
