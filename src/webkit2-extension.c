@@ -71,6 +71,10 @@ static JSClassRef
 	config_file_class,
 	greeter_util_class;
 
+static gboolean SESSION_STARTING = FALSE;
+
+static WebKitWebExtension *WEB_EXTENSION;
+
 
 /*
  * Returns either a string or null.
@@ -585,6 +589,16 @@ get_sessions_cb(JSContextRef context,
 
 
 static JSValueRef
+get_session_starting_cb(JSContextRef context,
+						JSObjectRef thisObject,
+						JSStringRef propertyName,
+						JSValueRef *exception) {
+
+	return JSValueMakeBoolean(context, SESSION_STARTING);
+}
+
+
+static JSValueRef
 get_default_session_cb(JSContextRef context,
 					   JSObjectRef thisObject,
 					   JSStringRef propertyName,
@@ -908,15 +922,19 @@ shutdown_cb(JSContextRef context,
 
 static JSValueRef
 start_session_cb(JSContextRef context,
-					  JSObjectRef function,
-					  JSObjectRef thisObject,
-					  size_t argumentCount,
-					  const JSValueRef arguments[],
-					  JSValueRef *exception) {
+				 JSObjectRef function,
+				 JSObjectRef thisObject,
+				 size_t argumentCount,
+				 const JSValueRef arguments[],
+				 JSValueRef *exception) {
 
 	gchar *session = NULL;
 	gboolean result;
 	GError *err = NULL;
+
+	WebKitDOMDOMWindow *dom_window;
+	WebKitDOMDocument *dom_document;
+	WebKitWebPage *web_page;
 
 	/* FIXME: old API required lightdm.login(username, session), but the username
 	 * is never actually used.  At some point, deprecate the old usage.  For now,
@@ -928,10 +946,27 @@ start_session_cb(JSContextRef context,
 		session = arg_to_string(context, arguments[1], exception);
 	}
 
+	web_page = webkit_web_extension_get_page(WEB_EXTENSION, page_id);
+
+	if (NULL != web_page) {
+		dom_document = webkit_web_page_get_dom_document(web_page);
+		dom_window = webkit_dom_document_get_default_view(dom_document);
+	}
+
+	if (dom_window) {
+		/* Stop theme heartbeat */
+		webkit_dom_dom_window_webkit_message_handlers_post_message(
+			dom_window, "GreeterBridge", "Heartbeat::Exit"
+		);
+	}
+
+	SESSION_STARTING = TRUE;
+
 	result = lightdm_greeter_start_session_sync(GREETER, session, &err);
 	g_free(session);
 
 	if (err != NULL) {
+		SESSION_STARTING = FALSE;
 		_mkexception(context, exception, err->message);
 		g_error_free(err);
 	}
@@ -1322,6 +1357,7 @@ static const JSStaticValue lightdm_greeter_values[] = {
 	{"select_guest_hint",   get_select_guest_hint_cb,   NULL,            kJSPropertyAttributeReadOnly},
 	{"select_user_hint",    get_select_user_hint_cb,    NULL,            kJSPropertyAttributeReadOnly},
 	{"sessions",            get_sessions_cb,            NULL,            kJSPropertyAttributeReadOnly},
+	{"session-starting",    get_session_starting_cb,    NULL,            kJSPropertyAttributeReadOnly},
 	{"users",               get_users_cb,               NULL,            kJSPropertyAttributeReadOnly},
 	/* ------>>> DEPRECATED! <<<----------->>> DEPRECATED! <<<------------>>> DEPRECATED! <<<------*/
 	{"default_language",    get_language_cb,            NULL,            kJSPropertyAttributeReadOnly},
@@ -1661,6 +1697,8 @@ page_created_cb(WebKitWebExtension *extension,
 G_MODULE_EXPORT void
 webkit_web_extension_initialize(WebKitWebExtension *extension) {
 	LightDMGreeter *greeter = lightdm_greeter_new();
+
+	WEB_EXTENSION = extension;
 
 	g_signal_connect(G_OBJECT(greeter),
 					 "authentication-complete",

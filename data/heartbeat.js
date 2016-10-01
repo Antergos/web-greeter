@@ -62,10 +62,18 @@ class LightDMGreeterHeartbeat {
 
 		this.heartbeat = setInterval(() => {
 			++heartbeats;
+
+			if ( true === lightdm.session_starting ) {
+				clearInterval( this.heartbeat );
+				return;
+			}
+
 			window.webkit.messageHandlers.GreeterBridge.postMessage('Heartbeat');
+
 			if ( heartbeats < 5 ) {
 				console.log('Sending heartbeat...');
 			}
+
 		}, 5000);
 	}
 }
