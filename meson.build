@@ -29,8 +29,8 @@ webkit2_webext = dependency('webkit2gtk-web-extension-4.0', version: '>=2.10.7')
 
 x11 = dependency('x11')
 
-deps = [dbus_glib, gtk3, libldm_gobject, webkit2, x11]
-webext_deps = deps + [webkit2_webext]
+greeter_deps = [dbus_glib, gtk3, webkit2, x11]
+webext_deps = [webkit2_webext, libldm_gobject]
 
 
 # =================================== #

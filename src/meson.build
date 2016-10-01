@@ -7,13 +7,12 @@ extdir = '@0@/@1@'.format(get_option('libdir'), 'lightdm-webkit2-greeter')
 # ------->>> Webkit2 Extension <<<------- #
 # ======================================= #
 
-webext_sources = ['gresource/greeter-resources.c', 'webkit2-extension.c']
+webext_sources = ['webkit2-extension.c']
 
-webext = shared_library(
+webext = library(
     'lightdm-webkit2-greeter-webext',
     webext_sources,
     dependencies: webext_deps,
-    include_directories : gresource_sources,
     install: true,
     install_dir : extdir
 )
@@ -32,7 +31,7 @@ greeter_cargs = [
 greeter = executable(
     'lightdm-webkit2-greeter',
     greeter_sources,
-    dependencies: deps,
+    dependencies: greeter_deps,
     c_args: greeter_cargs,
     include_directories : gresource_sources,
     install: true
