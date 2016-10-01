@@ -567,7 +567,7 @@ class AntergosTheme {
 					<i class="fa fa-${actions[ action ]}"></i>
 				</a>`;
 
-			if ( lightdm[ cmd ]() ) {
+			if ( true === lightdm[ cmd ] ) {
 				$( template ).appendTo( $( this.$actions_container ) ).click( this.system_action_handler );
 			}
 		} // END for (var [action, icon] of actions)
