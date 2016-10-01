@@ -99,9 +99,8 @@
 		messages.style.visibility = "visible";
 		// type is either "info" or "error"
 		if (type == "error") {
-			text = "<font color=\"red\">" + text + "</font>";
+			text = "<p style=\"color:red;\">" + text + "</p>";
 		}
-		text = text + "<br>";
 		messages.innerHTML = messages.innerHTML + text;
 	}
 
@@ -153,7 +152,7 @@
 		lightdm.respond(entry.value);
 	}
 </script>
-<script src="../antergos/js/mock.js"></script>
+<!--<script src="../_vendor/js/mock.js"></script>-->
 <script>
 	start_authentication();
 </script>
