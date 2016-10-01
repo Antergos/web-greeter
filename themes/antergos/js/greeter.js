@@ -214,7 +214,7 @@ class AntergosThemeUtils {
 	}
 
 	is_not_empty( value ) {
-		empty_values = [null, 'null', undefined, 'undefined'];
+		let empty_values = [null, 'null', undefined, 'undefined'];
 		return empty_values.findIndex(v => v === value) === -1;
 	}
 
