@@ -286,7 +286,6 @@ message_received_cb(WebKitUserContentManager *manager,
 
 static void
 quit_cb(void) {
-	gtk_widget_destroy(GTK_WIDGET(web_view));
 	gtk_widget_destroy(GTK_WIDGET(window));
 	gtk_main_quit();
 }
@@ -329,6 +328,7 @@ main(int argc, char **argv) {
 
 	gtk_init(&argc, &argv);
 	g_unix_signal_add(SIGTERM, (GSourceFunc) quit_cb, NULL);
+	g_unix_signal_add(SIGINT, (GSourceFunc) quit_cb, NULL);
 
 	/* Apply greeter settings from config file */
 	keyfile = g_key_file_new();
