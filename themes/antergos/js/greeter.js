@@ -213,6 +213,11 @@ class AntergosThemeUtils {
 		this.background_images_dir = background_images_dir;
 	}
 
+	is_not_empty( value ) {
+		empty_values = [null, 'null', undefined, 'undefined'];
+		return empty_values.findIndex(v => v === value) === -1;
+	}
+
 
 	find_images( dirlist ) {
 		var images = [],
@@ -661,7 +666,7 @@ class AntergosTheme {
 		var user_id = $( this ).attr( 'id' ),
 			selector = `.${user_id}`,
 			user_session_cached = _util.cache_get( 'user', user_id, 'session' ),
-			user_session = (null !== user_session_cached) ? user_session_cached : lightdm.default_session;
+			user_session = (_util.is_not_empty( user_session_cached )) ? user_session_cached : lightdm.default_session;
 
 		if ( _self.auth_pending || null !== _self.selected_user ) {
 			lightdm.cancel_authentication();

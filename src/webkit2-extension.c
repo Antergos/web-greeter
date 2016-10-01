@@ -1649,6 +1649,15 @@ autologin_timer_expired_cb(LightDMGreeter *greeter, WebKitWebExtension *extensio
 }
 
 
+void
+page_created_cb(WebKitWebExtension *extension,
+				WebKitWebPage      *web_page,
+				gpointer            user_data) {
+
+	page_id = webkit_web_page_get_id(web_page);
+}
+
+
 G_MODULE_EXPORT void
 webkit_web_extension_initialize(WebKitWebExtension *extension) {
 	LightDMGreeter *greeter = lightdm_greeter_new();
@@ -1662,6 +1671,11 @@ webkit_web_extension_initialize(WebKitWebExtension *extension) {
 					 "autologin-timer-expired",
 					 G_CALLBACK(autologin_timer_expired_cb),
 					 extension);
+
+	g_signal_connect(G_OBJECT(extension),
+					 "page-created",
+					 G_CALLBACK(page_created_cb),
+					 NULL);
 
 	g_signal_connect(webkit_script_world_get_default(),
 					 "window-object-cleared",

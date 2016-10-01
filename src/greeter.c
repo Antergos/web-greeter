@@ -177,8 +177,6 @@ theme_heartbeat_script_loaded_cb(GObject *object,
 								 gpointer user_data) {
 
 	WebKitJavascriptResult *js_result;
-	JSValueRef              value;
-	JSGlobalContextRef      context;
 	GError                 *error = NULL;
 
 	js_result = webkit_web_view_run_javascript_from_gresource_finish(
