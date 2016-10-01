@@ -27,10 +27,13 @@
 
 
 /**
- * Singleton class for the greeter theme heartbeat. Once instantiated, the instance will
- * begin sending a heartbeat message to the greeter every 5 seconds. Upon receiving the first
- * heartbeat message, the greeter will schedule checks to ensure that subsequent heartbeat
- * messages are received. If a heartbeat message is not received by the time any of the greeter's
+ * Singleton class for the greeter theme heartbeat.
+ *
+ * Once instantiated, the instance will begin sending a heartbeat message to the greeter
+ * every 5 seconds. Upon receiving the first heartbeat message, the greeter will schedule checks
+ * to ensure that subsequent heartbeat messages are received.
+ *
+ * If a heartbeat message is not received by the time any of the greeter's
  * subsequent checks run, it will assume that there has been an error in the theme's script
  * execution and fall back to the simple theme.
  */
@@ -42,6 +45,7 @@ class LightDMGreeterHeartbeat {
 		}
 
 		window._heartbeat = this;
+		this.heartbeat = '';
 
 		this.initialize_theme_heartbeat();
 	}
