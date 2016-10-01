@@ -1449,8 +1449,6 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 							   WebKitFrame *frame,
 							   LightDMGreeter *greeter) {
 
-	printf("web extension window object cleared fired!");
-
 	JSGlobalContextRef jsContext;
 	WebKitDOMDOMWindow *dom_window;
 	WebKitDOMDocument *dom_document;
@@ -1515,7 +1513,6 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	dom_window = webkit_dom_document_get_default_view(dom_document);
 
 	if (dom_window) {
-		printf("notifying UI process that page loaded!");
 		/* Notify the UI process that the page is loaded */
 		webkit_dom_dom_window_webkit_message_handlers_post_message(
 			dom_window, "GreeterBridge", page_loaded_message
@@ -1655,7 +1652,6 @@ autologin_timer_expired_cb(LightDMGreeter *greeter, WebKitWebExtension *extensio
 
 G_MODULE_EXPORT void
 webkit_web_extension_initialize(WebKitWebExtension *extension) {
-	printf("web extension initialize fired!");
 	LightDMGreeter *greeter = lightdm_greeter_new();
 
 	g_signal_connect(G_OBJECT(greeter),

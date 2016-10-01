@@ -176,7 +176,6 @@ theme_heartbeat_script_loaded_cb(GObject *object,
 								 GAsyncResult *result,
 								 gpointer user_data) {
 
-	printf("UI PROCESS - theme heartbeat loaded fired!");
 	WebKitJavascriptResult *js_result;
 	JSValueRef              value;
 	JSGlobalContextRef      context;
@@ -215,7 +214,6 @@ lock_hint_enabled_handler(void) {
 
 static void
 load_theme_heartbeat_script(void) {
-	printf("UI PROCESS - load theme heartbeat fired!");
 	webkit_web_view_run_javascript_from_gresource(
 		WEBKIT_WEB_VIEW(web_view),
 		"/com/antergos/lightdm-webkit2-greeter/js/heartbeat.js",
@@ -229,7 +227,6 @@ load_theme_heartbeat_script(void) {
 
 static void
 page_loaded_handler(void) {
-	printf("UI PROCESS - page loaded handler fired!");
 	load_theme_heartbeat_script();
 }
 
@@ -253,7 +250,6 @@ message_received_cb(WebKitUserContentManager *manager,
 	JSValueRef message_val;
 	JSStringRef js_str_val;
 	gsize message_str_length;
-	printf("UI PROCESS - message received fired!");
 
 	context = webkit_javascript_result_get_global_context(message);
 	message_val = webkit_javascript_result_get_value(message);
