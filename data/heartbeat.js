@@ -58,7 +58,7 @@ class LightDMGreeterHeartbeat {
 			return;
 		}
 
-		this.log('Initializing theme heartbeat.');
+		console.log('Initializing theme heartbeat.');
 
 		this.heartbeat = setInterval(() => {
 			++heartbeats;
