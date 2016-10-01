@@ -94,7 +94,7 @@ wm_window_filter(GdkXEvent *gxevent, GdkEvent *event, gpointer data) {
 static void
 initialize_web_extensions_cb(WebKitWebContext *context, gpointer user_data) {
 
-	webkit_web_context_set_web_extensions_directory(context, LIGHTDM_WEBKIT2_GREETER_EXTENSIONS_DIR);
+	webkit_web_context_set_web_extensions_directory(context, WEBEXT_DIR);
 
 }
 
@@ -137,7 +137,7 @@ check_theme_heartbeat(void) {
 		g_warning("[ERROR] :: A problem was detected with the current theme. Falling back to simple theme...");
 		webkit_web_view_load_uri(
 			WEBKIT_WEB_VIEW(web_view),
-			g_strdup_printf("file://%s/simple/index.html", THEME_DIR)
+			g_strdup_printf("file://%ssimple/index.html", THEME_DIR)
 		);
 	}
 
@@ -347,7 +347,7 @@ main(int argc, char **argv) {
 	keyfile = g_key_file_new();
 
 	g_key_file_load_from_file(keyfile,
-							  CONFIG_DIR "/lightdm-webkit2-greeter.conf",
+							  CONFIG_DIR "lightdm-webkit2-greeter.conf",
 							  G_KEY_FILE_NONE, NULL);
 
 	theme = g_key_file_get_string(keyfile, "greeter", "webkit-theme", NULL);
@@ -426,7 +426,7 @@ main(int argc, char **argv) {
 	/* There's no turning back now, let's go! */
 	gtk_container_add(GTK_CONTAINER(window), web_view);
 	webkit_web_view_load_uri(WEBKIT_WEB_VIEW(web_view),
-							 g_strdup_printf("file://%s/%s/index.html", THEME_DIR, theme));
+							 g_strdup_printf("file://%s%s/index.html", THEME_DIR, theme));
 
 	gtk_widget_show_all(window);
 

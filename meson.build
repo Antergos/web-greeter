@@ -47,13 +47,15 @@ conf.set('AS_MICRO_VERSION', as_micro_version)
 
 conf.set('GETTEXT_PACKAGE', '"lightdm-webkit2-greeter"')
 
-conf.set('LOCALE_DIR', '"@0@/@1@"'.format(get_option('datadir'), 'locale'))
+conf.set('LOCALE_DIR', '"@0@"'.format(get_option('with-locale-dir')))
 
 conf.set('THEME_DIR', '"@0@"'.format(get_option('with-theme-dir')))
 
 conf.set('CONFIG_DIR', '"@0@"'.format(get_option('with-config-dir')))
 
 conf.set('DESKTOP_DIR', '"@0@"'.format(get_option('with-desktop-dir')))
+
+conf.set('WEBEXT_DIR', '"@0@"'.format(get_option('with-webext-dir')))
 
 
 # ===================================== #

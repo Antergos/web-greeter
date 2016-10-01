@@ -1,7 +1,8 @@
 configure_file(output: 'config.h', configuration: conf)
 
 gresource_sources = include_directories('gresource')
-extdir = '@0@/@1@'.format(get_option('libdir'), 'lightdm-webkit2-greeter')
+_ = get_option('with-webext-dir').split('"')
+extdir = _[0]
 
 # ======================================= #
 # ------->>> Webkit2 Extension <<<------- #
@@ -24,15 +25,10 @@ webext = library(
 
 greeter_sources = ['gresource/greeter-resources.c', 'greeter.c']
 
-greeter_cargs = [
-    '-DLIGHTDM_WEBKIT2_GREETER_EXTENSIONS_DIR="@0@"'.format(extdir)
-]
-
 greeter = executable(
     'lightdm-webkit2-greeter',
     greeter_sources,
     dependencies: greeter_deps,
-    c_args: greeter_cargs,
     include_directories : gresource_sources,
     install: true
 )

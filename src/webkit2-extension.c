@@ -1460,7 +1460,6 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 				greeter_util_object,
 				globalObject;
 	JSStringRef command;
-	JSStringRef heartbeat_command;
 	gchar *lock_hint_message = "LockHint";
 	gchar *page_loaded_message = "PageLoaded";
 
@@ -1687,7 +1686,7 @@ webkit_web_extension_initialize(WebKitWebExtension *extension) {
 	keyfile = g_key_file_new();
 
 	g_key_file_load_from_file(keyfile,
-							  CONFIG_DIR "/lightdm-webkit2-greeter.conf",
+							  CONFIG_DIR "lightdm-webkit2-greeter.conf",
 							  G_KEY_FILE_NONE, NULL);
 }
 
