@@ -37,22 +37,23 @@
  * subsequent checks run, it will assume that there has been an error in the theme's script
  * execution and fall back to the simple theme.
  */
-class LightDMGreeterHeartbeat {
+class LightDMGreeterHeartbeat extends AutoBindingObject {
 
 	constructor() {
-		if ( '_heartbeat' in window ) {
-			return _heartbeat;
+		if ( '__heartbeat' in window ) {
+			return __heartbeat;
 		}
 
-		window._heartbeat = this;
+		super();
+
+		window.__heartbeat = this;
 		this.heartbeat = '';
+		this.heartbeats = 0;
 
 		this.initialize_theme_heartbeat();
 	}
 
 	initialize_theme_heartbeat() {
-		let heartbeats = 0;
-
 		if ( '' !== this.heartbeat ) {
 			console.log( 'Heartbeat has already been initialized!' );
 			return;
@@ -60,21 +61,23 @@ class LightDMGreeterHeartbeat {
 
 		console.log('Initializing theme heartbeat.');
 
-		this.heartbeat = setInterval(() => {
-			++heartbeats;
+		this.send_heartbeat();
+		this.heartbeat = setInterval(this.send_heartbeat, 5000);
+	}
 
-			if ( true === lightdm.session_starting ) {
-				clearInterval( this.heartbeat );
-				return;
-			}
+	send_heartbeat() {
+		++this.heartbeats;
 
-			window.webkit.messageHandlers.GreeterBridge.postMessage('Heartbeat');
+		if ( true === lightdm.session_starting ) {
+			clearInterval( this.heartbeat );
+			return;
+		}
 
-			if ( heartbeats < 5 ) {
-				console.log('Sending heartbeat...');
-			}
+		if ( this.heartbeats < 5 ) {
+			console.log('Sending heartbeat...');
+		}
 
-		}, 5000);
+		window.webkit.messageHandlers.GreeterBridge.postMessage('Heartbeat');
 	}
 }
 
