@@ -32,6 +32,8 @@ x11 = dependency('x11')
 greeter_deps = [dbus_glib, gtk3, webkit2, x11]
 webext_deps = [webkit2_webext, libldm_gobject]
 
+has_webkitgtk_214 = webkit2.version().version_compare('>=2.14.0')
+
 
 # =================================== #
 # ------->>> Configuration <<<------- #
@@ -56,6 +58,8 @@ conf.set('CONFIG_DIR', '"@0@"'.format(get_option('with-config-dir')))
 conf.set('DESKTOP_DIR', '"@0@"'.format(get_option('with-desktop-dir')))
 
 conf.set('WEBEXT_DIR', '"@0@"'.format(get_option('with-webext-dir')))
+
+conf.set('HAS_WEBKITGTK_2_14', has_webkitgtk_214)
 
 
 # ===================================== #

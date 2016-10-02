@@ -106,7 +106,9 @@ create_new_webkit_settings_object(void) {
 		"javascript-can-open-windows-automatically", TRUE,
 		"allow-file-access-from-file-urls", TRUE,
 		"enable-write-console-messages-to-stdout", TRUE,
+	#ifdef HAS_WEBKITGTK_2_14
 		"allow-universal-access-from-file-urls", TRUE,
+	#endif
 		NULL
 	);
 }
