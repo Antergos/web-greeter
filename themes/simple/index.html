@@ -6,12 +6,28 @@
 			width: 100%;
 			height: 100%;
 			overflow: hidden;
+			opacity: 1;
 			margin: 0;
+			background-color: #ffffff;
+			transition: opacity 2s, background-color 2s, background-position 2s;
+			transition-timing-function: ease-in;
 		}
 
 		body {
-			background: linear-gradient(white, SlateGray);
+			background: linear-gradient(transparent, SlateGray);
+			background-color: #ffffff;
+			font-family: 'sans-serif';
 			font-size: 24px;
+		}
+
+		html.session_starting {
+			opacity: 0;
+		}
+
+		.session_starting body {
+			opacity: 0;
+			background-color: rgba(0, 0, 0, 0);
+			background-position-y: -100%;
 		}
 
 		.container {
@@ -35,6 +51,7 @@
 
 		.wrapper {
 			height: 85px;
+			width: 350px;
 			position: absolute;
 			left: 0;
 			right: 0;
@@ -53,10 +70,36 @@
 			text-align: center;
 			visibility: hidden;
 		}
+
+		input#entry {
+			outline: none;
+			background: rgba(0, 0, 0, 0.05);
+			box-shadow: none;
+			box-sizing: border-box;
+			line-height: normal;
+			transition: .3s ease;
+			border: none !important;
+			padding: 14px 4% !important;
+			font-size: 16px;
+			color: #666;
+			background-color: #fff;
+			width: 100%;
+			font-weight: 400;
+			border-radius: 3px !important;
+		}
+
+		input#entry:focus {
+			background: rgba(0, 0, 0, 0.1);
+			color: rgba(0, 0, 0, 0.75);
+		}
+
+		input#entry:focus::placeholder {
+			color: rgba(255, 255, 255, 0.3);
+		}
 	</style>
 </head>
 
-<body>
+<body id="body">
 <div class="container">
 	<div class="topBox">
 		<img onclick="javascript:lightdm.shutdown();" src="power_button.png"/>
@@ -64,7 +107,7 @@
 	<div class="inputBox">
 		<div class="wrapper">
 			<div id="prompt"></div>
-			<form action="javascript: handle_input()">
+			<form action="javascript:handle_input();">
 				<input id="entry" />
 			</form>
 		</div>
@@ -72,49 +115,56 @@
 	<div class="messageBox" id="messages"></div>
 </div>
 <script>
-	/*********************************************************************/
-	/*                Callbacks for lightdm-webkit-greeter               */
-	/*********************************************************************/
+	/*********************************************************/
+	/*               Callbacks for the greeter               */
+	/*********************************************************/
 
 	/**
 	 * show_prompt callback.
 	 */
-	function show_prompt(text, type) {
+	window.show_prompt = function(text, type) {
 		// type is either "text" or "password"
-		prompt = document.getElementById("prompt");
-		prompt.innerHTML = text;
-		entry = document.getElementById("entry");
-		entry.value = "";    // clear entry
+		let prompt = document.getElementById("prompt"),
+			entry = document.getElementById("entry");
+
+		entry.placeholder = text.charAt(0).toUpperCase() + text.slice(1, -1);
+
+		// clear entry
+		entry.value = "";
 		entry.type = type;
-		entry.focus();
-	}
+	};
 
 	/**
 	 * show_message callback.
 	 */
-	function show_message(text, type) {
-		if (text.length == 0)
+	window.show_message = function(text, type) {
+		if (0 === text.length) {
 			return;
-		messages = document.getElementById("messages");
+		}
+		let messages = document.getElementById('messages');
 		messages.style.visibility = "visible";
 		// type is either "info" or "error"
-		if (type == "error") {
-			text = "<p style=\"color:red;\">" + text + "</p>";
+		if (type == 'error') {
+			text = `<p style="color:red;">${text}</p>`;
 		}
-		messages.innerHTML = messages.innerHTML + text;
-	}
+		messages.innerHTML = `${messages.innerHTML}${text}`;
+	};
 
 	/**
 	 * authentication_complete callback.
 	 */
-	function authentication_complete() {
+	window.authentication_complete = function() {
+		console.log('fired!');
 		if (lightdm.is_authenticated) {
-			lightdm.start_session_sync(); // Start default session
+			// Start default session
+			// let body = document.getElementById('body');
+			document.documentElement.addEventListener('transitionend', lightdm.start_session_sync);
+			document.documentElement.className = 'session_starting';
 		} else {
 			show_message("Authentication Failed", "error");
 			setTimeout(start_authentication, 3000);
 		}
-	}
+	};
 
 	/**
 	 * autologin_timer_expired callback.
@@ -123,15 +173,15 @@
 		/* Stub.  Does nothing. */
 	}
 
-	/*********************************************************************/
-	/*                Functions local to this greeter                    */
-	/*********************************************************************/
+	/*******************************************************************/
+	/*                Functions local to this theme                    */
+	/*******************************************************************/
 
 	/**
 	 * clear_messages
 	 */
 	function clear_messages() {
-		messages = document.getElementById("messages");
+		let messages = document.getElementById("messages");
 		messages.innerHTML = "";
 		messages.style.visibility = "hidden";
 	}
@@ -139,18 +189,20 @@
 	/**
 	 * Kickoff the authentication process
 	 */
-	function start_authentication() {
+	window.start_authentication = function() {
 		clear_messages();
-		lightdm.start_authentication();   // start with null userid, have pam prompt for userid.
-	}
+		// start without providing "user" to make the greeter prompt for "user"
+		lightdm.authenticate();
+	};
 
 	/**
 	 * handle the input from the entry field.
 	 */
-	function handle_input() {
-		entry = document.getElementById("entry");
+	window.handle_input = function() {
+		let entry = document.getElementById("entry");
 		lightdm.respond(entry.value);
-	}
+	};
+
 </script>
 <!--<script src="../_vendor/js/mock.js"></script>-->
 <script>
