@@ -17,20 +17,16 @@ as_micro_version = version_parts[2]
 # ------->>> Dependency Checks <<<------- #
 # ======================================= #
 
-dbus_glib = dependency('dbus-glib-1')
+dbus_glib       = dependency('dbus-glib-1')
+lightdm_gobject = dependency('liblightdm-gobject-1')
+x11             = dependency('x11')
 
-gtk3 = dependency('gtk+-3.0', version: '>=3.16')
-
-libldm_gobject = dependency('liblightdm-gobject-1')
-
-webkit2 = dependency('webkit2gtk-4.0', version: '>=2.10.7')
-
-webkit2_webext = dependency('webkit2gtk-web-extension-4.0', version: '>=2.10.7')
-
-x11 = dependency('x11')
+gtk3            = dependency('gtk+-3.0',                     version: '>=3.16')
+webkit2         = dependency('webkit2gtk-4.0',               version: '>=2.10.7')
+webkit2_webext  = dependency('webkit2gtk-web-extension-4.0', version: '>=2.10.7')
 
 greeter_deps = [dbus_glib, gtk3, webkit2, x11]
-webext_deps = [webkit2_webext, libldm_gobject]
+webext_deps = [webkit2_webext, lightdm_gobject]
 
 has_webkitgtk_214 = webkit2.version().version_compare('>=2.14.0')
 
