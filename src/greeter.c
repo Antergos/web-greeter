@@ -172,9 +172,9 @@ theme_heartbeat_exit_handler(void) {
 
 
 static void
-theme_heartbeat_script_loaded_cb(GObject *object,
-								 GAsyncResult *result,
-								 gpointer user_data) {
+script_loaded_cb(GObject *object,
+				 GAsyncResult *result,
+				 gpointer user_data) {
 
 	WebKitJavascriptResult *js_result;
 	GError                 *error = NULL;
@@ -211,12 +211,12 @@ lock_hint_enabled_handler(void) {
 
 
 static void
-load_theme_heartbeat_script(void) {
+load_script(char *script) {
 	webkit_web_view_run_javascript_from_gresource(
 		WEBKIT_WEB_VIEW(web_view),
-		"/com/antergos/lightdm-webkit2-greeter/js/heartbeat.js",
+		script,
 		NULL,
-		(GAsyncReadyCallback) theme_heartbeat_script_loaded_cb,
+		(GAsyncReadyCallback) script_loaded_cb,
 		NULL
 	);
 }
@@ -225,7 +225,8 @@ load_theme_heartbeat_script(void) {
 
 static void
 page_loaded_handler(void) {
-	load_theme_heartbeat_script();
+	load_script("/com/antergos/lightdm-webkit2-greeter/js/auto-binding-object.js");
+	load_script("/com/antergos/lightdm-webkit2-greeter/js/heartbeat.js");
 }
 
 
@@ -276,7 +277,7 @@ message_received_cb(WebKitUserContentManager *manager,
 	} else if (strcmp(message_str, "Heartbeat::Exit") == 0) {
 		theme_heartbeat_exit_handler();
 	} else {
-		printf("UI PROCESS - message received no match!");
+		printf("UI PROCESS - message_received_cb(): no match!");
 	}
 
 	g_free(message_str);
