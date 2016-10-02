@@ -31,6 +31,7 @@
  * along with lightdm-webkit2-greeter; If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define _GNU_SOURCE
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
@@ -1487,12 +1488,14 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	JSGlobalContextRef jsContext;
 	WebKitDOMDOMWindow *dom_window;
 	WebKitDOMDocument *dom_document;
+
+	JSStringRef command;
 	JSObjectRef gettext_object,
 				lightdm_greeter_object,
 				config_file_object,
 				greeter_util_object,
 				globalObject;
-	JSStringRef command;
+
 	gchar *lock_hint_message = "LockHint";
 	gchar *page_loaded_message = "PageLoaded";
 
@@ -1685,12 +1688,115 @@ autologin_timer_expired_cb(LightDMGreeter *greeter, WebKitWebExtension *extensio
 }
 
 
+static gchar*
+get_config_option(const gchar *section, const gchar *key) {
+	gchar *value;
+	GError *err = NULL;
+
+	value = g_key_file_get_string(keyfile, section, key, &err);
+
+	if (err) {
+		g_error(err->message);
+		g_error_free(err);
+		return "";
+	}
+
+	return value;
+}
+
+
+static gboolean
+is_requested_file_path_allowed(const char *file_path) {
+	gchar *background_images_dir;
+	gchar *user_image;
+	gchar *logo;
+	gboolean result = FALSE;
+	char *normalized_path;
+
+	if (NULL == file_path) {
+		return result;
+	}
+
+	GSList* paths = NULL, *iter = NULL;
+
+	paths = g_slist_prepend(paths, THEME_DIR);
+
+	background_images_dir = get_config_option("branding", "background_images");
+	paths = g_slist_prepend(paths, background_images_dir);
+
+	user_image = get_config_option("branding", "user_image");
+	paths = g_slist_prepend(paths, user_image);
+
+	logo = get_config_option("branding", "logo");
+	paths = g_slist_prepend(paths, logo);
+
+	normalized_path = canonicalize_file_name(file_path);
+
+	if (NULL != normalized_path) {
+		for (iter = paths; iter; iter = iter->next) {
+			if (strcmp(normalized_path, iter->data) == 0 || g_str_has_prefix(normalized_path, iter->data)) {
+				/* Requested path is allowed */
+				result = TRUE;
+				break;
+			}
+		}
+	}
+
+	g_slist_free_full(paths, g_free);
+	g_free(normalized_path);
+
+	return result;
+}
+
+
+/**
+ * Callback for the "send-request" signal of a {@link WebKitWebPage}
+ *
+ * @see https://goo.gl/mmoHEx
+ * @return TRUE to stop other handlers from being invoked for the event (block the request).
+ *         FALSE to continue emission of the event (allow the request).
+ */
+static gboolean
+web_page_send_request_cb(WebKitWebPage     *web_page,
+						 WebKitURIRequest  *request,
+						 WebKitURIResponse *redirected_response,
+						 gpointer           user_data) {
+
+	char *request_scheme;
+	char *request_file_path;
+
+	const char *request_uri = webkit_uri_request_get_uri(request);
+
+	request_scheme = g_uri_parse_scheme(request_uri);
+
+	if (strcmp(request_scheme, "file") != 0) {
+		/* In order to ensure the user's privacy & security, only local requests are allowed. */
+		g_free(request_scheme);
+		return TRUE;
+	}
+
+	request_file_path = g_filename_from_uri(request_uri, NULL, NULL);
+
+	g_free(request_scheme);
+
+	/* Returning TRUE prevents the request, while FALSE allows it :face_with_rolling_eyes: */
+	return (FALSE == is_requested_file_path_allowed(request_file_path));
+}
+
+
 void
 page_created_cb(WebKitWebExtension *extension,
 				WebKitWebPage      *web_page,
 				gpointer            user_data) {
 
 	page_id = webkit_web_page_get_id(web_page);
+
+	g_signal_connect(
+		web_page,
+		"send-request",
+		G_CALLBACK(web_page_send_request_cb),
+		NULL
+	);
 }
 
 
@@ -1700,28 +1806,46 @@ webkit_web_extension_initialize(WebKitWebExtension *extension) {
 
 	WEB_EXTENSION = extension;
 
-	g_signal_connect(G_OBJECT(greeter),
-					 "authentication-complete",
-					 G_CALLBACK(authentication_complete_cb),
-					 extension);
+	g_signal_connect(
+		G_OBJECT(greeter),
+		"authentication-complete",
+		G_CALLBACK(authentication_complete_cb),
+		extension
+	);
 
-	g_signal_connect(G_OBJECT(greeter),
-					 "autologin-timer-expired",
-					 G_CALLBACK(autologin_timer_expired_cb),
-					 extension);
+	g_signal_connect(
+		G_OBJECT(greeter),
+		"autologin-timer-expired",
+		G_CALLBACK(autologin_timer_expired_cb),
+		extension
+	);
 
-	g_signal_connect(G_OBJECT(extension),
-					 "page-created",
-					 G_CALLBACK(page_created_cb),
-					 NULL);
+	g_signal_connect(
+		G_OBJECT(extension),
+		"page-created",
+		G_CALLBACK(page_created_cb),
+		NULL
+	);
 
-	g_signal_connect(webkit_script_world_get_default(),
-					 "window-object-cleared",
-					 G_CALLBACK(window_object_cleared_callback),
-					 greeter);
+	g_signal_connect(
+		webkit_script_world_get_default(),
+		"window-object-cleared",
+		G_CALLBACK(window_object_cleared_callback),
+		greeter
+	);
 
-	g_signal_connect(G_OBJECT(greeter), "show-prompt", G_CALLBACK(show_prompt_cb), extension);
-	g_signal_connect(G_OBJECT(greeter), "show-message", G_CALLBACK(show_message_cb), extension);
+	g_signal_connect(
+		G_OBJECT(greeter),
+		"show-prompt",
+		G_CALLBACK(show_prompt_cb), extension
+	);
+
+	g_signal_connect(
+		G_OBJECT(greeter),
+		"show-message",
+		G_CALLBACK(show_message_cb),
+		extension
+	);
 
 	/* TODO: This function was deprecated in lightdm 1.11.x.
 	 * New function is lightdm_greeter_connect_to_daemon_sync
