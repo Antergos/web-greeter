@@ -31,36 +31,55 @@
  * along with lightdm-webkit2-greeter; If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* WebKitWebExtension
+ * This extension runs inside the web process allowing us to interact directly with
+ * the web page including the DOM and JavaScriptWorld.
+ */
+
 #define _GNU_SOURCE
 #include <stdlib.h>
+#include <glib.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
-#include <glib.h>
 #include <glib/gstdio.h>
-#include <webkit2/webkit-web-extension.h>
 #include <webkitdom/WebKitDOMCustom.h>
+#include <webkit2/webkit-web-extension.h>
 #include <JavaScriptCore/JavaScript.h>
-
 #include <lightdm.h>
 
-#include <config.h>
+#include "config.h"
 
-G_MODULE_EXPORT void webkit_web_extension_initialize(WebKitWebExtension *extension);
 
-guint64 page_id = -1;
-GKeyFile *keyfile;
+/* CLion bugs */
+#ifndef guint64
+typedef unsigned long guint64;
+#endif
 
+
+/* Convenience macros for use in functions that can be called from JavaScript
+ * running in the web process. They are used to confirm that calls were made by one of
+ * the classes that we injected into the web page.
+ */
 #define USER     ((LightDMUser *)     JSObjectGetPrivate (thisObject))
 #define LAYOUT   ((LightDMLayout *)   JSObjectGetPrivate (thisObject))
 #define SESSION  ((LightDMSession *)  JSObjectGetPrivate (thisObject))
 #define GREETER  ((LightDMGreeter *)  JSObjectGetPrivate (thisObject))
 #define LANGUAGE ((LightDMLanguage *) JSObjectGetPrivate (thisObject))
 
+
 /*
- * Put all our translatable strings up top
+ * Translatable strings
  */
 #define EXPECTSTRING   _("Expected a string")
 #define ARGNOTSUPPLIED _("Argument(s) not supplied")
+
+
+G_MODULE_EXPORT void webkit_web_extension_initialize(WebKitWebExtension *extension);
+
+
+guint64 page_id;
+GKeyFile *keyfile;
+
 
 static JSClassRef
 	lightdm_greeter_class,
@@ -477,8 +496,7 @@ get_language_cb(JSContextRef context,
 				JSObjectRef thisObject,
 				JSStringRef propertyName,
 				JSValueRef *exception) {
-	return string_or_null(context,
-						  lightdm_language_get_name((LightDMLanguage *) lightdm_get_language()));
+	return string_or_null(context, lightdm_language_get_name(lightdm_get_language()));
 }
 
 
@@ -1302,10 +1320,16 @@ txt2html_cb(JSContextRef context,
 
 
 static gchar *
-remove_query_string(gchar *str) {
+remove_query_and_hash(gchar *str) {
 	gchar *ptr = NULL;
 
 	ptr = strchr(str, '?');
+
+	if (NULL != ptr) {
+		*ptr = '\0';
+	}
+
+	ptr = strchr(str, '#');
 
 	if (NULL != ptr) {
 		*ptr = '\0';
@@ -1720,12 +1744,12 @@ get_config_option(const gchar *section, const gchar *key) {
 
 
 static gboolean
-is_requested_file_path_allowed(const char *file_path) {
+should_block_request(const char *file_path) {
 	gchar *background_images_dir;
 	gchar *user_image;
 	gchar *logo;
-	gboolean result = FALSE;
-	char *normalized_path;
+	gboolean result = TRUE;
+	char *canonical_path;
 
 	if (NULL == file_path) {
 		return result;
@@ -1744,20 +1768,20 @@ is_requested_file_path_allowed(const char *file_path) {
 	logo = get_config_option("branding", "logo");
 	paths = g_slist_prepend(paths, logo);
 
-	normalized_path = canonicalize_file_name(file_path);
+	canonical_path = canonicalize_file_name(file_path);
 
-	if (NULL != normalized_path) {
+	if (NULL != canonical_path) {
 		for (iter = paths; iter; iter = iter->next) {
-			if (strcmp(normalized_path, iter->data) == 0 || g_str_has_prefix(normalized_path, iter->data)) {
-				/* Requested path is allowed */
-				result = TRUE;
+			if (strcmp(canonical_path, iter->data) == 0 || g_str_has_prefix(canonical_path, iter->data)) {
+				/* Requested path is allowed (don't block request). */
+				result = FALSE;
 				break;
 			}
 		}
 	}
 
 	g_slist_free(paths);
-	g_free(normalized_path);
+	g_free(canonical_path);
 	g_free(background_images_dir);
 	g_free(user_image);
 	g_free(logo);
@@ -1805,13 +1829,11 @@ web_page_send_request_cb(WebKitWebPage     *web_page,
 	request_file_path = g_filename_from_uri(request_uri, NULL, NULL);
 	request_file_path_without_query = g_strdup(request_file_path);
 
-	request_file_path_without_query = remove_query_string(request_file_path_without_query);
-
-	g_message(request_file_path_without_query);
+	request_file_path_without_query = remove_query_and_hash(request_file_path_without_query);
 
 	g_free(request_scheme);
 
-	return (FALSE == is_requested_file_path_allowed(request_file_path_without_query));
+	return should_block_request(request_file_path_without_query);
 }
 
 
@@ -1887,9 +1909,12 @@ webkit_web_extension_initialize(WebKitWebExtension *extension) {
 	/* load greeter settings from config file */
 	keyfile = g_key_file_new();
 
-	g_key_file_load_from_file(keyfile,
-							  CONFIG_DIR "lightdm-webkit2-greeter.conf",
-							  G_KEY_FILE_NONE, NULL);
+	g_key_file_load_from_file(
+		keyfile,
+		CONFIG_DIR "lightdm-webkit2-greeter.conf",
+		G_KEY_FILE_NONE,
+		NULL
+	);
 }
 
 /* vim: set ts=4 sw=4 tw=0 noet : */

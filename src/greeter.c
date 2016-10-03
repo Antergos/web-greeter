@@ -33,19 +33,23 @@
  */
 
 #include <stdlib.h>
+#include <glib.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
-#include <glib.h>
 #include <glib/gprintf.h>
 #include <glib-unix.h>
-#include <gtk/gtkx.h>
 #include <webkit2/webkit2.h>
 #include <JavaScriptCore/JavaScript.h>
 #include <glib/gi18n.h>
 #include <sys/mman.h>
 
-#include <config.h>
+#include "config.h"
 #include "gresource/greeter-resources.h"
+
+/* CLion bugs */
+#ifndef gsize
+typedef unsigned long gsize;
+#endif
 
 static GtkWidget *web_view;
 static GtkWidget *window;
@@ -54,11 +58,18 @@ static GdkDisplay *default_display;
 static GResource *greeter_resources;
 
 /* Screensaver values */
-static int timeout, interval, prefer_blanking, allow_exposures;
+static int
+	timeout,
+	interval,
+	prefer_blanking,
+	allow_exposures;
 
 static gint config_timeout;
 
-static gboolean debug_mode, heartbeat, heartbeat_exit;
+static gboolean
+	debug_mode,
+	heartbeat,
+	heartbeat_exit;
 
 
 static GdkFilterReturn

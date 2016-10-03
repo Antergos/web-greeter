@@ -99,7 +99,8 @@ class AntergosThemeUtils {
 		if ('' === this.cache_backend) {
 			this.cache_backend = 'Cookies';
 		}
-		console.log(`AntergosThemeUtils.cache_backend is: ${this.cache_backend}`);
+
+		this.log(`AntergosThemeUtils.cache_backend is: ${this.cache_backend}`);
 	}
 
 
@@ -729,8 +730,6 @@ class AntergosTheme {
 
 		_self.selected_user = null;
 		_self.auth_pending = false;
-
-		console.log($(event.target));
 
 		if ( $(event.target).hasClass('alert') ) {
 			/* We were triggered by the authentication failed message being dismissed.
