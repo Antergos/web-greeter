@@ -280,51 +280,53 @@ class AntergosBackgroundManager {
 	/**
 	 * Determine which background image should be displayed and apply it.
 	 */
-	initialize() {
-		if ( ! this.current_background && 'localStorage' === _util.cache_backend ) {
+	initialize( deferred ) {
+		if ( ! _bg_self.current_background && 'localStorage' === _util.cache_backend ) {
 			// For backwards compatibility
 			if ( null !== localStorage.getItem( 'bgsaved' ) && '0' === localStorage.getItem( 'bgrandom' ) ) {
-				this.current_background = localStorage.getItem( 'bgsaved' );
-				_util.cache_set( this.current_background, 'background_manager', 'current_background' );
+				_bg_self.current_background = localStorage.getItem( 'bgsaved' );
+				_util.cache_set( _bg_self.current_background, 'background_manager', 'current_background' );
 				localStorage.removeItem( 'bgrandom' );
 				localStorage.removeItem( 'bgsaved' );
 			} else {
 				if ( '1' === localStorage.getItem( 'bgrandom' ) ) {
-					this.current_background = this.get_random_image();
+					_bg_self.current_background = _bg_self.get_random_image();
 					_util.cache_set( 'true', 'background_manager', 'random_background' );
 					localStorage.removeItem( 'bgrandom' );
 				}
 			}
 		}
 
-		if ( ! this.current_background ) {
+		if ( ! _bg_self.current_background ) {
 			// For current and future versions
 			let current_background = _util.cache_get( 'background_manager', 'current_background' ),
 				random_background = _util.cache_get( 'background_manager', 'random_background' );
 
 			if ( 'true' === random_background || ! current_background ) {
-				current_background = this.get_random_image();
+				current_background = _bg_self.get_random_image();
 				_util.cache_set( 'true', 'background_manager', 'random_background' );
 			}
 
-			this.current_background = current_background;
-			_util.cache_set( this.current_background, 'background_manager', 'current_background' );
+			_bg_self.current_background = current_background;
+			_util.cache_set( _bg_self.current_background, 'background_manager', 'current_background' );
 		}
 
-		this.do_background();
+		_bg_self.do_background(deferred);
 	}
 
 
 	/**
 	 * Set the background image to the value of `this.current_background`
 	 */
-	do_background() {
-		$( '.header' ).fadeTo( 300, 0.5, function() {
-			var bg = _bg_self.current_background,
-				tpl = (bg.indexOf('url(') > -1) ? bg : `url(${_bg_self.current_background})`;
+	do_background( deferred = null ) {
+		let bg = _bg_self.current_background,
+			tpl = (bg.indexOf('url(') > -1) ? bg : `url(${_bg_self.current_background})`;
 
-			$( '.header' ).css( "background-image", tpl );
-		} ).fadeTo( 300, 1 );
+		$( '.header' ).css( "background-image", tpl );
+
+		if (null !== deferred) {
+			deferred.resolve();
+		}
 	}
 
 
@@ -433,15 +435,16 @@ class AntergosTheme {
 		this.$user_list = $( '#user-list2' );
 		this.$session_list = $( '#sessions' );
 		this.$clock_container = $( '#collapseOne' );
-		this.$clock = $( "#current_time" );
-		this.$actions_container = $( "#actionsArea" );
+		this.$clock = $( '#current_time' );
+		this.$actions_container = $( '#actionsArea' );
 		this.$msg_area_container = $( '#statusArea' );
-		this.$msg_area = $( '#showMsg' );
+		this.$alert_msg_tpl = this.$msg_area_container.children('.alert-dismissible').clone();
 
 		this.background_manager = new AntergosBackgroundManager();
-		this.background_manager.initialize();
 
-		this.initialize();
+		let init_bg = $.Deferred(this.background_manager.initialize);
+
+		init_bg.then(() => this.initialize());
 
 		return _self;
 	}
@@ -455,9 +458,12 @@ class AntergosTheme {
 		this.do_static_translations();
 		this.initialize_clock();
 		this.prepare_login_panel_header();
+		this.prepare_system_action_buttons();
+
+		$('#login').css('opacity', '1');
+
 		this.prepare_user_list();
 		this.prepare_session_list();
-		this.prepare_system_action_buttons();
 		this.register_callbacks();
 		this.background_manager.setup_background_thumbnails();
 	}
@@ -468,13 +474,12 @@ class AntergosTheme {
 	 * been registered elsewhere.
 	 */
 	register_callbacks() {
-		var events = 'shown.bs.collapse, hidden.bs.collapse';
-
-		this.$user_list.parents( '.collapse' ).on( events, this.user_list_collapse_handler );
+		this.$user_list.parents( '.collapse' ).on( 'shown.bs.collapse', this.user_list_collapse_handler );
+		this.$user_list.parents( '.collapse' ).on( ' hidden.bs.collapse', this.user_list_collapse_handler );
 		$( document ).keydown( this.key_press_handler );
-		$( '.cancel_auth' ).click( this.cancel_authentication );
-		$( '.submit_passwd' ).click( this.submit_password );
-		$('[data-i18n="debug_log"]').click( this.show_log_handler );
+		$( '.cancel_auth:not(.alert .cancel_auth)' ).on('click', this.cancel_authentication );
+		$( '.submit_passwd' ).on('click', this.submit_password );
+		$('[data-i18n="debug_log"]').on('click', this.show_log_handler );
 
 		window.show_prompt = this.show_prompt;
 		window.show_message = this.show_message;
@@ -603,12 +608,20 @@ class AntergosTheme {
 	 * Show the user list if its not already shown. This is used to allow the user to
 	 * display the user list by pressing Enter or Spacebar.
 	 */
-	show_user_list() {
-		if ( $( this.$clock_container ).hasClass( 'in' ) ) {
+	show_user_list( shown = false ) {
+		let delay = 0;
+
+		if ( _self.$clock_container.hasClass( 'in' ) ) {
 			$( '#trigger' ).trigger( 'click' );
+			delay = 500;
+		} else if ( false === shown ) {
+			return;
 		}
-		if ( $( this.$user_list ).children().length <= 1 ) {
-			$( this.$user_list ).find( 'a' ).trigger( 'click', this );
+
+		if ( _self.$user_list.children().length <= 1 ) {
+			setTimeout(() => {
+				_self.$user_list.find( 'a' ).trigger( 'click', _self );
+			}, delay);
 		}
 	}
 
@@ -714,16 +727,27 @@ class AntergosTheme {
 
 		_util.log( 'Cancelled authentication.' );
 
-		if ( $( _self.$user_list ).children().length > 3 ) {
-			// Make the user list two columns instead of one.
-			$( _self.$user_list ).css( 'column-count', '2' ).parent().css( 'max-width', '85%' );
-		}
-
-		$( '.hovered' ).removeClass( 'hovered' ).siblings().show();
-		$( '.fa-toggle-down' ).show();
-
 		_self.selected_user = null;
 		_self.auth_pending = false;
+
+		console.log($(event.target));
+
+		if ( $(event.target).hasClass('alert') ) {
+			/* We were triggered by the authentication failed message being dismissed.
+			 * Keep the same account selected so user can retry without re-selecting an account.
+			 */
+			$( '#collapseTwo .user-wrap2' ).show(() => {
+				$( '.list-group-item.hovered' ).trigger('click');
+			});
+		} else {
+			if ( $( _self.$user_list ).children().length > 3 ) {
+				// Make the user list two columns instead of one.
+				$( _self.$user_list ).css( 'column-count', '2' ).parent().css( 'max-width', '85%' );
+			}
+
+			$( '.hovered' ).removeClass( 'hovered' ).siblings().show();
+			$( '.fa-toggle-down' ).show();
+		}
 
 	}
 
@@ -735,7 +759,7 @@ class AntergosTheme {
 	 */
 	authentication_complete() {
 		var selected_session = $( '.selected' ).attr( 'data-session-id' ),
-			err_msg = _util.translations.auth_failed[ _self.lang ];
+			err_msg = _util.translations.auth_failed;
 
 		_self.auth_pending = false;
 		_util.cache_set( selected_session, 'user', lightdm.authentication_user, 'session' );
@@ -749,8 +773,7 @@ class AntergosTheme {
 			} );
 		} else {
 			// The user did not enter the correct password. Show error message.
-			$('#showMsg').text(err_msg);
-			$( '#statusArea' ).show();
+			_self.show_message(err_msg, 'error');
 		}
 	}
 
@@ -775,19 +798,24 @@ class AntergosTheme {
 
 
 	key_press_handler( event ) {
-		var action;
+		let action = null;
+
 		switch ( event.which ) {
 			case 13:
-				action = _self.auth_pending ? _self.submit_password() : ! _self.user_list_visible ? _self.show_user_list() : 0;
+				action = _self.auth_pending ? _self.submit_password : ! _self.user_list_visible ? _self.show_user_list : 0;
 				break;
 			case 27:
-				action = _self.auth_pending ? _self.cancel_authentication() : 0;
+				action = _self.auth_pending ? _self.cancel_authentication : 0;
 				break;
 			case 32:
-				action = (! _self.user_list_visible && ! _self.auth_pending) ? _self.show_user_list() : 0;
+				action = (! _self.user_list_visible && ! _self.auth_pending) ? _self.show_user_list : 0;
 				break;
 			default:
 				break;
+		}
+
+		if ( action instanceof Function ) {
+			action();
 		}
 	}
 
@@ -810,8 +838,9 @@ class AntergosTheme {
 	}
 
 
-	user_list_collapse_handler() {
-		_self.user_list_visible = _self.$user_list.hasClass( 'in' );
+	user_list_collapse_handler( event ) {
+		_self.user_list_visible = $(event.target).hasClass( 'in' );
+		_self.show_user_list(_self.user_list_visible);
 	}
 
 
@@ -851,11 +880,24 @@ class AntergosTheme {
 	 * @param type
 	 */
 	show_message( text, type ) {
-		if ( text.length > 0 ) {
-			$( this.$msg_area ).html( text );
-			$( '#passwordArea' ).hide();
-			$( this.$msg_area_container ).show();
+		if (! text.length ) {
+			_util.log('show_message() called without a message to show!');
+			return;
 		}
+
+		let $msg_container = this.$msg_area_container.children('.alert-dismissible');
+
+		if (! $msg_container.length ) {
+			$msg_container = this.$alert_msg_tpl.clone();
+			$msg_container.appendTo( this.$msg_area_container );
+		}
+
+		$msg_container.on('closed.bs.alert', _self.cancel_authentication);
+
+		$msg_container.html( $msg_container.html() + text );
+		$( '#collapseTwo .user-wrap2' ).hide();
+		this.$msg_area_container.show();
+
 	}
 }
 
