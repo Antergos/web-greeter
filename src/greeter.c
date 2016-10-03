@@ -188,12 +188,10 @@ script_loaded_cb(GObject *object,
 	);
 
 	if (!js_result) {
-		g_warning("Error running javascript: %s", error->message);
 		g_error_free(error);
-		return;
+	} else {
+		webkit_javascript_result_unref(js_result);
 	}
-
-	webkit_javascript_result_unref(js_result);
 }
 
 
@@ -289,7 +287,7 @@ message_received_cb(WebKitUserContentManager *manager,
 
 static void
 quit_cb(void) {
-	gtk_widget_destroy(GTK_WIDGET(window));
+	gtk_widget_destroy(window);
 	gtk_main_quit();
 }
 
@@ -330,8 +328,10 @@ main(int argc, char **argv) {
 	textdomain (GETTEXT_PACKAGE);
 
 	gtk_init(&argc, &argv);
+
 	g_unix_signal_add(SIGTERM, (GSourceFunc) quit_cb, NULL);
 	g_unix_signal_add(SIGINT, (GSourceFunc) quit_cb, NULL);
+	g_unix_signal_add(SIGHUP, (GSourceFunc) quit_cb, NULL);
 
 	/* Apply greeter settings from config file */
 	keyfile = g_key_file_new();
@@ -416,7 +416,7 @@ main(int argc, char **argv) {
 	/* There's no turning back now, let's go! */
 	gtk_container_add(GTK_CONTAINER(window), web_view);
 	webkit_web_view_load_uri(WEBKIT_WEB_VIEW(web_view),
-							 g_strdup_printf("file://%s%s/index.html", THEME_DIR, theme));
+							 g_strdup_printf("file://%s/%s/index.html", THEME_DIR, theme));
 
 	gtk_widget_show_all(window);
 

@@ -1742,8 +1742,11 @@ is_requested_file_path_allowed(const char *file_path) {
 		}
 	}
 
-	g_slist_free_full(paths, g_free);
+	g_slist_free(paths);
 	g_free(normalized_path);
+	g_free(background_images_dir);
+	g_free(user_image);
+	g_free(logo);
 
 	return result;
 }
@@ -1769,8 +1772,11 @@ web_page_send_request_cb(WebKitWebPage     *web_page,
 
 	request_scheme = g_uri_parse_scheme(request_uri);
 
-	if (strcmp(request_scheme, "file") != 0) {
+	g_message(request_uri);
+
+	if (strcmp(request_scheme, "file") != 0 && strcmp(request_scheme, "data") != 0) {
 		/* In order to ensure the user's privacy & security, only local requests are allowed. */
+		g_warning("request scheme error: %s", request_scheme);
 		g_free(request_scheme);
 		return TRUE;
 	}
