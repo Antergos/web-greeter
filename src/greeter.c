@@ -68,6 +68,7 @@ static gint config_timeout;
 
 static gboolean
 	debug_mode,
+	secure_mode,
 	heartbeat,
 	heartbeat_exit;
 
