@@ -1301,6 +1301,20 @@ txt2html_cb(JSContextRef context,
 }
 
 
+static gchar *
+remove_query_string(gchar *str) {
+	gchar *ptr = NULL;
+
+	ptr = strchr(str, '?');
+
+	if (NULL != ptr) {
+		*ptr = '\0';
+	}
+
+	return g_strstrip(str);
+}
+
+
 static const JSStaticValue lightdm_user_values[] = {
 	{"display_name",   get_user_display_name_cb,   NULL, kJSPropertyAttributeReadOnly},
 	{"home_directory", get_user_home_directory_cb, NULL, kJSPropertyAttributeReadOnly},
@@ -1766,27 +1780,38 @@ web_page_send_request_cb(WebKitWebPage     *web_page,
 						 gpointer           user_data) {
 
 	char *request_scheme;
-	char *request_file_path;
+	gchar *request_file_path;
+	char *request_file_path_without_query;
 
 	const char *request_uri = webkit_uri_request_get_uri(request);
-
 	request_scheme = g_uri_parse_scheme(request_uri);
 
-	g_message(request_uri);
+	/* NOTE: Returning TRUE blocks the request, while Returning FALSE allows it.
+	 * :face_with_rolling_eyes:
+	 */
 
-	if (strcmp(request_scheme, "file") != 0 && strcmp(request_scheme, "data") != 0) {
+	if (strcmp(request_scheme, "data") == 0) {
+		g_free(request_scheme);
+		return FALSE; /* Allowed */
+	}
+
+	if (strcmp(request_scheme, "file") != 0) {
 		/* In order to ensure the user's privacy & security, only local requests are allowed. */
 		g_warning("request scheme error: %s", request_scheme);
 		g_free(request_scheme);
-		return TRUE;
+		return TRUE; /* Blocked */
 	}
 
 	request_file_path = g_filename_from_uri(request_uri, NULL, NULL);
+	request_file_path_without_query = g_strdup(request_file_path);
+
+	request_file_path_without_query = remove_query_string(request_file_path_without_query);
+
+	g_message(request_file_path_without_query);
 
 	g_free(request_scheme);
 
-	/* Returning TRUE prevents the request, while FALSE allows it :face_with_rolling_eyes: */
-	return (FALSE == is_requested_file_path_allowed(request_file_path));
+	return (FALSE == is_requested_file_path_allowed(request_file_path_without_query));
 }
 
 

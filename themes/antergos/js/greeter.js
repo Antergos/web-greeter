@@ -779,15 +779,12 @@ class AntergosTheme {
 		switch ( event.which ) {
 			case 13:
 				action = _self.auth_pending ? _self.submit_password() : ! _self.user_list_visible ? _self.show_user_list() : 0;
-				_util.log( action );
 				break;
 			case 27:
 				action = _self.auth_pending ? _self.cancel_authentication() : 0;
-				_util.log( action );
 				break;
 			case 32:
 				action = (! _self.user_list_visible && ! _self.auth_pending) ? _self.show_user_list() : 0;
-				_util.log( action );
 				break;
 			default:
 				break;
