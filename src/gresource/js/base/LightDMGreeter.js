@@ -27,82 +27,31 @@
 
 
 /**
- * Singleton class which implements the LightDMGreeter Interface. Greeter themes will
- * interact directly with this class to facilitate the user log in processes.
- * The greeter will automatically create an instance of this class when it starts.
- * The instance can be accessed with the global variable: `lightdm`.
+ * Base class for the greeter's JavaScript Theme API. Greeter themes will interact
+ * directly with an object derived from this class to facilitate the user log-in process.
+ * The greeter will automatically create an instance when it starts.
+ * The instance can be accessed using the global variable: `lightdm`.
  * @memberOf LightDM
  */
 class LightDMGreeter {
 
 	constructor() {
-		if ( null !== lightdm ) {
-			return lightdm;
+		if ( 'lightdm' in window ) {
+			return window.lightdm;
 		}
 
-		lightdm = this;
-		this._mock_data = MockData();
+		window.lightdm = GreeterUtils.bind_this( this );
 
-		this._initialize();
-	}
-
-	/**
-	 * @private
-	 */
-	_do_mocked_system_action( action ) {
-		alert(`System ${action} triggered.`);
-		document.location.reload(true);
-		return true;
-	}
-
-	/**
-	 * @private
-	 */
-	_initialize() {
-		this._set_default_property_values();
-	}
-
-	/**
-	 * @private
-	 */
-	_populate_ldm_object_arrays() {
-		for ( let object_type of ['sessions', 'users', 'languages', 'layouts'] ) {
-			let object_name = object_type.slice(0, -1).capitalize(),
-				ObjectClass = `LightDM${object_name}`;
-
-			for ( let object_info of this._mock_data[object_type] ) {
-				this[object_type].push(MockObjects[ObjectClass](object_info));
-			}
-		}
-	}
-
-	/**
-	 * @private
-	 */
-	_set_default_property_values() {
-		for ( let property_type of Object.keys(this._mock_data.greeter.properties) ) {
-			for ( let property of this._mock_data.greeter.properties[property_type] ) {
-				if ( property.indexOf('can_') > -1 ) {
-					// System Power Actions
-					this[`_${property}`] = true;
-				} else {
-					this[`_${property}`] = this._mock_data.greeter.default_values[property_type]();
-				}
-			}
-		}
-
-		this._populate_ldm_object_arrays();
+		return window.lightdm;
 	}
 
 	/**
 	 * The username of the user being authenticated or {@link null}
-	 * if no authentication is in progress.
+	 * if there is no authentication in progress.
 	 * @type {String|null}
 	 * @readonly
 	 */
-	get authentication_user() {
-		return this._authentication_user;
-	}
+	get authentication_user() {}
 
 	/**
 	 * Whether or not the guest account should be automatically logged
@@ -110,165 +59,126 @@ class LightDMGreeter {
 	 * @type {Boolean}
 	 * @readonly
 	 */
-	get autologin_guest() {
-		return this._autologin_guest;
-	}
+	get autologin_guest() {}
 
 	/**
 	 * The number of seconds to wait before automatically logging in.
 	 * @type {Number}
 	 * @readonly
 	 */
-	get autologin_timeout() {
-		return this._autologin_timeout;
-	}
+	get autologin_timeout() {}
 
 	/**
 	 * The username with which to automatically log in when the timer expires.
 	 * @type {String}
 	 * @readonly
 	 */
-	get autologin_user() {
-		return this._autologin_user;
-	}
+	get autologin_user() {}
 
 	/**
 	 * Whether or not the greeter can make the system hibernate.
 	 * @type {Boolean}
 	 * @readonly
 	 */
-	get can_hibernate() {
-		return this._can_hibernate;
-	}
+	get can_hibernate() {}
 
 	/**
 	 * Whether or not the greeter can make the system restart.
 	 * @type {Boolean}
 	 * @readonly
 	 */
-	get can_restart() {
-		return this._can_restart;
-	}
+	get can_restart() {}
 
 	/**
 	 * Whether or not the greeter can make the system shutdown.
 	 * @type {Boolean}
 	 * @readonly
 	 */
-	get can_shutdown() {
-		return this._can_shutdown;
-	}
+	get can_shutdown() {}
 
 	/**
 	 * Whether or not the greeter can make the system suspend/sleep.
 	 * @type {Boolean}
 	 * @readonly
 	 */
-	get can_suspend() {
-		return this._can_suspend;
-	}
+	get can_suspend() {}
 
 	/**
 	 * The name of the default session.
 	 * @type {String}
 	 * @readonly
 	 */
-	get default_session() {
-		return this._default_session;
-	}
+	get default_session() {}
 
 	/**
 	 * Whether or not guest sessions are supported.
 	 * @type {Boolean}
 	 * @readonly
 	 */
-	get has_guest_account() {
-		return this._has_guest_account;
-	}
+	get has_guest_account() {}
 
 	/**
 	 * Whether or not user accounts should be hidden.
 	 * @type {Boolean}
 	 * @readonly
 	 */
-	get hide_users() {
-		return this._hide_users;
-	}
+	get hide_users() {}
 
 	/**
 	 * The system's hostname.
 	 * @type {String}
 	 * @readonly
 	 */
-	get hostname() {
-		return this._hostname;
-	}
+	get hostname() {}
 
 	/**
 	 * Whether or not the greeter is in the process of authenticating.
 	 * @type {Boolean}
 	 * @readonly
 	 */
-	get in_authentication() {
-		return this._in_authentication;
-	}
+	get in_authentication() {}
 
 	/**
 	 * Whether or not the greeter has successfully authenticated.
 	 * @type {Boolean}
 	 * @readonly
 	 */
-	get is_authenticated() {
-		return this._is_authenticated;
-	}
+	get is_authenticated() {}
 
 	/**
 	 * The current language or {@link null} if no language.
 	 * @type {LightDMLanguage|null}
 	 * @readonly
 	 */
-	get language() {
-		return this._language;
-	}
+	get language() {}
 
 	/**
 	 * A list of languages to present to the user.
 	 * @type {LightDMLanguage[]}
 	 * @readonly
 	 */
-	get languages() {
-		return this._languages;
-	}
+	get languages() {}
 
 	/**
 	 * The currently active layout for the selected user.
 	 * @type {LightDMLayout}
 	 */
-	get layout() {
-		return this._layout;
-	}
-
-	set layout( value ) {
-		this._layout = value;
-	}
+	get layout() {}
+	set layout( value ) {}
 
 	/**
 	 * A list of keyboard layouts to present to the user.
 	 * @type {LightDMLayout[]}
 	 * @readonly
 	 */
-	get layouts() {
-		return this._layouts;
-	}
+	get layouts() {}
 
 	/**
 	 * Whether or not the greeter was started as a lock screen.
 	 * @type {Boolean}
 	 * @readonly
 	 */
-	get lock_hint() {
-		return this._lock_hint;
-	}
+	get lock_hint() {}
 
 	/**
 	 * The number of users able to log in.
@@ -284,36 +194,28 @@ class LightDMGreeter {
 	 * @type {Boolean}
 	 * @readonly
 	 */
-	get select_guest_hint() {
-		return this._select_guest_hint;
-	}
+	get select_guest_hint() {}
 
 	/**
 	 * The username to select by default.
 	 * @type {String}
 	 * @readonly
 	 */
-	get select_user_hint() {
-		return this._select_user_hint;
-	}
+	get select_user_hint() {}
 
 	/**
 	 * List of available sessions.
 	 * @type {LightDMSession[]}
 	 * @readonly
 	 */
-	get sessions() {
-		return this._sessions;
-	}
+	get sessions() {}
 
 	/**
 	 * List of available users.
 	 * @type {LightDMUser[]}
 	 * @readonly
 	 */
-	get users() {
-		return this._users;
-	}
+	get users() {}
 
 
 	/**
@@ -329,7 +231,7 @@ class LightDMGreeter {
 	authenticate_as_guest() {}
 
 	/**
-	 * Cancel user authentication that is currently in progress.
+	 * Cancel the user authentication that is currently in progress.
 	 */
 	cancel_authentication() {}
 
@@ -369,8 +271,7 @@ class LightDMGreeter {
 
 	/**
 	 * Set the language for the currently authenticated user.
-	 * @arg {String} language The language in the form of a locale specification (e.g.
-	 *     'de_DE.UTF-8')
+	 * @arg {String} language The language in the form of a locale specification (e.g. 'de_DE.UTF-8')
 	 * @returns {Boolean} {@link true} if successful, otherwise {@link false}
 	 */
 	set_language( language ) {}
@@ -379,9 +280,7 @@ class LightDMGreeter {
 	 * Triggers the system to shutdown.
 	 * @returns {Boolean} {@link true} if shutdown initiated, otherwise {@link false}
 	 */
-	shutdown() {
-		return this._do_mocked_system_action('shutdown');
-	}
+	shutdown() {}
 
 	/**
 	 * Start a session for the authenticated user.
@@ -394,13 +293,11 @@ class LightDMGreeter {
 	 * Triggers the system to suspend/sleep.
 	 * @returns {Boolean} {@link true} if suspend/sleep initiated, otherwise {@link false}
 	 */
-	suspend() {
-		return this._do_mocked_system_action('suspend');
-	}
+	suspend() {}
 
 }
 
 
-
+window.LightDMGreeter = LightDMGreeter;
 
 
