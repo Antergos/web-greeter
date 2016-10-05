@@ -1,5 +1,5 @@
 /*
- * auto-binding-object.js
+ * GreeterUtils.js
  *
  * Copyright © 2016 Antergos Developers <dev@antergos.com>
  *
@@ -26,48 +26,42 @@
  */
 
 
+
 /**
- * Generic base class that automatically binds `this` to the instance for all class methods.
- * It is made available in the global scope and can be used in greeter themes if needed/wanted.
+ * Provides various utility methods and can be used by greeter themes if needed.
  */
-class AutoBindingObject {
+class GreeterUtils {
 	/**
-	 * Creates a new {@link AutoBindingObject} instance.
-	 */
-	constructor() {
-		this.__bind_this();
-	}
-
-	/**
-	 * Binds `this` to the class for all class methods.
+	 * Binds `this` to `context` for all of a class's methods.
 	 *
-	 * @private
+	 * @arg {function(new:*): Object} context An ES6 class (not an instance) with at least one method.
+	 *
+	 * @return {Object} `context` with `this` bound to it for all of its methods.
 	 */
-	__bind_this() {
-		let excluded_methods = ['constructor', '__bind_this'];
+	static bind_this( context ) {
+		let excluded_methods = ['constructor'];
 
-		function not_excluded( method, context ) {
-			let _is_excluded = excluded_methods.findIndex( excluded_method => method === excluded_method ) > -1,
-				is_method = 'function' === typeof context[method];
+		function not_excluded( _method, _context ) {
+			let is_excluded = excluded_methods.findIndex( excluded_method => _method === excluded_method ) > -1,
+				is_method = 'function' === typeof _context[_method];
 
-			return is_method && !_is_excluded;
+			return is_method && !is_excluded;
 		}
 
-		for ( let obj = this; obj; obj = Object.getPrototypeOf( obj ) ) {
-			// Handle only our methods
+		for ( let obj = context; obj; obj = Object.getPrototypeOf( obj ) ) {
+			// Stop once we have traveled all the way up the inheritance chain
 			if ( 'Object' === obj.constructor.name ) {
 				break;
 			}
 
 			for ( let method of Object.getOwnPropertyNames( obj ) ) {
-				if ( not_excluded( method, this ) ) {
-					this[method] = this[method].bind( this );
+				if ( not_excluded( method, context ) ) {
+					context[method] = context[method].bind( context );
 				}
 			}
 		}
-
 	}
 }
 
 
-window.AutoBindingObject = AutoBindingObject;
+window.GreeterUtils = GreeterUtils;

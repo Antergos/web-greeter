@@ -37,20 +37,20 @@
  * subsequent checks run, it will assume that there has been an error in the theme's script
  * execution and fall back to the simple theme.
  */
-class LightDMGreeterHeartbeat extends AutoBindingObject {
+class GreeterHeartbeat  {
 
 	constructor() {
 		if ( '__heartbeat' in window ) {
 			return __heartbeat;
 		}
 
-		super();
-
-		window.__heartbeat = this;
+		window.__heartbeat = GreeterUtils.bind_this(this);
 		this.heartbeat = '';
 		this.heartbeats = 0;
 
 		this.initialize_theme_heartbeat();
+
+		return window.__heartbeat;
 	}
 
 	initialize_theme_heartbeat() {
@@ -82,4 +82,4 @@ class LightDMGreeterHeartbeat extends AutoBindingObject {
 }
 
 
-new LightDMGreeterHeartbeat();
+new GreeterHeartbeat();
