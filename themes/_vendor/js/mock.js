@@ -95,6 +95,7 @@ class LightDMSession  {
 }
 
 
+
 /**
  * Interface for object that holds info about a language on this system. Language objects are not
  * created by the theme's code, but rather by the {@link LightDMGreeter} class.

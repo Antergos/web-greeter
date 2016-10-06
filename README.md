@@ -24,16 +24,16 @@
 
 #### How To Build
 ```sh
-cd /tmp
-git clone https://github.com/Antergos/lightdm-webkit2-greeter.git greeter
-cd greeter
+git clone https://github.com/Antergos/lightdm-webkit2-greeter.git /tmp/greeter
+cd /tmp/greeter
+git checkout ${LATEST_RELEASE_TAG} # eg. git checkout 2.1.4
 ./autogen.sh --prefix=/usr
 make
 ```
 
 #### How To Install
 ```sh
-sudo make install --prefix=/usr
+sudo make install
 ```
 
 ## Theme JavaScript API:
