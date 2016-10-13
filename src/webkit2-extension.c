@@ -52,7 +52,7 @@
 
 /* CLion bugs */
 #ifndef guint64
-typedef unsigned long guint64;
+typedef unsigned long long guint64;
 #endif
 
 
