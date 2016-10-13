@@ -48,7 +48,7 @@
 
 /* CLion bugs */
 #ifndef gsize
-typedef unsigned long gsize;
+/* typedef unsigned long gsize; */
 #endif
 
 static GtkWidget *web_view;
