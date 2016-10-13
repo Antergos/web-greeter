@@ -334,6 +334,9 @@ main(int argc, char **argv) {
 	/* Prevent memory from being swapped out, since we see unencrypted passwords. */
 	mlockall (MCL_CURRENT | MCL_FUTURE);
 
+	/* https://goo.gl/vDFwFe */
+	g_setenv ("GDK_CORE_DEVICE_EVENTS", "1", TRUE);
+
 	/* Initialize i18n */
 	bindtextdomain (GETTEXT_PACKAGE, LOCALE_DIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
@@ -357,11 +360,18 @@ main(int argc, char **argv) {
 	config_timeout = g_key_file_get_integer(keyfile, "greeter", "screensaver-timeout", NULL);
 	debug_mode = g_key_file_get_boolean(keyfile, "greeter", "debug_mode", NULL);
 
+	/* Set default cursor */
+	root_window = gdk_get_default_root_window();
+	default_display = gdk_display_get_default();
+
+	gdk_window_set_cursor(root_window, gdk_cursor_new_for_display(default_display, GDK_LEFT_PTR));
+
+	/* Set the GTK theme to Adwaita */
+	g_object_set(gtk_settings_get_default(), "gtk-theme-name", "Adwaita", NULL);
+
 	/* Setup the main window */
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	screen = gtk_window_get_screen(GTK_WINDOW(window));
-	root_window = gdk_get_default_root_window();
-	default_display = gdk_display_get_default();
 
 	gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
 	gdk_screen_get_monitor_geometry(screen, gdk_screen_get_primary_monitor(screen), &geometry);
@@ -371,9 +381,6 @@ main(int argc, char **argv) {
 	/* There is no window manager, so we need to implement some of its functionality */
 	gdk_window_set_events(root_window, gdk_window_get_events(root_window) | GDK_SUBSTRUCTURE_MASK);
 	gdk_window_add_filter(root_window, wm_window_filter, NULL);
-
-	/* Set default cursor */
-	gdk_window_set_cursor(root_window, gdk_cursor_new_for_display(default_display, GDK_LEFT_PTR));
 
 	/* Setup CSS provider. We use CSS to set the window background to black instead
 	 * of default white so the screen doesnt flash during startup.
@@ -432,7 +439,9 @@ main(int argc, char **argv) {
 
 	gtk_widget_show_all(window);
 
+	g_debug("Run Gtk loop...");
 	gtk_main();
+	g_debug("Gtk loop exits");
 
 	return 0;
 }
