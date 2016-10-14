@@ -1,3 +1,8 @@
+Overview of changes in lightdm-webkit2-greeter 2.1.5
+
+    * [HOTFIX] Remove old code related to GDKWindow filters as it is no longer necessary and
+      actually causes issues with webkitgtk 2.14+.
+
 Overview of changes in lightdm-webkit2-greeter 2.1.4
 
     * Implemented a theme heartbeat to allow the greeter to detect and respond to theme failures.
