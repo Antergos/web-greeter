@@ -73,36 +73,6 @@ static gboolean
 	heartbeat_exit;
 
 
-static GdkFilterReturn
-wm_window_filter(GdkXEvent *gxevent, GdkEvent *event, gpointer data) {
-	XEvent *xevent = (XEvent *) gxevent;
-
-	if (xevent->type == MapNotify) {
-		GdkDisplay *display = gdk_x11_lookup_xdisplay(xevent->xmap.display);
-		GdkWindow *win = gdk_x11_window_foreign_new_for_display(display, xevent->xmap.window);
-		GdkWindowTypeHint win_type = gdk_window_get_type_hint(win);
-
-		if (win_type != GDK_WINDOW_TYPE_HINT_COMBO
-			&& win_type != GDK_WINDOW_TYPE_HINT_TOOLTIP
-			&& win_type != GDK_WINDOW_TYPE_HINT_NOTIFICATION) {
-
-			gdk_window_focus(win, GDK_CURRENT_TIME);
-		}
-
-	} else if (xevent->type == UnmapNotify) {
-		Window xwin;
-		int revert_to = RevertToNone;
-
-		XGetInputFocus(xevent->xunmap.display, &xwin, &revert_to);
-		if (revert_to == RevertToNone) {
-			gdk_window_lower(gtk_widget_get_window(gtk_widget_get_toplevel(GTK_WIDGET(window))));
-		}
-	}
-
-	return GDK_FILTER_CONTINUE;
-}
-
-
 static void
 initialize_web_extensions_cb(WebKitWebContext *context, gpointer user_data) {
 
@@ -338,9 +308,9 @@ main(int argc, char **argv) {
 	g_setenv ("GDK_CORE_DEVICE_EVENTS", "1", TRUE);
 
 	/* Initialize i18n */
-	bindtextdomain (GETTEXT_PACKAGE, LOCALE_DIR);
-	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
-	textdomain (GETTEXT_PACKAGE);
+	bindtextdomain(GETTEXT_PACKAGE, LOCALE_DIR);
+	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+	textdomain(GETTEXT_PACKAGE);
 
 	gtk_init(&argc, &argv);
 
@@ -377,10 +347,6 @@ main(int argc, char **argv) {
 	gdk_screen_get_monitor_geometry(screen, gdk_screen_get_primary_monitor(screen), &geometry);
 	gtk_window_set_default_size(GTK_WINDOW(window), geometry.width, geometry.height);
 	gtk_window_move(GTK_WINDOW(window), geometry.x, geometry.y);
-
-	/* There is no window manager, so we need to implement some of its functionality */
-	gdk_window_set_events(root_window, gdk_window_get_events(root_window) | GDK_SUBSTRUCTURE_MASK);
-	gdk_window_add_filter(root_window, wm_window_filter, NULL);
 
 	/* Setup CSS provider. We use CSS to set the window background to black instead
 	 * of default white so the screen doesnt flash during startup.
@@ -438,10 +404,12 @@ main(int argc, char **argv) {
 							 g_strdup_printf("file://%s/%s/index.html", THEME_DIR, theme));
 
 	gtk_widget_show_all(window);
+	gtk_widget_set_can_focus(GTK_WIDGET(web_view), TRUE);
+	gtk_widget_grab_focus(GTK_WIDGET(web_view));
 
-	g_debug("Run Gtk loop...");
+	g_debug("Entering Gtk loop...");
 	gtk_main();
-	g_debug("Gtk loop exits");
+	g_debug("Exited Gtk loop.");
 
 	return 0;
 }
