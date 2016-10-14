@@ -28,10 +28,11 @@
 |**Meson Build System**|meson|
 
 ### How To Build
+> ***Note:*** These instructions are for the `master` branch. For building the latest release, please see the `stable` branch.
+
 ```sh
 git clone https://github.com/Antergos/lightdm-webkit2-greeter.git /tmp/greeter
 cd /tmp/greeter/build
-git checkout ${LATEST_RELEASE_TAG} # eg. git checkout 2.1.5
 meson --prefix=/usr --libdir=lib ..
 ninja
 ```
