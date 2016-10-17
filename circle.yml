@@ -1,0 +1,25 @@
+machine:
+  timezone: America/Chicago
+
+dependencies:
+  post:
+    - sudo apt-get update
+    - >
+      sudo apt-get install -y
+      libgtk-3-0
+      liblightdm-gobject-1-dev
+      libexo-1-dev
+      exo-utils
+      libdbus-glib-1-dev
+      gnome-common
+    # use the repository from xenial to get libwebkit2gtk-4.0-dev
+    - sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu/ xenial main universe"
+    - sudo apt-get update
+    # ignore the error during the installation
+    - sudo DEBIAN_FRONTEND=noninteractive apt-get install -y libwebkit2gtk-4.0-dev || true
+
+test:
+  override:
+    - ./autogen.sh
+    - make
+    - sudo make install
