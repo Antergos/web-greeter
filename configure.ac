@@ -37,7 +37,7 @@ PKG_CHECK_MODULES([GREETER], [gtk+-3.0 >= 3.20],
 AM_CONDITIONAL([HAVE_GTK320], [test "$HAVE_GTK320" -eq 1])
 
 PKG_CHECK_MODULES([WEB_EXTENSION], [liblightdm-gobject-1 >= 1.19.2],
-    [AC_DEFINE([HAVE_LIGHTDM_1_19_2], [1], [Building with liblightdmgobject 1.19.2])],
+    [AC_DEFINE([HAS_LIGHTDM_1_19_2], [1], [Building with liblightdmgobject 1.19.2])],
         [PKG_CHECK_MODULES([WEB_EXTENSION], [liblightdm-gobject-1 >= 1.3.5])]
 )
 
