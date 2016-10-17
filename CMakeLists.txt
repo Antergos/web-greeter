@@ -1,17 +1,26 @@
-cmake_minimum_required(VERSION 2.8)
-project(lightdm-webkit2-greeter C)
+cmake_minimum_required(VERSION 3.6)
+project(lightdm_webkit2_greeter C)
 
-#[[
-set(lightdm-webkit2-greeter_VERSION_MAJOR 0)
-set(lightdm-webkit2-greeter_VERSION_MINOR 2)
-set(lightdm-webkit2-greeter_VERSION_BUGFIX 3)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(PROJECT_SOURCE_DIR src)
-set(LIBSRC ${PROJECT_SOURCE_DIR})
-set(SRC lightdm-webkit2-greeter)
+if(EXISTS "src/gresource")
+	set(SOURCE_FILES
+		src/gresource/greeter-resources.c
+		src/gresource/greeter-resources.h
+		src/config.h
+		src/greeter.c
+		src/webkit2-extension.c)
+else()
+	set(SOURCE_FILES
+			src/lightdm-webkit2-greeter.c
+			src/lightdm-webkit2-greeter-ext.c)
+endif()
 
-install(FILES lightdm-webkit2-greeter-ext.so DESTINATION lib)
-install(FILES lightdm-webkit2-greeter DESTINATION bin)
+include_directories(
+		/usr/include/gtk-3.0
+		/usr/include/glib-2.0
+		/usr/include/glib-2.0/glib
+		/usr/include/webkitgtk-4.0
+		/usr/include/lightdm-gobject-1)
 
-add_library(lightdm-webkit2-greeter-ext SHARED ${LIBSRC}/lightdm-webkit2-greeter-ext.c)
-add_executable(lightdm-webkit2-greeter ${PROJECT_SOURCE_DIR}/lightdm-webkit2-greeter.c)]]
+add_executable(lightdm_webkit2_greeter ${SOURCE_FILES})
