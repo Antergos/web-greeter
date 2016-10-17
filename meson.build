@@ -1,4 +1,4 @@
-project('lightdm-webkit2-greeter', 'c', version: '2.1.5', license: 'GPL-3')
+project('lightdm-webkit2-greeter', 'c', version: '2.1.6', license: 'GPL-3')
 
 
 # ================================== #
@@ -28,7 +28,8 @@ webkit2_webext  = dependency('webkit2gtk-web-extension-4.0', version: '>=2.10.7'
 greeter_deps = [dbus_glib, gtk3, webkit2, x11]
 webext_deps = [webkit2_webext, lightdm_gobject]
 
-has_webkitgtk_214 = webkit2.version().version_compare('>=2.14.0')
+has_webkitgtk_2_14 = webkit2.version().version_compare('>=2.14.0')
+has_lightdm_1_19_2 = lightdm_gobject.version().version_compare('>=1.19.2')
 
 
 # =================================== #
@@ -55,7 +56,9 @@ conf.set('DESKTOP_DIR', '"@0@"'.format(get_option('with-desktop-dir')))
 
 conf.set('WEBEXT_DIR', '"@0@"'.format(get_option('with-webext-dir')))
 
-conf.set('HAS_WEBKITGTK_2_14', has_webkitgtk_214)
+conf.set('HAS_WEBKITGTK_2_14', has_webkitgtk_2_14)
+
+conf.set('HAS_LIGHTDM_1_19_2', has_lightdm_1_19_2)
 
 
 # ===================================== #
