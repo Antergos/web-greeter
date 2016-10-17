@@ -46,10 +46,6 @@
 #include "config.h"
 #include "gresource/greeter-resources.h"
 
-/* CLion bugs */
-#ifndef gsize
-/* typedef unsigned long gsize; */
-#endif
 
 static GtkWidget *web_view;
 static GtkWidget *window;

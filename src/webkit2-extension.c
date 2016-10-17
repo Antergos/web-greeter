@@ -51,12 +51,6 @@
 #include "config.h"
 
 
-/* CLion bugs */
-#ifndef guint64
-typedef unsigned long guint64;
-#endif
-
-
 /* Convenience macros for use in functions that can be called from JavaScript
  * running in the web process. They are used to confirm that calls were made by one of
  * the classes that we injected into the web page.
@@ -1071,7 +1065,7 @@ set_language_cb(JSContextRef context,
 		g_error_free(err);
 	}
 	#else
-	lightdm_greeter_set_language(GREETER, language);
+	lightdm_greeter_set_language(GREETER, language, &err);
 	#endif
 
 	g_free(language);
