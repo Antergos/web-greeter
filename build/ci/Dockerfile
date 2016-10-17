@@ -1,7 +1,8 @@
 FROM ubuntu:16.04
 MAINTAINER Antergos Developers <dev@antergos.com>
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update; \
+	apt-get install -y \
 		libgtk-3-dev \
 		liblightdm-gobject-1-dev \
 		libexo-1-dev \
