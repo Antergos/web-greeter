@@ -52,7 +52,7 @@
 
 /* CLion bugs */
 #ifndef guint64
-/* typedef unsigned long guint64; */
+#define guint64 typedef unsigned long guint64;
 #endif
 
 
@@ -970,13 +970,13 @@ start_session_cb(JSContextRef context,
 	if (NULL != web_page) {
 		dom_document = webkit_web_page_get_dom_document(web_page);
 		dom_window = webkit_dom_document_get_default_view(dom_document);
-	}
 
-	if (dom_window) {
-		/* Stop theme heartbeat */
-		webkit_dom_dom_window_webkit_message_handlers_post_message(
-			dom_window, "GreeterBridge", "Heartbeat::Exit"
-		);
+		if (dom_window) {
+			/* Stop theme heartbeat */
+			webkit_dom_dom_window_webkit_message_handlers_post_message(
+				dom_window, "GreeterBridge", "Heartbeat::Exit"
+			);
+		}
 	}
 
 	SESSION_STARTING = TRUE;
@@ -1277,6 +1277,7 @@ get_dirlist_cb(JSContextRef context,
 		return array;
 	}
 }
+
 
 static JSValueRef
 txt2html_cb(JSContextRef context,
@@ -1589,7 +1590,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	dom_window = webkit_dom_document_get_default_view(dom_document);
 
 	if (dom_window) {
-		/* Notify the UI process that the page is loaded */
+		/* Notify the UI process that the greeter is loaded */
 		webkit_dom_dom_window_webkit_message_handlers_post_message(
 			dom_window, "GreeterBridge", page_loaded_message
 		);
@@ -1890,7 +1891,8 @@ webkit_web_extension_initialize(WebKitWebExtension *extension) {
 	g_signal_connect(
 		G_OBJECT(greeter),
 		"show-prompt",
-		G_CALLBACK(show_prompt_cb), extension
+		G_CALLBACK(show_prompt_cb),
+		extension
 	);
 
 	g_signal_connect(
