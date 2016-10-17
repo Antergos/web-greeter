@@ -642,7 +642,19 @@ authenticate_cb(JSContextRef context,
 		name = arg_to_string(context, arguments[0], exception);
 	}
 
+	#ifdef HAS_LIGHTDM_1_19_2
+	GError *err = NULL;
+
+	lightdm_greeter_authenticate(GREETER, name, &err);
+
+	if (NULL != err) {
+		_mkexception(context, exception, err->message);
+		g_error_free(err);
+	}
+	#else
 	lightdm_greeter_authenticate(GREETER, name);
+	#endif
+
 	g_free(name);
 
 	return JSValueMakeNull(context);
@@ -657,7 +669,18 @@ authenticate_as_guest_cb(JSContextRef context,
 						 const JSValueRef arguments[],
 						 JSValueRef *exception) {
 
+	#ifdef HAS_LIGHTDM_1_19_2
+	GError *err = NULL;
+
+	lightdm_greeter_authenticate_as_guest(GREETER, &err);
+
+	if (NULL != err) {
+		_mkexception(context, exception, err->message);
+		g_error_free(err);
+	}
+	#else
 	lightdm_greeter_authenticate_as_guest(GREETER);
+	#endif
 
 	return JSValueMakeNull(context);
 }
@@ -711,7 +734,19 @@ respond_cb(JSContextRef context,
 		return JSValueMakeNull(context);
 	}
 
+	#ifdef HAS_LIGHTDM_1_19_2
+	GError *err = NULL;
+
+	lightdm_greeter_respond(GREETER, response, &err);
+
+	if (NULL != err) {
+		_mkexception(context, exception, err->message);
+		g_error_free(err);
+	}
+	#else
 	lightdm_greeter_respond(GREETER, response);
+	#endif
+
 	g_free(response);
 
 	return JSValueMakeNull(context);
@@ -726,7 +761,18 @@ cancel_authentication_cb(JSContextRef context,
 						 const JSValueRef arguments[],
 						 JSValueRef *exception) {
 
+	#ifdef HAS_LIGHTDM_1_19_2
+	GError *err = NULL;
+
+	lightdm_greeter_cancel_authentication(GREETER, &err);
+
+	if (NULL != err) {
+		_mkexception(context, exception, err->message);
+		g_error_free(err);
+	}
+	#else
 	lightdm_greeter_cancel_authentication(GREETER);
+	#endif
 
 	return JSValueMakeNull(context);
 }
@@ -963,7 +1009,18 @@ set_language_cb(JSContextRef context,
 		return JSValueMakeNull(context);
 	}
 
+	#ifdef HAS_LIGHTDM_1_19_2
+	GError *err = NULL;
+
+	lightdm_greeter_set_language(GREETER, language, &err);
+
+	if (NULL != err) {
+		_mkexception(context, exception, err->message);
+		g_error_free(err);
+	}
+	#else
 	lightdm_greeter_set_language(GREETER, language);
+	#endif
 
 	g_free(language);
 
