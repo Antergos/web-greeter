@@ -140,6 +140,7 @@ CMakeScripts
 Makefile
 cmake_install.cmake
 install_manifest.txt
+CMakeLists.txt
 ### C template
 # Object files
 *.ko
