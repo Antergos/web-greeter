@@ -12,3 +12,4 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update; \
 		libwebkit2gtk-4.0-dev
 
 VOLUME /build
+WORKDIR /build
