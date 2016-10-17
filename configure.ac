@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(lightdm-webkit2-greeter, 2.1.5)
+AC_INIT(lightdm-webkit2-greeter, 2.1.6)
 AC_SUBST(THEME_DIR)
 AC_CONFIG_HEADER(config.h)
 AC_PREREQ([2.59])
@@ -35,6 +35,12 @@ PKG_CHECK_MODULES([GREETER], [gtk+-3.0 >= 3.20],
        [AC_DEFINE([HAVE_GTK320], [0], [Use Gtk320])]
 )
 AM_CONDITIONAL([HAVE_GTK320], [test "$HAVE_GTK320" -eq 1])
+
+PKG_CHECK_MODULES([LIGHTDMGOBJECT], [liblightdm-gobject-1 >= 1.19.2],
+  [AC_DEFINE([HAVE_LIGHTDM_1_19_2], [1], [Building with liblightdmgobject 1.19.2])],
+  [PKG_CHECK_MODULES([LIGHTDMGOBJECT], [liblightdm-gobject-1 >= 1.3.5])]
+)
+AM_CONDITIONAL([HAVE_LIGHTDM_1_19_2], [test "$HAVE_LIGHTDM_1_19_2" -eq 1])
 
 AC_SUBST([WEB_EXTENSION_CFLAGS])
 AC_SUBST([WEB_EXTENSION_LIBS])
