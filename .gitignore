@@ -1,4 +1,5 @@
 build/**
+!build/ci
 !build/ci/Dockerfile
 /ChangeLog
 /AUTHORS
