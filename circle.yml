@@ -8,7 +8,7 @@ dependencies:
     - ~/docker
   override:
     - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
-    - docker build --rm=false -t antergos/ci-ubuntu lightdm-webkit2-greeter/build/ci
+    - docker build --rm=false -t antergos/ci-ubuntu build/ci
     - mkdir -p ~/docker; docker save antergos/ci-ubuntu > ~/docker/image.tar
 
 test:
