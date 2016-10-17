@@ -13,4 +13,4 @@ dependencies:
 
 test:
   override:
-    - docker run -v .:/build:rw antergos/ci-ubuntu "./autogen.sh && make && make install"
+    - docker run -v ${PWD}:/build:rw antergos/ci-ubuntu "./autogen.sh && make && make install"
