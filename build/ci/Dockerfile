@@ -11,4 +11,4 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update; \
 		gnome-common \
 		libwebkit2gtk-4.0-dev
 
-VOLUME /lightdm-webkit2-greeter
+VOLUME /build
