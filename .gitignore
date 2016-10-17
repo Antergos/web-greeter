@@ -1,5 +1,6 @@
 build/**
 !build/.gitignore
+!build/ci/Dockerfile
 CMakeLists.txt
 /ChangeLog
 /AUTHORS
