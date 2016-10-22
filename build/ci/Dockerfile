@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:16.10
 MAINTAINER Antergos Developers <dev@antergos.com>
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update; \
