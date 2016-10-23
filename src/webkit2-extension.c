@@ -1065,7 +1065,7 @@ set_language_cb(JSContextRef context,
 		g_error_free(err);
 	}
 	#else
-	lightdm_greeter_set_language(GREETER, language, &err);
+	lightdm_greeter_set_language(GREETER, language);
 	#endif
 
 	g_free(language);
