@@ -1904,14 +1904,16 @@ page_created_cb(WebKitWebExtension *extension,
 	gboolean secure_mode;
 	GError *err = NULL;
 
+	// save the page_id (global variable)
+	page_id = webkit_web_page_get_id(web_page);
+
+	// Determine if secure_mode is enabled and connect callback to signal if so.
 	secure_mode = get_config_option_as_bool("greeter", "secure_mode", err);
 
 	if (FALSE == secure_mode && NULL == err) {
 		// secure_mode is disabled in our config file. bail.
 		return;
 	}
-
-	page_id = webkit_web_page_get_id(web_page);
 
 	g_signal_connect(
 		web_page,
