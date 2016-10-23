@@ -1,4 +1,4 @@
-project('lightdm-webkit2-greeter', 'c', version: '2.1.6', license: 'GPL-3')
+project('lightdm-webkit2-greeter', 'c', version: '2.1.90', license: 'GPL-3')
 
 
 # ================================== #
@@ -58,7 +58,9 @@ conf.set('WEBEXT_DIR', '"@0@"'.format(get_option('with-webext-dir')))
 
 conf.set('HAS_WEBKITGTK_2_14', has_webkitgtk_2_14)
 
-conf.set('HAS_LIGHTDM_1_19_2', has_lightdm_1_19_2)
+if has_lightdm_1_19_2
+  conf.set('HAS_LIGHTDM_1_19_2', has_lightdm_1_19_2)
+fi
 
 
 # ===================================== #
