@@ -1779,16 +1779,22 @@ autologin_timer_expired_cb(LightDMGreeter *greeter, WebKitWebExtension *extensio
 }
 
 
+static gboolean
+get_config_option_as_bool(const gchar *section, const gchar *key, GError *err) {
+	return g_key_file_get_boolean(keyfile, section, key, &err);
+}
+
 static gchar*
-get_config_option(const gchar *section, const gchar *key) {
+get_config_option_as_string(const gchar *section, const gchar *key) {
 	gchar *value;
 	GError *err = NULL;
 
 	value = g_key_file_get_string(keyfile, section, key, &err);
 
-	if (err) {
+	if (NULL != err) {
 		g_error(err->message);
 		g_error_free(err);
+		g_free(value);
 		return "";
 	}
 
@@ -1812,13 +1818,13 @@ should_block_request(const char *file_path) {
 
 	paths = g_slist_prepend(paths, THEME_DIR);
 
-	background_images_dir = get_config_option("branding", "background_images");
+	background_images_dir = get_config_option_as_string("branding", "background_images");
 	paths = g_slist_prepend(paths, background_images_dir);
 
-	user_image = get_config_option("branding", "user_image");
+	user_image = get_config_option_as_string("branding", "user_image");
 	paths = g_slist_prepend(paths, user_image);
 
-	logo = get_config_option("branding", "logo");
+	logo = get_config_option_as_string("branding", "logo");
 	paths = g_slist_prepend(paths, logo);
 
 	canonical_path = canonicalize_file_name(file_path);
@@ -1894,6 +1900,16 @@ void
 page_created_cb(WebKitWebExtension *extension,
 				WebKitWebPage      *web_page,
 				gpointer            user_data) {
+
+	gboolean secure_mode;
+	GError *err = NULL;
+
+	secure_mode = get_config_option_as_bool("greeter", "secure_mode", err);
+
+	if (FALSE == secure_mode && NULL == err) {
+		// secure_mode is disabled in our config file. bail.
+		return;
+	}
 
 	page_id = webkit_web_page_get_id(web_page);
 
