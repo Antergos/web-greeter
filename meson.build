@@ -60,7 +60,7 @@ conf.set('HAS_WEBKITGTK_2_14', has_webkitgtk_2_14)
 
 if has_lightdm_1_19_2
   conf.set('HAS_LIGHTDM_1_19_2', has_lightdm_1_19_2)
-fi
+endif
 
 
 # ===================================== #
