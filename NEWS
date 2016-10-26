@@ -1,3 +1,25 @@
+Overview of changes in lightdm-webkit2-greeter 2.2
+
+    * Fixed issue where the default X cursor was shown briefly after the greeter exits.
+    * The JavaScript API for themes is now fully documented: https://goo.gl/0iPzA4
+    * Switched build systems from Autotools to Meson.
+    * Moved the Theme Heartbeat from the default theme into the greeter itself. Themes no longer
+      need to worry about starting/stopping the heartbeat as its now handled automatically.
+    * Added new config option: secure_mode (enabled by default). When enabled, only local http
+      requests are allowed in themes. All non-local requests will be blocked.
+    * Updated API usage for LightDM 1.19.2+.
+    * antergos theme (default):
+        * Fixed issue with the size and position of the error messages container.
+        * Fixed issue that caused the spacebar and enter login shortcut keys not to work.
+          It's now once again possible to skip straight to password entry by pressing either
+          the spacebar or the enter key.
+        * Fixed issue where translated strings were available but not used in the theme.
+        * Updated translations with latest changes made by the Antergos Community on Transifex.
+    * simple theme:
+        * Removed deprecated HTML4 tags.
+        * Improved styles for input field.
+        * Add fade out animation on exit.
+
 Overview of changes in lightdm-webkit2-greeter 2.1.6
 
     * [HOTFIX] Support for LightDM 1.19.2+ (greeter API changes)
