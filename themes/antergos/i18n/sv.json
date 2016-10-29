@@ -1,14 +1,14 @@
 {
     "auth_failed": "Hoppsan! Autentisering misslyckades. Var god försök igen.",
-    "background_options": "bakgrund Val",
-    "cancel": "Annullera",
+    "background_options": "Välj bakgrund",
+    "cancel": "Avbryt",
     "confirm_system_action": "Är du säker?",
-    "debug_log": "Debug Log",
-    "greeting": "Välkomna!",
-    "hibernate": "Övervintra",
+    "debug_log": "Felsökningslogg",
+    "greeting": "Välkommen!",
+    "hibernate": "Viloläge",
     "random": "Slumpmässig",
     "reset": "Återställa",
-    "restart": "Omstart",
-    "shutdown": "Stäng ner",
-    "suspend": "Uppskjuta"
+    "restart": "Starta om",
+    "shutdown": "Stäng av",
+    "suspend": "Vänteläge"
 }

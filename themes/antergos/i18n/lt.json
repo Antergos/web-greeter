@@ -1,14 +1,14 @@
 {
-    "auth_failed": "Uh Oh! Autentifikavimas nepavyko. Prašau, pabandykite dar kartą.",
-    "background_options": "Fono parinktys",
-    "cancel": "atšaukti",
-    "confirm_system_action": "Ar tu tuo tikras?",
-    "debug_log": "derinti Prisijungti",
+    "auth_failed": "Oi! Tapatybės nustatymas nepavyko. Prašome bandyti dar kartą.",
+    "background_options": "Fono parametrai",
+    "cancel": "Atsisakyti",
+    "confirm_system_action": "Ar tikrai?",
+    "debug_log": "Derinimo žurnalas",
     "greeting": "Sveiki!",
-    "hibernate": "hibernate",
+    "hibernate": "Užmigdyti",
     "random": "Atsitiktinės",
     "reset": "Atstatyti",
-    "restart": "Perkrauti",
+    "restart": "Paleisti iš naujo",
     "shutdown": "Išjungti",
-    "suspend": "sustabdyti"
+    "suspend": "Pristabdyti"
 }
