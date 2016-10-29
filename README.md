@@ -47,4 +47,4 @@ The greeter exposes a JavaScript API to themes which they must use to interact w
 
 
 ## Translations
-Translations are managed through [Transifex](http://transifex.com).
+Translations are managed through [Transifex](https://www.transifex.com/faidoc/antergos/lightdm-webkit2-greeter/).
