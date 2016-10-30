@@ -30,7 +30,7 @@ webext_deps = [webkit2_webext, lightdm_gobject]
 
 has_webkitgtk_2_14 = webkit2.version().version_compare('>=2.14.0')
 has_lightdm_1_19_2 = lightdm_gobject.version().version_compare('>=1.19.2')
-
+has_gtk_3_22 = gtk3.version().version_compare('>=3.22')
 
 # =================================== #
 # ------->>> Configuration <<<------- #
@@ -56,10 +56,16 @@ conf.set('DESKTOP_DIR', '"@0@"'.format(get_option('with-desktop-dir')))
 
 conf.set('WEBEXT_DIR', '"@0@"'.format(get_option('with-webext-dir')))
 
-conf.set('HAS_WEBKITGTK_2_14', has_webkitgtk_2_14)
+if has_webkitgtk_2_14
+  conf.set('HAS_WEBKITGTK_2_14', has_webkitgtk_2_14)
+endif
 
 if has_lightdm_1_19_2
   conf.set('HAS_LIGHTDM_1_19_2', has_lightdm_1_19_2)
+endif
+
+if has_gtk_3_22
+  conf.set('HAS_GTK_3_22', has_gtk_3_22)
 endif
 
 

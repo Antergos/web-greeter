@@ -373,7 +373,14 @@ main(int argc, char **argv) {
 	screen = gtk_window_get_screen(GTK_WINDOW(window));
 
 	gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
-	gdk_screen_get_monitor_geometry(screen, gdk_screen_get_primary_monitor(screen), &geometry);
+
+	#ifdef HAS_GTK_3_22
+		GdkMonitor *monitor = gdk_display_get_primary_monitor(default_display);
+		gdk_monitor_get_geometry(monitor, &geometry);
+	#else
+		gdk_screen_get_monitor_geometry(screen, gdk_screen_get_primary_monitor(screen), &geometry);
+	#endif
+
 	gtk_window_set_default_size(GTK_WINDOW(window), geometry.width, geometry.height);
 	gtk_window_move(GTK_WINDOW(window), geometry.x, geometry.y);
 
