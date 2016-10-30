@@ -1622,7 +1622,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 						globalObject,
 						JSStringCreateWithUTF8CString("__GreeterConfig"),
 						greeter_config_object,
-						kJSPropertyAttributeDontEnum | kJSPropertyAttributeReadOnly,
+						kJSPropertyAttributeDontEnum,
 						NULL);
 
 	theme_utils_object = JSObjectMake(jsContext, theme_utils_class, NULL);
@@ -1630,7 +1630,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 						globalObject,
 						JSStringCreateWithUTF8CString("__ThemeUtils"),
 						theme_utils_object,
-						kJSPropertyAttributeDontEnum | kJSPropertyAttributeReadOnly,
+						kJSPropertyAttributeDontEnum,
 						NULL);
 
 	dom_document = webkit_web_page_get_dom_document(web_page);
