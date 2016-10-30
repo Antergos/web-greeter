@@ -1552,21 +1552,21 @@ static const JSClassDefinition gettext_definition = {
 };
 
 static const JSClassDefinition greeter_config_definition = {
-	0,                                     /* Version          */
-	kJSClassAttributeNoAutomaticPrototype, /* Attributes       */
-	"__GreeterConfig",                     /* Class name       */
-	NULL,                                  /* Parent class     */
-	NULL,                                  /* Static values    */
-	greeter_config_functions,              /* Static functions */
+	0,                        /* Version          */
+	kJSClassAttributeNone,    /* Attributes       */
+	"__GreeterConfig",        /* Class name       */
+	NULL,                     /* Parent class     */
+	NULL,                     /* Static values    */
+	greeter_config_functions, /* Static functions */
 };
 
 static const JSClassDefinition theme_utils_definition = {
-	0,                                     /* Version          */
-	kJSClassAttributeNoAutomaticPrototype, /* Attributes       */
-	"__ThemeUtils",                        /* Class name       */
-	NULL,                                  /* Parent class     */
-	NULL,                                  /* Static values    */
-	theme_utils_functions,                 /* Static functions */
+	0,                     /* Version          */
+	kJSClassAttributeNone, /* Attributes       */
+	"__ThemeUtils",        /* Class name       */
+	NULL,                  /* Parent class     */
+	NULL,                  /* Static values    */
+	theme_utils_functions, /* Static functions */
 };
 
 
