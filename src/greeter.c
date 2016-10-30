@@ -64,7 +64,6 @@ static gint config_timeout;
 
 static gboolean
 	debug_mode,
-	secure_mode,
 	heartbeat,
 	heartbeat_exit;
 
@@ -319,9 +318,12 @@ main(int argc, char **argv) {
 	/* BEGIN Greeter Config File */
 	keyfile = g_key_file_new();
 
-	g_key_file_load_from_file(keyfile,
-							  CONFIG_DIR "lightdm-webkit2-greeter.conf",
-							  G_KEY_FILE_NONE, NULL);
+	g_key_file_load_from_file(
+		keyfile,
+		CONFIG_DIR "/lightdm-webkit2-greeter.conf",
+		G_KEY_FILE_NONE,
+		NULL
+	);
 
 	/* TODO: Handle config values and fallbacks some other way, this is garbage! */
 	theme = g_key_file_get_string(keyfile, "greeter", "webkit_theme", &err);
