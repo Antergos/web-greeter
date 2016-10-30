@@ -84,7 +84,7 @@ static JSClassRef
 	lightdm_layout_class,
 	lightdm_session_class,
 	config_file_class,
-	greeter_util_class;
+	theme_utils_class;
 
 static gboolean SESSION_STARTING = FALSE;
 
@@ -1600,7 +1600,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	lightdm_layout_class = JSClassCreate(&lightdm_layout_definition);
 	lightdm_session_class = JSClassCreate(&lightdm_session_definition);
 	config_file_class = JSClassCreate(&config_file_definition);
-	greeter_util_class = JSClassCreate(&theme_utils_definition);
+	theme_utils_class = JSClassCreate(&theme_utils_definition);
 
 	gettext_object = JSObjectMake(jsContext, gettext_class, NULL);
 	JSObjectSetProperty(jsContext,
@@ -1626,7 +1626,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 						kJSPropertyAttributeNone,
 						NULL);
 
-	theme_utils_object = JSObjectMake(jsContext, greeter_util_class, NULL);
+	theme_utils_object = JSObjectMake(jsContext, theme_utils_class, NULL);
 	JSObjectSetProperty(jsContext,
 						globalObject,
 						JSStringCreateWithUTF8CString("__ThemeUtils"),

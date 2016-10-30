@@ -203,7 +203,7 @@ load_script(char *script) {
 
 static void
 page_loaded_handler(void) {
-	load_script("/com/antergos/lightdm-webkit2-greeter/js/auto-binding-object.js");
+	load_script("/com/antergos/lightdm-webkit2-greeter/js/ThemeUtils.js");
 	load_script("/com/antergos/lightdm-webkit2-greeter/js/ThemeHeartbeat.js");
 }
 
