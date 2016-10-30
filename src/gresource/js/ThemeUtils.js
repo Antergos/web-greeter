@@ -65,8 +65,6 @@ class ThemeUtils  {
 			}
 		}
 	}
-
-	static
 }
 
 window.theme_utils = __ThemeUtils;

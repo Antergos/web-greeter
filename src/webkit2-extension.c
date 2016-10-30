@@ -1587,7 +1587,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 				globalObject;
 
 	gchar *lock_hint_message = "LockHint";
-	gchar *page_loaded_message = "PageLoaded";
+	gchar *greeter_loaded_message = "GreeterLoaded";
 
 	jsContext = webkit_frame_get_javascript_context_for_script_world(frame, world);
 	globalObject = JSContextGetGlobalObject(jsContext);
@@ -1622,7 +1622,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 						globalObject,
 						JSStringCreateWithUTF8CString("__GreeterConfig"),
 						greeter_config_object,
-						kJSPropertyAttributeDontEnum,
+						kJSPropertyAttributeDontEnum | kJSPropertyAttributeReadOnly,
 						NULL);
 
 	theme_utils_object = JSObjectMake(jsContext, theme_utils_class, NULL);
@@ -1630,7 +1630,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 						globalObject,
 						JSStringCreateWithUTF8CString("__ThemeUtils"),
 						theme_utils_object,
-						kJSPropertyAttributeDontEnum,
+						kJSPropertyAttributeDontEnum | kJSPropertyAttributeReadOnly,
 						NULL);
 
 	dom_document = webkit_web_page_get_dom_document(web_page);
@@ -1639,7 +1639,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	if (dom_window) {
 		/* Notify the UI process that the greeter is loaded */
 		webkit_dom_dom_window_webkit_message_handlers_post_message(
-			dom_window, "GreeterBridge", page_loaded_message
+			dom_window, "GreeterBridge", greeter_loaded_message
 		);
 
 		/* If the greeter was started as a lock-screen, notify our UI process. */

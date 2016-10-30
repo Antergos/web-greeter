@@ -202,7 +202,8 @@ load_script(char *script) {
 
 
 static void
-page_loaded_handler(void) {
+greeter_loaded_handler(void) {
+	load_script("/com/antergos/lightdm-webkit2-greeter/js/GreeterConfig.js");
 	load_script("/com/antergos/lightdm-webkit2-greeter/js/ThemeUtils.js");
 	load_script("/com/antergos/lightdm-webkit2-greeter/js/ThemeHeartbeat.js");
 }
@@ -243,8 +244,8 @@ message_received_cb(WebKitUserContentManager *manager,
 		printf("Error running javascript: unexpected return value");
 	}
 
-	if (strcmp(message_str, "PageLoaded") == 0) {
-		page_loaded_handler();
+	if (strcmp(message_str, "GreeterLoaded") == 0) {
+		greeter_loaded_handler();
 
 	} else if (strcmp(message_str, "LockHint") == 0) {
 		lock_hint_enabled_handler();
