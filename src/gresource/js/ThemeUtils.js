@@ -28,7 +28,11 @@
 
 
 /**
- * Provides various utility methods and can be used by greeter themes if needed.
+ * Provides various utility methods for use by theme authors. The greeter will automatically
+ * create an instance of this class when it starts. The instance can be accessed
+ * with the global variable: `theme_utils`.
+ *
+ * @memberOf LightDM
  */
 class ThemeUtils  {
 	/**
@@ -61,6 +65,8 @@ class ThemeUtils  {
 			}
 		}
 	}
+
+	static
 }
 
 window.theme_utils = __ThemeUtils;

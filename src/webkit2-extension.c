@@ -83,7 +83,7 @@ static JSClassRef
 	lightdm_language_class,
 	lightdm_layout_class,
 	lightdm_session_class,
-	config_file_class,
+	greeter_config_class,
 	theme_utils_class;
 
 static gboolean SESSION_STARTING = FALSE;
@@ -1488,7 +1488,7 @@ static const JSStaticFunction gettext_functions[] = {
 	{NULL,       NULL,        0}};
 
 
-static const JSStaticFunction config_file_functions[] = {
+static const JSStaticFunction greeter_config_functions[] = {
 	{"get_str",  get_conf_str_cb,  kJSPropertyAttributeReadOnly},
 	{"get_num",  get_conf_num_cb,  kJSPropertyAttributeReadOnly},
 	{"get_bool", get_conf_bool_cb, kJSPropertyAttributeReadOnly},
@@ -1551,13 +1551,13 @@ static const JSClassDefinition gettext_definition = {
 	gettext_functions,     /* Static functions */
 };
 
-static const JSClassDefinition config_file_definition = {
-	0,                      /* Version          */
-	kJSClassAttributeNone,  /* Attributes       */
-	"ConfigFile",           /* Class name       */
-	NULL,                   /* Parent class     */
-	NULL,                   /* Static values    */
-	config_file_functions,  /* Static functions */
+static const JSClassDefinition greeter_config_definition = {
+	0,                                     /* Version          */
+	kJSClassAttributeNoAutomaticPrototype, /* Attributes       */
+	"__GreeterConfig",                     /* Class name       */
+	NULL,                                  /* Parent class     */
+	NULL,                                  /* Static values    */
+	greeter_config_functions,              /* Static functions */
 };
 
 static const JSClassDefinition theme_utils_definition = {
@@ -1582,7 +1582,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 
 	JSObjectRef gettext_object,
 				lightdm_greeter_object,
-				config_file_object,
+				greeter_config_object,
 				theme_utils_object,
 				globalObject;
 
@@ -1598,7 +1598,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	lightdm_language_class = JSClassCreate(&lightdm_language_definition);
 	lightdm_layout_class = JSClassCreate(&lightdm_layout_definition);
 	lightdm_session_class = JSClassCreate(&lightdm_session_definition);
-	config_file_class = JSClassCreate(&config_file_definition);
+	greeter_config_class = JSClassCreate(&greeter_config_definition);
 	theme_utils_class = JSClassCreate(&theme_utils_definition);
 
 	gettext_object = JSObjectMake(jsContext, gettext_class, NULL);
@@ -1617,12 +1617,12 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 						kJSPropertyAttributeNone,
 						NULL);
 
-	config_file_object = JSObjectMake(jsContext, config_file_class, greeter);
+	greeter_config_object = JSObjectMake(jsContext, greeter_config_class, greeter);
 	JSObjectSetProperty(jsContext,
 						globalObject,
-						JSStringCreateWithUTF8CString("config"),
-						config_file_object,
-						kJSPropertyAttributeNone,
+						JSStringCreateWithUTF8CString("__GreeterConfig"),
+						greeter_config_object,
+						(JSPropertyAttributes) (kJSPropertyAttributeDontEnum || kJSPropertyAttributeReadOnly),
 						NULL);
 
 	theme_utils_object = JSObjectMake(jsContext, theme_utils_class, NULL);
@@ -1630,7 +1630,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 						globalObject,
 						JSStringCreateWithUTF8CString("__ThemeUtils"),
 						theme_utils_object,
-						kJSPropertyAttributeNone,
+						(JSPropertyAttributes) (kJSPropertyAttributeDontEnum || kJSPropertyAttributeReadOnly),
 						NULL);
 
 	dom_document = webkit_web_page_get_dom_document(web_page);
