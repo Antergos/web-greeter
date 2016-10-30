@@ -2,6 +2,8 @@ build/**
 !build/.gitignore
 !build/ci/Dockerfile
 src/greeter-resources.h
+src/config.h
+cmake-build-debug
 CMakeLists.txt
 /ChangeLog
 /AUTHORS
