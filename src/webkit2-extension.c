@@ -1561,12 +1561,12 @@ static const JSClassDefinition config_file_definition = {
 };
 
 static const JSClassDefinition theme_utils_definition = {
-	0,                      /* Version          */
-	kJSClassAttributeNone,  /* Attributes       */
-	"__ThemeUtils",         /* Class name       */
-	NULL,                   /* Parent class     */
-	NULL,                   /* Static values    */
-	theme_utils_functions,  /* Static functions */
+	0,                                     /* Version          */
+	kJSClassAttributeNoAutomaticPrototype, /* Attributes       */
+	"__ThemeUtils",                        /* Class name       */
+	NULL,                                  /* Parent class     */
+	NULL,                                  /* Static values    */
+	theme_utils_functions,                 /* Static functions */
 };
 
 
@@ -1580,7 +1580,6 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	WebKitDOMDOMWindow *dom_window;
 	WebKitDOMDocument *dom_document;
 
-	JSStringRef command;
 	JSObjectRef gettext_object,
 				lightdm_greeter_object,
 				config_file_object,

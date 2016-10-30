@@ -30,7 +30,7 @@
 /**
  * Provides various utility methods and can be used by greeter themes if needed.
  */
-class ThemeUtils extends __ThemeUtils {
+class ThemeUtils  {
 	/**
 	 * Binds `this` to class, `context`, for all of the class's methods.
 	 *
@@ -38,7 +38,7 @@ class ThemeUtils extends __ThemeUtils {
 	 *
 	 * @return {function(new:*): Object} `context` with `this` bound to it for all of its methods.
 	 */
-	bind_this( context ) {
+	static bind_this( context ) {
 		let excluded_methods = ['constructor'];
 
 		function not_excluded( _method, _context ) {
@@ -63,7 +63,8 @@ class ThemeUtils extends __ThemeUtils {
 	}
 }
 
-window.theme_utils = new ThemeUtils();
+window.theme_utils = new __ThemeUtils();
+window.theme_utils.bind_this = ThemeUtils.bind_this;
 
 /* -------->>> DEPRECATED! <<<-------- */
 window.greeterutil = window.theme_utils;
