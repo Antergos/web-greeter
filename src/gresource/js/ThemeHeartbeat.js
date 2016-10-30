@@ -37,14 +37,14 @@
  * subsequent checks run, it will assume that there has been an error in the theme's script
  * execution and fall back to the simple theme.
  */
-class GreeterHeartbeat  {
+class ThemeHeartbeat  {
 
 	constructor() {
 		if ( '__heartbeat' in window ) {
 			return __heartbeat;
 		}
 
-		window.__heartbeat = GreeterUtils.bind_this(this);
+		window.__heartbeat = theme_utils.bind_this(this);
 		this.heartbeat = '';
 		this.heartbeats = 0;
 
@@ -82,4 +82,4 @@ class GreeterHeartbeat  {
 }
 
 
-new GreeterHeartbeat();
+new ThemeHeartbeat();

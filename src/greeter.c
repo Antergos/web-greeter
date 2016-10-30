@@ -44,7 +44,7 @@
 #include <sys/mman.h>
 
 #include "config.h"
-#include "gresource/greeter-resources.h"
+#include "greeter-resources.h"
 
 
 static GtkWidget *web_view;
@@ -204,7 +204,7 @@ load_script(char *script) {
 static void
 page_loaded_handler(void) {
 	load_script("/com/antergos/lightdm-webkit2-greeter/js/auto-binding-object.js");
-	load_script("/com/antergos/lightdm-webkit2-greeter/js/heartbeat.js");
+	load_script("/com/antergos/lightdm-webkit2-greeter/js/ThemeHeartbeat.js");
 }
 
 

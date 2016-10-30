@@ -2,8 +2,8 @@
 <gresources>
 	<gresource prefix="/com/antergos/lightdm-webkit2-greeter/">
 		<file>css/style.css</file>
-		<file>js/heartbeat.js</file>
-		<file>js/auto-binding-object.js</file>
+		<file>js/ThemeHeartbeat.js</file>
+		<file>js/ThemeUtils.js</file>
 	</gresource>
 </gresources>
 

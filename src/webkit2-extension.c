@@ -1495,7 +1495,7 @@ static const JSStaticFunction config_file_functions[] = {
 	{NULL,       NULL,             0}};
 
 
-static const JSStaticFunction greeter_util_functions[] = {
+static const JSStaticFunction theme_utils_functions[] = {
 	{"dirlist",  get_dirlist_cb,   kJSPropertyAttributeReadOnly},
 	{"txt2html", txt2html_cb,      kJSPropertyAttributeReadOnly},
 	{NULL,       NULL,             0}};
@@ -1560,13 +1560,13 @@ static const JSClassDefinition config_file_definition = {
 	config_file_functions,  /* Static functions */
 };
 
-static const JSClassDefinition greeter_util_definition = {
+static const JSClassDefinition theme_utils_definition = {
 	0,                      /* Version          */
 	kJSClassAttributeNone,  /* Attributes       */
-	"GreeterUtil",          /* Class name       */
+	"__ThemeUtils",         /* Class name       */
 	NULL,                   /* Parent class     */
 	NULL,                   /* Static values    */
-	greeter_util_functions, /* Static functions */
+	theme_utils_functions,  /* Static functions */
 };
 
 
@@ -1584,7 +1584,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	JSObjectRef gettext_object,
 				lightdm_greeter_object,
 				config_file_object,
-				greeter_util_object,
+				theme_utils_object,
 				globalObject;
 
 	gchar *lock_hint_message = "LockHint";
@@ -1600,7 +1600,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	lightdm_layout_class = JSClassCreate(&lightdm_layout_definition);
 	lightdm_session_class = JSClassCreate(&lightdm_session_definition);
 	config_file_class = JSClassCreate(&config_file_definition);
-	greeter_util_class = JSClassCreate(&greeter_util_definition);
+	greeter_util_class = JSClassCreate(&theme_utils_definition);
 
 	gettext_object = JSObjectMake(jsContext, gettext_class, NULL);
 	JSObjectSetProperty(jsContext,
@@ -1626,17 +1626,13 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 						kJSPropertyAttributeNone,
 						NULL);
 
-	greeter_util_object = JSObjectMake(jsContext, greeter_util_class, NULL);
+	theme_utils_object = JSObjectMake(jsContext, greeter_util_class, NULL);
 	JSObjectSetProperty(jsContext,
 						globalObject,
-						JSStringCreateWithUTF8CString("greeter_util"),
-						greeter_util_object,
+						JSStringCreateWithUTF8CString("__ThemeUtils"),
+						theme_utils_object,
 						kJSPropertyAttributeNone,
 						NULL);
-
-	/* Keep previous variable name for backwards compatibility. Will remove at later date. */
-	command = JSStringCreateWithUTF8CString("window.greeterutil = greeter_util;");
-	JSEvaluateScript(jsContext, command, NULL, NULL, 0, NULL);
 
 	dom_document = webkit_web_page_get_dom_document(web_page);
 	dom_window = webkit_dom_document_get_default_view(dom_document);

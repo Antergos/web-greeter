@@ -1,11 +1,24 @@
 configure_file(output: 'config.h', configuration: conf)
 
-gresource_sources = include_directories('gresource')
-_ = get_option('with-webext-dir').split('"')
-extdir = _[0]
+with_webext_dir = get_option('with-webext-dir').split('"')
+extdir = with_webext_dir[0]
+
+# ================================ #
+# ------->>> GResources <<<------- #
+# ================================ #
+
+gresources_dir = include_directories('gresource')
+gnome = import('gnome')
+
+gresources = gnome.compile_resources(
+    'greeter-resources',
+    'gresource/greeter-resources.gresource.xml',
+    source_dir : 'gresource',
+    c_name : 'greeter_resources'
+)
 
 # ======================================= #
-# ------->>> Webkit2 Extension <<<------- #
+# ------->>> WebKit2 Extension <<<------- #
 # ======================================= #
 
 webext_sources = ['webkit2-extension.c']
@@ -23,23 +36,12 @@ webext = library(
 # ------->>> Greeter <<<------- #
 # ============================= #
 
-greeter_sources = ['gresource/greeter-resources.c', 'greeter.c']
+greeter_sources = [gresources, 'greeter.c']
 
 greeter = executable(
     'lightdm-webkit2-greeter',
     greeter_sources,
     dependencies: greeter_deps,
-    include_directories : gresource_sources,
     install: true
 )
 
-
-# ===================================== #
-# ------->>> Sub Directories <<<------- #
-# ===================================== #
-
-subdirs = ['gresource']
-
-foreach s : subdirs
-  subdir(s)
-endforeach
