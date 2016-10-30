@@ -1586,9 +1586,6 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 				theme_utils_object,
 				globalObject;
 
-	gchar *lock_hint_message = "LockHint";
-	gchar *greeter_loaded_message = "GreeterLoaded";
-
 	jsContext = webkit_frame_get_javascript_context_for_script_world(frame, world);
 	globalObject = JSContextGetGlobalObject(jsContext);
 
@@ -1639,13 +1636,13 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	if (dom_window) {
 		/* Notify the UI process that the greeter is loaded */
 		webkit_dom_dom_window_webkit_message_handlers_post_message(
-			dom_window, "GreeterBridge", greeter_loaded_message
+			dom_window, "GreeterBridge", "GreeterLoaded"
 		);
 
 		/* If the greeter was started as a lock-screen, notify our UI process. */
 		if (lightdm_greeter_get_lock_hint(greeter)) {
 			webkit_dom_dom_window_webkit_message_handlers_post_message(
-				dom_window, "GreeterBridge", lock_hint_message
+				dom_window, "GreeterBridge", "LockHint"
 			);
 		}
 	}

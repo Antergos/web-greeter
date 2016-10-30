@@ -292,6 +292,7 @@ main(int argc, char **argv) {
 	GdkRectangle geometry;
 	GKeyFile *keyfile;
 	gchar *theme;
+	GError *err = NULL;
 	GdkRGBA bg_color;
 	WebKitUserContentManager *manager;
 	WebKitWebContext *context;
@@ -315,17 +316,46 @@ main(int argc, char **argv) {
 	g_unix_signal_add(SIGINT, (GSourceFunc) quit_cb, NULL);
 	g_unix_signal_add(SIGHUP, (GSourceFunc) quit_cb, NULL);
 
-	/* Apply greeter settings from config file */
+	/* BEGIN Greeter Config File */
 	keyfile = g_key_file_new();
 
 	g_key_file_load_from_file(keyfile,
 							  CONFIG_DIR "lightdm-webkit2-greeter.conf",
 							  G_KEY_FILE_NONE, NULL);
 
-	theme = g_key_file_get_string(keyfile, "greeter", "webkit-theme", NULL);
+	/* TODO: Handle config values and fallbacks some other way, this is garbage! */
+	theme = g_key_file_get_string(keyfile, "greeter", "webkit_theme", &err);
+
+	if ( NULL != err) {
+		g_clear_error(&err);
+		theme = g_key_file_get_string(keyfile, "greeter", "webkit-theme", &err);
+
+		if ( NULL != err) {
+			g_clear_error(&err);
+			theme = "antergos";
+		}
+	}
+
 	theme = rtrim_comments(theme);
-	config_timeout = g_key_file_get_integer(keyfile, "greeter", "screensaver-timeout", NULL);
+	config_timeout = g_key_file_get_integer(keyfile, "greeter", "screensaver_timeout", &err);
+
+	if ( NULL != err) {
+		g_clear_error(&err);
+		config_timeout = g_key_file_get_integer(keyfile, "greeter", "screensaver-timeout", &err);
+
+		if ( NULL != err) {
+			g_error_free(err);
+			config_timeout = 300;
+		}
+	}
+
 	debug_mode = g_key_file_get_boolean(keyfile, "greeter", "debug_mode", NULL);
+
+	if ( NULL != err) {
+		g_clear_error(&err);
+		debug_mode = FALSE;
+	}
+	/* END Greeter Config File */
 
 	/* Set default cursor */
 	root_window = gdk_get_default_root_window();
