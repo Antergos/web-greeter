@@ -50,6 +50,11 @@
 
 #include "config.h"
 
+/* Work-around CLion bug */
+#ifndef CONFIG_DIR
+#include "../build/src/config.h"
+#endif
+
 
 /* Convenience macros for use in functions that can be called from JavaScript
  * running in the web process. They are used to confirm that calls were made by one of
@@ -1975,7 +1980,7 @@ webkit_web_extension_initialize(WebKitWebExtension *extension) {
 
 	g_key_file_load_from_file(
 		keyfile,
-		CONFIG_DIR "lightdm-webkit2-greeter.conf",
+		CONFIG_DIR "/lightdm-webkit2-greeter.conf",
 		G_KEY_FILE_NONE,
 		NULL
 	);

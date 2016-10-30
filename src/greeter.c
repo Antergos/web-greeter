@@ -46,6 +46,12 @@
 #include "config.h"
 #include "greeter-resources.h"
 
+/* Work-around CLion bug */
+#ifndef CONFIG_DIR
+#include "../build/src/config.h"
+#include "../build/src/greeter-resources.h"
+#endif
+
 
 static GtkWidget *web_view;
 static GtkWidget *window;
@@ -199,12 +205,12 @@ load_script(char *script) {
 }
 
 
-
 static void
 greeter_loaded_handler(void) {
-	load_script("/com/antergos/lightdm-webkit2-greeter/js/GreeterConfig.js");
-	load_script("/com/antergos/lightdm-webkit2-greeter/js/ThemeUtils.js");
-	load_script("/com/antergos/lightdm-webkit2-greeter/js/ThemeHeartbeat.js");
+	load_script(GRESOURCE_PATH "/js/_vendor/moment-with-locales.min.js");
+	load_script(GRESOURCE_PATH "/js/GreeterConfig.js");
+	load_script(GRESOURCE_PATH "/js/ThemeUtils.js");
+	load_script(GRESOURCE_PATH "/js/ThemeHeartbeat.js");
 }
 
 

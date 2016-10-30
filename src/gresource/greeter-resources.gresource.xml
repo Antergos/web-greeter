@@ -2,6 +2,7 @@
 <gresources>
 	<gresource prefix="/com/antergos/lightdm-webkit2-greeter/">
 		<file>css/style.css</file>
+		<file>js/_vendor/moment-with-locales.min.js</file>
 		<file>js/GreeterConfig.js</file>
 		<file>js/ThemeHeartbeat.js</file>
 		<file>js/ThemeUtils.js</file>

@@ -56,6 +56,8 @@ conf.set('DESKTOP_DIR', '"@0@"'.format(get_option('with-desktop-dir')))
 
 conf.set('WEBEXT_DIR', '"@0@"'.format(get_option('with-webext-dir')))
 
+conf.set('GRESOURCE_PATH', '"/com/antergos/lightdm-webkit2-greeter"')
+
 if has_webkitgtk_2_14
   conf.set('HAS_WEBKITGTK_2_14', has_webkitgtk_2_14)
 endif

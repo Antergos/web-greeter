@@ -73,7 +73,7 @@ class ThemeHeartbeat  {
 			return;
 		}
 
-		if ( this.heartbeats < 5 ) {
+		if ( this.heartbeats < 2 ) {
 			console.log('Sending heartbeat...');
 		}
 
