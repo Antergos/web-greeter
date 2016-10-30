@@ -63,7 +63,7 @@ class ThemeUtils  {
 	}
 }
 
-window.theme_utils = new __ThemeUtils();
+window.theme_utils = __ThemeUtils;
 window.theme_utils.bind_this = ThemeUtils.bind_this;
 
 /* -------->>> DEPRECATED! <<<-------- */
