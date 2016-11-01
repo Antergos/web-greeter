@@ -25,9 +25,6 @@
  * along with lightdm-webkit2-greeter; If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @namespace LightDM
- */
 
 /**
  * Provides theme authors with a way to retrieve values from the greeter's config

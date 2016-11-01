@@ -33,9 +33,6 @@ moment.locale( window.navigator.languages );
 let localized_invalid_date = moment('today', '!@#');
 
 
-/**
- * @namespace LightDM
- */
 
 /**
  * Provides various utility methods for use by theme authors. The greeter will automatically
@@ -106,6 +103,8 @@ class ThemeUtils  {
 	 *     according to that value.
 	 *   * When `time_format` does not have a valid value, the time format will be `LT`
 	 *     which is `1:00 PM` or `13:00` depending on the system's locale.
+	 *
+	 * @return {String} The current localized time.
 	 */
 	get_current_localized_time() {
 		let config_format = greeter_config.greeter.time_format;
