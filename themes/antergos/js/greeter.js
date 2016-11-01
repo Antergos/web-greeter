@@ -64,11 +64,6 @@ class AntergosThemeUtils {
 		this.$log_container = $('#logArea');
 		this.recursion = 0;
 		this.cache_backend = '';
-		this.heartbeat = '';
-
-		if ( 'undefined' === typeof window.navigator.languages ) {
-			window.navigator.languages = [ window.navigator.language ];
-		}
 
 		this.setup_cache_backend();
 		this.init_config_values();

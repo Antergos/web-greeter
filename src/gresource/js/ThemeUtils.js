@@ -25,6 +25,14 @@
  * along with lightdm-webkit2-greeter; If not, see <http://www.gnu.org/licenses/>.
  */
 
+if ( 'undefined' === typeof window.navigator.languages ) {
+	window.navigator.languages = [ window.navigator.language ];
+}
+
+moment.locale( window.navigator.languages );
+let localized_invalid_date = moment('today', '!@#');
+
+
 /**
  * @namespace LightDM
  */
@@ -32,7 +40,7 @@
 /**
  * Provides various utility methods for use by theme authors. The greeter will automatically
  * create an instance of this class when it starts. The instance can be accessed
- * with the global variable: `theme_utils`.
+ * with the global variable: `theme_utils` ({@link window.theme_utils}).
  *
  * @memberOf LightDM
  */
@@ -44,7 +52,7 @@ class ThemeUtils  {
 	 *
 	 * @return {function(new:*): Object} `context` with `this` bound to it for all of its methods.
 	 */
-	static bind_this( context ) {
+	bind_this( context ) {
 		let excluded_methods = ['constructor'];
 
 		function not_excluded( _method, _context ) {
@@ -67,6 +75,55 @@ class ThemeUtils  {
 			}
 		}
 	}
+
+
+	/**
+	 * Returns the contents of directory found at `path` provided that the (normalized) `path`
+	 * meets at least one of the following conditions:
+	 *   * Is located within the greeter themes' root directory.
+	 *   * Has been explicitly allowed in the greeter's config file.
+	 *   * Is located within the greeter's shared data directory (`/var/lib/lightdm-data`)
+	 *
+	 * @param {String} path The abs path to desired directory.
+	 *
+	 * @returns {String[]} List of abs paths for the files and directories found in `path`.
+	 */
+	dirlist( path ) {}
+
+	/**
+	 * Escape HTML entities in a string.
+	 *
+	 * @param {String} text The text to be escaped.
+	 *
+	 * @returns {String}
+	 */
+	esc_html( text ) {}
+
+
+	/**
+	 * Get the current time in a localized format based on the `time_format` config file key.
+	 *   * When `time_format` has a valid value, time will be formatted
+	 *     according to that value.
+	 *   * When `time_format` does not have a valid value, the time format will be `LT`
+	 *     which is `1:00 PM` or `13:00` depending on the system's locale.
+	 */
+	get_current_localized_time() {
+		let config_format = greeter_config.greeter.time_format;
+		let format = ( '' !== config_format ) ? config_format : 'LT';
+		let local_time = moment().format( format );
+
+		if ( local_time === localized_invalid_date ) {
+			local_time = moment().format( 'LT' );
+		}
+
+		return local_time;
+	}
+
+
+	/**
+	 * @deprecated Use {@link theme_utils.esc_html()} instead.
+	 */
+	txt2html( text ) {}
 }
 
 
@@ -76,6 +133,7 @@ class ThemeUtils  {
  */
 window.theme_utils = __ThemeUtils;
 window.theme_utils.bind_this = ThemeUtils.bind_this;
+window.theme_utils.get_current_localized_time = ThemeUtils.get_current_localized_time;
 
 /* -------->>> DEPRECATED! <<<-------- */
 window.greeterutil = window.theme_utils;

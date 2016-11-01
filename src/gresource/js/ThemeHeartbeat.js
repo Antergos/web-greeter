@@ -1,5 +1,5 @@
 /*
- * heartbeat.js
+ * ThemeHeartbeat.js
  *
  * Copyright © 2016 Antergos Developers <dev@antergos.com>
  *

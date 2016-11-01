@@ -30,7 +30,7 @@
  * Base class for the greeter's JavaScript Theme API. Greeter themes will interact
  * directly with an object derived from this class to facilitate the user log-in process.
  * The greeter will automatically create an instance when it starts.
- * The instance can be accessed using the global variable: `lightdm`.
+ * The instance can be accessed using the global variable: `lightdm` ({@link window.lightdm}).
  *
  * @memberOf LightDM
  */
@@ -266,9 +266,7 @@ class Greeter {
 	 * Triggers the system to restart.
 	 * @returns {Boolean} {@link true} if restart initiated, otherwise {@link false}
 	 */
-	restart() {
-		return this._do_mocked_system_action('restart');
-	}
+	restart() {}
 
 	/**
 	 * Set the language for the currently authenticated user.

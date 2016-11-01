@@ -31,10 +31,10 @@
 
 /**
  * Interface for object that holds info about a session. Session objects are not
- * created by the theme's code, but rather by the {@link LightDMGreeter} class.
+ * created by the theme's code, but rather by the {@link LightDM.Greeter} class.
  * @memberOf LightDM
  */
-class LightDMSession  {
+class Session  {
 	constructor(  { comment, key, name } ) {
 		/**
 		 * The comment for the session.
@@ -62,10 +62,10 @@ class LightDMSession  {
 
 /**
  * Interface for object that holds info about a language on the system. Language objects are not
- * created by the theme's code, but rather by the {@link LightDMGreeter} class.
+ * created by the theme's code, but rather by the {@link LightDM.Greeter} class.
  * @memberOf LightDM
  */
-class LightDMLanguage {
+class Language {
 	constructor(  { code, name, territory } ) {
 		/**
 		 * The code for the language.
@@ -93,10 +93,10 @@ class LightDMLanguage {
 
 /**
  * Interface for object that holds info about a keyboard layout on the system. Language
- * objects are not created by the theme's code, but rather by the {@link LightDMGreeter} class.
+ * objects are not created by the theme's code, but rather by the {@link LightDM.Greeter} class.
  * @memberOf LightDM
  */
-class LightDMLayout {
+class Layout {
 	constructor(  { description, name, short_description } ) {
 		/**
 		 * The description for the layout.
@@ -124,10 +124,10 @@ class LightDMLayout {
 
 /**
  * Interface for object that holds info about a user account on the system. User
- * objects are not created by the theme's code, but rather by the {@link LightDMGreeter} class.
+ * objects are not created by the theme's code, but rather by the {@link LightDM.Greeter} class.
  * @memberOf LightDM
  */
-class LightDMUser {
+class User {
 	constructor( user_info ) {
 		/**
 		 * The display name for the user.
