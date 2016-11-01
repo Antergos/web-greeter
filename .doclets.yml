@@ -1,4 +1,8 @@
-dir: src/gresource/js
+files:
+  - src/gresource/js/LightDMObjects.js
+  - src/gresource/js/Greeter.js
+  - src/gresource/js/GreeterConfig.js
+  - src/gresource/js/ThemeUtils.js
 articles:
   - Overview: README.md
 branches:
