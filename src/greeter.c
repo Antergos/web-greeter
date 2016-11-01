@@ -208,6 +208,7 @@ load_script(char *script) {
 static void
 greeter_loaded_handler(void) {
 	load_script(GRESOURCE_PATH "/js/_vendor/moment-with-locales.min.js");
+	load_script(GRESOURCE_PATH "/js/Greeter.js");
 	load_script(GRESOURCE_PATH "/js/GreeterConfig.js");
 	load_script(GRESOURCE_PATH "/js/ThemeUtils.js");
 	load_script(GRESOURCE_PATH "/js/ThemeHeartbeat.js");

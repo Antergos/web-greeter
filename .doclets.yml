@@ -1,4 +1,6 @@
-files:
-  - themes/_vendor/js/mock.js
+dir: src/gresource/js
 articles:
   - Overview: README.md
+branches:
+  - master
+  - stable

@@ -1541,7 +1541,7 @@ static const JSClassDefinition lightdm_session_definition = {
 static const JSClassDefinition lightdm_greeter_definition = {
 	0,                         /* Version          */
 	kJSClassAttributeNone,     /* Attributes       */
-	"LightDMGreeter",          /* Class name       */
+	"__LightDMGreeter",          /* Class name       */
 	NULL,                      /* Parent class     */
 	lightdm_greeter_values,    /* Static values    */
 	lightdm_greeter_functions, /* Static functions */
@@ -1614,7 +1614,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	lightdm_greeter_object = JSObjectMake(jsContext, lightdm_greeter_class, greeter);
 	JSObjectSetProperty(jsContext,
 						globalObject,
-						JSStringCreateWithUTF8CString("lightdm"),
+						JSStringCreateWithUTF8CString("__LightDMGreeter"),
 						lightdm_greeter_object,
 						kJSPropertyAttributeNone,
 						NULL);

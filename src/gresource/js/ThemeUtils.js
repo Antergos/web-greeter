@@ -25,7 +25,9 @@
  * along with lightdm-webkit2-greeter; If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+/**
+ * @namespace LightDM
+ */
 
 /**
  * Provides various utility methods for use by theme authors. The greeter will automatically
@@ -67,6 +69,11 @@ class ThemeUtils  {
 	}
 }
 
+
+/**
+ * @memberOf window
+ * @type {LightDM.ThemeUtils}
+ */
 window.theme_utils = __ThemeUtils;
 window.theme_utils.bind_this = ThemeUtils.bind_this;
 
