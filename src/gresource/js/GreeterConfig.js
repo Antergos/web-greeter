@@ -26,6 +26,10 @@
  */
 
 
+let _branding = null,
+	_greeter = null;
+
+
 /**
  * Provides theme authors with a way to retrieve values from the greeter's config
  * file located at `/etc/lightdm/lightdm-webkit2-greeter.conf`. The greeter will
@@ -45,7 +49,15 @@ class GreeterConfig  {
 	 *
 	 * @readonly
 	 */
-	get branding() {}
+	get branding() {
+		let props = ['background_images', 'logo', 'user_image'];
+
+		if ( null === _branding ) {
+			props.forEach( prop => _branding[prop] = this.get_str( 'branding', prop ) );
+		}
+
+		return _branding;
+	}
 
 	/**
 	 * Holds keys/values from the `greeter` section of the config file.
@@ -54,11 +66,26 @@ class GreeterConfig  {
 	 *       {Boolean} greeter.debug_mode
 	 *       {Boolean} greeter.secure_mode
 	 *       {Number}  greeter.screensaver_timeout
+	 *       {String}  greeter.time_format
+	 *       {String}  greeter.time_language
 	 *       {String}  greeter.webkit_theme
 	 *
 	 * @readonly
 	 */
-	get greeter() {}
+	get greeter() {
+		let bools = ['debug_mode', 'secure_mode'],
+			strings = ['time_format', 'time_language', 'webkit_theme'];
+
+		if ( null === _greeter ) {
+			_greeter = {};
+			_greeter.screensaver_timeout = this.get_num( 'greeter', 'screensaver_timeout' );
+
+			bools.forEach( prop => _greeter[prop] = this.get_bool( 'greeter', prop ) );
+			strings.forEach( prop => _greeter[prop] = this.get_str( 'greeter', prop ) );
+		}
+
+		return _greeter;
+	}
 
 	/**
 	 * Returns the value of `key` from the `config_section` of the greeter's config file.
@@ -70,7 +97,9 @@ class GreeterConfig  {
 	 *
 	 * @returns {Boolean} Config value for `key`.
 	 */
-	get_bool( config_section, key ) {}
+	get_bool( config_section, key ) {
+		return __GreeterConfig.get_bool( config_section, key );
+	}
 
 	/**
 	 * Returns the value of `key` from the `config_section` of the greeter's config file.
@@ -82,7 +111,9 @@ class GreeterConfig  {
 	 *
 	 * @returns {Number} Config value for `key`.
 	 */
-	get_num( config_section, key ) {}
+	get_num( config_section, key ) {
+		return __GreeterConfig.get_num( config_section, key );
+	}
 
 	/**
 	 * Returns the value of `key` from the `config_section` of the greeter's config file.
@@ -94,7 +125,9 @@ class GreeterConfig  {
 	 *
 	 * @returns {String} Config value for `key`.
 	 */
-	get_str( key ) {}
+	get_str( config_section, key ) {
+		return __GreeterConfig.get_str( config_section, key );
+	}
 }
 
 
@@ -102,8 +135,11 @@ class GreeterConfig  {
  * @memberOf window
  * @type {LightDM.GreeterConfig}
  */
-window.greeter_config = __GreeterConfig;
+window.greeter_config = new GreeterConfig();
 
-/* -------->>> DEPRECATED! <<<-------- */
+
+/**
+ * @deprecated
+ * @type {LightDM.GreeterConfig}
+ */
 window.config = window.greeter_config;
-/* -------->>> DEPRECATED! <<<-------- */

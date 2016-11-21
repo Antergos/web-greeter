@@ -30,7 +30,10 @@ if ( 'undefined' === typeof window.navigator.languages ) {
 }
 
 moment.locale( window.navigator.languages );
-let localized_invalid_date = moment('today', '!@#');
+
+let localized_invalid_date = moment('today', '!@#'),
+	time_language = null,
+	time_format = null;
 
 
 
@@ -45,9 +48,9 @@ class ThemeUtils  {
 	/**
 	 * Binds `this` to class, `context`, for all of the class's methods.
 	 *
-	 * @arg {function(new:*): Object} context An ES6 class (not an instance) with at least one method.
+	 * @arg {Object} context An ES6 class instance with at least one method.
 	 *
-	 * @return {function(new:*): Object} `context` with `this` bound to it for all of its methods.
+	 * @return {Object} `context` with `this` bound to it for all of its methods.
 	 */
 	bind_this( context ) {
 		let excluded_methods = ['constructor'];
@@ -98,8 +101,10 @@ class ThemeUtils  {
 
 
 	/**
-	 * Get the current time in a localized format based on the `time_format` config file key.
-	 *   * When `time_format` has a valid value, time will be formatted
+	 * Get the current time in a localized format. Time format and language are auto-detected
+	 * by default, but can be set manually in the greeter config file.
+	 *   * `language` defaults to the system's language, but can be set manually in the config file.
+	 *   * When `time_format` config file option has a valid value, time will be formatted
 	 *     according to that value.
 	 *   * When `time_format` does not have a valid value, the time format will be `LT`
 	 *     which is `1:00 PM` or `13:00` depending on the system's locale.
@@ -107,8 +112,19 @@ class ThemeUtils  {
 	 * @return {String} The current localized time.
 	 */
 	get_current_localized_time() {
-		let config_format = greeter_config.greeter.time_format;
-		let format = ( '' !== config_format ) ? config_format : 'LT';
+		if ( null === time_language ) {
+			let config = greeter_config.greeter,
+				manual_language = ( '' !== config.time_language && 'auto' !== config.time_language ),
+				manual_time_format = ( '' !== config.time_format && 'auto' !== config.time_format );
+
+			time_language =  manual_language ? config.time_language : window.navigator.language;
+			time_format = manual_time_format ? config.time_format : 'LT';
+
+			if ( manual_language ) {
+				moment.locale( time_language );
+			}
+		}
+
 		let local_time = moment().format( format );
 
 		if ( local_time === localized_invalid_date ) {
