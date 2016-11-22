@@ -33,7 +33,8 @@ moment.locale( window.navigator.languages );
 
 let localized_invalid_date = moment('today', '!@#'),
 	time_language = null,
-	time_format = null;
+	time_format = null,
+	allowed_dirs = null;
 
 
 
@@ -44,7 +45,7 @@ let localized_invalid_date = moment('today', '!@#'),
  *
  * @memberOf LightDM
  */
-const ThemeUtils = {
+class ThemeUtils {
 	/**
 	 * Binds `this` to class, `context`, for all of the class's methods.
 	 *
@@ -74,7 +75,7 @@ const ThemeUtils = {
 				}
 			}
 		}
-	},
+	}
 
 
 	/**
@@ -88,7 +89,51 @@ const ThemeUtils = {
 	 *
 	 * @returns {String[]} List of abs paths for the files and directories found in `path`.
 	 */
-	dirlist( path ) {},
+	dirlist( path ) {
+		let allowed = true;
+
+		if ( '' === path || ! path instanceof String ) {
+			console.log('[ERROR] theme_utils.dirlist(): path must be a non-empty string!');
+			allowed = false;
+
+		} else if ( null !== path.match(/^[^/].+/) ) {
+			console.log('[ERROR] theme_utils.dirlist(): path must not include be absolute!');
+			allowed = false;
+		}
+
+		if ( null !== path.match(/\/\.+(?=\/)/) ) {
+			// No special directory names allowed (eg ../../)
+			path = path.replace(/\/\.+(?=\/)/g, '' );
+		}
+
+		if ( null === allowed_dirs ) {
+			let user = lightdm.users.pop();
+
+			allowed_dirs = {
+				themes_dir: greeter_config.get_str( user.username, 'lightdm_data_dir' ),
+				backgrounds_dir: greeter_config.get_str( 'greeter', 'themes_dir' ),
+				lightdm_data_dir: greeter_config.get_str( 'branding', 'background_images' ),
+				tmpdir: '/tmp'
+			};
+		}
+
+		if ( ! Object.keys( allowed_dirs ).some( dir => path.startsWith( allowed_dirs[dir] ) ) ) {
+			console.log(`[ERROR] theme_utils.dirlist(): path is not allowed: ${path}`);
+			allowed = false;
+		}
+
+		if ( ! allowed ) {
+			return [];
+		}
+
+		try {
+			return __ThemeUtils.dirlist( path );
+
+		} catch( err ) {
+			console.log( `[ERROR] theme_utils.dirlist(): ${err}` );
+			return [];
+		}
+	}
 
 	/**
 	 * Escape HTML entities in a string.
@@ -97,7 +142,9 @@ const ThemeUtils = {
 	 *
 	 * @returns {String}
 	 */
-	esc_html( text ) {},
+	esc_html( text ) {
+		return this.txt2html( text );
+	}
 
 
 	/**
@@ -132,23 +179,29 @@ const ThemeUtils = {
 		}
 
 		return local_time;
-	},
+	}
 
 
 	/**
 	 * @deprecated Use {@link theme_utils.esc_html()} instead.
 	 */
-	txt2html( text ) {},
-};
+	txt2html( text ) {
+		try {
+			return __ThemeUtils.txt2html( text );
+
+		} catch( err ) {
+			console.log( `[ERROR] theme_utils.dirlist(): ${err}` );
+			return text;
+		}
+	}
+}
 
 
 /**
  * @memberOf window
  * @type {LightDM.ThemeUtils}
  */
-window.theme_utils = __ThemeUtils;
-window.theme_utils.bind_this = ThemeUtils.bind_this;
-window.theme_utils.get_current_localized_time = ThemeUtils.get_current_localized_time;
+window.theme_utils = new ThemeUtils();
 
 /**
  * @deprecated

@@ -563,13 +563,17 @@ input.password.form-control:focus {
 	top: 2px;
 }
 
-a.list-group-item:focus, a.list-group-item:hover, a.list-group-item.hovered {
+a.list-group-item:focus, a.list-group-item.hovered {
 	position: relative;
-	-webkit-box-shadow: 0 1px 0px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.1) inset;
-	box-shadow: 0 1px 0px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.1) inset;
+	box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
+	border-color: transparent;
 	outline: none;
 	margin: 0px 0;
 	background: #FFFFFF;
+}
+
+a.list-group-item.hover:not(:focus) {
+	background: #f0f0f0;
 }
 
 a.list-group-item:focus:before, a.list-group-item:focus:after,
@@ -578,8 +582,6 @@ a.list-group-item.hovered:after, a.list-group-item.hovered:before {
 	content: "";
 	position: absolute;
 	z-index: -1;
-	-webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
 	top: 0;
 	bottom: 0;
 	left: 10px;

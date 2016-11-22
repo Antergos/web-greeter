@@ -1175,7 +1175,17 @@ get_conf_str_cb(JSContextRef context,
 		return JSValueMakeNull(context);
 	}
 
-	value = g_key_file_get_string(keyfile, section, key, &err);
+	if (0 == g_strcmp0(key, "themes_dir")) {
+		value = g_strdup_printf("%s", THEME_DIR);
+
+	} else if (0 == g_strcmp0(key, "lightdm_data_dir")) {
+		value = lightdm_greeter_ensure_shared_data_dir_sync(GREETER, section);
+
+	} else {
+		value = g_key_file_get_string(keyfile, section, key, &err);
+	}
+
+
 
 	if (err) {
 		_mkexception(context, exception, err->message);
