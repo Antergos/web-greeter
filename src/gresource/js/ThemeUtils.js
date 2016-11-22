@@ -44,7 +44,7 @@ let localized_invalid_date = moment('today', '!@#'),
  *
  * @memberOf LightDM
  */
-class ThemeUtils  {
+const ThemeUtils = {
 	/**
 	 * Binds `this` to class, `context`, for all of the class's methods.
 	 *
@@ -74,7 +74,7 @@ class ThemeUtils  {
 				}
 			}
 		}
-	}
+	},
 
 
 	/**
@@ -88,7 +88,7 @@ class ThemeUtils  {
 	 *
 	 * @returns {String[]} List of abs paths for the files and directories found in `path`.
 	 */
-	dirlist( path ) {}
+	dirlist( path ) {},
 
 	/**
 	 * Escape HTML entities in a string.
@@ -97,7 +97,7 @@ class ThemeUtils  {
 	 *
 	 * @returns {String}
 	 */
-	esc_html( text ) {}
+	esc_html( text ) {},
 
 
 	/**
@@ -132,14 +132,14 @@ class ThemeUtils  {
 		}
 
 		return local_time;
-	}
+	},
 
 
 	/**
 	 * @deprecated Use {@link theme_utils.esc_html()} instead.
 	 */
-	txt2html( text ) {}
-}
+	txt2html( text ) {},
+};
 
 
 /**
@@ -150,6 +150,8 @@ window.theme_utils = __ThemeUtils;
 window.theme_utils.bind_this = ThemeUtils.bind_this;
 window.theme_utils.get_current_localized_time = ThemeUtils.get_current_localized_time;
 
-/* -------->>> DEPRECATED! <<<-------- */
+/**
+ * @deprecated
+ * @type {LightDM.ThemeUtils}
+ */
 window.greeterutil = window.theme_utils;
-/* -------->>> DEPRECATED! <<<-------- */

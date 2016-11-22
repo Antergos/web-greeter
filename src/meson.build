@@ -9,12 +9,25 @@ extdir = with_webext_dir[0]
 
 gresources_dir = include_directories('gresource')
 gnome = import('gnome')
+utils = '@0@/utils.sh'.format(meson.build_root())
+
+# Can't do it the right way until GLib 2.52 is released
+# js_sources = run_command(utils, 'get-js-files').stdout().split()
+
+#js_sources_combined = custom_target(
+#    'javascript_sources',
+#    input: files(js_sources),
+#    output: 'bundle.js',
+#    command: [utils, 'combine-js']
+#)
+
+js_sources = run_command(utils, 'combine-js')
 
 gresources = gnome.compile_resources(
     'greeter-resources',
     'gresource/greeter-resources.gresource.xml',
-    source_dir : 'gresource',
-    c_name : 'greeter_resources'
+    source_dir: 'gresource',
+    c_name: 'greeter_resources'
 )
 
 # ======================================= #

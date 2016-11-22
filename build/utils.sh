@@ -8,7 +8,7 @@ combine_javascript_sources() {
 			Greeter.js \
 			GreeterConfig.js \
 			ThemeUtils.js \
-			ThemeHeartbeat.js > bundle.js
+			ThemeHeartbeat.js >> "${MESON_SOURCE_ROOT}/src/gresource/js/bundle.js"
 	}
 }
 
