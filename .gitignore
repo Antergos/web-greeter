@@ -1,6 +1,7 @@
 build/**
 !build/.gitignore
 !build/ci/Dockerfile
+!build/utils.sh
 src/greeter-resources.h
 src/config.h
 cmake-build-debug
