@@ -588,14 +588,10 @@ class AntergosTheme {
 	 * Setup the clock widget.
 	 */
 	initialize_clock() {
-		var saved_format = _util.cache_get( 'clock', 'time_format' ),
-			format = (null !== saved_format) ? saved_format : 'LT';
-
-		moment.locale( window.navigator.languages );
-		this.$clock.html( moment().format( format ) );
+		this.$clock.html( theme_utils.get_current_localized_time() );
 
 		setInterval( () => {
-			_self.$clock.html( moment().format( format ) );
+			_self.$clock.html( theme_utils.get_current_localized_time() );
 		}, 60000 );
 	}
 

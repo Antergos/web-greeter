@@ -125,7 +125,7 @@ const ThemeUtils = {
 			}
 		}
 
-		let local_time = moment().format( format );
+		let local_time = moment().format( time_format );
 
 		if ( local_time === localized_invalid_date ) {
 			local_time = moment().format( 'LT' );

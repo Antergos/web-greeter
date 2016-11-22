@@ -30,6 +30,19 @@ let _branding = null,
 	_greeter = null;
 
 
+function set_values( defaults, target_obj, method ) {
+	let keys = Object.keys(defaults);
+
+	keys.forEach( prop => {
+		try {
+			target_obj[prop] = method( 'greeter', prop );
+		} catch(err) {
+			target_obj[prop] = defaults[prop];
+		}
+	});
+}
+
+
 /**
  * Provides theme authors with a way to retrieve values from the greeter's config
  * file located at `/etc/lightdm/lightdm-webkit2-greeter.conf`. The greeter will
@@ -50,10 +63,17 @@ class GreeterConfig  {
 	 * @readonly
 	 */
 	get branding() {
-		let props = ['background_images', 'logo', 'user_image'];
-
 		if ( null === _branding ) {
-			props.forEach( prop => _branding[prop] = this.get_str( 'branding', prop ) );
+			let theme_dir = '/usr/share/lightdm-webkit/themes/antergos',
+				props = {
+					'background_images': '/usr/share/backgrounds',
+					'logo': `${theme_dir}/img/antergos-logo-user.png`,
+					'user_image': `${theme_dir}/img/antergos.png`
+			};
+
+			_branding = {};
+
+			set_values( props, _branding, this.get_str );
 		}
 
 		return _branding;
@@ -73,15 +93,16 @@ class GreeterConfig  {
 	 * @readonly
 	 */
 	get greeter() {
-		let bools = ['debug_mode', 'secure_mode'],
-			strings = ['time_format', 'time_language', 'webkit_theme'];
-
 		if ( null === _greeter ) {
-			_greeter = {};
-			_greeter.screensaver_timeout = this.get_num( 'greeter', 'screensaver_timeout' );
+			let bools = {'debug_mode': true, 'secure_mode': true},
+				strings = {'time_format': 'LT', 'time_language': 'auto', 'webkit_theme': 'antergos'},
+				numbers = {'screensaver_timeout': 30};
 
-			bools.forEach( prop => _greeter[prop] = this.get_bool( 'greeter', prop ) );
-			strings.forEach( prop => _greeter[prop] = this.get_str( 'greeter', prop ) );
+			_greeter = {};
+
+			set_values( bools, _greeter, this.get_bool );
+			set_values( strings, _greeter, this.get_str );
+			set_values( numbers, _greeter, this.get_num );
 		}
 
 		return _greeter;
