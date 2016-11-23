@@ -351,7 +351,7 @@ let MockObjects = {
  * Mock data to simulate the greeter's API in any web browser.
  * @ignore
  */
-MockData = () => ({
+let MockData = () => ({
 	greeter: {
 		default_values: {
 			string: () => '',
