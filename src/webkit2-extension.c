@@ -1179,7 +1179,11 @@ get_conf_str_cb(JSContextRef context,
 		value = g_strdup_printf("%s", THEME_DIR);
 
 	} else if (0 == g_strcmp0(key, "lightdm_data_dir")) {
+		#ifdef HAS_LIGHTDM_1_19_2
+		value = lightdm_greeter_ensure_shared_data_dir_sync(GREETER, section, &err);
+		#else
 		value = lightdm_greeter_ensure_shared_data_dir_sync(GREETER, section);
+		#endif
 
 	} else {
 		value = g_key_file_get_string(keyfile, section, key, &err);
