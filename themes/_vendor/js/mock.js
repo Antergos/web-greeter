@@ -478,7 +478,7 @@ let MockData = () => ({
 });
 
 
-if ( ! 'lightdm' in window ) {
+if ( ! ( 'lightdm' in window ) ) {
 	new ConfigFile();
 	new GreeterUtil();
 	new LightDMGreeter();
