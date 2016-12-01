@@ -69,17 +69,12 @@ static int
 
 static gint config_timeout;
 
-static gboolean
-	debug_mode,
-	heartbeat,
-	heartbeat_exit;
+static gboolean debug_mode;
 
 
 static void
 initialize_web_extensions_cb(WebKitWebContext *context, gpointer user_data) {
-
 	webkit_web_context_set_web_extensions_directory(context, WEBEXT_DIR);
-
 }
 
 
@@ -104,56 +99,11 @@ context_menu_cb(WebKitWebView *view,
 				GdkEvent *event,
 				WebKitHitTestResult *hit_test_result,
 				gpointer user_data) {
-
 	/* Returning true without creating a custom context menu results in no context
 	 * menu being shown. Thus, we are returning the opposite of debug_mode to get
 	 * desired result (which is only show menu when debug_mode is enabled.
 	 */
 	return (! debug_mode);
-}
-
-
-static gboolean
-check_theme_heartbeat(void) {
-	if (! heartbeat && ! heartbeat_exit) {
-		/* Theme heartbeat not received. We assume that an error has occurred
-		 * which broke script execution. We will fallback to the simple theme
-		 * so the user won't be stuck with a broken login screen.
-		 */
-		g_warning("[ERROR] :: A problem was detected with the current theme. Falling back to simple theme...");
-		webkit_web_view_load_uri(
-			WEBKIT_WEB_VIEW(web_view),
-			g_strdup_printf("file://%ssimple/index.html", THEME_DIR)
-		);
-	}
-
-	heartbeat = FALSE;
-
-	return heartbeat;
-}
-
-
-/**
- * Callback for Theme Heartbeat.
- */
-static void
-theme_heartbeat_handler(void) {
-	if (! heartbeat) {
-		/* Setup g_timeout callback for theme heartbeat check */
-		g_timeout_add_seconds(8, (GSourceFunc) check_theme_heartbeat, NULL);
-		heartbeat = TRUE;
-		heartbeat_exit = FALSE;
-	}
-}
-
-
-/**
- * Before starting the user's session, the web process will send a signal to exit the hearbeat
- * in order to prevent a race condition while the greeter is shutting down.
- */
-static void
-theme_heartbeat_exit_handler(void) {
-	heartbeat_exit = TRUE;
 }
 
 
@@ -210,17 +160,11 @@ message_received_cb(WebKitUserContentManager *manager,
 	if (strcmp(message_str, "LockHint") == 0) {
 		lock_hint_enabled_handler();
 
-	} else if (strcmp(message_str, "Heartbeat") == 0) {
-		theme_heartbeat_handler();
-
-	} else if (strcmp(message_str, "Heartbeat::Exit") == 0) {
-		theme_heartbeat_exit_handler();
 	} else {
 		printf("UI PROCESS - message_received_cb(): no match!");
 	}
 
 	g_free(message_str);
-
 }
 
 
@@ -272,6 +216,89 @@ javascript_bundle_injection_setup() {
 	);
 
 	webkit_user_content_manager_add_script(WEBKIT_USER_CONTENT_MANAGER(manager), bundle);
+}
+
+
+static void
+theme_function_exists_cb(GObject *object,
+						 GAsyncResult *result,
+						 gpointer user_data) {
+
+	WebKitJavascriptResult *js_result;
+	GError                 *error = NULL;
+	JSValueRef              value;
+	JSGlobalContextRef      context;
+	gboolean                result_as_bool;
+
+	js_result = webkit_web_view_run_javascript_finish(WEBKIT_WEB_VIEW(object), result, &error);
+
+	if (NULL != error) {
+		g_warning ("Error running javascript: %s", error->message);
+		g_error_free(error);
+		return;
+
+	} else {
+		context = webkit_javascript_result_get_global_context(js_result);
+		value = webkit_javascript_result_get_value(js_result);
+
+		result_as_bool = JSValueToBoolean(context, value);
+	}
+
+	if (FALSE == result_as_bool) {
+		GtkWidget *dialog, *label, *content_area, *button, *button_box;
+
+		dialog = gtk_dialog_new_with_buttons(
+			_("Greeter Theme Error Detected"),
+			GTK_WINDOW(window),
+			GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+			_("_Load Default Theme"),
+			GTK_RESPONSE_ACCEPT,
+			_("_Load Fallback Theme"),
+			GTK_RESPONSE_OK,
+			_("_Cancel"),
+			GTK_RESPONSE_REJECT,
+			NULL
+		);
+		content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+		button = gtk_dialog_get_widget_for_response(GTK_DIALOG(dialog), GTK_RESPONSE_REJECT);
+		button_box = gtk_widget_get_parent(button);
+		label = gtk_label_new(_("An error was detected in the current theme that could interfere with the system login process."));
+
+		gtk_button_box_set_layout(GTK_BUTTON_BOX(button_box), GTK_BUTTONBOX_EXPAND);
+		gtk_container_add(GTK_CONTAINER(content_area), label);
+		gtk_widget_show_all(content_area);
+
+		gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+		gchar *log_msg = "[ERROR] :: A problem was detected with the current theme. Falling back to simple theme...";
+
+		if (GTK_RESPONSE_ACCEPT == response) {
+			g_warning(log_msg);
+			webkit_web_view_load_uri(WEBKIT_WEB_VIEW(web_view), g_strdup_printf("file://%s/antergos/index.html", THEME_DIR));
+
+		} else if (GTK_RESPONSE_OK == response) {
+			g_warning(log_msg);
+			webkit_web_view_load_uri(WEBKIT_WEB_VIEW(web_view), g_strdup_printf("file://%s/simple/index.html", THEME_DIR));
+		}
+
+		gtk_widget_destroy(dialog);
+	}
+
+	webkit_javascript_result_unref(js_result);
+}
+
+
+gboolean
+maybe_show_theme_fallback_dialog(void) {
+	/* Check for existence of a function that themes must add to window object */
+	webkit_web_view_run_javascript(
+		WEBKIT_WEB_VIEW(web_view),
+		"(() => 'authentication_complete' in window)()",
+		NULL,
+		(GAsyncReadyCallback) theme_function_exists_cb,
+		NULL
+	);
+
+	return FALSE;
 }
 
 
@@ -355,9 +382,6 @@ main(int argc, char **argv) {
 
 	gdk_window_set_cursor(root_window, gdk_cursor_new_for_display(default_display, GDK_LEFT_PTR));
 
-	/* Set the GTK theme to Adwaita */
-	g_object_set(gtk_settings_get_default(), "gtk-theme-name", "Adwaita", NULL);
-
 	/* Setup the main window */
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	screen = gtk_window_get_screen(GTK_WINDOW(window));
@@ -425,6 +449,9 @@ main(int argc, char **argv) {
 
 	/* Maybe disable the context (right-click) menu. */
 	g_signal_connect(WEBKIT_WEB_VIEW(web_view), "context-menu", G_CALLBACK(context_menu_cb), NULL);
+
+	/* Register callback to check if theme loaded successfully */
+	g_timeout_add_seconds(5, (GSourceFunc) maybe_show_theme_fallback_dialog, NULL);
 
 	/* There's no turning back now, let's go! */
 	gtk_container_add(GTK_CONTAINER(window), web_view);

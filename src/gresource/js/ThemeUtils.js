@@ -227,8 +227,6 @@ const __theme_utils = new Promise( (resolve, reject) => {
 __theme_utils.then( result => {
 	window.theme_utils = result;
 
-	new ThemeHeartbeat();
-
 	/**
 	 * @deprecated
 	 * @type {LightDM.ThemeUtils}
