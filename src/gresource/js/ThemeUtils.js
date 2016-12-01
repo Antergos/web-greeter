@@ -213,7 +213,7 @@ const __theme_utils = new Promise( (resolve, reject) => {
 			}
 
 			check_window_prop();
-		}, 1 );
+		}, 0 );
 	};
 
 	check_window_prop();

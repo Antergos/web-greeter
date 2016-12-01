@@ -157,28 +157,6 @@ theme_heartbeat_exit_handler(void) {
 }
 
 
-static void
-script_loaded_cb(GObject *object,
-				 GAsyncResult *result,
-				 gpointer user_data) {
-
-	WebKitJavascriptResult *js_result;
-	GError                 *error = NULL;
-
-	js_result = webkit_web_view_run_javascript_from_gresource_finish(
-		WEBKIT_WEB_VIEW(object),
-		result,
-		&error
-	);
-
-	if (!js_result) {
-		g_error_free(error);
-	} else {
-		webkit_javascript_result_unref(js_result);
-	}
-}
-
-
 /**
  * Makes the greeter behave a bit more like a screensaver if it was launched as
  * a lock-screen by blanking the screen.
@@ -191,24 +169,6 @@ lock_hint_enabled_handler(void) {
 	XGetScreenSaver(display, &timeout, &interval, &prefer_blanking, &allow_exposures);
 	XForceScreenSaver(display, ScreenSaverActive);
 	XSetScreenSaver(display, config_timeout, 0, PreferBlanking, DefaultExposures);
-}
-
-
-static void
-load_script(char *script) {
-	webkit_web_view_run_javascript_from_gresource(
-		WEBKIT_WEB_VIEW(web_view),
-		script,
-		NULL,
-		(GAsyncReadyCallback) script_loaded_cb,
-		NULL
-	);
-}
-
-
-static void
-greeter_loaded_handler(void) {
-	//load_script(GRESOURCE_PATH "/js/bundle.js");
 }
 
 
@@ -247,10 +207,7 @@ message_received_cb(WebKitUserContentManager *manager,
 		printf("Error running javascript: unexpected return value");
 	}
 
-	if (strcmp(message_str, "GreeterLoaded") == 0) {
-		greeter_loaded_handler();
-
-	} else if (strcmp(message_str, "LockHint") == 0) {
+	if (strcmp(message_str, "LockHint") == 0) {
 		lock_hint_enabled_handler();
 
 	} else if (strcmp(message_str, "Heartbeat") == 0) {
@@ -293,6 +250,7 @@ javascript_bundle_injection_setup() {
 	WebKitUserScript *bundle;
 	GBytes *data;
 	guint8 *data_as_guint;
+	gsize data_size;
 	gchar *script;
 
 	data = g_resource_lookup_data(
@@ -302,7 +260,7 @@ javascript_bundle_injection_setup() {
 		NULL
 	);
 
-	data_as_guint = g_byte_array_free(g_bytes_unref_to_array(data), FALSE);
+	data_as_guint = g_bytes_unref_to_data(data, &data_size);
 	script = g_strdup_printf("%s", data_as_guint);
 
 	bundle = webkit_user_script_new(

@@ -167,7 +167,7 @@ const __greeter_config = new Promise( (resolve, reject) => {
 			}
 
 			check_window_prop();
-		}, 1 );
+		}, 0 );
 	};
 
 	check_window_prop();

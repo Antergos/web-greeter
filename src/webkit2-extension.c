@@ -91,6 +91,8 @@ static JSClassRef
 	greeter_config_class,
 	theme_utils_class;
 
+static gboolean secure_mode;
+static gboolean secure_mode_checked = FALSE;
 static gboolean SESSION_STARTING = FALSE;
 
 static WebKitWebExtension *WEB_EXTENSION;
@@ -1189,8 +1191,6 @@ get_conf_str_cb(JSContextRef context,
 		value = g_key_file_get_string(keyfile, section, key, &err);
 	}
 
-
-
 	if (err) {
 		_mkexception(context, exception, err->message);
 		g_error_free(err);
@@ -1653,11 +1653,6 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 	dom_window = webkit_dom_document_get_default_view(dom_document);
 
 	if (dom_window) {
-		/* Notify the UI process that the greeter is loaded */
-		webkit_dom_dom_window_webkit_message_handlers_post_message(
-			dom_window, "GreeterBridge", "GreeterLoaded"
-		);
-
 		/* If the greeter was started as a lock-screen, notify our UI process. */
 		if (lightdm_greeter_get_lock_hint(greeter)) {
 			webkit_dom_dom_window_webkit_message_handlers_post_message(
@@ -1795,6 +1790,7 @@ get_config_option_as_bool(const gchar *section, const gchar *key, GError *err) {
 	return g_key_file_get_boolean(keyfile, section, key, &err);
 }
 
+
 static gchar*
 get_config_option_as_string(const gchar *section, const gchar *key) {
 	gchar *value;
@@ -1867,7 +1863,7 @@ should_block_request(const char *file_path) {
  * @return TRUE to stop other handlers from being invoked for the event (block the request).
  *         FALSE to continue emission of the event (allow the request).
  */
-static gboolean
+gboolean
 web_page_send_request_cb(WebKitWebPage     *web_page,
 						 WebKitURIRequest  *request,
 						 WebKitURIResponse *redirected_response,
@@ -1876,6 +1872,7 @@ web_page_send_request_cb(WebKitWebPage     *web_page,
 	char *request_scheme;
 	gchar *request_file_path;
 	char *request_file_path_without_query;
+	gboolean decision;
 
 	const char *request_uri = webkit_uri_request_get_uri(request);
 	request_scheme = g_uri_parse_scheme(request_uri);
@@ -1884,26 +1881,33 @@ web_page_send_request_cb(WebKitWebPage     *web_page,
 	 * :face_with_rolling_eyes:
 	 */
 
-	if (strcmp(request_scheme, "data") == 0) {
-		g_free(request_scheme);
-		return FALSE; /* Allowed */
-	}
+	if (NULL != strstr(request_uri, "mock.js")) {
+		/* Never allow mock greeter script to be loaded in the greeter */
+		decision = TRUE; /* Blocked */
 
-	if (strcmp(request_scheme, "file") != 0) {
+	} else if (FALSE == secure_mode) {
+		decision = FALSE; /* Allowed */
+
+	} else if (0 == strcmp(request_scheme, "data") || 0 == strcmp(request_scheme, "resource")) {
+		decision = FALSE; /* Allowed */
+
+	} else if (0 == strcmp(request_scheme, "file")) {
+		request_file_path = g_filename_from_uri(request_uri, NULL, NULL);
+		request_file_path_without_query = g_strdup(request_file_path);
+
+		request_file_path_without_query = remove_query_and_hash(request_file_path_without_query);
+
+		decision = should_block_request(request_file_path_without_query);
+
+	} else {
 		/* In order to ensure the user's privacy & security, only local requests are allowed. */
 		g_warning("request scheme error: %s", request_scheme);
-		g_free(request_scheme);
-		return TRUE; /* Blocked */
+		decision = TRUE; /* Blocked */
 	}
-
-	request_file_path = g_filename_from_uri(request_uri, NULL, NULL);
-	request_file_path_without_query = g_strdup(request_file_path);
-
-	request_file_path_without_query = remove_query_and_hash(request_file_path_without_query);
 
 	g_free(request_scheme);
 
-	return should_block_request(request_file_path_without_query);
+	return decision;
 }
 
 
@@ -1912,26 +1916,23 @@ page_created_cb(WebKitWebExtension *extension,
 				WebKitWebPage      *web_page,
 				gpointer            user_data) {
 
-	gboolean secure_mode;
 	GError *err = NULL;
 
 	// save the page_id (global variable)
 	page_id = webkit_web_page_get_id(web_page);
 
-	// Determine if secure_mode is enabled and connect callback to signal if so.
-	secure_mode = get_config_option_as_bool("greeter", "secure_mode", err);
+	// Make sure secure_mode variable has been set
+	if (FALSE == secure_mode_checked) {
+		secure_mode = get_config_option_as_bool("greeter", "secure_mode", err);
+		secure_mode_checked = TRUE;
 
-	if (FALSE == secure_mode && NULL == err) {
-		// secure_mode is disabled in our config file. bail.
-		return;
+		if (NULL != err) {
+			// Use default value
+			secure_mode = TRUE;
+		}
 	}
 
-	g_signal_connect(
-		web_page,
-		"send-request",
-		G_CALLBACK(web_page_send_request_cb),
-		NULL
-	);
+	g_signal_connect(web_page, "send-request", G_CALLBACK(web_page_send_request_cb), NULL);
 }
 
 
