@@ -58,6 +58,7 @@ static GtkWidget *window;
 static WebKitSettings *webkit_settings;
 static GdkDisplay *default_display;
 static GResource *greeter_resources;
+static WebKitUserContentManager *manager;
 
 /* Screensaver values */
 static int
@@ -207,7 +208,7 @@ load_script(char *script) {
 
 static void
 greeter_loaded_handler(void) {
-	load_script(GRESOURCE_PATH "/js/bundle.js");
+	//load_script(GRESOURCE_PATH "/js/bundle.js");
 }
 
 
@@ -287,6 +288,35 @@ rtrim_comments(gchar *str) {
 }
 
 
+static void
+javascript_bundle_injection_setup() {
+	WebKitUserScript *bundle;
+	GBytes *data;
+	guint8 *data_as_guint;
+	gchar *script;
+
+	data = g_resource_lookup_data(
+		greeter_resources,
+		GRESOURCE_PATH "/js/bundle.js",
+		G_RESOURCE_LOOKUP_FLAGS_NONE,
+		NULL
+	);
+
+	data_as_guint = g_byte_array_free(g_bytes_unref_to_array(data), FALSE);
+	script = g_strdup_printf("%s", data_as_guint);
+
+	bundle = webkit_user_script_new(
+		script,
+		WEBKIT_USER_CONTENT_INJECT_TOP_FRAME,
+		WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_START,
+		NULL, /* URL whitelist pattern */
+		NULL  /* URL blacklist pattern */
+	);
+
+	webkit_user_content_manager_add_script(WEBKIT_USER_CONTENT_MANAGER(manager), bundle);
+}
+
+
 int
 main(int argc, char **argv) {
 	GdkScreen *screen;
@@ -296,7 +326,6 @@ main(int argc, char **argv) {
 	gchar *theme;
 	GError *err = NULL;
 	GdkRGBA bg_color;
-	WebKitUserContentManager *manager;
 	WebKitWebContext *context;
 	GtkCssProvider *css_provider;
 	WebKitCookieManager *cookie_manager;
@@ -420,6 +449,8 @@ main(int argc, char **argv) {
 	manager = webkit_user_content_manager_new();
 	g_signal_connect(manager, "script-message-received::GreeterBridge", G_CALLBACK(message_received_cb), NULL);
 	webkit_user_content_manager_register_script_message_handler(manager, "GreeterBridge");
+
+	javascript_bundle_injection_setup();
 
 	/* Create the web_view */
 	web_view = webkit_web_view_new_with_user_content_manager(manager);

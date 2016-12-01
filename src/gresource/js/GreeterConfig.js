@@ -151,16 +151,42 @@ class GreeterConfig  {
 	}
 }
 
+const __greeter_config = new Promise( (resolve, reject) => {
+	let waiting = 0;
+
+	const check_window_prop = () => {
+		if ( waiting > 15000 ) {
+			return reject( 'Timeout Reached!');
+		}
+
+		setTimeout( () => {
+			waiting += 1;
+
+			if ( '__GreeterConfig' in window ) {
+				return resolve( (() => new GreeterConfig())() );
+			}
+
+			check_window_prop();
+		}, 1 );
+	};
+
+	check_window_prop();
+});
+
 
 /**
  * @memberOf window
  * @type {LightDM.GreeterConfig}
  */
-window.greeter_config = new GreeterConfig();
+__greeter_config.then( result => {
+	window.greeter_config = result;
+
+	/**
+	 * @deprecated
+	 * @type {LightDM.GreeterConfig}
+	 */
+	window.config = window.greeter_config;
+} );
 
 
-/**
- * @deprecated
- * @type {LightDM.GreeterConfig}
- */
-window.config = window.greeter_config;
+

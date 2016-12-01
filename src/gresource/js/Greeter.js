@@ -297,10 +297,33 @@ class Greeter {
 }
 
 
+const __lightdm = new Promise( (resolve, reject) => {
+	let waiting = 0;
+
+	const check_window_prop = () => {
+		if ( waiting > 15000 ) {
+			return reject( 'Timeout Reached!');
+		}
+
+		setTimeout( () => {
+			waiting += 1;
+
+			if ( '__LightDMGreeter' in window ) {
+				return resolve( window.__LightDMGreeter );
+			}
+
+			check_window_prop();
+		}, 1 );
+	};
+
+	check_window_prop();
+});
+
+
 /**
  * @memberOf window
  * @type {LightDM.Greeter}
  */
-window.lightdm = __LightDMGreeter;
+__lightdm.then( result => window.lightdm = result );
 
 

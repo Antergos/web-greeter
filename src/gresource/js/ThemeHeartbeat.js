@@ -80,6 +80,3 @@ class ThemeHeartbeat  {
 		window.webkit.messageHandlers.GreeterBridge.postMessage('Heartbeat');
 	}
 }
-
-
-new ThemeHeartbeat();

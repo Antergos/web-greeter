@@ -197,14 +197,41 @@ class ThemeUtils {
 }
 
 
+const __theme_utils = new Promise( (resolve, reject) => {
+	let waiting = 0;
+
+	const check_window_prop = () => {
+		if ( waiting > 15000 ) {
+			return reject( 'Timeout Reached!');
+		}
+
+		setTimeout( () => {
+			waiting += 1;
+
+			if ( '__ThemeUtils' in window ) {
+				return resolve( (() => new ThemeUtils())() );
+			}
+
+			check_window_prop();
+		}, 1 );
+	};
+
+	check_window_prop();
+});
+
+
 /**
  * @memberOf window
  * @type {LightDM.ThemeUtils}
  */
-window.theme_utils = new ThemeUtils();
+__theme_utils.then( result => {
+	window.theme_utils = result;
 
-/**
- * @deprecated
- * @type {LightDM.ThemeUtils}
- */
-window.greeterutil = window.theme_utils;
+	new ThemeHeartbeat();
+
+	/**
+	 * @deprecated
+	 * @type {LightDM.ThemeUtils}
+	 */
+	window.greeterutil = window.theme_utils;
+} );
