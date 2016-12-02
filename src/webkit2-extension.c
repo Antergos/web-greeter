@@ -1912,6 +1912,50 @@ web_page_send_request_cb(WebKitWebPage     *web_page,
 
 
 void
+web_page_console_message_sent_cb(WebKitWebPage        *web_page,
+								 WebKitConsoleMessage *console_message,
+								 gpointer              user_data) {
+	WebKitConsoleMessageLevel msg_level;
+	WebKitConsoleMessageSource msg_source;
+	WebKitDOMDOMWindow *dom_window;
+	WebKitDOMDocument *dom_document;
+	const gchar *msg_text;
+	gboolean is_error, is_from_javascript, is_uncaught_exception;
+
+	msg_level = webkit_console_message_get_level(console_message);
+	is_error = WEBKIT_CONSOLE_MESSAGE_LEVEL_ERROR == msg_level;
+
+	if (! is_error) {
+		return;
+	}
+
+	msg_source = webkit_console_message_get_source(console_message);
+	is_from_javascript = WEBKIT_CONSOLE_MESSAGE_SOURCE_JAVASCRIPT == msg_source;
+
+	if (! is_from_javascript) {
+		return;
+	}
+
+	msg_text = webkit_console_message_get_text(console_message);
+	is_uncaught_exception = NULL != strstr(msg_text, "Uncaught");
+
+	if (! is_uncaught_exception) {
+		return;
+	}
+
+	/* This is an Uncaught JS Exception. Notify the UI process so it can show recovery dialog */
+	dom_document = webkit_web_page_get_dom_document(web_page);
+	dom_window = webkit_dom_document_get_default_view(dom_document);
+
+	if (dom_window) {
+		webkit_dom_dom_window_webkit_message_handlers_post_message(
+			dom_window, "GreeterBridge", "JavaScriptException"
+		);
+	}
+}
+
+
+void
 page_created_cb(WebKitWebExtension *extension,
 				WebKitWebPage      *web_page,
 				gpointer            user_data) {
@@ -1933,6 +1977,7 @@ page_created_cb(WebKitWebExtension *extension,
 	}
 
 	g_signal_connect(web_page, "send-request", G_CALLBACK(web_page_send_request_cb), NULL);
+	g_signal_connect(web_page, "console-message-sent", G_CALLBACK(web_page_console_message_sent_cb), NULL);
 }
 
 

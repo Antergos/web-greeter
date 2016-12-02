@@ -122,6 +122,66 @@ lock_hint_enabled_handler(void) {
 }
 
 
+static void
+show_theme_recovery_modal() {
+	GtkWidget
+		*dialog,
+		*label,
+		*content_area,
+		*button,
+		*button_box;
+
+	dialog = gtk_dialog_new_with_buttons(
+		_("Greeter Theme Error Detected"),
+		GTK_WINDOW(window),
+		GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+		_("Load _Default Theme"),
+		GTK_RESPONSE_ACCEPT,
+		_("Load _Fallback Theme"),
+		GTK_RESPONSE_OK,
+		_("_Cancel"),
+		GTK_RESPONSE_REJECT,
+		NULL
+	);
+
+	content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+	button = gtk_dialog_get_widget_for_response(GTK_DIALOG(dialog), GTK_RESPONSE_REJECT);
+	button_box = gtk_widget_get_parent(button);
+	label = gtk_label_new(
+		_("An error was detected in the current theme that could interfere with the system login process.")
+	);
+
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(button_box), GTK_BUTTONBOX_EXPAND);
+	gtk_container_add(GTK_CONTAINER(content_area), label);
+	gtk_widget_show_all(content_area);
+
+	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+
+	if (GTK_RESPONSE_REJECT == response) {
+		gtk_widget_destroy(dialog);
+		return;
+	}
+
+	gchar *log_msg = "[ERROR] :: A problem was detected with the current theme. Falling back to default theme...";
+	gchar *fallback_theme;
+
+	if (GTK_RESPONSE_ACCEPT == response) {
+		fallback_theme = "antergos";
+
+	} else {
+		fallback_theme = "simple";
+	}
+
+	g_warning(log_msg);
+	gtk_widget_destroy(dialog);
+
+	webkit_web_view_load_uri(
+		WEBKIT_WEB_VIEW(web_view),
+		g_strdup_printf("file://%s/%s/index.html", THEME_DIR, fallback_theme)
+	);
+}
+
+
 /**
  * Message received callback.
  *
@@ -157,7 +217,10 @@ message_received_cb(WebKitUserContentManager *manager,
 		printf("Error running javascript: unexpected return value");
 	}
 
-	if (strcmp(message_str, "LockHint") == 0) {
+	if (0 == g_strcmp0(message_str, "JavaScriptException")) {
+		show_theme_recovery_modal();
+
+	} else if (0 == g_strcmp0(message_str, "LockHint")) {
 		lock_hint_enabled_handler();
 
 	} else {
@@ -245,42 +308,7 @@ theme_function_exists_cb(GObject *object,
 	}
 
 	if (FALSE == result_as_bool) {
-		GtkWidget *dialog, *label, *content_area, *button, *button_box;
-
-		dialog = gtk_dialog_new_with_buttons(
-			_("Greeter Theme Error Detected"),
-			GTK_WINDOW(window),
-			GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-			_("_Load Default Theme"),
-			GTK_RESPONSE_ACCEPT,
-			_("_Load Fallback Theme"),
-			GTK_RESPONSE_OK,
-			_("_Cancel"),
-			GTK_RESPONSE_REJECT,
-			NULL
-		);
-		content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
-		button = gtk_dialog_get_widget_for_response(GTK_DIALOG(dialog), GTK_RESPONSE_REJECT);
-		button_box = gtk_widget_get_parent(button);
-		label = gtk_label_new(_("An error was detected in the current theme that could interfere with the system login process."));
-
-		gtk_button_box_set_layout(GTK_BUTTON_BOX(button_box), GTK_BUTTONBOX_EXPAND);
-		gtk_container_add(GTK_CONTAINER(content_area), label);
-		gtk_widget_show_all(content_area);
-
-		gint response = gtk_dialog_run(GTK_DIALOG(dialog));
-		gchar *log_msg = "[ERROR] :: A problem was detected with the current theme. Falling back to simple theme...";
-
-		if (GTK_RESPONSE_ACCEPT == response) {
-			g_warning(log_msg);
-			webkit_web_view_load_uri(WEBKIT_WEB_VIEW(web_view), g_strdup_printf("file://%s/antergos/index.html", THEME_DIR));
-
-		} else if (GTK_RESPONSE_OK == response) {
-			g_warning(log_msg);
-			webkit_web_view_load_uri(WEBKIT_WEB_VIEW(web_view), g_strdup_printf("file://%s/simple/index.html", THEME_DIR));
-		}
-
-		gtk_widget_destroy(dialog);
+		show_theme_recovery_modal();
 	}
 
 	webkit_javascript_result_unref(js_result);
@@ -419,9 +447,8 @@ main(int argc, char **argv) {
 	 * so webkit can find our extension.
 	 */
 	context = webkit_web_context_get_default();
-	g_signal_connect(WEBKIT_WEB_CONTEXT(context),
-					 "initialize-web-extensions",
-					 G_CALLBACK(initialize_web_extensions_cb), NULL);
+	g_signal_connect(context, "initialize-web-extensions", G_CALLBACK(initialize_web_extensions_cb), NULL);
+	webkit_web_context_set_cache_model(context, WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER);
 
 	/* Set cookie policy */
 	cookie_manager = webkit_web_context_get_cookie_manager(context);
