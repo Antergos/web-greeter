@@ -41,7 +41,7 @@ let localized_invalid_date = moment('today', '!@#'),
 /**
  * Provides various utility methods for use by theme authors. The greeter will automatically
  * create an instance of this class when it starts. The instance can be accessed
- * with the global variable: `theme_utils` ({@link window.theme_utils}).
+ * with the global variable: [`theme_utils`]({@link window.theme_utils}).
  *
  * @memberOf LightDM
  */
@@ -221,15 +221,18 @@ const __theme_utils = new Promise( (resolve, reject) => {
 
 
 /**
- * @memberOf window
+ * @alias theme_utils
  * @type {LightDM.ThemeUtils}
+ * @memberOf window
  */
 __theme_utils.then( result => {
 	window.theme_utils = result;
 
 	/**
-	 * @deprecated
+	 * @alias greeterutil
 	 * @type {LightDM.ThemeUtils}
+	 * @memberOf window
+	 * @deprecated Use [`theme_utils`]({@link window.theme_utils}) instead.
 	 */
 	window.greeterutil = window.theme_utils;
 } );

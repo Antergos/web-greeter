@@ -25,12 +25,22 @@
  * along with lightdm-webkit2-greeter; If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * The global window object.
+ * @typedef {Object} Window
+ */
+
+/**
+ * @namespace {Window} window
+ * @global
+ */
+
 
 /**
  * Base class for the greeter's JavaScript Theme API. Greeter themes will interact
  * directly with an object derived from this class to facilitate the user log-in process.
  * The greeter will automatically create an instance when it starts.
- * The instance can be accessed using the global variable: `lightdm` ({@link window.lightdm}).
+ * The instance can be accessed using the global variable: [`lightdm`]({@link window.lightdm}).
  *
  * @memberOf LightDM
  */
@@ -165,6 +175,11 @@ class Greeter {
 	 * @type {LightDMLayout}
 	 */
 	get layout() {}
+
+	/**
+	 * Set the active layout for the selected user.
+	 * @param {LightDMLayout} value
+	 */
 	set layout( value ) {}
 
 	/**
@@ -321,9 +336,43 @@ const __lightdm = new Promise( (resolve, reject) => {
 
 
 /**
- * @memberOf window
+ * @alias lightdm
  * @type {LightDM.Greeter}
+ * @memberOf window
  */
 __lightdm.then( result => window.lightdm = result );
+
+
+/**
+ * Moment.js instance - Loaded and instantiated automatically by the greeter.
+ * @name moment
+ * @type {Object}
+ * @version 2.17.0
+ * @memberOf window
+ * @see {@link [Moment.js Documentation](http://momentjs.com/docs)}
+ */
+
+/**
+ * jQuery instance - Themes must manually load the included vendor script in order to use this object.
+ * @name jQuery
+ * @type {Object}
+ * @version 3.1.1
+ * @memberOf window
+ * @see {@link [jQuery Documentation](http://api.jquery.com)}
+ */
+
+/**
+ * @name $
+ * @see {@link window.jQuery}
+ */
+
+/**
+ * JS-Cookie instance - Themes must manually load the included vendor script in order to use this object.
+ * @name Cookies
+ * @type {Object}
+ * @version 2.1.3
+ * @memberOf window
+ * @see {@link [JS Cookie Documentation](https://github.com/js-cookie/js-cookie/tree/latest#readme)}
+ */
 
 

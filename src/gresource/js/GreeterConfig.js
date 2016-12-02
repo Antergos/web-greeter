@@ -47,7 +47,7 @@ function set_values( defaults, target_obj, method ) {
  * Provides theme authors with a way to retrieve values from the greeter's config
  * file located at `/etc/lightdm/lightdm-webkit2-greeter.conf`. The greeter will
  * create an instance of this class when it starts. The instance can be accessed
- * with the global variable: `greeter_config`.
+ * with the global variable: [`greeter_config`]({@link window.greeter_config}).
  *
  * @memberOf LightDM
  */
@@ -151,6 +151,7 @@ class GreeterConfig  {
 	}
 }
 
+
 const __greeter_config = new Promise( (resolve, reject) => {
 	let waiting = 0;
 
@@ -175,15 +176,18 @@ const __greeter_config = new Promise( (resolve, reject) => {
 
 
 /**
- * @memberOf window
+ * @alias greeter_config
  * @type {LightDM.GreeterConfig}
+ * @memberOf window
  */
 __greeter_config.then( result => {
 	window.greeter_config = result;
 
 	/**
-	 * @deprecated
+	 * @alias config
 	 * @type {LightDM.GreeterConfig}
+	 * @memberOf window
+	 * @deprecated Use [`greeter_config`]({@link window.greeter_config}) instead.
 	 */
 	window.config = window.greeter_config;
 } );
