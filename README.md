@@ -20,7 +20,7 @@
 |**liblightdm-gobject-1** |lightdm  |liblightdm-gobject-dev | lightdm-gobject-devel | liblightdm-gobject-1-0 |
 |**gtk+ 3**               |gtk3     |libgtk-3-0             | gtk3                  | gtk3                   |
 |**webkit2gtk-4.0**       |webkit2gtk|libwebkit2gtk-4.0-dev  | webkitgtk4            | libwebkit2gtk-4_0-37            |
-|**dbus-glib-1**         |dbus-glib|libdbus-glib-1-dev     | dbus-glib             | dbus-1-glib            |
+|**dbus-glib-1**          |dbus-glib|libdbus-glib-1-dev     | dbus-glib             | dbus-1-glib            |
 
 #### Build Deps
 |                   | ![antergos](https://dl.dropboxusercontent.com/u/60521097/logo-square26x26.png) &nbsp;&nbsp; ![arch](https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png) &nbsp;&nbsp; ![debian](https://dl.dropboxusercontent.com/u/60521097/openlogo-nd-25.png) &nbsp;&nbsp; ![ubuntu](https://dl.dropboxusercontent.com/u/60521097/ubuntu_orange_hex.png) &nbsp;&nbsp; ![fedora](https://dl.dropboxusercontent.com/u/60521097/fedora-logo.png) &nbsp;&nbsp; ![openSUSE](https://dl.dropboxusercontent.com/u/60521097/Geeko-button-bling7.png) | 

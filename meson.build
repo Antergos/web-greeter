@@ -21,14 +21,14 @@ dbus_glib       = dependency('dbus-glib-1')
 lightdm_gobject = dependency('liblightdm-gobject-1')
 x11             = dependency('x11')
 
-gtk3            = dependency('gtk+-3.0',                     version: '>=3.16')
-webkit2         = dependency('webkit2gtk-4.0',               version: '>=2.10.7')
-webkit2_webext  = dependency('webkit2gtk-web-extension-4.0', version: '>=2.10.7')
+gtk3            = dependency('gtk+-3.0',                     version: '>=3.18')
+webkit2         = dependency('webkit2gtk-4.0',               version: '>=2.12')
+webkit2_webext  = dependency('webkit2gtk-web-extension-4.0', version: '>=2.12')
 
 greeter_deps = [dbus_glib, gtk3, webkit2, x11]
 webext_deps = [webkit2_webext, lightdm_gobject]
 
-has_webkitgtk_2_14 = webkit2.version().version_compare('>=2.14.0')
+has_webkitgtk_2_14 = webkit2.version().version_compare('>=2.14')
 has_lightdm_1_19_2 = lightdm_gobject.version().version_compare('>=1.19.2')
 has_gtk_3_22 = gtk3.version().version_compare('>=3.22')
 
