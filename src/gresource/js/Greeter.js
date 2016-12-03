@@ -342,7 +342,7 @@ __lightdm.then( result => window.lightdm = result );
 
 /**
  * Moment.js instance - Loaded and instantiated automatically by the greeter.
- * @external moment
+ * @name moment
  * @type {object}
  * @version 2.17.0
  * @memberOf window
@@ -351,7 +351,7 @@ __lightdm.then( result => window.lightdm = result );
 
 /**
  * jQuery instance - Themes must manually load the included vendor script in order to use this object.
- * @external jQuery
+ * @name jQuery
  * @type {object}
  * @version 3.1.1
  * @memberOf window
@@ -359,7 +359,7 @@ __lightdm.then( result => window.lightdm = result );
  */
 
 /**
- * @external $
+ * @name $
  * @memberOf window
  * @see {@link window.jQuery}
  */
