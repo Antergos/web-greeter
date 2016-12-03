@@ -896,7 +896,7 @@ class AntergosTheme {
 /**
  * Initialize the theme once the window has loaded.
  */
-$( window ).load( () => {
+$( window ).on('load', () => {
 	new AntergosThemeUtils();
 	new AntergosTheme();
 } );

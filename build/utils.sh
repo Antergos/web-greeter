@@ -10,6 +10,13 @@ do_build() {
 		&& ninja)
 }
 
+do_quick_install() {
+	(cd "$(dirname "${DIR}")/build/src" \
+		&& sudo cp lightdm-webkit2-greeter /usr/bin \
+		&& sudo cp liblightdm-webkit2-greeter-webext.so /usr/lib/lightdm-webkit2-greeter \
+		&& sudo cp -R ../../themes/antergos /usr/share/lightdm-webkit/themes)
+}
+
 clean_build_dir() {
 	(cd "${DIR}" \
 		&& find . -type f ! -path './ci*' ! -name '.gitignore' ! -name utils.sh -delete \
@@ -48,5 +55,9 @@ case "$1" in
 
 	build)
 		clean_build_dir && do_build
+	;;
+
+	build-dev)
+		clean_build_dir && do_build && do_quick_install
 	;;
 esac
