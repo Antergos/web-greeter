@@ -1814,7 +1814,7 @@ should_block_request(const char *file_path) {
 	gchar *background_images_dir;
 	gchar *user_image;
 	gchar *logo;
-	gboolean result = TRUE;
+	gboolean result = TRUE; /* Blocked */
 	char *canonical_path;
 
 	if (NULL == file_path) {
@@ -1839,8 +1839,7 @@ should_block_request(const char *file_path) {
 	if (NULL != canonical_path) {
 		for (iter = paths; iter; iter = iter->next) {
 			if (strcmp(canonical_path, iter->data) == 0 || g_str_has_prefix(canonical_path, iter->data)) {
-				/* Requested path is allowed (don't block request). */
-				result = FALSE;
+				result = FALSE; /* Allowed */
 				break;
 			}
 		}
@@ -1920,7 +1919,7 @@ web_page_console_message_sent_cb(WebKitWebPage        *web_page,
 	WebKitDOMDOMWindow *dom_window;
 	WebKitDOMDocument *dom_document;
 	const gchar *msg_text;
-	gboolean is_error, is_from_javascript, is_uncaught_exception;
+	gboolean is_error, is_from_javascript, is_exception;
 
 	msg_level = webkit_console_message_get_level(console_message);
 	is_error = WEBKIT_CONSOLE_MESSAGE_LEVEL_ERROR == msg_level;
@@ -1937,9 +1936,14 @@ web_page_console_message_sent_cb(WebKitWebPage        *web_page,
 	}
 
 	msg_text = webkit_console_message_get_text(console_message);
-	is_uncaught_exception = NULL != strstr(msg_text, "Uncaught");
+	is_exception =
+		NULL != strstr(msg_text, "Uncaught") ||
+		NULL != strstr(msg_text, "Error") ||
+		NULL != strstr(msg_text, "error") ||
+		NULL != strstr(msg_text, "Exception") ||
+		NULL != strstr(msg_text, "exception");
 
-	if (! is_uncaught_exception) {
+	if (! is_exception) {
 		return;
 	}
 

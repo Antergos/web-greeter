@@ -326,6 +326,7 @@ const __lightdm = new Promise( (resolve, reject) => {
 
 
 /**
+ * Greeter Instance
  * @name lightdm
  * @type {LightDM.Greeter}
  * @memberOf window
