@@ -3,20 +3,6 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 
-do_build() {
-	(cd "$(dirname "${DIR}")" \
-		&& meson build \
-		&& cd build \
-		&& ninja)
-}
-
-do_quick_install() {
-	(cd "$(dirname "${DIR}")/build/src" \
-		&& sudo cp lightdm-webkit2-greeter /usr/bin \
-		&& sudo cp liblightdm-webkit2-greeter-webext.so /usr/lib/lightdm-webkit2-greeter \
-		&& sudo cp -R ../../themes/antergos /usr/share/lightdm-webkit/themes)
-}
-
 clean_build_dir() {
 	(cd "${DIR}" \
 		&& find . -type f ! -path './ci*' ! -name '.gitignore' ! -name utils.sh -delete \
@@ -33,6 +19,25 @@ combine_javascript_sources() {
 			ThemeUtils.js \
 			ThemeHeartbeat.js >> "${MESON_SOURCE_ROOT}/src/gresource/js/bundle.js"
 	}
+}
+
+do_build() {
+	(cd "$(dirname "${DIR}")" \
+		&& meson build \
+		&& cd build \
+		&& ninja)
+}
+
+do_quick_install() {
+	(cd "${DIR}/src" \
+		&& sudo cp lightdm-webkit2-greeter /usr/bin \
+		&& sudo cp liblightdm-webkit2-greeter-webext.so /usr/lib/lightdm-webkit2-greeter \
+		&& sudo cp -R ../../themes/antergos /usr/share/lightdm-webkit/themes)
+}
+
+generate_pot_file() {
+	REPO_ROOT="$(dirname "${DIR}")"
+	xgettext --from-code UTF-8 -o "${REPO_ROOT}/po/lightdm-webkit2-greeter.pot" -d lightdm-webkit2-greeter "${REPO_ROOT}"/src/*.c
 }
 
 list_javascript_sources() {
@@ -59,5 +64,9 @@ case "$1" in
 
 	build-dev)
 		clean_build_dir && do_build && do_quick_install
+	;;
+
+	gen-pot)
+		generate_pot_file
 	;;
 esac

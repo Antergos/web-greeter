@@ -68,10 +68,10 @@
 
 
 /*
- * Translatable strings
+ * Error messages
  */
-#define EXPECTSTRING   _("Expected a string")
-#define ARGNOTSUPPLIED _("Argument(s) not supplied")
+#define EXPECTSTRING   "Expected a string"
+#define ARGNOTSUPPLIED "Argument(s) not supplied"
 
 
 G_MODULE_EXPORT void webkit_web_extension_initialize(WebKitWebExtension *extension);

@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# This file is distributed under the same license as the lightdm-webkit2-greeter package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: lightdm-webkit2-greeter\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-24 11:48-0600\n"
+"POT-Creation-Date: 2016-12-03 05:51-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,36 +17,24 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../src/lightdm-webkit2-greeter-ext.c:132
-msgid "Expected a string"
+#: src/greeter.c:135
+msgid "Greeter Theme Error Detected"
 msgstr ""
 
-#: ../src/lightdm-webkit2-greeter-ext.c:654
-msgid "Hint argument not supplied"
+#: src/greeter.c:138
+msgid "Load _Default Theme"
 msgstr ""
 
-#: ../src/lightdm-webkit2-greeter-ext.c:681
-msgid "Response not supplied"
+#: src/greeter.c:140
+msgid "Load _Fallback Theme"
 msgstr ""
 
-#: ../src/lightdm-webkit2-greeter-ext.c:911
-msgid "Incorrect parameters"
+#: src/greeter.c:142
+msgid "_Cancel"
 msgstr ""
 
-#: ../src/lightdm-webkit2-greeter-ext.c:938
-msgid "Language not supplied"
-msgstr ""
-
-#: ../src/lightdm-webkit2-greeter-ext.c:967
-msgid "Argument not supplied"
-msgstr ""
-
-#: ../src/lightdm-webkit2-greeter-ext.c:996
-msgid "Needs 3 arguments"
-msgstr ""
-
-#: ../src/lightdm-webkit2-greeter-ext.c:1038
-#: ../src/lightdm-webkit2-greeter-ext.c:1085
-#: ../src/lightdm-webkit2-greeter-ext.c:1128
-msgid "Needs 2 arguments"
+#: src/greeter.c:151
+msgid ""
+"An error was detected in the current theme that could interfere with the "
+"system login process."
 msgstr ""

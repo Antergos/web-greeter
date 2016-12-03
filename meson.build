@@ -75,7 +75,7 @@ endif
 # ------->>> Sub Directories <<<------- #
 # ===================================== #
 
-subdirs = ['src', 'man', 'themes', 'data']
+subdirs = ['src', 'man', 'themes', 'data', 'po']
 
 foreach s : subdirs
   subdir(s)
