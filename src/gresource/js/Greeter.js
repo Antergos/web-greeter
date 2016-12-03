@@ -148,33 +148,33 @@ class Greeter {
 
 	/**
 	 * The current language or {@link null} if no language.
-	 * @type {LightDMLanguage|null}
+	 * @type {LightDM.Language|null}
 	 * @readonly
 	 */
 	get language() {}
 
 	/**
 	 * A list of languages to present to the user.
-	 * @type {LightDMLanguage[]}
+	 * @type {LightDM.Language[]}
 	 * @readonly
 	 */
 	get languages() {}
 
 	/**
 	 * The currently active layout for the selected user.
-	 * @type {LightDMLayout}
+	 * @type {LightDM.Layout}
 	 */
 	get layout() {}
 
 	/**
 	 * Set the active layout for the selected user.
-	 * @param {LightDMLayout} value
+	 * @param {LightDM.Layout} value
 	 */
 	set layout( value ) {}
 
 	/**
 	 * A list of keyboard layouts to present to the user.
-	 * @type {LightDMLayout[]}
+	 * @type {LightDM.Layout[]}
 	 * @readonly
 	 */
 	get layouts() {}
@@ -211,14 +211,14 @@ class Greeter {
 
 	/**
 	 * List of available sessions.
-	 * @type {LightDMSession[]}
+	 * @type {LightDM.Session[]}
 	 * @readonly
 	 */
 	get sessions() {}
 
 	/**
 	 * List of available users.
-	 * @type {LightDMUser[]}
+	 * @type {LightDM.User[]}
 	 * @readonly
 	 */
 	get users() {}
