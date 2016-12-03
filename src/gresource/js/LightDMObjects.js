@@ -28,27 +28,28 @@
 /**
  * Interface for object that holds info about a session. Session objects are not
  * created by the theme's code, but rather by the {@link LightDM.Greeter} class.
+ *
  * @memberOf LightDM
  */
 class Session  {
 	constructor(  { comment, key, name } ) {
 		/**
 		 * The comment for the session.
-		 * @type {String}
+		 * @type {string}
 		 * @readonly
 		 */
 		this.comment = comment;
 
 		/**
 		 * The key for the session.
-		 * @type {String}
+		 * @type {string}
 		 * @readonly
 		 */
 		this.key = key;
 
 		/**
 		 * The name for the session.
-		 * @type {String}
+		 * @type {string}
 		 * @readonly
 		 */
 		this.name = name;
@@ -59,27 +60,28 @@ class Session  {
 /**
  * Interface for object that holds info about a language on the system. Language objects are not
  * created by the theme's code, but rather by the {@link LightDM.Greeter} class.
+ *
  * @memberOf LightDM
  */
 class Language {
 	constructor(  { code, name, territory } ) {
 		/**
 		 * The code for the language.
-		 * @type {String}
+		 * @type {string}
 		 * @readonly
 		 */
 		this.code = code;
 
 		/**
 		 * The name for the language.
-		 * @type {String}
+		 * @type {string}
 		 * @readonly
 		 */
 		this.name = name;
 
 		/**
 		 * The territory for the language.
-		 * @type {String}
+		 * @type {string}
 		 * @readonly
 		 */
 		this.territory = territory;
@@ -90,27 +92,28 @@ class Language {
 /**
  * Interface for object that holds info about a keyboard layout on the system. Language
  * objects are not created by the theme's code, but rather by the {@link LightDM.Greeter} class.
+ *
  * @memberOf LightDM
  */
 class Layout {
 	constructor(  { description, name, short_description } ) {
 		/**
 		 * The description for the layout.
-		 * @type {String}
+		 * @type {string}
 		 * @readonly
 		 */
 		this.description = description;
 
 		/**
 		 * The name for the layout.
-		 * @type {String}
+		 * @type {string}
 		 * @readonly
 		 */
 		this.name = name;
 
 		/**
 		 * The territory for the layout.
-		 * @type {String}
+		 * @type {string}
 		 * @readonly
 		 */
 		this.short_description = short_description;
@@ -121,78 +124,79 @@ class Layout {
 /**
  * Interface for object that holds info about a user account on the system. User
  * objects are not created by the theme's code, but rather by the {@link LightDM.Greeter} class.
+ *
  * @memberOf LightDM
  */
 class User {
 	constructor( user_info ) {
 		/**
 		 * The display name for the user.
-		 * @type {String}
+		 * @type {string}
 		 * @readonly
 		 */
 		this.display_name = user_info.display_name;
 
 		/**
 		 * The language for the user.
-		 * @type {String}
+		 * @type {string}
 		 * @readonly
 		 */
 		this.language = user_info.language;
 
 		/**
 		 * The keyboard layout for the user.
-		 * @type {String}
+		 * @type {string}
 		 * @readonly
 		 */
 		this.layout = user_info.layout;
 
 		/**
 		 * The image for the user.
-		 * @type {String}
+		 * @type {string}
 		 * @readonly
 		 */
 		this.image = user_info.image;
 
 		/**
 		 * The home_directory for the user.
-		 * @type {String}
+		 * @type {string}
 		 * @readonly
 		 */
 		this.home_directory = user_info.home_directory;
 
 		/**
 		 * The username for the user.
-		 * @type {String}
+		 * @type {string}
 		 * @readonly
 		 */
 		this.username = user_info.username;
 
 		/**
 		 * Whether or not the user is currently logged in.
-		 * @type {Boolean}
+		 * @type {boolean}
 		 * @readonly
 		 */
 		this.logged_in = user_info.logged_in;
 
 		/**
 		 * The last session that the user logged into.
-		 * @type {String|null}
+		 * @type {string|null}
 		 * @readonly
 		 */
 		this.session = user_info.session;
 
 		/**
-		 * DEPRECATED!
-		 * @deprecated See {@link LightDMUser.username}.
-		 * @type {String}
+		 * ***Deprecated!*** See {@link LightDM.User#username}.
+		 * @deprecated
+		 * @type {string}
 		 * @readonly
 		 */
 		this.name = user_info.name;
 
 		/**
-		 * DEPRECATED!
-		 * @deprecated See {@link LightDMUser.display_name}.
-		 * @type {String}
+		 * ***Deprecated!*** See {@link LightDM.User#display_name}.
+		 * @deprecated
+		 * @type {string}
 		 * @readonly
 		 */
 		this.real_name = user_info.real_name;

@@ -39,7 +39,7 @@ let localized_invalid_date = moment('today', '!@#'),
 
 
 /**
- * Provides various utility methods for use by theme authors. The greeter will automatically
+ * Provides various utility methods for use in greeter themes. The greeter will automatically
  * create an instance of this class when it starts. The instance can be accessed
  * with the global variable: [`theme_utils`](#dl-window-theme_utils).
  *
@@ -186,7 +186,9 @@ class ThemeUtils {
 
 
 	/**
-	 * @deprecated Use {@link window.theme_utils.esc_html()} instead.
+	 * Use {@link window.theme_utils.esc_html()} instead.
+	 *
+	 * @deprecated
 	 */
 	txt2html( text ) {
 		try {
@@ -224,6 +226,7 @@ const __theme_utils = new Promise( (resolve, reject) => {
 
 
 /**
+ * Theme Utils - various utility methods for use in greeter themes.
  * @name theme_utils
  * @type {LightDM.ThemeUtils}
  * @memberOf window
@@ -232,10 +235,11 @@ __theme_utils.then( result => {
 	window.theme_utils = result;
 
 	/**
+	 * ***Deprecated!*** Use {@link window.theme_utils} instead.
 	 * @name greeterutil
 	 * @type {LightDM.ThemeUtils}
 	 * @memberOf window
-	 * @deprecated Use [`theme_utils`](#dl-window-theme_utils) instead.
+	 * @deprecated
 	 */
 	window.greeterutil = window.theme_utils;
 } );
