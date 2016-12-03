@@ -26,6 +26,21 @@
  */
 
 /**
+ * The global window object.
+ *
+ * @name window
+ * @type {object}
+ * @global
+ */
+
+/**
+ * The greeter's Theme JavaScript API.
+ *
+ * @namespace LightDM
+ */
+
+
+/**
  * Interface for object that holds info about a session. Session objects are not
  * created by the theme's code, but rather by the {@link LightDM.Greeter} class.
  *

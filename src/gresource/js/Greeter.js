@@ -25,18 +25,6 @@
  * along with lightdm-webkit2-greeter; If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * The global window object.
- * @name window
- * @type {object}
- * @global
- */
-
-/**
- * The greeter's Theme JavaScript API.
- * @namespace LightDM
- */
-
 
 /**
  * Base class for the greeter's Theme JavaScript API. Greeter themes will interact
