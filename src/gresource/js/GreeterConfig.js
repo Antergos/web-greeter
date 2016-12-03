@@ -176,7 +176,7 @@ const __greeter_config = new Promise( (resolve, reject) => {
 
 
 /**
- * @alias greeter_config
+ * @name greeter_config
  * @type {LightDM.GreeterConfig}
  * @memberOf window
  */
@@ -184,7 +184,7 @@ __greeter_config.then( result => {
 	window.greeter_config = result;
 
 	/**
-	 * @alias config
+	 * @name config
 	 * @type {LightDM.GreeterConfig}
 	 * @memberOf window
 	 * @deprecated Use {@link window.greeter_config} instead.

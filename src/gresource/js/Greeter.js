@@ -333,7 +333,7 @@ const __lightdm = new Promise( (resolve, reject) => {
 
 
 /**
- * @alias lightdm
+ * @name lightdm
  * @type {LightDM.Greeter}
  * @memberOf window
  */

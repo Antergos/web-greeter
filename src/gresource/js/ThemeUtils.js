@@ -224,7 +224,7 @@ const __theme_utils = new Promise( (resolve, reject) => {
 
 
 /**
- * @alias theme_utils
+ * @name theme_utils
  * @type {LightDM.ThemeUtils}
  * @memberOf window
  */
@@ -232,7 +232,7 @@ __theme_utils.then( result => {
 	window.theme_utils = result;
 
 	/**
-	 * @alias greeterutil
+	 * @name greeterutil
 	 * @type {LightDM.ThemeUtils}
 	 * @memberOf window
 	 * @deprecated Use {@link window.theme_utils} instead.
