@@ -56,9 +56,9 @@ class GreeterConfig  {
 	 * Holds keys/values from the `branding` section of the config file.
 	 *
 	 * @type {object} branding
-	 * @prop {string} branding.background_images
-	 * @prop {string} branding.logo
-	 * @prop {string} branding.user_image
+	 * @prop {string} background_images
+	 * @prop {string} logo
+	 * @prop {string} user_image
 	 *
 	 * @readonly
 	 */
@@ -83,12 +83,12 @@ class GreeterConfig  {
 	 * Holds keys/values from the `greeter` section of the config file.
 	 *
 	 * @type {object}  greeter
-	 * @prop {boolean} greeter.debug_mode
-	 * @prop {boolean} greeter.secure_mode
-	 * @prop {number}  greeter.screensaver_timeout
-	 * @prop {string}  greeter.time_format
-	 * @prop {string}  greeter.time_language
-	 * @prop {string}  greeter.webkit_theme
+	 * @prop {boolean} debug_mode
+	 * @prop {boolean} secure_mode
+	 * @prop {number}  screensaver_timeout
+	 * @prop {string}  time_format
+	 * @prop {string}  time_language
+	 * @prop {string}  webkit_theme
 	 *
 	 * @readonly
 	 */
@@ -178,7 +178,7 @@ const __greeter_config = new Promise( (resolve, reject) => {
 /**
  * @alias greeter_config
  * @type {LightDM.GreeterConfig}
- * @memberOf external:window
+ * @memberOf window
  */
 __greeter_config.then( result => {
 	window.greeter_config = result;
@@ -186,8 +186,8 @@ __greeter_config.then( result => {
 	/**
 	 * @alias config
 	 * @type {LightDM.GreeterConfig}
-	 * @memberOf external:window
-	 * @deprecated Use [`greeter_config`]({@link external:window.greeter_config}) instead.
+	 * @memberOf window
+	 * @deprecated Use {@link window.greeter_config} instead.
 	 */
 	window.config = window.greeter_config;
 } );

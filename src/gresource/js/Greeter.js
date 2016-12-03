@@ -37,7 +37,7 @@
  * Base class for the greeter's JavaScript Theme API. Greeter themes will interact
  * directly with an object derived from this class to facilitate the user log-in process.
  * The greeter will automatically create an instance when it starts.
- * The instance can be accessed using the global variable: [`lightdm`]({@link external:window.lightdm}).
+ * The instance can be accessed using the global variable: {@link window.lightdm}.
  *
  * @memberOf LightDM
  */
@@ -335,7 +335,7 @@ const __lightdm = new Promise( (resolve, reject) => {
 /**
  * @alias lightdm
  * @type {LightDM.Greeter}
- * @memberOf external:window
+ * @memberOf window
  */
 __lightdm.then( result => window.lightdm = result );
 
@@ -345,7 +345,7 @@ __lightdm.then( result => window.lightdm = result );
  * @external moment
  * @type {Object}
  * @version 2.17.0
- * @memberOf external:window
+ * @memberOf window
  * @see {@link [Moment.js Documentation](http://momentjs.com/docs)}
  */
 
@@ -354,13 +354,13 @@ __lightdm.then( result => window.lightdm = result );
  * @external jQuery
  * @type {Object}
  * @version 3.1.1
- * @memberOf external:window
+ * @memberOf window
  * @see {@link [jQuery Documentation](http://api.jquery.com)}
  */
 
 /**
  * @external $
- * @memberOf external:window
+ * @memberOf window
  * @see {@link window.jQuery}
  */
 
@@ -369,7 +369,7 @@ __lightdm.then( result => window.lightdm = result );
  * @name Cookies
  * @type {Object}
  * @version 2.1.3
- * @memberOf external:window
+ * @memberOf window
  * @see {@link [JS Cookie Documentation](https://github.com/js-cookie/js-cookie/tree/latest#readme)}
  */
 
