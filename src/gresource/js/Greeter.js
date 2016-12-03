@@ -27,8 +27,8 @@
 
 /**
  * The global window object.
- * @external window
- * @type     {Object}
+ * @name window
+ * @type {object}
  * @global
  */
 
@@ -56,7 +56,7 @@ class Greeter {
 	/**
 	 * The username of the user being authenticated or {@link null}
 	 * if there is no authentication in progress.
-	 * @type {String|null}
+	 * @type {string|null}
 	 * @readonly
 	 */
 	get authentication_user() {}
@@ -64,91 +64,91 @@ class Greeter {
 	/**
 	 * Whether or not the guest account should be automatically logged
 	 * into when the timer expires.
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @readonly
 	 */
 	get autologin_guest() {}
 
 	/**
 	 * The number of seconds to wait before automatically logging in.
-	 * @type {Number}
+	 * @type {number}
 	 * @readonly
 	 */
 	get autologin_timeout() {}
 
 	/**
 	 * The username with which to automatically log in when the timer expires.
-	 * @type {String}
+	 * @type {string}
 	 * @readonly
 	 */
 	get autologin_user() {}
 
 	/**
 	 * Whether or not the greeter can make the system hibernate.
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @readonly
 	 */
 	get can_hibernate() {}
 
 	/**
 	 * Whether or not the greeter can make the system restart.
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @readonly
 	 */
 	get can_restart() {}
 
 	/**
 	 * Whether or not the greeter can make the system shutdown.
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @readonly
 	 */
 	get can_shutdown() {}
 
 	/**
 	 * Whether or not the greeter can make the system suspend/sleep.
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @readonly
 	 */
 	get can_suspend() {}
 
 	/**
 	 * The name of the default session.
-	 * @type {String}
+	 * @type {string}
 	 * @readonly
 	 */
 	get default_session() {}
 
 	/**
 	 * Whether or not guest sessions are supported.
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @readonly
 	 */
 	get has_guest_account() {}
 
 	/**
 	 * Whether or not user accounts should be hidden.
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @readonly
 	 */
 	get hide_users() {}
 
 	/**
 	 * The system's hostname.
-	 * @type {String}
+	 * @type {string}
 	 * @readonly
 	 */
 	get hostname() {}
 
 	/**
 	 * Whether or not the greeter is in the process of authenticating.
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @readonly
 	 */
 	get in_authentication() {}
 
 	/**
 	 * Whether or not the greeter has successfully authenticated.
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @readonly
 	 */
 	get is_authenticated() {}
@@ -188,14 +188,14 @@ class Greeter {
 
 	/**
 	 * Whether or not the greeter was started as a lock screen.
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @readonly
 	 */
 	get lock_hint() {}
 
 	/**
 	 * The number of users able to log in.
-	 * @type {Number}
+	 * @type {number}
 	 * @readonly
 	 */
 	get num_users() {
@@ -204,14 +204,14 @@ class Greeter {
 
 	/**
 	 * Whether or not the guest account should be selected by default.
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @readonly
 	 */
 	get select_guest_hint() {}
 
 	/**
 	 * The username to select by default.
-	 * @type {String}
+	 * @type {string}
 	 * @readonly
 	 */
 	get select_user_hint() {}
@@ -255,14 +255,14 @@ class Greeter {
 
 	/**
 	 * Get the value of a hint.
-	 * @arg {String} name The name of the hint to get.
-	 * @returns {String|Boolean|Number|null}
+	 * @arg {string} name The name of the hint to get.
+	 * @returns {string|boolean|number|null}
 	 */
 	get_hint( name ) {}
 
 	/**
 	 * Triggers the system to hibernate.
-	 * @returns {Boolean} {@link true} if hibernation initiated, otherwise {@link false}
+	 * @returns {boolean} {@link true} if hibernation initiated, otherwise {@link false}
 	 */
 	hibernate() {
 		return this._do_mocked_system_action('hibernate');
@@ -276,33 +276,33 @@ class Greeter {
 
 	/**
 	 * Triggers the system to restart.
-	 * @returns {Boolean} {@link true} if restart initiated, otherwise {@link false}
+	 * @returns {boolean} {@link true} if restart initiated, otherwise {@link false}
 	 */
 	restart() {}
 
 	/**
 	 * Set the language for the currently authenticated user.
-	 * @arg {String} language The language in the form of a locale specification (e.g. 'de_DE.UTF-8')
-	 * @returns {Boolean} {@link true} if successful, otherwise {@link false}
+	 * @arg {string} language The language in the form of a locale specification (e.g. 'de_DE.UTF-8')
+	 * @returns {boolean} {@link true} if successful, otherwise {@link false}
 	 */
 	set_language( language ) {}
 
 	/**
 	 * Triggers the system to shutdown.
-	 * @returns {Boolean} {@link true} if shutdown initiated, otherwise {@link false}
+	 * @returns {boolean} {@link true} if shutdown initiated, otherwise {@link false}
 	 */
 	shutdown() {}
 
 	/**
 	 * Start a session for the authenticated user.
 	 * @arg {String|null} session The session to log into or {@link null} to use the default.
-	 * @returns {Boolean} {@link true} if successful, otherwise {@link false}
+	 * @returns {boolean} {@link true} if successful, otherwise {@link false}
 	 */
 	start_session( session ) {}
 
 	/**
 	 * Triggers the system to suspend/sleep.
-	 * @returns {Boolean} {@link true} if suspend/sleep initiated, otherwise {@link false}
+	 * @returns {boolean} {@link true} if suspend/sleep initiated, otherwise {@link false}
 	 */
 	suspend() {}
 
@@ -343,19 +343,19 @@ __lightdm.then( result => window.lightdm = result );
 /**
  * Moment.js instance - Loaded and instantiated automatically by the greeter.
  * @external moment
- * @type {Object}
+ * @type {object}
  * @version 2.17.0
  * @memberOf window
- * @see {@link [Moment.js Documentation](http://momentjs.com/docs)}
+ * @see [Moment.js Documentation](http://momentjs.com/docs)
  */
 
 /**
  * jQuery instance - Themes must manually load the included vendor script in order to use this object.
  * @external jQuery
- * @type {Object}
+ * @type {object}
  * @version 3.1.1
  * @memberOf window
- * @see {@link [jQuery Documentation](http://api.jquery.com)}
+ * @see [jQuery Documentation](http://api.jquery.com)
  */
 
 /**
@@ -367,10 +367,10 @@ __lightdm.then( result => window.lightdm = result );
 /**
  * JS-Cookie instance - Themes must manually load the included vendor script in order to use this object.
  * @name Cookies
- * @type {Object}
+ * @type {object}
  * @version 2.1.3
  * @memberOf window
- * @see {@link [JS Cookie Documentation](https://github.com/js-cookie/js-cookie/tree/latest#readme)}
+ * @see [JS Cookie Documentation](https://github.com/js-cookie/js-cookie/tree/latest#readme)
  */
 
 
