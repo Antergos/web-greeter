@@ -32,12 +32,16 @@
  * @global
  */
 
+/**
+ * @namespace LightDM The greeter's Theme JavaScript API.
+ */
+
 
 /**
- * Base class for the greeter's JavaScript Theme API. Greeter themes will interact
+ * Base class for the greeter's Theme JavaScript API. Greeter themes will interact
  * directly with an object derived from this class to facilitate the user log-in process.
  * The greeter will automatically create an instance when it starts.
- * The instance can be accessed using the global variable: {@link window.lightdm}.
+ * The instance can be accessed using the global variable: [`lightdm`](#dl-window-lightdm).
  *
  * @memberOf LightDM
  */
