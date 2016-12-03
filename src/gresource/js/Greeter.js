@@ -33,7 +33,8 @@
  */
 
 /**
- * @namespace LightDM The greeter's Theme JavaScript API.
+ * The greeter's Theme JavaScript API.
+ * @namespace LightDM
  */
 
 
