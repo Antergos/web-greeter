@@ -41,7 +41,7 @@ let localized_invalid_date = moment('today', '!@#'),
 /**
  * Provides various utility methods for use by theme authors. The greeter will automatically
  * create an instance of this class when it starts. The instance can be accessed
- * with the global variable: [`theme_utils`]({@link window.theme_utils}).
+ * with the global variable: [`theme_utils`]({@link external:window.theme_utils}).
  *
  * @memberOf LightDM
  */
@@ -49,9 +49,9 @@ class ThemeUtils {
 	/**
 	 * Binds `this` to class, `context`, for all of the class's methods.
 	 *
-	 * @arg {Object} context An ES6 class instance with at least one method.
+	 * @arg {object} context An ES6 class instance with at least one method.
 	 *
-	 * @return {Object} `context` with `this` bound to it for all of its methods.
+	 * @return {object} `context` with `this` bound to it for all of its methods.
 	 */
 	bind_this( context ) {
 		let excluded_methods = ['constructor'];
@@ -83,11 +83,12 @@ class ThemeUtils {
 	 * meets at least one of the following conditions:
 	 *   * Is located within the greeter themes' root directory.
 	 *   * Has been explicitly allowed in the greeter's config file.
-	 *   * Is located within the greeter's shared data directory (`/var/lib/lightdm-data`)
+	 *   * Is located within the greeter's shared data directory (`/var/lib/lightdm-data`).
+	 *   * Is located in `/tmp`.
 	 *
-	 * @param {String} path The abs path to desired directory.
+	 * @param {string} path The abs path to desired directory.
 	 *
-	 * @returns {String[]} List of abs paths for the files and directories found in `path`.
+	 * @returns {string[]} List of abs paths for the files and directories found in `path`.
 	 */
 	dirlist( path ) {
 		let allowed = true;
@@ -107,13 +108,15 @@ class ThemeUtils {
 		}
 
 		if ( null === allowed_dirs ) {
-			let user = lightdm.users.pop();
+			let user = lightdm.users.pop(),
+				user_data_dir = greeter_config.get_str( user.username, 'lightdm_data_dir' ),
+				lightdm_data_dir = user_data_dir.substr( 0, user_data_dir.lastIndexOf('/') );
 
 			allowed_dirs = {
-				themes_dir: greeter_config.get_str( user.username, 'lightdm_data_dir' ),
-				backgrounds_dir: greeter_config.get_str( 'greeter', 'themes_dir' ),
-				lightdm_data_dir: greeter_config.get_str( 'branding', 'background_images' ),
-				tmpdir: '/tmp'
+				themes_dir: greeter_config.get_str( 'greeter', 'themes_dir' ),
+				backgrounds_dir: greeter_config.get_str( 'branding', 'background_images' ),
+				lightdm_data_dir: lightdm_data_dir,
+				tmpdir: '/tmp',
 			};
 		}
 
@@ -138,9 +141,9 @@ class ThemeUtils {
 	/**
 	 * Escape HTML entities in a string.
 	 *
-	 * @param {String} text The text to be escaped.
+	 * @param {string} text The text to be escaped.
 	 *
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	esc_html( text ) {
 		return this.txt2html( text );
@@ -156,7 +159,7 @@ class ThemeUtils {
 	 *   * When `time_format` does not have a valid value, the time format will be `LT`
 	 *     which is `1:00 PM` or `13:00` depending on the system's locale.
 	 *
-	 * @return {String} The current localized time.
+	 * @return {string} The current localized time.
 	 */
 	get_current_localized_time() {
 		if ( null === time_language ) {
@@ -223,7 +226,7 @@ const __theme_utils = new Promise( (resolve, reject) => {
 /**
  * @alias theme_utils
  * @type {LightDM.ThemeUtils}
- * @memberOf window
+ * @memberOf external:window
  */
 __theme_utils.then( result => {
 	window.theme_utils = result;
@@ -231,8 +234,8 @@ __theme_utils.then( result => {
 	/**
 	 * @alias greeterutil
 	 * @type {LightDM.ThemeUtils}
-	 * @memberOf window
-	 * @deprecated Use [`theme_utils`]({@link window.theme_utils}) instead.
+	 * @memberOf external:window
+	 * @deprecated Use [`theme_utils`]({@link external:window.theme_utils}) instead.
 	 */
 	window.greeterutil = window.theme_utils;
 } );

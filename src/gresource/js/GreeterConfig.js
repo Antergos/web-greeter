@@ -47,7 +47,7 @@ function set_values( defaults, target_obj, method ) {
  * Provides theme authors with a way to retrieve values from the greeter's config
  * file located at `/etc/lightdm/lightdm-webkit2-greeter.conf`. The greeter will
  * create an instance of this class when it starts. The instance can be accessed
- * with the global variable: [`greeter_config`]({@link window.greeter_config}).
+ * with the global variable: [`greeter_config`]({@link external:window.greeter_config}).
  *
  * @memberOf LightDM
  */
@@ -55,10 +55,10 @@ class GreeterConfig  {
 	/**
 	 * Holds keys/values from the `branding` section of the config file.
 	 *
-	 * @type {Object} branding
-	 *       {String} branding.background_images
-	 *       {String} branding.logo
-	 *       {String} branding.user_image
+	 * @type {object} branding
+	 * @prop {string} branding.background_images
+	 * @prop {string} branding.logo
+	 * @prop {string} branding.user_image
 	 *
 	 * @readonly
 	 */
@@ -82,13 +82,13 @@ class GreeterConfig  {
 	/**
 	 * Holds keys/values from the `greeter` section of the config file.
 	 *
-	 * @type {Object}  greeter
-	 *       {Boolean} greeter.debug_mode
-	 *       {Boolean} greeter.secure_mode
-	 *       {Number}  greeter.screensaver_timeout
-	 *       {String}  greeter.time_format
-	 *       {String}  greeter.time_language
-	 *       {String}  greeter.webkit_theme
+	 * @type {object}  greeter
+	 * @prop {boolean} greeter.debug_mode
+	 * @prop {boolean} greeter.secure_mode
+	 * @prop {number}  greeter.screensaver_timeout
+	 * @prop {string}  greeter.time_format
+	 * @prop {string}  greeter.time_language
+	 * @prop {string}  greeter.webkit_theme
 	 *
 	 * @readonly
 	 */
@@ -113,10 +113,10 @@ class GreeterConfig  {
 	 *
 	 * @deprecated Access config sections directly as properties of this object instead.
 	 *
-	 * @arg {String} config_section
-	 * @arg {String} key
+	 * @arg {string} config_section
+	 * @arg {string} key
 	 *
-	 * @returns {Boolean} Config value for `key`.
+	 * @returns {boolean} Config value for `key`.
 	 */
 	get_bool( config_section, key ) {
 		return __GreeterConfig.get_bool( config_section, key );
@@ -127,10 +127,10 @@ class GreeterConfig  {
 	 *
 	 * @deprecated Access config sections directly as properties of this object instead.
 	 *
-	 * @arg {String} config_section
-	 * @arg {String} key
+	 * @arg {string} config_section
+	 * @arg {string} key
 	 *
-	 * @returns {Number} Config value for `key`.
+	 * @returns {number} Config value for `key`.
 	 */
 	get_num( config_section, key ) {
 		return __GreeterConfig.get_num( config_section, key );
@@ -141,10 +141,10 @@ class GreeterConfig  {
 	 *
 	 * @deprecated Access config sections directly as properties of this object instead.
 	 *
-	 * @arg {String} config_section
-	 * @arg {String} key
+	 * @arg {string} config_section
+	 * @arg {string} key
 	 *
-	 * @returns {String} Config value for `key`.
+	 * @returns {string} Config value for `key`.
 	 */
 	get_str( config_section, key ) {
 		return __GreeterConfig.get_str( config_section, key );
@@ -178,7 +178,7 @@ const __greeter_config = new Promise( (resolve, reject) => {
 /**
  * @alias greeter_config
  * @type {LightDM.GreeterConfig}
- * @memberOf window
+ * @memberOf external:window
  */
 __greeter_config.then( result => {
 	window.greeter_config = result;
@@ -186,8 +186,8 @@ __greeter_config.then( result => {
 	/**
 	 * @alias config
 	 * @type {LightDM.GreeterConfig}
-	 * @memberOf window
-	 * @deprecated Use [`greeter_config`]({@link window.greeter_config}) instead.
+	 * @memberOf external:window
+	 * @deprecated Use [`greeter_config`]({@link external:window.greeter_config}) instead.
 	 */
 	window.config = window.greeter_config;
 } );
