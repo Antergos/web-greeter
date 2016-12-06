@@ -331,7 +331,11 @@ const __lightdm = new Promise( (resolve, reject) => {
  * @type {LightDM.Greeter}
  * @memberOf window
  */
-__lightdm.then( result => window.lightdm = result );
+__lightdm.then( result => {
+	result.start_authentication = function( user ) { return this.authenticate( user ); };
+	result.start_authentication = result.start_authentication.bind(result);
+	window.lightdm = result
+} );
 
 
 /**
