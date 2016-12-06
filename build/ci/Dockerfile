@@ -8,7 +8,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update; \
 		libdbus-glib-1-dev \
 		libwebkit2gtk-4.0-dev \
 		ninja-build \
-		python3-pip; pip3 install meson
+		python3-pip; pip3 install https://github.com/mesonbuild/meson/archive/master.zip
 
 VOLUME /build
 WORKDIR /build
