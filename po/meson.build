@@ -1,9 +1,7 @@
 i18n = import('i18n')
-langs = ['en']
 
 i18n.gettext(
     meson.project_name(),
-    languages : langs,
     args: [
       '--default-domain=' + meson.project_name(),
       '--from-code=UTF-8',
