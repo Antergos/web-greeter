@@ -73,13 +73,13 @@
 #define EXPECTSTRING   "Expected a string"
 #define ARGNOTSUPPLIED "Argument(s) not supplied"
 
-
 G_MODULE_EXPORT void webkit_web_extension_initialize(WebKitWebExtension *extension);
 
 
 guint64 page_id;
 GKeyFile *keyfile;
 
+static GSList* paths = NULL, *iter = NULL;
 
 static JSClassRef
 	lightdm_greeter_class,
@@ -91,10 +91,15 @@ static JSClassRef
 	greeter_config_class,
 	theme_utils_class;
 
-static gboolean secure_mode;
-static gboolean secure_mode_checked = FALSE;
-static gboolean SESSION_STARTING = FALSE;
-static gboolean detect_theme_errors;
+static gboolean
+	detect_theme_errors,
+	secure_mode,
+	SESSION_STARTING;
+
+static gchar
+	*background_images_dir,
+	*user_image,
+	*logo;
 
 static WebKitWebExtension *WEB_EXTENSION;
 
@@ -1819,28 +1824,12 @@ get_config_option_as_string(const gchar *section, const gchar *key) {
 
 static gboolean
 should_block_request(const char *file_path) {
-	gchar *background_images_dir;
-	gchar *user_image;
-	gchar *logo;
 	gboolean result = TRUE; /* Blocked */
 	char *canonical_path;
 
 	if (NULL == file_path) {
 		return result;
 	}
-
-	GSList* paths = NULL, *iter = NULL;
-
-	paths = g_slist_prepend(paths, THEME_DIR);
-
-	background_images_dir = get_config_option_as_string("branding", "background_images");
-	paths = g_slist_prepend(paths, background_images_dir);
-
-	user_image = get_config_option_as_string("branding", "user_image");
-	paths = g_slist_prepend(paths, user_image);
-
-	logo = get_config_option_as_string("branding", "logo");
-	paths = g_slist_prepend(paths, logo);
 
 	canonical_path = canonicalize_file_name(file_path);
 
@@ -1853,11 +1842,7 @@ should_block_request(const char *file_path) {
 		}
 	}
 
-	g_slist_free(paths);
 	g_free(canonical_path);
-	g_free(background_images_dir);
-	g_free(user_image);
-	g_free(logo);
 
 	return result;
 }
@@ -1887,12 +1872,11 @@ web_page_send_request_cb(WebKitWebPage     *web_page,
 	/* NOTE: Returning TRUE blocks the request, while Returning FALSE allows it.
 	 * :face_with_rolling_eyes:
 	 */
-
 	if (NULL != strstr(request_uri, "mock.js")) {
 		/* Never allow mock greeter script to be loaded in the greeter */
 		decision = TRUE; /* Blocked */
 
-	} else if (FALSE == secure_mode) {
+	} else if (FALSE == secure_mode && NULL != strstr(request_scheme, "http")) {
 		decision = FALSE; /* Allowed */
 
 	} else if (0 == strcmp(request_scheme, "data") || 0 == strcmp(request_scheme, "resource")) {
@@ -1961,7 +1945,10 @@ page_created_cb(WebKitWebExtension *extension,
 	page_id = webkit_web_page_get_id(web_page);
 
 	g_signal_connect(web_page, "send-request", G_CALLBACK(web_page_send_request_cb), NULL);
-	g_signal_connect(web_page, "console-message-sent", G_CALLBACK(web_page_console_message_sent_cb), NULL);
+
+	if (TRUE == detect_theme_errors) {
+		g_signal_connect(web_page, "console-message-sent", G_CALLBACK(web_page_console_message_sent_cb), NULL);
+	}
 }
 
 
@@ -1971,6 +1958,7 @@ webkit_web_extension_initialize(WebKitWebExtension *extension) {
 	GError *err = NULL;
 
 	WEB_EXTENSION = extension;
+	SESSION_STARTING = FALSE;
 
 	/* load greeter settings from config file */
 	keyfile = g_key_file_new();
@@ -1983,7 +1971,6 @@ webkit_web_extension_initialize(WebKitWebExtension *extension) {
 	);
 
 	secure_mode = get_config_option_as_bool("greeter", "secure_mode", &err);
-
 	if (NULL != err) {
 		// Use default value
 		secure_mode = TRUE;
@@ -1991,12 +1978,22 @@ webkit_web_extension_initialize(WebKitWebExtension *extension) {
 	}
 
 	detect_theme_errors = get_config_option_as_bool("greeter", "detect_theme_errors", &err);
-
 	if (NULL != err) {
 		// Use default value
 		detect_theme_errors = TRUE;
 		g_error_free(err);
 	}
+
+	paths = g_slist_prepend(paths, THEME_DIR);
+
+	background_images_dir = get_config_option_as_string("branding", "background_images");
+	paths = g_slist_prepend(paths, background_images_dir);
+
+	user_image = get_config_option_as_string("branding", "user_image");
+	paths = g_slist_prepend(paths, user_image);
+
+	logo = get_config_option_as_string("branding", "logo");
+	paths = g_slist_prepend(paths, logo);
 
 	g_signal_connect(
 		G_OBJECT(greeter),
