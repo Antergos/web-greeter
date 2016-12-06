@@ -94,6 +94,7 @@ static JSClassRef
 static gboolean secure_mode;
 static gboolean secure_mode_checked = FALSE;
 static gboolean SESSION_STARTING = FALSE;
+static gboolean detect_theme_errors;
 
 static WebKitWebExtension *WEB_EXTENSION;
 
@@ -1786,8 +1787,15 @@ autologin_timer_expired_cb(LightDMGreeter *greeter, WebKitWebExtension *extensio
 
 
 static gboolean
-get_config_option_as_bool(const gchar *section, const gchar *key, GError *err) {
-	return g_key_file_get_boolean(keyfile, section, key, &err);
+get_config_option_as_bool(const gchar *section, const gchar *key, GError **err) {
+	GError *err_tmp = NULL;
+	gboolean result = g_key_file_get_boolean(keyfile, section, key, &err_tmp);
+
+	if (NULL != err_tmp) {
+		g_propagate_error(err, err_tmp);
+	}
+
+	return result;
 }
 
 
@@ -1949,21 +1957,8 @@ page_created_cb(WebKitWebExtension *extension,
 				WebKitWebPage      *web_page,
 				gpointer            user_data) {
 
-	GError *err = NULL;
-
 	// save the page_id (global variable)
 	page_id = webkit_web_page_get_id(web_page);
-
-	// Make sure secure_mode variable has been set
-	if (FALSE == secure_mode_checked) {
-		secure_mode = get_config_option_as_bool("greeter", "secure_mode", err);
-		secure_mode_checked = TRUE;
-
-		if (NULL != err) {
-			// Use default value
-			secure_mode = TRUE;
-		}
-	}
 
 	g_signal_connect(web_page, "send-request", G_CALLBACK(web_page_send_request_cb), NULL);
 	g_signal_connect(web_page, "console-message-sent", G_CALLBACK(web_page_console_message_sent_cb), NULL);
@@ -1973,8 +1968,35 @@ page_created_cb(WebKitWebExtension *extension,
 G_MODULE_EXPORT void
 webkit_web_extension_initialize(WebKitWebExtension *extension) {
 	LightDMGreeter *greeter = lightdm_greeter_new();
+	GError *err = NULL;
 
 	WEB_EXTENSION = extension;
+
+	/* load greeter settings from config file */
+	keyfile = g_key_file_new();
+
+	g_key_file_load_from_file(
+		keyfile,
+		CONFIG_DIR "/lightdm-webkit2-greeter.conf",
+		G_KEY_FILE_NONE,
+		NULL
+	);
+
+	secure_mode = get_config_option_as_bool("greeter", "secure_mode", &err);
+
+	if (NULL != err) {
+		// Use default value
+		secure_mode = TRUE;
+		g_clear_error(&err);
+	}
+
+	detect_theme_errors = get_config_option_as_bool("greeter", "detect_theme_errors", &err);
+
+	if (NULL != err) {
+		// Use default value
+		detect_theme_errors = TRUE;
+		g_error_free(err);
+	}
 
 	g_signal_connect(
 		G_OBJECT(greeter),
@@ -2023,16 +2045,6 @@ webkit_web_extension_initialize(WebKitWebExtension *extension) {
 	 * Wait until it makes it into Debian Stable before making the change.
 	 */
 	lightdm_greeter_connect_sync(greeter, NULL);
-
-	/* load greeter settings from config file */
-	keyfile = g_key_file_new();
-
-	g_key_file_load_from_file(
-		keyfile,
-		CONFIG_DIR "/lightdm-webkit2-greeter.conf",
-		G_KEY_FILE_NONE,
-		NULL
-	);
 }
 
 /* vim: set ts=4 sw=4 tw=0 noet : */
