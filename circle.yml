@@ -7,7 +7,7 @@ dependencies:
   cache_directories:
     - ~/docker
   override:
-    - '[[ -e ~/docker/image.tar ]] && docker load -i ~/docker/image.tar'
+    - '[[ -e ~/docker/image.tar ]] && docker load -i ~/docker/image.tar || true'
     - '[[ -e ~/docker/image.tar ]] || docker build --rm=false -t antergos/ci-ubuntu build/ci'
     - '[[ -e ~/docker/image.tar ]] || mkdir -p ~/docker; docker save antergos/ci-ubuntu > ~/docker/image.tar'
 
