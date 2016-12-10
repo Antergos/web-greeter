@@ -56,10 +56,11 @@ class GreeterConfig  {
 	 * Holds keys/values from the `branding` section of the config file.
 	 *
 	 * @type {object} branding
-	 * @prop {string} background_images
-	 * @prop {string} logo
-	 * @prop {string} user_image
-	 *
+	 * @prop {string} background_images Path to directory that contains background images
+	 *                                  for use in greeter themes.
+	 * @prop {string} logo              Path to distro logo image for use in greeter themes.
+	 * @prop {string} user_image        Default user image/avatar. This is used by greeter themes
+	 *                                  for users that have not configured a `.face` image.
 	 * @readonly
 	 */
 	get branding() {
@@ -83,20 +84,23 @@ class GreeterConfig  {
 	 * Holds keys/values from the `greeter` section of the config file.
 	 *
 	 * @type {object}  greeter
-	 * @prop {boolean} debug_mode
-	 * @prop {boolean} secure_mode
-	 * @prop {number}  screensaver_timeout
-	 * @prop {string}  time_format
-	 * @prop {string}  time_language
-	 * @prop {string}  webkit_theme
-	 *
+	 * @prop {boolean} debug_mode          Greeter theme debug mode.
+	 * @prop {boolean} detect_theme_errors Provide an option to load a fallback theme when theme
+	 *                                     errors are detected.
+	 * @prop {number}  screensaver_timeout Blank the screen after this many seconds of inactivity.
+	 * @prop {boolean} secure_mode         Don't allow themes to make remote http requests.
+	 * @prop {string}  time_format         A moment.js format string to be used by the greeter to
+	 *                                     generate localized time for display.
+	 * @prop {string}  time_language       Language to use when displaying the time or `auto`
+	 *                                     to use the system's language.
+	 * @prop {string}  webkit_theme        The name of the theme to be used by the greeter.
 	 * @readonly
 	 */
 	get greeter() {
 		if ( null === _greeter ) {
-			let bools = {'debug_mode': true, 'secure_mode': true},
+			let bools = {'debug_mode': false, 'secure_mode': true, 'detect_theme_errors': true},
 				strings = {'time_format': 'LT', 'time_language': 'auto', 'webkit_theme': 'antergos'},
-				numbers = {'screensaver_timeout': 30};
+				numbers = {'screensaver_timeout': 300};
 
 			_greeter = {};
 
