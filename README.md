@@ -25,7 +25,7 @@
 #### Build Deps
 |                   | ![antergos](https://dl.dropboxusercontent.com/u/60521097/logo-square26x26.png) &nbsp;&nbsp; ![arch](https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png) &nbsp;&nbsp; ![debian](https://dl.dropboxusercontent.com/u/60521097/openlogo-nd-25.png) &nbsp;&nbsp; ![ubuntu](https://dl.dropboxusercontent.com/u/60521097/ubuntu_orange_hex.png) &nbsp;&nbsp; ![fedora](https://dl.dropboxusercontent.com/u/60521097/fedora-logo.png) &nbsp;&nbsp; ![openSUSE](https://dl.dropboxusercontent.com/u/60521097/Geeko-button-bling7.png) | 
 |-------------------|-------------------------------------------------------------------------|----------------------------------------------------------------------------|-------------------------------------------------------------------------|-----------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
-|**Meson Build System**|meson|
+|**Meson Build System**|meson v0.37+|
 
 ### How To Build
 > ***Note:*** These instructions are for the `master` branch. To build the latest release, please see the `stable` branch.
