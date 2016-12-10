@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: Antergos\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-03 05:51-0600\n"
-"PO-Revision-Date: 2016-12-03 11:59+0000\n"
-"Last-Translator: Dustin Falgout <dustin@falgout.us>\n"
+"PO-Revision-Date: 2016-12-06 15:59+0000\n"
+"Last-Translator: Jun Kasamatsu <mohemohe@ghippos.net>\n"
 "Language-Team: Japanese (http://www.transifex.com/faidoc/antergos/language/ja/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,15 +20,15 @@ msgstr ""
 
 #: src/greeter.c:135
 msgid "Greeter Theme Error Detected"
-msgstr ""
+msgstr "Greeter テーマのエラーを検出"
 
 #: src/greeter.c:138
 msgid "Load _Default Theme"
-msgstr ""
+msgstr "デフォルト テーマの読み込み (_D)"
 
 #: src/greeter.c:140
 msgid "Load _Fallback Theme"
-msgstr ""
+msgstr "フォールバック テーマの読み込み (_F)"
 
 #: src/greeter.c:142
 msgid "_Cancel"
@@ -38,4 +38,4 @@ msgstr "キャンセル(_C)"
 msgid ""
 "An error was detected in the current theme that could interfere with the "
 "system login process."
-msgstr ""
+msgstr "現在のテーマでシステム ログイン プロセスを妨げる可能性のあるエラーが検出されました。"

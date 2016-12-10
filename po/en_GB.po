@@ -4,12 +4,13 @@
 # 
 # Translators:
 # Andi Chandler <andi@gowling.com>, 2016
+# Dustin Falgout <dustin@falgout.us>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: Antergos\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-03 05:51-0600\n"
-"PO-Revision-Date: 2016-12-03 11:59+0000\n"
+"PO-Revision-Date: 2016-12-10 08:54+0000\n"
 "Last-Translator: Dustin Falgout <dustin@falgout.us>\n"
 "Language-Team: English (United Kingdom) (http://www.transifex.com/faidoc/antergos/language/en_GB/)\n"
 "MIME-Version: 1.0\n"
@@ -20,15 +21,15 @@ msgstr ""
 
 #: src/greeter.c:135
 msgid "Greeter Theme Error Detected"
-msgstr ""
+msgstr "Greeter Theme Error Detected"
 
 #: src/greeter.c:138
 msgid "Load _Default Theme"
-msgstr ""
+msgstr "Load _Default Theme"
 
 #: src/greeter.c:140
 msgid "Load _Fallback Theme"
-msgstr ""
+msgstr "Load _Fallback Theme"
 
 #: src/greeter.c:142
 msgid "_Cancel"
@@ -38,4 +39,4 @@ msgstr "_Cancel"
 msgid ""
 "An error was detected in the current theme that could interfere with the "
 "system login process."
-msgstr ""
+msgstr "An error was detected in the current theme that could interfere with the system login process."

@@ -3,12 +3,13 @@
 # This file is distributed under the same license as the lightdm-webkit2-greeter package.
 # 
 # Translators:
+# Dustin Falgout <dustin@falgout.us>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: Antergos\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-12-03 05:51-0600\n"
-"PO-Revision-Date: 2016-12-03 11:59+0000\n"
+"PO-Revision-Date: 2016-12-10 08:55+0000\n"
 "Last-Translator: Dustin Falgout <dustin@falgout.us>\n"
 "Language-Team: Spanish (http://www.transifex.com/faidoc/antergos/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -19,15 +20,15 @@ msgstr ""
 
 #: src/greeter.c:135
 msgid "Greeter Theme Error Detected"
-msgstr ""
+msgstr "Greeter tema Error detectado"
 
 #: src/greeter.c:138
 msgid "Load _Default Theme"
-msgstr ""
+msgstr "Carga _Default tema"
 
 #: src/greeter.c:140
 msgid "Load _Fallback Theme"
-msgstr ""
+msgstr "Tema de _Fallback de carga"
 
 #: src/greeter.c:142
 msgid "_Cancel"
@@ -37,4 +38,4 @@ msgstr "_Cancelar"
 msgid ""
 "An error was detected in the current theme that could interfere with the "
 "system login process."
-msgstr ""
+msgstr "Se detectó un error en el tema actual que pudiera interferir con el proceso de inicio de sesión del sistema."

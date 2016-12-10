@@ -19,7 +19,7 @@ Overview of changes in lightdm-webkit2-greeter 2.2
         * Fixed issue that caused the spacebar and enter login shortcut keys not to work.
           It's now once again possible to skip straight to password entry by pressing either
           the spacebar or the enter key.
-        * Fixed issue where translated strings were available but not used in the theme.
+        * Fixed issue where translated strings were available but not used by the theme.
         * Updated theme for compatibility with the latest jQuery.
         * Enhanced styles for buttons and user list-box items.
     * simple theme:

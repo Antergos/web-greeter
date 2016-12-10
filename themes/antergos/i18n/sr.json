@@ -1,14 +1,14 @@
 {
-    "auth_failed": "Ahhh! Autentifikacija nepoznata. Molim Vas, pokušajte ponovo.",
-    "background_options": "Opcije za pozadinu",
-    "cancel": "Odustani",
-    "confirm_system_action": "Da li ste sigurni?",
-    "debug_log": "Debug log datoteka",
-    "greeting": "Dobrodošli!",
-    "hibernate": "Hibernacija",
-    "random": "Slučajni odabir",
-    "reset": "Resetovanje",
-    "restart": "Ponovno pokretanje",
-    "shutdown": "Isključivanje",
-    "suspend": "Suspendovanje rada računara"
+    "auth_failed": "Аутентификација није успела. Покушајте поново.",
+    "background_options": "Опције за позадину",
+    "cancel": "Одустани",
+    "confirm_system_action": "Да ли сте сигурни?",
+    "debug_log": "Запис за исправљање грешака",
+    "greeting": "Добро дошли!",
+    "hibernate": "Хибернирај",
+    "random": "Случајни избор",
+    "reset": "Ресетуј",
+    "restart": "Поново покрени",
+    "shutdown": "Искључи",
+    "suspend": "Суспендуј"
 }
