@@ -37,6 +37,7 @@
 ```sh
 git clone https://github.com/Antergos/lightdm-webkit2-greeter.git /tmp/greeter
 cd /tmp/greeter/build
+git checkout ${LATEST_RELEASE_TAG} # eg. git checkout 2.2
 meson --prefix=/usr --libdir=lib ..
 ninja
 ```
