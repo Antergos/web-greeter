@@ -30,11 +30,20 @@
 
 @font-face {
 	font-family: 'Open Sans';
-	src: url('../../_vendor/fonts/TTF/OpenSans-Regular.ttf');
+	font-weight: 400;
+	font-style: normal;
+	src: local('Open Sans Regular'), local('Open Sans'), url('../../_vendor/fonts/TTF/OpenSans-Regular.ttf');
 }
 @font-face {
-	font-family: 'Open Sans Light';
-	src: url('../../_vendor/fonts/TTF/OpenSans-Light.ttf');
+	font-family: 'Open Sans';
+	font-weight: 300;
+	font-style: normal;
+	src: local('Open Sans Light'), local('Open Sans'), url('../../_vendor/fonts/TTF/OpenSans-Light.ttf');
+}
+
+body {
+	-webkit-font-smoothing: antialiased !important;
+	text-rendering: optimizeLegibility !important;
 }
 
 *:focus {
@@ -204,7 +213,7 @@ a {
 }
 
 .toggle {
-	margin: 5px 20px 0 0;
+	margin: 10px 20px 0 0;
 }
 
 /* Full Page Image Header Area */
@@ -218,7 +227,8 @@ a {
 	background-size: cover !important;
 	background-repeat: no-repeat !important;
 	background-position: center !important;
-	transition: left 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+	transition: left 0.8s, background-image 0.3s;
+	transition-timing-function: cubic-bezier(0.77, 0, 0.175, 1), linear;
 
 }
 
@@ -243,8 +253,9 @@ a {
 /* Clock Widget */
 
 .time {
-	font-family: "Open Sans Light", sans-serif;
+	font-family: "Open Sans", sans-serif;
 	font-size: 96px;
+	font-weight: 300;
 	line-height: 1em;
 	text-decoration: none;
 	color: #3D73C5;
@@ -311,9 +322,24 @@ a {
 	min-height: 275px;
 }
 
+#login {
+	opacity: 0;
+	transition: opacity 0.3s ease-in;
+}
+
 #panel-fix .panel-shadow, .panel-group, .panel-shadow {
 	box-shadow: none !important;
 	border: none !important;
+}
+
+#collapseOne {
+	position: relative;
+	top: 5px;
+}
+
+#collapseTwo {
+	position: relative;
+	top: 15px;
 }
 
 .panel-default {
@@ -537,13 +563,17 @@ input.password.form-control:focus {
 	top: 2px;
 }
 
-a.list-group-item:focus, a.list-group-item:hover, a.list-group-item.hovered {
+a.list-group-item:focus, a.list-group-item.hovered {
 	position: relative;
-	-webkit-box-shadow: 0 1px 0px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.1) inset;
-	box-shadow: 0 1px 0px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.1) inset;
+	box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
+	border-color: transparent;
 	outline: none;
 	margin: 0px 0;
 	background: #FFFFFF;
+}
+
+a.list-group-item.hover:not(:focus) {
+	background: #f0f0f0;
 }
 
 a.list-group-item:focus:before, a.list-group-item:focus:after,
@@ -552,8 +582,6 @@ a.list-group-item.hovered:after, a.list-group-item.hovered:before {
 	content: "";
 	position: absolute;
 	z-index: -1;
-	-webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
 	top: 0;
 	bottom: 0;
 	left: 10px;
@@ -588,3 +616,46 @@ a.list-group-item:focus:after, a.list-group-item:hover:after, a.list-group-item.
 	padding-left: 25px;
 	padding-right: 25px;
 }
+
+#statusArea {
+	width: 360px;
+	position: relative;
+	top: 15px
+}
+
+.alert-danger {
+	background-color: #e51c23;
+}
+
+.alert {
+	border: none;
+	color: #fff;
+	font-size: 14.5px;
+	font-weight: 400;
+	padding-right: 35px;
+	padding-left: 35px;
+}
+
+.alert .close {
+	color: #fff;
+}
+
+.close {
+	font-size: 34px;
+	font-weight: 300;
+	line-height: 24px;
+	opacity: 0.6;
+	transition: all 0.2s;
+}
+
+.alert-dismissible .close {
+	position: relative;
+	top:      -2px;
+	right:    -21px;
+}
+
+.close:hover {
+	opacity: 1;
+}
+
+

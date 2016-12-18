@@ -7,10 +7,10 @@ dependencies:
   cache_directories:
     - ~/docker
   override:
-    - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
-    - docker build --rm=false -t antergos/ci-ubuntu build/ci
-    - mkdir -p ~/docker; docker save antergos/ci-ubuntu > ~/docker/image.tar
+    - '[[ -e ~/docker/image.tar ]] && docker load -i ~/docker/image.tar || true'
+    - '[[ -e ~/docker/image.tar ]] || docker build --rm=false -t antergos/ci-ubuntu build/ci'
+    - '[[ -e ~/docker/image.tar ]] || mkdir -p ~/docker; docker save antergos/ci-ubuntu > ~/docker/image.tar'
 
 test:
   override:
-    - docker run -v ${PWD}:/build:rw antergos/ci-ubuntu /bin/bash -c "./autogen.sh && make && make install"
+    - docker run -v ${PWD}:/build:rw antergos/ci-ubuntu /bin/bash -c "cd build && meson --prefix=/usr .. && ninja && ninja install"

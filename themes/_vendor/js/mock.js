@@ -26,9 +26,6 @@
  */
 
 
-if ( ! 'lightdm' in window ) {
-
-
 /** @ignore */
 String.prototype.capitalize = function() {
 	return this.charAt(0).toUpperCase() + this.slice(1);
@@ -91,7 +88,6 @@ class LightDMSession  {
 		this.name = name;
 	}
 }
-
 
 
 /**
@@ -567,6 +563,10 @@ class LightDMGreeter {
 		return this._layout;
 	}
 
+	/**
+	 * Set the active layout for the selected user.
+	 * @param {LightDMLayout} value
+	 */
 	set layout( value ) {
 		this._layout = value;
 	}
@@ -723,7 +723,7 @@ class LightDMGreeter {
  * Mock data to simulate the greeter's API in any web browser.
  * @ignore
  */
-MockData = () => ({
+let MockData = () => ({
 	greeter: {
 		default_values: {
 			string: () => '',
@@ -850,10 +850,10 @@ MockData = () => ({
 });
 
 
-	new ConfigFile();
-	new GreeterUtil();
-	new LightDMGreeter();
-}
+new ConfigFile();
+new GreeterUtil();
+new LightDMGreeter();
+
 
 // mock lighdm for testing
 /*

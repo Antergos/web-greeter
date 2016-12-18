@@ -37,7 +37,7 @@
 	<meta name="author" content="Dustin Falgout">
 
 	<!--For testing the theme in a web browser -->
-	<script type="text/javascript" src="../_vendor/js/mock.js"></script>
+	<!--<script type="text/javascript" src="../_vendor/js/mock.js"></script>-->
 
 	<!-- Vendor CSS -->
 	<link rel="stylesheet" type="text/css" href="../_vendor/css/bootswatch-paper.bootstrap.min.css"/>
@@ -49,7 +49,6 @@
 	<!-- Vendor JavaScript -->
 	<script src="../_vendor/js/jquery.min.js"></script>
 	<script src="../_vendor/js/bootstrap.min.js"></script>
-	<script src="../_vendor/js/moment-with-locales.min.js"></script>
 	<script src="../_vendor/js/js.cookie.min.js"></script>
 
 	<!-- Theme JavaScript -->
@@ -174,16 +173,9 @@
 												</div>
 												<!-- Status Area -->
 												<div id="statusArea" class="status">
-													<table border="0" align="center">
-														<tr>
-															<td>
-																<div class="alert alert-danger  fade in">
-																	<button type="button" class="close cancel_auth" data-dismiss="alert" aria-hidden="true">&nbsp;&times;</button>
-																	<span id="showMsg"></span>
-																</div>
-															</td>
-														</tr>
-													</table>
+													<div class="alert alert-dismissible alert-danger fade in">
+														<button type="button" class="close cancel_auth" data-dismiss="alert" aria-hidden="true">&nbsp;&times;</button>
+													</div>
 												</div>
 
 											</div>
@@ -235,19 +227,19 @@
 <!-- Custom JavaScript for the BG Switcher & Clock Toggle -->
 <script>
 	// TODO: Move this stuff into greeter.js
-	$( "#bg-switch-close" ).click( function( e ) {
+	$('#bg-switch-wrapper').on('transitionend', function() {
+		if ( $(this).hasClass('active') ) {
+			$('#bg-switch-toggle').hide(0);
+			$('#bg-switch-close').show(0);
+		} else {
+			$('#bg-switch-close').hide(100);
+			$('#bg-switch-toggle').show(100);
+		}
+	});
+	$( "#bg-switch-close, #bg-switch-toggle" ).click( function( e ) {
 		e.preventDefault();
-		$( "#bg-switch-wrapper" ).toggleClass( "active" );
-		$( this ).hide();
-		$( "#bg-switch-toggle" ).show();
+		$('#bg-switch-wrapper').toggleClass( "active" );
 	} );
-	$( "#bg-switch-toggle" ).click( function( e ) {
-		e.preventDefault();
-		$( "#bg-switch-wrapper" ).toggleClass( "active" );
-		$( this ).hide();
-		$( "#bg-switch-close" ).show();
-	} );
-
 
 	$( '#collapseTwo' ).on( 'shown.bs.collapse', function() {
 		$( '#collapseTwo a' ).filter( ':not(.dropdown-menu *)' ).each( function( index ) {

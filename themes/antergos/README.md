@@ -28,10 +28,10 @@ To change users icons:
 * Create a resource named with the user's login in `/var/lib/AccountsService/icons/`
 * Edit `/var/lib/AccountsService/users/<userLogin>` and add a property `Icon` targeting the icon resource you just created.
 
-### Translations
+## Theme JavaScript API:
+The greeter exposes a JavaScript API to themes which they must use to interact with the greeter (in order to facilitate the user login process). For more details, check out the [API Documentation](https://doclets.io/Antergos/lightdm-webkit2-greeter/master). 
 
-Translations are managed through [Transifex](https://www.transifex.com/faidoc/antergos). Please do not submit PR for translations.
 
-### Webkit2 Greeter's Theme JavaScript API:
-The greeter exposes a JavaScript API to greeter themes which they must use to interact with the greeter (in order to facilitate the user login process). The [API Documentation](https://antergos.com/wiki/development/lightdm-webkit2-greeter-theme-javascript-api/) is a W.I.P.
+## Translations
+Translations are managed through [Transifex](http://transifex.com).
 

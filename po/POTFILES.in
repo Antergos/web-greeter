@@ -1,5 +1,0 @@
-# List of source files containing translatable strings.
-# Please keep this file sorted alphabetically.
-[encoding: UTF-8]
-src/lightdm-webkit2-greeter.c
-src/lightdm-webkit2-greeter-ext.c
