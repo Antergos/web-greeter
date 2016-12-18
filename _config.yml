@@ -1,0 +1,8 @@
+title: lightdm-webkit2-greeter
+description: A LightDM greeter that uses Webkit2 for theming via HTML/JavaScript
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-minimal
+
+gems:
+  - jekyll-mentions
