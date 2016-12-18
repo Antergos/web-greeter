@@ -5,10 +5,10 @@ show_downloads: true
 theme: jekyll-theme-minimal
 
 kramdown:
-   input: GFM
-   hard_wrap: false
+  input: GFM
+  hard_wrap: false
 
 gems:
   - jekyll-mentions
-   - jekyll-coffeescript
-   - jekyll-paginate
+  - jekyll-coffeescript
+  - jekyll-paginate
