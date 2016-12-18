@@ -3,6 +3,7 @@ description: A LightDM greeter that uses Webkit2 for theming via HTML/JavaScript
 google_analytics: 
 show_downloads: true
 theme: jekyll-theme-minimal
+markdown: kramdown
 
 kramdown:
   input: GFM
