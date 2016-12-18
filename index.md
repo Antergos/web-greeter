@@ -1,16 +1,16 @@
----
----
 # lightdm-webkit2-greeter
 [![Latest Release](https://img.shields.io/github/release/Antergos/lightdm-webkit2-greeter.svg?style=flat-square)](https://github.com/Antergos/lightdm-webkit2-greeter/releases)  &nbsp;[![CircleCI](https://img.shields.io/circleci/project/Antergos/lightdm-webkit2-greeter/master.svg?style=flat-square)](https://circleci.com/gh/Antergos/lightdm-webkit2-greeter) &nbsp;[![Coverity Scan Build Status](https://img.shields.io/coverity/scan/6871.svg?style=flat-square)](https://scan.coverity.com/projects/antergos-lightdm-webkit2-greeter) &nbsp;[![Theme API Docs](https://img.shields.io/badge/API--Doc-ready-brightgreen.svg?style=flat-square)](https://doclets.io/Antergos/lightdm-webkit2-greeter/stable) &nbsp;[![AUR Votes](https://img.shields.io/aur/votes/lightdm-webkit2-greeter.svg?maxAge=2592000&style=flat-square)](https://aur.archlinux.org/packages/lightdm-webkit2-greeter)
 
 ## Install It
 
 #### Official Distro Packages
+
 |Distro|Install Command/Links|
 |:---:|:---:|
 |![antergos](https://dl.dropboxusercontent.com/u/60521097/logo-square26x26.png)|`sudo pacman -S lightdm-webkit2-greeter`|
 
 #### Unofficial Distro Packages
+
 |Distro|Install Command/Links|
 |:---:|:---:|
 |![arch](https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png)|`yaourt -S lightdm-webkit2-greeter`|
@@ -21,6 +21,7 @@
 ## Build It
 
 ### Dependencies
+
 |                   | ![antergos](https://dl.dropboxusercontent.com/u/60521097/logo-square26x26.png) &nbsp;&nbsp; ![arch](https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png) | ![debian](https://dl.dropboxusercontent.com/u/60521097/openlogo-nd-25.png) &nbsp;&nbsp; ![ubuntu](https://dl.dropboxusercontent.com/u/60521097/ubuntu_orange_hex.png) | ![fedora](https://dl.dropboxusercontent.com/u/60521097/fedora-logo.png) | ![openSUSE](https://dl.dropboxusercontent.com/u/60521097/Geeko-button-bling7.png) | 
 |-----------------------|-------------------------------------------------------------------------|----------------------------------------------------------------------------|-------------------------------------------------------------------------|-----------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
 |**liblightdm-gobject-1** |lightdm  |liblightdm-gobject-dev | lightdm-gobject-devel | liblightdm-gobject-1-0 |
@@ -29,8 +30,9 @@
 |**dbus-glib-1**          |dbus-glib|libdbus-glib-1-dev     | dbus-glib             | dbus-1-glib            |
 
 #### Build Deps
+
 |                   | ![antergos](https://dl.dropboxusercontent.com/u/60521097/logo-square26x26.png) &nbsp;&nbsp; ![arch](https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png) &nbsp;&nbsp; ![debian](https://dl.dropboxusercontent.com/u/60521097/openlogo-nd-25.png) &nbsp;&nbsp; ![ubuntu](https://dl.dropboxusercontent.com/u/60521097/ubuntu_orange_hex.png) &nbsp;&nbsp; ![fedora](https://dl.dropboxusercontent.com/u/60521097/fedora-logo.png) &nbsp;&nbsp; ![openSUSE](https://dl.dropboxusercontent.com/u/60521097/Geeko-button-bling7.png) | 
-|-------------------|-------------------------------------------------------------------------|----------------------------------------------------------------------------|-------------------------------------------------------------------------|-----------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+|-------------------|-------------------------------------------------------------------------|
 |**Meson Build System**|meson v0.37+|
 
 ### How To Build
