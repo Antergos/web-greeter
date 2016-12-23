@@ -1812,7 +1812,7 @@ get_config_option_as_string(const gchar *section, const gchar *key) {
 	value = g_key_file_get_string(keyfile, section, key, &err);
 
 	if (NULL != err) {
-		g_error(err->message);
+		g_error("%s", err->message);
 		g_error_free(err);
 		g_free(value);
 		return "";

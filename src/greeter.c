@@ -172,7 +172,7 @@ show_theme_recovery_modal() {
 		fallback_theme = "simple";
 	}
 
-	g_warning(log_msg);
+	g_warning("%s", log_msg);
 	gtk_widget_destroy(dialog);
 
 	webkit_web_view_load_uri(
