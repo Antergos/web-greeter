@@ -276,24 +276,33 @@ get_user_image_cb(JSContextRef context,
 				  JSObjectRef thisObject,
 				  JSStringRef propertyName,
 				  JSValueRef *exception) {
-	const gchar *image_uri = lightdm_user_get_image(USER);
+
+	const gchar *image = lightdm_user_get_image(USER);
 	gchar *image_path;
 	gint  result;
 
-	image_path = g_filename_from_uri(image_uri, NULL, NULL);
-	if (image_path) {
-		result = g_access(image_path, R_OK);
-		g_free(image_path);
-	} else {
-		result = g_access(image_uri, R_OK);
+	// Determine if we already checked this path
+	for (iter = paths; iter; iter = iter->next) {
+		if (0 == g_strcmp0(image, iter->data)) {
+			// We've already checked this path, no need to continue further.
+			return string_or_null(context, image);
+		}
 	}
 
-	if (result) {
-		/* Couldn't access */
-		return JSValueMakeNull(context);
-	} else {
-		return string_or_null(context, image_uri);
+	image_path = g_strdup(image);
+	result = g_access(image_path, R_OK);
+
+	if (0 == result) {
+		// Path is accessible. Add it to our paths list.
+		paths = g_slist_prepend(paths, image_path);
+
+		return string_or_null(context, image);
 	}
+
+	// Path is not accessible.
+	g_free(image_path);
+
+	return JSValueMakeNull(context);
 }
 
 
@@ -1835,7 +1844,7 @@ should_block_request(const char *file_path) {
 
 	if (NULL != canonical_path) {
 		for (iter = paths; iter; iter = iter->next) {
-			if (strcmp(canonical_path, iter->data) == 0 || g_str_has_prefix(canonical_path, iter->data)) {
+			if (0 == g_strcmp0(canonical_path, iter->data) || g_str_has_prefix(canonical_path, iter->data)) {
 				result = FALSE; /* Allowed */
 				break;
 			}
