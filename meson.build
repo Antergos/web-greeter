@@ -1,4 +1,4 @@
-project('lightdm-webkit2-greeter', 'c', version: '2.2.0', license: 'GPL-3')
+project('lightdm-webkit2-greeter', 'c', version: '2.2.1', license: 'GPL-3')
 
 
 # ================================== #

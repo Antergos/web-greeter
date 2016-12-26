@@ -172,7 +172,7 @@ show_theme_recovery_modal() {
 		fallback_theme = "simple";
 	}
 
-	g_warning(log_msg);
+	g_warning("%s", log_msg);
 	gtk_widget_destroy(dialog);
 
 	webkit_web_view_load_uri(
@@ -478,7 +478,7 @@ main(int argc, char **argv) {
 	g_signal_connect(WEBKIT_WEB_VIEW(web_view), "context-menu", G_CALLBACK(context_menu_cb), NULL);
 
 	/* Register callback to check if theme loaded successfully */
-	g_timeout_add_seconds(5, (GSourceFunc) maybe_show_theme_fallback_dialog, NULL);
+	g_timeout_add_seconds(10, (GSourceFunc) maybe_show_theme_fallback_dialog, NULL);
 
 	/* There's no turning back now, let's go! */
 	gtk_container_add(GTK_CONTAINER(window), web_view);
