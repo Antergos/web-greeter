@@ -1,3 +1,9 @@
+Overview of changes in lightdm-webkit2-greeter 2.2.1
+
+    * Increased the timeout for the "theme loaded" check to ensure themes are given
+      enough time to load (when running on less powerful systems). (GH #98)
+    * Fixed issue where users' custom .face image failed to load. (GH #98)
+
 Overview of changes in lightdm-webkit2-greeter 2.2
 
     * Fixed issue where the ugly default X cursor was shown briefly after the greeter exits.
