@@ -182,6 +182,54 @@ show_theme_recovery_modal() {
 }
 
 
+static void
+theme_function_exists_cb(GObject *object,
+						 GAsyncResult *result,
+						 gpointer user_data) {
+
+	WebKitJavascriptResult *js_result;
+	GError                 *error = NULL;
+	JSValueRef              value;
+	JSGlobalContextRef      context;
+	gboolean                result_as_bool;
+
+	js_result = webkit_web_view_run_javascript_finish(WEBKIT_WEB_VIEW(object), result, &error);
+
+	if (NULL != error) {
+		g_warning ("Error running javascript: %s", error->message);
+		g_error_free(error);
+		return;
+
+	} else {
+		context = webkit_javascript_result_get_global_context(js_result);
+		value = webkit_javascript_result_get_value(js_result);
+
+		result_as_bool = JSValueToBoolean(context, value);
+	}
+
+	if (FALSE == result_as_bool) {
+		show_theme_recovery_modal();
+	}
+
+	webkit_javascript_result_unref(js_result);
+}
+
+
+gboolean
+maybe_show_theme_fallback_dialog(void) {
+	/* Check for existence of a function that themes must add to window object */
+	webkit_web_view_run_javascript(
+		WEBKIT_WEB_VIEW(web_view),
+		"(() => 'authentication_complete' in window)()",
+		NULL,
+		(GAsyncReadyCallback) theme_function_exists_cb,
+		NULL
+	);
+
+	return FALSE;
+}
+
+
 /**
  * Message received callback.
  *
@@ -217,7 +265,11 @@ message_received_cb(WebKitUserContentManager *manager,
 		printf("Error running javascript: unexpected return value");
 	}
 
-	if (0 == g_strcmp0(message_str, "JavaScriptException")) {
+	if (0 == g_strcmp0(message_str, "PageLoaded")) {
+		/* Register callback to check if theme loaded successfully */
+		g_timeout_add_seconds(8, (GSourceFunc) maybe_show_theme_fallback_dialog, NULL);
+
+	} else if (0 == g_strcmp0(message_str, "JavaScriptException")) {
 		show_theme_recovery_modal();
 
 	} else if (0 == g_strcmp0(message_str, "LockHint")) {
@@ -279,54 +331,6 @@ javascript_bundle_injection_setup() {
 	);
 
 	webkit_user_content_manager_add_script(WEBKIT_USER_CONTENT_MANAGER(manager), bundle);
-}
-
-
-static void
-theme_function_exists_cb(GObject *object,
-						 GAsyncResult *result,
-						 gpointer user_data) {
-
-	WebKitJavascriptResult *js_result;
-	GError                 *error = NULL;
-	JSValueRef              value;
-	JSGlobalContextRef      context;
-	gboolean                result_as_bool;
-
-	js_result = webkit_web_view_run_javascript_finish(WEBKIT_WEB_VIEW(object), result, &error);
-
-	if (NULL != error) {
-		g_warning ("Error running javascript: %s", error->message);
-		g_error_free(error);
-		return;
-
-	} else {
-		context = webkit_javascript_result_get_global_context(js_result);
-		value = webkit_javascript_result_get_value(js_result);
-
-		result_as_bool = JSValueToBoolean(context, value);
-	}
-
-	if (FALSE == result_as_bool) {
-		show_theme_recovery_modal();
-	}
-
-	webkit_javascript_result_unref(js_result);
-}
-
-
-gboolean
-maybe_show_theme_fallback_dialog(void) {
-	/* Check for existence of a function that themes must add to window object */
-	webkit_web_view_run_javascript(
-		WEBKIT_WEB_VIEW(web_view),
-		"(() => 'authentication_complete' in window)()",
-		NULL,
-		(GAsyncReadyCallback) theme_function_exists_cb,
-		NULL
-	);
-
-	return FALSE;
 }
 
 
@@ -476,9 +480,6 @@ main(int argc, char **argv) {
 
 	/* Maybe disable the context (right-click) menu. */
 	g_signal_connect(WEBKIT_WEB_VIEW(web_view), "context-menu", G_CALLBACK(context_menu_cb), NULL);
-
-	/* Register callback to check if theme loaded successfully */
-	g_timeout_add_seconds(10, (GSourceFunc) maybe_show_theme_fallback_dialog, NULL);
 
 	/* There's no turning back now, let's go! */
 	gtk_container_add(GTK_CONTAINER(window), web_view);

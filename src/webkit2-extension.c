@@ -1950,6 +1950,9 @@ page_created_cb(WebKitWebExtension *extension,
 				WebKitWebPage      *web_page,
 				gpointer            user_data) {
 
+	WebKitDOMDOMWindow *dom_window;
+	WebKitDOMDocument *dom_document;
+
 	// save the page_id (global variable)
 	page_id = webkit_web_page_get_id(web_page);
 
@@ -1957,6 +1960,16 @@ page_created_cb(WebKitWebExtension *extension,
 
 	if (TRUE == detect_theme_errors) {
 		g_signal_connect(web_page, "console-message-sent", G_CALLBACK(web_page_console_message_sent_cb), NULL);
+	}
+
+	// Notify UI process that the page is loaded.
+	dom_document = webkit_web_page_get_dom_document(web_page);
+	dom_window = webkit_dom_document_get_default_view(dom_document);
+
+	if (dom_window) {
+		webkit_dom_dom_window_webkit_message_handlers_post_message(
+			dom_window, "GreeterBridge", "PageLoaded"
+		);
 	}
 }
 
