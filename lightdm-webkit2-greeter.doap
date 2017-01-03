@@ -6,10 +6,13 @@
 
   <name xml:lang="en">lightdm-webkit2-greeter</name>
   <shortdesc xml:lang="en">LightDM Webkit2 Greeter</shortdesc>
+  <programming-language>C</programming-language>
+  <programming-language>JavaScript</programming-language>
   <homepage rdf:resource="https://github.com/Antergos/lightdm-webkit2-greeter" />
   <download-page rdf:resource="https://github.com/Antergos/lightdm-webkit2-greeter/release" />
   <bug-database rdf:resource="https://github.com/Antergos/lightdm-webkit2-greeter/issues" />
   <category rdf:resource="http://api.gnome.org/doap-extensions#desktop" />
+  <screenshots rdf:resource="https://github.com/Antergos/lightdm-webkit2-greeter/raw/master/themes/antergos/img/screenshot1.jpg" />
 
   <maintainer>
     <foaf:Person>
