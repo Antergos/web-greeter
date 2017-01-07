@@ -364,17 +364,24 @@ main(int argc, char **argv) {
 	g_unix_signal_add(SIGINT, (GSourceFunc) quit_cb, NULL);
 	g_unix_signal_add(SIGHUP, (GSourceFunc) quit_cb, NULL);
 
-	/* BEGIN Greeter Config File */
+	/* BEGIN Load Greeter Config */
+	/* TODO: Handle config values and fallbacks some other way, this is ugly! */
 	keyfile = g_key_file_new();
 
-	g_key_file_load_from_file(
-		keyfile,
-		CONFIG_DIR "/lightdm-webkit2-greeter.conf",
-		G_KEY_FILE_NONE,
-		NULL
-	);
+	g_key_file_load_from_file(keyfile, CONFIG_FILE, G_KEY_FILE_NONE, &err);
 
-	/* TODO: Handle config values and fallbacks some other way, this is garbage! */
+	if (NULL != err) {
+		g_clear_error(&err);
+		g_key_file_load_from_file(keyfile, CONFIG_FILE_LEGACY, G_KEY_FILE_NONE, &err);
+
+		if (NULL != err) {
+			// Unable to load config file. Use defaults.
+			theme = "antergos";
+			config_timeout = 300;
+			debug_mode = FALSE;
+		}
+	}
+
 	theme = g_key_file_get_string(keyfile, "greeter", "webkit_theme", &err);
 
 	if ( NULL != err) {
@@ -395,15 +402,15 @@ main(int argc, char **argv) {
 		config_timeout = g_key_file_get_integer(keyfile, "greeter", "screensaver-timeout", &err);
 
 		if ( NULL != err) {
-			g_error_free(err);
+			g_clear_error(&err);
 			config_timeout = 300;
 		}
 	}
 
-	debug_mode = g_key_file_get_boolean(keyfile, "greeter", "debug_mode", NULL);
+	debug_mode = g_key_file_get_boolean(keyfile, "greeter", "debug_mode", &err);
 
-	if ( NULL != err) {
-		g_clear_error(&err);
+	if (NULL != err) {
+		g_error_free(err);
 		debug_mode = FALSE;
 	}
 	/* END Greeter Config File */
@@ -439,7 +446,7 @@ main(int argc, char **argv) {
 	g_resources_register(greeter_resources);
 	gtk_css_provider_load_from_resource(
 		GTK_CSS_PROVIDER(css_provider),
-		"/com/antergos/lightdm-webkit2-greeter/css/style.css"
+		"/com/antergos/webkit2-greeter/css/style.css"
 	);
 	gtk_style_context_add_provider_for_screen(
 		screen,

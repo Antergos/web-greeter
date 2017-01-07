@@ -1,12 +1,15 @@
-appdata_file = 'com.antergos.lightdm-webkit2-greeter.appdata.xml'
+id           = 'com.antergos.webkit2-greeter'
+appdata_file = '@0@.appdata.xml'.format(id)
+desktop_file = '@0@.desktop'.format(id)
+
 
 install_data(
-  'com.antergos.lightdm-webkit2-greeter.desktop',
+  desktop_file,
   install_dir: get_option('with-desktop-dir')
 )
 
 install_data(
-  'lightdm-webkit2-greeter.conf',
+  'webkit2-greeter.conf',
   install_dir: get_option('with-config-dir')
 )
 

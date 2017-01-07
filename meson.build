@@ -36,7 +36,9 @@ has_gtk_3_22 = gtk3.version().version_compare('>=3.22')
 # ------->>> Configuration <<<------- #
 # =================================== #
 
-conf = configuration_data()
+conf               = configuration_data()
+config_file        = 'webkit2-greeter.conf'
+config_file_legacy = 'lightdm-webkit2-greeter.conf'
 
 conf.set('VERSION', as_version)
 conf.set('PACKAGE_VERSION', as_version)
@@ -52,11 +54,15 @@ conf.set('THEME_DIR', '"@0@"'.format(get_option('with-theme-dir')))
 
 conf.set('CONFIG_DIR', '"@0@"'.format(get_option('with-config-dir')))
 
+conf.set('CONFIG_FILE', '"@0@/@1@"'.format(get_option('with-config-dir'), config_file)
+
+conf.set('CONFIG_FILE_LEGACY', '"@0@/@1@"'.format(get_option('with-config-dir'), config_file_legacy)
+
 conf.set('DESKTOP_DIR', '"@0@"'.format(get_option('with-desktop-dir')))
 
 conf.set('WEBEXT_DIR', '"@0@"'.format(get_option('with-webext-dir')))
 
-conf.set('GRESOURCE_PATH', '"/com/antergos/lightdm-webkit2-greeter"')
+conf.set('GRESOURCE_PATH', '"/com/antergos/webkit2-greeter"')
 
 if has_webkitgtk_2_14
   conf.set('HAS_WEBKITGTK_2_14', has_webkitgtk_2_14)
