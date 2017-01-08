@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- Copyright 2017 Dustin Falgout <dustin@antergos.com> -->
 <component type="desktop">
-	<id>com.antergos.lightdm-webkit2-greeter</id>
+	<id>com.antergos.webkit2-greeter</id>
 	<metadata_license>CC0-1.0</metadata_license>
 	<project_license>GPL-3.0+</project_license>
 	<name>LightDM WebKit2 Greeter</name>

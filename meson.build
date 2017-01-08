@@ -1,6 +1,5 @@
 project('lightdm-webkit2-greeter', 'c', version: '2.2.1', license: 'GPL-3')
 
-
 # ================================== #
 # ------->>> Version Vars <<<------- #
 # ================================== #
@@ -54,15 +53,21 @@ conf.set('THEME_DIR', '"@0@"'.format(get_option('with-theme-dir')))
 
 conf.set('CONFIG_DIR', '"@0@"'.format(get_option('with-config-dir')))
 
-conf.set('CONFIG_FILE', '"@0@/@1@"'.format(get_option('with-config-dir'), config_file)
+conf.set('CONFIG_FILE', '"@0@"'.format(join_paths(get_option('with-config-dir'), config_file)))
 
-conf.set('CONFIG_FILE_LEGACY', '"@0@/@1@"'.format(get_option('with-config-dir'), config_file_legacy)
+conf.set('CONFIG_FILE_LEGACY', '"@0@"'.format(join_paths(get_option('with-config-dir'), config_file_legacy)))
 
 conf.set('DESKTOP_DIR', '"@0@"'.format(get_option('with-desktop-dir')))
 
 conf.set('WEBEXT_DIR', '"@0@"'.format(get_option('with-webext-dir')))
 
 conf.set('GRESOURCE_PATH', '"/com/antergos/webkit2-greeter"')
+
+conf.set('BACKGROUND_IMAGES_DIR', '"/usr/share/backgrounds"')
+
+conf.set('LOGO_IMAGE', '"@0@"'.format(join_paths(get_option('with-theme-dir'), 'antergos/img/antergos.png')))
+
+conf.set('USER_IMAGE', '"@0@"'.format(join_paths(get_option('with-theme-dir'), 'antergos/img/antergos-logo-user.png')))
 
 if has_webkitgtk_2_14
   conf.set('HAS_WEBKITGTK_2_14', has_webkitgtk_2_14)

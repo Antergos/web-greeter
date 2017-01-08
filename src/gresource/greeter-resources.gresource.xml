@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-	<gresource prefix="/com/antergos/lightdm-webkit2-greeter/">
+	<gresource prefix="/com/antergos/webkit2-greeter/">
 		<file>css/style.css</file>
 		<file>js/bundle.js</file>
 		<!--<file>js/_vendor/moment-with-locales.min.js</file>

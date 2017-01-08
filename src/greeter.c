@@ -32,7 +32,6 @@
  *
  */
 
-#include <stdlib.h>
 #include <glib.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
@@ -45,12 +44,7 @@
 
 #include "config.h"
 #include "greeter-resources.h"
-
-/* Work-around CLion bug */
-#ifndef CONFIG_DIR
-#include "../build/src/config.h"
-#include "../build/src/greeter-resources.h"
-#endif
+#include "greeter-config.h"
 
 
 static GtkWidget *web_view;
@@ -67,9 +61,7 @@ static int
 	prefer_blanking,
 	allow_exposures;
 
-static gint config_timeout;
-
-static gboolean debug_mode;
+static Config *conf;
 
 
 static void
@@ -103,7 +95,7 @@ context_menu_cb(WebKitWebView *view,
 	 * menu being shown. Thus, we are returning the opposite of debug_mode to get
 	 * desired result (which is only show menu when debug_mode is enabled.
 	 */
-	return (! debug_mode);
+	return (! conf->greeter->debug_mode);
 }
 
 
@@ -114,11 +106,10 @@ context_menu_cb(WebKitWebView *view,
 static void
 lock_hint_enabled_handler(void) {
 	Display *display = gdk_x11_display_get_xdisplay(default_display);
-	config_timeout = (0 != config_timeout) ? config_timeout : 300;
 
 	XGetScreenSaver(display, &timeout, &interval, &prefer_blanking, &allow_exposures);
 	XForceScreenSaver(display, ScreenSaverActive);
-	XSetScreenSaver(display, config_timeout, 0, PreferBlanking, DefaultExposures);
+	XSetScreenSaver(display, conf->greeter->screensaver_timeout, 0, PreferBlanking, DefaultExposures);
 }
 
 
@@ -276,7 +267,7 @@ message_received_cb(WebKitUserContentManager *manager,
 		lock_hint_enabled_handler();
 
 	} else {
-		printf("UI PROCESS - message_received_cb(): no match!");
+		printf("UI PROCESS - message_received_cb(): no match for: %s", message_str);
 	}
 
 	g_free(message_str);
@@ -287,20 +278,6 @@ static void
 quit_cb(void) {
 	gtk_widget_destroy(window);
 	gtk_main_quit();
-}
-
-
-static gchar *
-rtrim_comments(gchar *str) {
-	gchar *ptr = NULL;
-
-	ptr = strchr(str, '#');
-
-	if (NULL != ptr) {
-		*ptr = '\0';
-	}
-
-	return g_strstrip(str);
 }
 
 
@@ -339,9 +316,6 @@ main(int argc, char **argv) {
 	GdkScreen *screen;
 	GdkWindow *root_window;
 	GdkRectangle geometry;
-	GKeyFile *keyfile;
-	gchar *theme;
-	GError *err = NULL;
 	GdkRGBA bg_color;
 	WebKitWebContext *context;
 	GtkCssProvider *css_provider;
@@ -364,56 +338,8 @@ main(int argc, char **argv) {
 	g_unix_signal_add(SIGINT, (GSourceFunc) quit_cb, NULL);
 	g_unix_signal_add(SIGHUP, (GSourceFunc) quit_cb, NULL);
 
-	/* BEGIN Load Greeter Config */
-	/* TODO: Handle config values and fallbacks some other way, this is ugly! */
-	keyfile = g_key_file_new();
-
-	g_key_file_load_from_file(keyfile, CONFIG_FILE, G_KEY_FILE_NONE, &err);
-
-	if (NULL != err) {
-		g_clear_error(&err);
-		g_key_file_load_from_file(keyfile, CONFIG_FILE_LEGACY, G_KEY_FILE_NONE, &err);
-
-		if (NULL != err) {
-			// Unable to load config file. Use defaults.
-			theme = "antergos";
-			config_timeout = 300;
-			debug_mode = FALSE;
-		}
-	}
-
-	theme = g_key_file_get_string(keyfile, "greeter", "webkit_theme", &err);
-
-	if ( NULL != err) {
-		g_clear_error(&err);
-		theme = g_key_file_get_string(keyfile, "greeter", "webkit-theme", &err);
-
-		if ( NULL != err) {
-			g_clear_error(&err);
-			theme = "antergos";
-		}
-	}
-
-	theme = rtrim_comments(theme);
-	config_timeout = g_key_file_get_integer(keyfile, "greeter", "screensaver_timeout", &err);
-
-	if ( NULL != err) {
-		g_clear_error(&err);
-		config_timeout = g_key_file_get_integer(keyfile, "greeter", "screensaver-timeout", &err);
-
-		if ( NULL != err) {
-			g_clear_error(&err);
-			config_timeout = 300;
-		}
-	}
-
-	debug_mode = g_key_file_get_boolean(keyfile, "greeter", "debug_mode", &err);
-
-	if (NULL != err) {
-		g_error_free(err);
-		debug_mode = FALSE;
-	}
-	/* END Greeter Config File */
+	/* Initialize greeter config */
+	conf = get_config();
 
 	/* Set default cursor */
 	root_window = gdk_get_default_root_window();
@@ -491,7 +417,7 @@ main(int argc, char **argv) {
 	/* There's no turning back now, let's go! */
 	gtk_container_add(GTK_CONTAINER(window), web_view);
 	webkit_web_view_load_uri(WEBKIT_WEB_VIEW(web_view),
-							 g_strdup_printf("file://%s/%s/index.html", THEME_DIR, theme));
+							 g_strdup_printf("file://%s/%s/index.html", THEME_DIR, conf->greeter->webkit_theme));
 
 	gtk_widget_show_all(window);
 	gtk_widget_set_can_focus(GTK_WIDGET(web_view), TRUE);

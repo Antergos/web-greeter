@@ -49,7 +49,7 @@ webext = library(
 # ------->>> Greeter <<<------- #
 # ============================= #
 
-greeter_sources = [gresources, 'greeter.c']
+greeter_sources = [gresources, 'greeter.c', 'greeter-config.c']
 
 greeter = executable(
     'lightdm-webkit2-greeter',
