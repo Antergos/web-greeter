@@ -1,7 +1,7 @@
 /*
  * LightDMGreeter.js
  *
- * Copyright © 2016 Antergos Developers <dev@antergos.com>
+ * Copyright © 2017 Antergos Developers <dev@antergos.com>
  *
  * This file is part of lightdm-webkit2-greeter.
  *

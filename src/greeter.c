@@ -1,7 +1,7 @@
 /*
  * greeter.c
  *
- * Copyright © 2014-2016 Antergos Developers <dev@antergos.com>
+ * Copyright © 2014-2017 Antergos Developers <dev@antergos.com>
  *
  * Includes Code Contributed By:
  * Copyright © 2016 Scott Balneaves <sbalneav@ltsp.org>

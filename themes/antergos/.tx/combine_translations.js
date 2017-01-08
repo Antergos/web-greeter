@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015-2016 Antergos
+ * Copyright © 2015-2017 Antergos
  *
  * combine_translations.js
  *
