@@ -1,7 +1,7 @@
 /*
  * webkit2-extension.c
  *
- * Copyright © 2014-2016 Antergos Developers <dev@antergos.com>
+ * Copyright © 2014-2017 Antergos Developers <dev@antergos.com>
  *
  * Includes Code Contributed By:
  * Copyright © 2016 Scott Balneaves <sbalneav@ltsp.org>
@@ -48,6 +48,8 @@
 #include <JavaScriptCore/JavaScript.h>
 #include <lightdm.h>
 
+#include "greeter-config.h"
+
 #include "config.h"
 
 /* Work-around CLion bug */
@@ -76,8 +78,7 @@
 G_MODULE_EXPORT void webkit_web_extension_initialize(WebKitWebExtension *extension);
 
 
-guint64 page_id;
-GKeyFile *keyfile;
+static guint64 page_id;
 
 static GSList* paths = NULL, *iter = NULL;
 
@@ -91,15 +92,13 @@ static JSClassRef
 	greeter_config_class,
 	theme_utils_class;
 
-static gboolean
-	detect_theme_errors,
-	secure_mode,
-	SESSION_STARTING;
+static gboolean SESSION_STARTING;
 
-static gchar
-	*background_images_dir,
-	*user_image,
-	*logo;
+static Config *conf;
+
+static JSObjectRef
+	config_greeter_obj,
+	config_branding_obj;
 
 static WebKitWebExtension *WEB_EXTENSION;
 
@@ -1014,12 +1013,10 @@ start_session_cb(JSContextRef context,
 	gboolean result;
 	GError *err = NULL;
 
-	WebKitDOMDOMWindow *dom_window;
-	WebKitDOMDocument *dom_document;
-	WebKitWebPage *web_page;
+	SESSION_STARTING = TRUE;
 
-	/* FIXME: old API required lightdm.login(username, session), but the username
-	 * is never actually used.  At some point, deprecate the old usage.  For now,
+	/* TODO: Old API required lightdm.login(username, session), but the username
+	 * was never actually used. At some point, deprecate the old usage. For now,
 	 * simply work around it.
 	 */
 	if (argumentCount == 1) {
@@ -1027,22 +1024,6 @@ start_session_cb(JSContextRef context,
 	} else if (argumentCount == 2) {
 		session = arg_to_string(context, arguments[1], exception);
 	}
-
-	web_page = webkit_web_extension_get_page(WEB_EXTENSION, page_id);
-
-	if (NULL != web_page) {
-		dom_document = webkit_web_page_get_dom_document(web_page);
-		dom_window = webkit_dom_document_get_default_view(dom_document);
-
-		if (dom_window) {
-			/* Stop theme heartbeat */
-			webkit_dom_dom_window_webkit_message_handlers_post_message(
-				dom_window, "GreeterBridge", "Heartbeat::Exit"
-			);
-		}
-	}
-
-	SESSION_STARTING = TRUE;
 
 	result = lightdm_greeter_start_session_sync(GREETER, session, &err);
 	g_free(session);
@@ -1183,12 +1164,14 @@ get_conf_str_cb(JSContextRef context,
 	}
 
 	section = arg_to_string(context, arguments[0], exception);
-	if (!section) {
+
+	if (NULL == section) {
 		return JSValueMakeNull(context);
 	}
 
 	key = arg_to_string(context, arguments[1], exception);
-	if (!key) {
+
+	if (NULL == key) {
 		return JSValueMakeNull(context);
 	}
 
@@ -1303,6 +1286,31 @@ get_conf_bool_cb(JSContextRef context,
 	}
 
 	return JSValueMakeBoolean(context, value);
+}
+
+
+static JSValueRef
+get_config_section_greeter_cb(JSContextRef context,
+							  JSObjectRef thisObject,
+							  JSStringRef propertyName,
+							  JSValueRef *exception) {
+
+	if (NULL != config_greeter_obj) {
+		goto finish;
+	}
+
+	if (NULL == conf) {
+		conf = get_config();
+	}
+
+	config_greeter_obj = JSObjectMake(context, NULL, NULL);
+
+	finish:
+		JSStringRef obj = JSValueCreateJSONString(context, config_greeter_obj, 0, NULL);
+
+		return (NULL != obj)
+			   ? JSValueMakeFromJSONString(context, obj)
+			   : JSValueMakeNull(context);
 }
 
 
@@ -1495,6 +1503,11 @@ static const JSStaticValue lightdm_greeter_values[] = {
 	/* ------>>> DEPRECATED! <<<----------->>> DEPRECATED! <<<------------>>> DEPRECATED! <<<------*/
 	{NULL,                  NULL,                       NULL,            0}};
 
+static const JSStaticValue greeter_config_values[] = {
+	{"greeter",    get_config_section_greeter_cb,   NULL,   kJSPropertyAttributeReadOnly},
+	{"branding",   get_config_section_branding_cb,  NULL,   kJSPropertyAttributeReadOnly},
+	{NULL,         NULL,                            NULL,   0}};
+
 static const JSStaticFunction lightdm_greeter_functions[] = {
 	{"authenticate",          authenticate_cb,          kJSPropertyAttributeReadOnly},
 	{"authenticate_as_guest", authenticate_as_guest_cb, kJSPropertyAttributeReadOnly},
@@ -1520,14 +1533,6 @@ static const JSStaticFunction gettext_functions[] = {
 	{"gettext",  gettext_cb,  kJSPropertyAttributeReadOnly},
 	{"ngettext", ngettext_cb, kJSPropertyAttributeReadOnly},
 	{NULL,       NULL,        0}};
-
-
-static const JSStaticFunction greeter_config_functions[] = {
-	{"get_str",  get_conf_str_cb,  kJSPropertyAttributeReadOnly},
-	{"get_num",  get_conf_num_cb,  kJSPropertyAttributeReadOnly},
-	{"get_bool", get_conf_bool_cb, kJSPropertyAttributeReadOnly},
-	{NULL,       NULL,             0}};
-
 
 static const JSStaticFunction theme_utils_functions[] = {
 	{"dirlist",  get_dirlist_cb,   kJSPropertyAttributeReadOnly},
@@ -1591,7 +1596,7 @@ static const JSClassDefinition greeter_config_definition = {
 	"__GreeterConfig",        /* Class name       */
 	NULL,                     /* Parent class     */
 	NULL,                     /* Static values    */
-	greeter_config_functions, /* Static functions */
+	NULL,                     /* Static functions */
 };
 
 static const JSClassDefinition theme_utils_definition = {
@@ -1648,7 +1653,7 @@ window_object_cleared_callback(WebKitScriptWorld *world,
 						kJSPropertyAttributeNone,
 						NULL);
 
-	greeter_config_object = JSObjectMake(jsContext, greeter_config_class, greeter);
+	greeter_config_object = JSObjectMake(jsContext, greeter_config_class, NULL);
 	JSObjectSetProperty(jsContext,
 						globalObject,
 						JSStringCreateWithUTF8CString("__GreeterConfig"),
@@ -1982,15 +1987,7 @@ webkit_web_extension_initialize(WebKitWebExtension *extension) {
 	WEB_EXTENSION = extension;
 	SESSION_STARTING = FALSE;
 
-	/* load greeter settings from config file */
-	keyfile = g_key_file_new();
-
-	g_key_file_load_from_file(
-		keyfile,
-		CONFIG_DIR "/lightdm-webkit2-greeter.conf",
-		G_KEY_FILE_NONE,
-		NULL
-	);
+	conf = get_config();
 
 	secure_mode = get_config_option_as_bool("greeter", "secure_mode", &err);
 	if (NULL != err) {
