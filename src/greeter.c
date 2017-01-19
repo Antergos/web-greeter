@@ -349,6 +349,9 @@ main(int argc, char **argv) {
 	/* https://goo.gl/vDFwFe */
 	g_setenv ("GDK_CORE_DEVICE_EVENTS", "1", TRUE);
 
+	/* Temporary workaround until fixed upstream: https://goo.gl/wFJ4v7 */
+	g_setenv("WEBKIT_DISABLE_COMPOSITING_MODE", "1", TRUE);
+
 	/* Initialize i18n */
 	bindtextdomain(GETTEXT_PACKAGE, LOCALE_DIR);
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
