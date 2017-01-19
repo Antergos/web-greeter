@@ -1,71 +1,122 @@
-### lightdm-webkit2-greeter 2.2.1
+# Change Log
 
-* Increased the timeout for the "theme loaded" check to ensure themes are given 
-  enough time to load (when running on less powerful systems). (GH #98)
-* Fixed issue where users' custom .face image failed to load. (GH #98)
+## [2.2.1](https://github.com/antergos/lightdm-webkit2-greeter/tree/2.2.1) ~ 12-26-2016
 
-### lightdm-webkit2-greeter 2.2
+**Fixed:**
 
-* Fixed issue where the ugly default X cursor was shown briefly after the greeter exits.
-* The JavaScript API for themes is now fully documented: https://goo.gl/0iPzA4
-* Switched build systems from Autotools to Meson.
-* Removed the Theme Heartbeat system.
-* Added Theme Error Recovery System that will alert the user when errors are
-  detected during JavaScript execution and give them the option to to load a fallback theme.
-* Added new config option: secure_mode (enabled by default). When enabled, only local http
-  requests are allowed in themes. All non-local requests will be blocked.
-* Updated API usage for LightDM 1.19.2+.
-* Updated bundled JS & CSS vendor libs to their latest versions.
-* Added two new options to the greeter config file which make it possible to override the
-  language and format used by the greeter when displaying the current time.
-* Added new theme utility method for getting the current localized time.
-* Updated translations with latest changes contributed by the Antergos Community on Transifex.
-* antergos theme (default):
-  * Fixed issue with the size and position of the error messages container.
-  * Fixed issue that caused the spacebar and enter login shortcut keys not to work.
-    It's now once again possible to skip straight to password entry by pressing either
-    the spacebar or the enter key.
-  * Fixed issue where translated strings were available but not used by the theme.
-  * Updated theme for compatibility with the latest jQuery.
-  * Enhanced styles for buttons and user list-box items.
-* simple theme:
-  * Removed deprecated HTML4 tags.
-  * Improved styles for input field.
-  * Add fade out animation on exit.
+  * Increased the timeout for the "theme loaded" check to ensure themes are given 
+    enough time to load (when running on less powerful systems). (GH #98)
+  * Fixed issue where users' custom .face image failed to load. (GH #98)
 
-### lightdm-webkit2-greeter 2.1.6
+[Full Changelog](https://github.com/antergos/lightdm-webkit2-greeter/compare/2.2...2.2.1)
 
-* [HOTFIX] Support for LightDM 1.19.2+ (greeter API changes)
 
-### lightdm-webkit2-greeter 2.1.5
+## [2.2](https://github.com/antergos/lightdm-webkit2-greeter/tree/2.2) ~ 12-18-2016
 
-* [HOTFIX] Remove old code related to GDKWindow filters as it is no longer necessary and
-  actually causes issues with webkitgtk 2.14+.
+**Added:**
 
-### lightdm-webkit2-greeter 2.1.4
+  * The JavaScript API for themes is now [fully documented](https://goo.gl/0iPzA4).
+  * New Theme Error Recovery System that will alert the user when errors are
+    detected during JavaScript execution and give them the option to to load a fallback theme.
+  * New config option: secure_mode (enabled by default). When enabled, only local http
+    requests are allowed in themes. All non-local requests will be blocked.
+  * It is now possible to override the language and format used by the greeter when displaying
+    the current time. See the greeter config file for details.
+  * A new utility method for getting the current localized time is available to themes.
+  * Simple theme now has a fade out exit animation.
 
-* Implemented a theme heartbeat to allow the greeter to detect and respond to theme failures.
-* Updated translations.
+**Changed:**
 
-### lightdm-webkit2-greeter 2.1.3
+  * Switched build systems from Autotools to Meson.
+  * Updated API usage for LightDM 1.19.2+.
+  * Updated bundled JS & CSS vendor libs to their latest versions.
+  * Updated translations with latest changes contributed by the Antergos Community on Transifex.
+  * Default theme:
+    - Buttons and user list-box items received some minor style enhancements.
+    - Theme is now compatible with the latest jQuery.
+  * Simple theme:
+    - Removed deprecated HTML4 tags.
+    - Improved styles for the input field.
 
-* Implemented work-around in default theme for webkit2gtk localStorage bug.
-* Moved vendor css, js, & font files into top level _vendor directory for
-  easy access from any theme that needs them.
-* Fix time format when no value is cached.
-* Fix empty session dropdown when no session is cached.
+**Fixed:**
 
-### lightdm-webkit2-greeter 2.1.2
+  * The ugly default X cursor will no longer be shown after the greeter exits.
+  * Default theme:
+    - The error messages container will now appear correctly (size and position).
+    - It is now once again possible to skip straight to password entry by pressing either
+      the spacebar or the enter key.
+
+**Removed:**
+
+  * Removed the Theme Heartbeat system.
+
+[Full Changelog](https://github.com/antergos/lightdm-webkit2-greeter/compare/2.1.6...2.2)
+
+
+## [2.1.6](https://github.com/antergos/lightdm-webkit2-greeter/tree/2.1.6) ~ 10-17-2016
+
+**Added:**
+
+  * The greeter is now compatible with LightDM 1.19.2+
+
+[Full Changelog](https://github.com/antergos/lightdm-webkit2-greeter/compare/2.1.5...2.1.6)
+
+
+## [2.1.5](https://github.com/antergos/lightdm-webkit2-greeter/tree/2.1.5) ~ 10-14-2016
+
+**Fixed:**
+
+  * Remove old code related to GDKWindow filters as it is no longer necessary and
+    was actually causing issues with webkitgtk 2.14+.
+
+[Full Changelog](https://github.com/antergos/lightdm-webkit2-greeter/compare/2.1.4...2.1.5)
+
+
+## [2.1.4](https://github.com/antergos/lightdm-webkit2-greeter/tree/2.1.4) ~ 04-27-2016
+
+**Added:**
+
+  * New Theme Heartbeat System to allow the greeter to detect and respond to theme failures.
+
+**Changed:**
+
+  * Updated translations.
+
+[Full Changelog](https://github.com/antergos/lightdm-webkit2-greeter/compare/2.1.3...2.1.4)
+
+
+## [2.1.3](https://github.com/antergos/lightdm-webkit2-greeter/tree/2.1.3) ~ 04-16-2016
+
+**Added:**
+
+  * New Theme Heartbeat System to allow the greeter to detect and respond to theme failures.
+
+**Changed:**
+
+  * Implemented work-around in default theme for a webkit2gtk bug related to localStorage.
+  * Moved vendor css, js, & font files into new top level `_vendor` directory for
+    easy access from any theme that needs them.
+
+**Fixed:**
+
+  * Default theme:
+    - Fix time format when no value is cached.
+    - Fix empty session dropdown when no session is cached.
+
+[Full Changelog](https://github.com/antergos/lightdm-webkit2-greeter/compare/2.1.2...2.1.3)
+
+
+## 2.1.2
 
 * Allow access to right-click context menu when debug mode is enabled in lightdm-webkit2-greeter.conf.
 * Add additional debug messages to the default theme to help identify points of failure.
 * Fix issue with screen blanking functionality when greeter is used as a lockscreen.
 
-### lightdm-webkit2-greeter 2.1.1
+## 2.1.1
 
 * Fix default theme initialization failure if config file values are missing.
 
-### lightdm-webkit2-greeter 2.1.0
+## 2.1.0
 
 * It is now possible to configure branding including logos and backgrounds
   in lightdm-webkit2-greeter.conf.
@@ -90,7 +141,7 @@
   - The background images directory can also be configured in lightdm-webkit2-greeter.conf.
 * Several small bug fixes, enhancements, and code cleanup commits also made it into this release.
 
-### lightdm-webkit2-greeter 2.0.0
+## 2.0.0
 
 * Version scheme updated for both the webkit1 and webkit2 greeters as follows:
   - MAJOR.MINOR.UNIQUE_FIXES
@@ -110,36 +161,36 @@
   - Theme's script was completely rewritten in ES6.
   - Use babel to compile ES6->ES5 until webkit catches up.
 
-### lightdm-webkit2-greeter 0.2.3
+## 0.2.3
 
 * Add support for getting the lock_hint from lightdm.
 * Default webkit theme is now antergos.
 * Code formatting cleanup
 
-### lightdm-webkit2-greeter 0.2.1
+## 0.2.1
 
 * Handle tasks that a WM would normally handle.
 * Code clean-up
 
-### lightdm-webkit2-greeter 0.2.0
+## 0.2.0
 
 * Add missing lightdm.set_language function
 * Fix compile warnings
 
-### lightdm-webkit2-greeter 0.1.3
+## 0.1.3
 
 * Port from webkitgtk -> webkit2gtk
 * Use GTK+ 3.0
 
-### lightdm-webkit-greeter 0.1.2
+## 0.1.2
 
 * Fix files not being added to tarball
 * Don't use AC_CONFIG_MACRO_DIR in configure.ac
 
-### lightdm-webkit-greeter 0.1.1
+## 0.1.1
 
 * Update to work with newer LightDM
 
-### lightdm-webkit-greeter 0.1.0
+## 0.1.0
 
 * Split out into separate module from lightdm
