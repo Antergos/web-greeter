@@ -1,5 +1,14 @@
 # Change Log
 
+## [2.2.2](https://github.com/antergos/lightdm-webkit2-greeter/tree/2.2.1) ~ 01-18-2017
+
+**Fixed:**
+
+  * Implement workaround to prevent the web process from crashing in webkit2gtk 2.14.3
+
+[Full Changelog](https://github.com/antergos/lightdm-webkit2-greeter/compare/2.2.1...2.2.2)
+
+
 ## [2.2.1](https://github.com/antergos/lightdm-webkit2-greeter/tree/2.2.1) ~ 12-26-2016
 
 **Fixed:**
