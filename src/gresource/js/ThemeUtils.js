@@ -108,16 +108,25 @@ class ThemeUtils {
 		}
 
 		if ( null === allowed_dirs ) {
-			let user = lightdm.users.pop(),
-				user_data_dir = greeter_config.get_str( user.username, 'lightdm_data_dir' ),
-				lightdm_data_dir = user_data_dir.substr( 0, user_data_dir.lastIndexOf('/') );
+			let user             = lightdm.users.pop(),
+				user_data_dir    = greeter_config.get_str( user.username, 'lightdm_data_dir' ),
+				lightdm_data_dir = user_data_dir.substr( 0, user_data_dir.lastIndexOf('/') ),
+				themes_dir       = greeter_config.get_str( 'greeter', 'themes_dir' ),
+				backgrounds_dir  = greeter_config.get_str( 'branding', 'background_images' );
 
-			allowed_dirs = {
-				themes_dir: greeter_config.get_str( 'greeter', 'themes_dir' ),
-				backgrounds_dir: greeter_config.get_str( 'branding', 'background_images' ),
-				lightdm_data_dir: lightdm_data_dir,
-				tmpdir: '/tmp',
-			};
+			allowed_dirs = { tmpdir: '/tmp' };
+
+			if ( '' !== lightdm_data_dir ) {
+				allowed_dirs.lightdm_data_dir = lightdm_data_dir;
+			}
+
+			if ( '' !== themes_dir ) {
+				allowed_dirs.themes_dir = themes_dir;
+			}
+
+			if ( '' !== backgrounds_dir ) {
+				allowed_dirs.backgrounds_dir = backgrounds_dir;
+			}
 		}
 
 		if ( ! Object.keys( allowed_dirs ).some( dir => path.startsWith( allowed_dirs[dir] ) ) ) {
