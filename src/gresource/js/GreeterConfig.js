@@ -151,7 +151,8 @@ class GreeterConfig  {
 	 * @returns {string} Config value for `key`.
 	 */
 	get_str( config_section, key ) {
-		return __GreeterConfig.get_str( config_section, key );
+		let value = __GreeterConfig.get_str( config_section, key );
+		return null !== value ? value : '';
 	}
 }
 
