@@ -1,0 +1,31 @@
+# Whither (Universal Linux Apps) Configuration
+# The top-level keys in this file should be application names. This makes it possible to
+# install multiple Whither-based apps on a single system, each with their own configuration.
+
+# App Name
+WebGreeter:
+    # Whither's Config
+    whither:
+        # Unique identifier string (dbus-style)
+        app_id: com.antergos.web-greeter
+        toolkit: auto # auto|qt|gtk
+        # A valid URI for an HTML page that will be loaded when the app starts.
+        entry_point:
+            autoload: False
+            url: ''
+        window:
+            width: 1120
+            height: 720
+            initial_state: maximized # normal|maximized|minimized|fullscreen
+            # Whether or not the window should show standard titlebar and action buttons.
+            decorated: False
+            # Whether or not the window should stay on top of all other windows.
+            stays_on_top: False
+            title: Web Greeter for LightDM
+            icon: /usr/share/cnchi/data/icons/48x48/cnchi.png
+        toolbar:
+            enabled: False
+
+    # App's Config
+    app:
+        themes_dir: /usr/share/lightdm-webkit/themes
