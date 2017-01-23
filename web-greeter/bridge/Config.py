@@ -26,4 +26,27 @@
 #  You should have received a copy of the GNU General Public License
 #  along with Web Greeter; If not, see <http://www.gnu.org/licenses/>.
 
-# Standard Lib
+# 3rd-Party Libs
+from PyQt5.QtCore import QVariant
+
+# This Application
+from whither.bridge import (
+    BridgeObject,
+    bridge,
+)
+
+
+class Config(BridgeObject):
+
+    def __init__(self, config, *args, **kwargs):
+        super().__init__(name='Config', *args, **kwargs)
+
+        self._branding, self._greeter = config.branding, config.greeter
+
+    @bridge.prop(QVariant)
+    def branding(self):
+        return self._branding
+
+    @bridge.prop(QVariant)
+    def greeter(self):
+        return self._greeter

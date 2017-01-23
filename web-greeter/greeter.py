@@ -36,6 +36,7 @@ from whither.base.data import AttributeDict
 
 # This Application
 from bridge.Greeter import Greeter
+from bridge.Config import Config
 
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -51,7 +52,7 @@ class WebGreeter(App):
         self.get_and_save_user_config()
 
         self._greeter = Greeter()
-        self._web_container.bridge_objects = (self._greeter,)
+        self._web_container.bridge_objects = (self._greeter, Config(self._user_config))
 
         self._web_container.initialize_bridge_objects()
         self.load_theme()
