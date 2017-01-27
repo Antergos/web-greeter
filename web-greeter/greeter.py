@@ -35,8 +35,17 @@ from whither.app import App
 from whither.base.data import AttributeDict
 
 # This Application
-from bridge.Greeter import Greeter
-from bridge.Config import Config
+try:
+    # PyCharm quirkiness
+    from .resources import *
+    from .bridge.Greeter import Greeter
+    from .bridge.Config import Config
+    from .bridge.ThemeUtils import ThemeUtils
+except ImportError:
+    import resources
+    from bridge.Greeter import Greeter
+    from bridge.Config import Config
+    from bridge.ThemeUtils import ThemeUtils
 
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -44,17 +53,22 @@ CONFIG_FILE = os.path.join(BASE_DIR, 'whither.yml')
 
 
 class WebGreeter(App):
-    _user_config = AttributeDict({})
-    _greeter = None
+    greeter = None
+    greeter_config = None
+    theme_utils = None
+    user_config = AttributeDict({})
 
     def __init__(self, *args, **kwargs):
         super().__init__('WebGreeter', config_file=CONFIG_FILE, debug=True, *args, **kwargs)
         self.get_and_save_user_config()
 
-        self._greeter = Greeter()
-        self._web_container.bridge_objects = (self._greeter, Config(self._user_config))
+        self.greeter = Greeter(self.config.themes_dir)
+        self.greeter_config = Config(self.user_config)
+        self.theme_utils = ThemeUtils(self.greeter, self.config, self.user_config)
+        self._web_container.bridge_objects = (self.greeter, self.greeter_config, self.theme_utils)
 
         self._web_container.initialize_bridge_objects()
+        self._web_container.load_script(':/_greeter/js/bundle.js', 'Web Greeter Bundle')
         self.load_theme()
 
     def get_and_save_user_config(self):
@@ -63,15 +77,15 @@ class WebGreeter(App):
         config.read('/etc/lightdm/web-greeter.conf')
 
         for section in config.sections():
-            self._user_config[section] = {}
+            self.user_config[section] = {}
 
             for key in config[section]:
-                self._user_config[section][key] = config[section][key]
+                self.user_config[section][key] = config[section][key]
 
     def load_theme(self):
         theme_url = 'file://{0}/{1}/index.html'.format(
             self.config.themes_dir,
-            self._user_config.greeter.webkit_theme
+            self.user_config.greeter.webkit_theme
         )
 
         self._web_container.load(theme_url)

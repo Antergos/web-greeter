@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Config.py
+#  ThemeUtils.py
 #
 #  Copyright © 2017 Antergos
 #
@@ -26,6 +26,10 @@
 #  You should have received a copy of the GNU General Public License
 #  along with Web Greeter; If not, see <http://www.gnu.org/licenses/>.
 
+# Standard Lib
+import os
+import os.path as path
+
 # 3rd-Party Libs
 from whither.bridge import (
     BridgeObject,
@@ -34,17 +38,42 @@ from whither.bridge import (
 )
 
 
-class Config(BridgeObject):
+class ThemeUtils(BridgeObject):
 
-    def __init__(self, config, *args, **kwargs):
-        super().__init__(name='Config', *args, **kwargs)
+    def __init__(self, greeter, config, user_config, *args, **kwargs):
+        super().__init__(name='ThemeUtils', *args, **kwargs)
 
-        self._branding, self._greeter = config.branding.as_dict(), config.greeter.as_dict()
+        self._config = config
+        self._user_config = user_config
+        self._greeter = greeter
 
-    @bridge.prop(Variant)
-    def branding(self):
-        return self._branding
+    @bridge.method(Variant)
+    def dirlist(self, dir_path):
+        if not dir_path or not isinstance(dir_path, str):
+            return []
 
-    @bridge.prop(Variant)
-    def greeter(self):
-        return self._greeter
+        dir_path = path.realpath(path.normpath(dir_path))
+
+        if not path.isabs(dir_path) or not path.isdir(dir_path):
+            return []
+
+        allowed = False
+        allowed_dirs = (
+            self._config.themes_dir,
+            self._user_config.branding.background_images,
+            self._greeter.shared_data_directory,
+            '/tmp/'
+        )
+
+        for allowed_dir in allowed_dirs:
+            if dir_path.startswith(allowed_dir):
+                allowed = True
+                break
+
+        if not allowed:
+            return []
+
+        return (path.join(dir_path, f) for f in os.listdir(dir_path))
+
+
+

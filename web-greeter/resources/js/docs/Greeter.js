@@ -302,42 +302,6 @@ class Greeter {
 }
 
 
-const __lightdm = new Promise( (resolve, reject) => {
-	let waiting = 0;
-
-	const check_window_prop = () => {
-		if ( waiting > 15000 ) {
-			return reject( 'Timeout Reached!');
-		}
-
-		setTimeout( () => {
-			waiting += 1;
-
-			if ( '__LightDMGreeter' in window ) {
-				return resolve( window.__LightDMGreeter );
-			}
-
-			check_window_prop();
-		}, 0 );
-	};
-
-	check_window_prop();
-});
-
-
-/**
- * Greeter Instance
- * @name lightdm
- * @type {LightDM.Greeter}
- * @memberOf window
- */
-__lightdm.then( result => {
-	result.start_authentication = function( user ) { return this.authenticate( user ); };
-	result.start_authentication = result.start_authentication.bind(result);
-	window.lightdm = result
-} );
-
-
 /**
  * Moment.js instance - Loaded and instantiated automatically by the greeter.
  * @name moment

@@ -35,7 +35,7 @@ function set_values( defaults, target_obj, method ) {
 
 	keys.forEach( prop => {
 		try {
-			target_obj[prop] = method( 'greeter', prop );
+			target_obj[prop] = window;
 		} catch(err) {
 			target_obj[prop] = defaults[prop];
 		}
@@ -178,25 +178,6 @@ const __greeter_config = new Promise( (resolve, reject) => {
 	check_window_prop();
 });
 
-
-/**
- * Greeter Config - Access values from the greeter's config file.
- * @name greeter_config
- * @type {LightDM.GreeterConfig}
- * @memberOf window
- */
-__greeter_config.then( result => {
-	window.greeter_config = result;
-
-	/**
-	 * ***Deprecated!*** Use {@link window.greeter_config} instead.
-	 * @name config
-	 * @type {LightDM.GreeterConfig}
-	 * @memberOf window
-	 * @deprecated
-	 */
-	window.config = window.greeter_config;
-} );
 
 
 

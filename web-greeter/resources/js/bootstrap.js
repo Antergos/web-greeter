@@ -26,15 +26,58 @@
  */
 
 let _channel;
+const _ready_event = new Event( 'GreeterReady' );
 
 
 function initialize() {
 	new QWebChannel( qt.webChannelTransport, channel => {
 		_channel = channel;
+
+		/**
+		 * Greeter Instance
+		 * @name lightdm
+		 * @type {LightDM.Greeter}
+		 * @memberOf window
+		 */
 		window.lightdm = _channel.objects.LightDMGreeter;
+
+		/**
+		 * Greeter Config - Access values from the greeter's config file.
+		 * @name greeter_config
+		 * @type {LightDM.GreeterConfig}
+		 * @memberOf window
+		 */
 		window.greeter_config = _channel.objects.Config;
+
+		/**
+		 * ***Deprecated!*** Use {@link window.greeter_config} instead.
+		 * @name config
+		 * @type {LightDM.GreeterConfig}
+		 * @memberOf window
+		 * @deprecated
+		 */
+		window.config = window.greeter_config;
+
+		/**
+		 * Theme Utils - various utility methods for use in greeter themes.
+		 * @name theme_utils
+		 * @type {LightDM.ThemeUtils}
+		 * @memberOf window
+		 */
+		window.theme_utils = new ThemeUtils( _channel.objects.ThemeUtils );
+
+		/**
+		 * ***Deprecated!*** Use {@link window.theme_utils} instead.
+		 * @name greeterutil
+		 * @type {LightDM.ThemeUtils}
+		 * @memberOf window
+		 * @deprecated
+		 */
+		window.greeterutil = window.theme_utils;
+
+		window.dispatchEvent( _ready_event );
 	});
 }
 
 
-$(window).on('load', initialize);
+setTimeout( initialize, 50 );

@@ -1,4 +1,4 @@
-project('lightdm-webkit2-greeter', 'c', version: '2.2.2', license: 'GPL-3')
+project('lightdm-webkit2-greeter', 'python', version: '3.0.0', license: 'GPL-3')
 
 # ================================== #
 # ------->>> Version Vars <<<------- #

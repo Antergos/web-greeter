@@ -32,10 +32,10 @@
 import gi
 gi.require_version('LightDM', '1')
 from gi.repository import LightDM
-from PyQt5.QtCore import QVariant
 from whither.bridge import (
     BridgeObject,
     bridge,
+    Variant,
 )
 
 # This Application
@@ -48,24 +48,33 @@ from . import (
 
 
 LightDMGreeter = LightDM.Greeter()
-LightDMUserList = LightDM.UserList()
+LightDMUsers = LightDM.UserList()
 
 
 class Greeter(BridgeObject):
 
-    authentication_complete = bridge.signal()
-    autologin_timer_expired = bridge.signal()
-    idle = bridge.signal()
-    reset = bridge.signal()
-    show_message = bridge.signal(str, str, arguments=('text', 'type'))
-    show_prompt = bridge.signal(str, str, arguments=('text', 'type'))
+    authentication_complete = bridge.signal(LightDM.Greeter)
+    autologin_timer_expired = bridge.signal(LightDM.Greeter)
+    idle = bridge.signal(LightDM.Greeter)
+    reset = bridge.signal(LightDM.Greeter)
+    show_message = bridge.signal((LightDM.Greeter, str, str), arguments=('text', 'type'))
+    show_prompt = bridge.signal((LightDM.Greeter, str, str), arguments=('text', 'type'))
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, themes_dir, *args, **kwargs):
         super().__init__(name='LightDMGreeter', *args, **kwargs)
+
+        self._shared_data_directory = ''
+        self._themes_directory = themes_dir
 
         LightDMGreeter.connect_to_daemon_sync()
 
         self._connect_signals()
+        self._determine_shared_data_directory_path()
+
+    def _determine_shared_data_directory_path(self):
+        user = LightDMUsers.get_users()[0]
+        user_data_dir = LightDMGreeter.ensure_shared_data_dir_sync(user.get_name())
+        self._shared_data_directory = user_data_dir.rpartition('/')[0]
 
     def _connect_signals(self):
         LightDMGreeter.connect('authentication-complete', self.authentication_complete.emit)
@@ -131,19 +140,19 @@ class Greeter(BridgeObject):
     def is_authenticated(self):
         return LightDMGreeter.get_is_authenticated()
 
-    @bridge.prop(QVariant)
+    @bridge.prop(Variant)
     def language(self):
         return language_to_dict(LightDM.get_language())
 
-    @bridge.prop(list)
+    @bridge.prop(Variant)
     def languages(self):
         return [language_to_dict(lang) for lang in LightDM.get_languages()]
 
-    @bridge.prop(QVariant)
+    @bridge.prop(Variant)
     def layout(self):
         return layout_to_dict(LightDM.get_layout())
 
-    @bridge.prop(list)
+    @bridge.prop(Variant)
     def layouts(self):
         return [layout_to_dict(layout) for layout in LightDM.get_layouts()]
 
@@ -151,7 +160,7 @@ class Greeter(BridgeObject):
     def lock_hint(self):
         return LightDMGreeter.get_lock_hint()
 
-    @bridge.prop(list)
+    @bridge.prop(Variant)
     def remote_sessions(self):
         return [session_to_dict(session) for session in LightDM.get_remote_sessions()]
 
@@ -163,9 +172,13 @@ class Greeter(BridgeObject):
     def select_user_hint(self):
         return LightDMGreeter.get_select_user_hint() or ''
 
-    @bridge.prop(QVariant)
+    @bridge.prop(Variant)
     def sessions(self):
         return [session_to_dict(session) for session in LightDM.get_sessions()]
+
+    @bridge.prop(str)
+    def shared_data_directory(self):
+        return self._shared_data_directory
 
     @bridge.prop(bool)
     def show_manual_login_hint(self):
@@ -175,9 +188,13 @@ class Greeter(BridgeObject):
     def show_remote_login_hint(self):
         return LightDMGreeter.get_show_remote_login_hint()
 
-    @bridge.prop(QVariant)
+    @bridge.prop(str)
+    def themes_directory(self):
+        return self._themes_directory
+
+    @bridge.prop(Variant)
     def users(self):
-        return [user_to_dict(user) for user in LightDMUserList.get_users()]
+        return [user_to_dict(user) for user in LightDMUsers.get_users()]
 
     @bridge.method(str)
     def authenticate(self, username):

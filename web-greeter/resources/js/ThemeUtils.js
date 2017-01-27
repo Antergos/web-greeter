@@ -25,16 +25,27 @@
  * along with lightdm-webkit2-greeter; If not, see <http://www.gnu.org/licenses/>.
  */
 
-if ( 'undefined' === typeof window.navigator.languages ) {
+/*if ( 'undefined' === typeof window.navigator.languages ) {
 	window.navigator.languages = [ window.navigator.language ];
-}
+}*/
 
-moment.locale( window.navigator.languages );
 
-let localized_invalid_date = moment('today', '!@#'),
+
+let localized_invalid_date = null,
 	time_language = null,
 	time_format = null,
-	allowed_dirs = null;
+	allowed_dirs = null,
+	_ThemeUtils = null;
+
+
+function _set_allowed_dirs() {
+	allowed_dirs = {
+		themes_dir: lightdm.themes_directory,
+		backgrounds_dir: greeter_config.branding.background_images,
+		lightdm_data_dir: lightdm.shared_data_directory,
+		tmpdir: '/tmp',
+	};
+}
 
 
 
@@ -46,6 +57,18 @@ let localized_invalid_date = moment('today', '!@#'),
  * @memberOf LightDM
  */
 class ThemeUtils {
+
+	constructor( instance ) {
+		if ( null !== _ThemeUtils ) {
+			return _ThemeUtils;
+		}
+
+		moment.locale( window.navigator.languages );
+
+		localized_invalid_date = moment('today', '!@#');
+		_ThemeUtils = instance;
+	}
+
 	/**
 	 * Binds `this` to class, `context`, for all of the class's methods.
 	 *
@@ -91,15 +114,15 @@ class ThemeUtils {
 	 * @returns {string[]} List of abs paths for the files and directories found in `path`.
 	 */
 	dirlist( path ) {
-		let allowed = true;
+		let allowed = false;
 
-		if ( '' === path || ! path instanceof String ) {
+		if ( '' === path || 'string' !== typeof path ) {
 			console.log('[ERROR] theme_utils.dirlist(): path must be a non-empty string!');
-			allowed = false;
+			return [];
 
 		} else if ( null !== path.match(/^[^/].+/) ) {
-			console.log('[ERROR] theme_utils.dirlist(): path must not include be absolute!');
-			allowed = false;
+			console.log('[ERROR] theme_utils.dirlist(): path must be absolute!');
+			return[];
 		}
 
 		if ( null !== path.match(/\/\.+(?=\/)/) ) {
@@ -108,29 +131,16 @@ class ThemeUtils {
 		}
 
 		if ( null === allowed_dirs ) {
-			let user = lightdm.users.pop(),
-				user_data_dir = greeter_config.get_str( user.username, 'lightdm_data_dir' ),
-				lightdm_data_dir = user_data_dir.substr( 0, user_data_dir.lastIndexOf('/') );
-
-			allowed_dirs = {
-				themes_dir: greeter_config.get_str( 'greeter', 'themes_dir' ),
-				backgrounds_dir: greeter_config.get_str( 'branding', 'background_images' ),
-				lightdm_data_dir: lightdm_data_dir,
-				tmpdir: '/tmp',
-			};
+			_set_allowed_dirs();
 		}
 
 		if ( ! Object.keys( allowed_dirs ).some( dir => path.startsWith( allowed_dirs[dir] ) ) ) {
 			console.log(`[ERROR] theme_utils.dirlist(): path is not allowed: ${path}`);
-			allowed = false;
-		}
-
-		if ( ! allowed ) {
 			return [];
 		}
 
 		try {
-			return __ThemeUtils.dirlist( path );
+			return _ThemeUtils.dirlist( path );
 
 		} catch( err ) {
 			console.log( `[ERROR] theme_utils.dirlist(): ${err}` );
@@ -192,7 +202,7 @@ class ThemeUtils {
 	 */
 	txt2html( text ) {
 		try {
-			return __ThemeUtils.txt2html( text );
+			return _ThemeUtils.esc_html( text );
 
 		} catch( err ) {
 			console.log( `[ERROR] theme_utils.dirlist(): ${err}` );
@@ -200,46 +210,3 @@ class ThemeUtils {
 		}
 	}
 }
-
-
-const __theme_utils = new Promise( (resolve, reject) => {
-	let waiting = 0;
-
-	const check_window_prop = () => {
-		if ( waiting > 15000 ) {
-			return reject( 'Timeout Reached!');
-		}
-
-		setTimeout( () => {
-			waiting += 1;
-
-			if ( '__ThemeUtils' in window ) {
-				return resolve( (() => new ThemeUtils())() );
-			}
-
-			check_window_prop();
-		}, 0 );
-	};
-
-	check_window_prop();
-});
-
-
-/**
- * Theme Utils - various utility methods for use in greeter themes.
- * @name theme_utils
- * @type {LightDM.ThemeUtils}
- * @memberOf window
- */
-__theme_utils.then( result => {
-	window.theme_utils = result;
-
-	/**
-	 * ***Deprecated!*** Use {@link window.theme_utils} instead.
-	 * @name greeterutil
-	 * @type {LightDM.ThemeUtils}
-	 * @memberOf window
-	 * @deprecated
-	 */
-	window.greeterutil = window.theme_utils;
-} );
