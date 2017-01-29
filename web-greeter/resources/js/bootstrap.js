@@ -75,7 +75,9 @@ function initialize() {
 		 */
 		window.greeterutil = window.theme_utils;
 
-		window.dispatchEvent( _ready_event );
+		setTimeout(function() {
+			window.dispatchEvent( _ready_event );
+		}, 400);
 	});
 }
 
