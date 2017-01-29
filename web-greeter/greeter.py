@@ -35,17 +35,12 @@ from whither.app import App
 from whither.base.data import AttributeDict
 
 # This Application
-try:
-    # PyCharm quirkiness
-    from .resources import *
-    from .bridge.Greeter import Greeter
-    from .bridge.Config import Config
-    from .bridge.ThemeUtils import ThemeUtils
-except ImportError:
-    import resources
-    from bridge.Greeter import Greeter
-    from bridge.Config import Config
-    from bridge.ThemeUtils import ThemeUtils
+import resources
+from bridge import (
+    Config,
+    Greeter,
+    ThemeUtils,
+)
 
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -59,7 +54,7 @@ class WebGreeter(App):
     user_config = AttributeDict({})
 
     def __init__(self, *args, **kwargs):
-        super().__init__('WebGreeter', config_file=CONFIG_FILE, debug=True, *args, **kwargs)
+        super().__init__('WebGreeter', config_file=CONFIG_FILE, debug=False, *args, **kwargs)
         self.get_and_save_user_config()
 
         self.greeter = Greeter(self.config.themes_dir)

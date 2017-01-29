@@ -63,3 +63,8 @@ def user_to_dict(user):
         real_name=user.get_real_name(),
         # ---->>> END DEPRECATED! <<<----
     )
+
+
+from .Greeter import Greeter
+from .Config import Config
+from .ThemeUtils import ThemeUtils
