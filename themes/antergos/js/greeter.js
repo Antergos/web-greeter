@@ -182,36 +182,28 @@ class AntergosThemeUtils {
 	 * Get some values from `lightdm-webkit2-greeter.conf` and save them for later.
 	 */
 	init_config_values() {
-		var logo, user_image, debug, background_images, background_images_dir;
-
-		if ( 'undefined' !== typeof( config ) ) {
-
-			logo = config.get_str( 'branding', 'logo' ) || 'img/antergos.png';
-			user_image = config.get_str( 'branding', 'user_image' ) || 'img/antergos-logo-user.png';
-			background_images_dir = config.get_str( 'branding', 'background_images' ) || '/usr/share/backgrounds';
-			debug = config.get_bool( 'greeter', 'debug_mode' ) || false;
-
-			if ( background_images_dir ) {
-				background_images = greeterutil.dirlist( background_images_dir ) || [];
-				_util.log(background_images);
-			}
-
-			if ( background_images && background_images.length ) {
-				background_images = this.find_images( background_images );
-			}
-
+		if ( 'undefined' === typeof( greeter_config ) ) {
+			greeter_config = {branding: {}, greeter: {}};
 		}
 
-		this.logo = logo;
-		this.debug = debug;
-		this.user_image = user_image;
-		this.background_images = background_images;
-		this.background_images_dir = background_images_dir;
+		this.logo                  = greeter_config.branding.logo || 'img/antergos.png';
+		this.user_image            = greeter_config.branding.user_image || 'img/antergos-logo-user.png';
+		this.background_images_dir = greeter_config.branding.background_images || '/usr/share/backgrounds';
+		this.debug                 = greeter_config.greeter.debug_mode || false;
+		this.background_images     = [];
+
+		if ( this.background_images_dir ) {
+			theme_utils.dirlist( this.background_images_dir, true, ( result ) => {
+				this.background_images = result || [];
+
+				_util.log( this.background_images );
+			} );
+		}
 	}
 
 	is_not_empty( value ) {
 		let empty_values = [null, 'null', undefined, 'undefined'];
-		return empty_values.findIndex(v => v === value) === -1;
+		return ! empty_values.includes(value);
 	}
 
 
@@ -219,7 +211,7 @@ class AntergosThemeUtils {
 		var images = [],
 			subdirs = [];
 
-		for ( var file of dirlist ) {
+		for ( let file of dirlist ) {
 			if ( file.match( /(png|PNG)|(jpg|JPEG)|(bmp|BMP)/ ) ) {
 				images.push( file );
 			} else if ( ! file.match( /\w+\.\w+/ ) ) {
@@ -227,14 +219,17 @@ class AntergosThemeUtils {
 			}
 		}
 
-		if ( subdirs.length && ! images.length && this.recursion < 3 ) {
+		if ( subdirs.length && images.length < 20 && this.recursion < 3 ) {
 			this.recursion++;
-			for ( var dir of subdirs ) {
-				var list = greeterutil.dirlist( dir );
 
-				if ( list && list.length ) {
-					images.push.apply( images, this.find_images( list ) );
-				}
+			for ( let dir of subdirs ) {
+				theme_utils.dirlist( dir, ( result ) => {
+					if ( result && result.length ) {
+						images.push.apply( images, this.find_images( result ) );
+					}
+				} );
+
+
 			}
 		}
 
@@ -896,7 +891,7 @@ class AntergosTheme {
 /**
  * Initialize the theme once the window has loaded.
  */
-$( window ).on('load', () => {
+$( window ).on( 'GreeterReady', () => {
 	new AntergosThemeUtils();
 	new AntergosTheme();
 } );

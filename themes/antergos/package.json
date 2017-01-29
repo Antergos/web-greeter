@@ -18,7 +18,7 @@
   "config": {},
   "wg_theme": {
     "display_name": "Default",
-    "supports": ["2.2", "3"],
+    "supports": ["3"],
     "entry_point": "./index.html",
     "styles": [
       "bootswatch-paper",

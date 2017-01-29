@@ -53,12 +53,22 @@ LightDMUsers = LightDM.UserList()
 
 class Greeter(BridgeObject):
 
-    authentication_complete = bridge.signal(LightDM.Greeter)
-    autologin_timer_expired = bridge.signal(LightDM.Greeter)
-    idle = bridge.signal(LightDM.Greeter)
-    reset = bridge.signal(LightDM.Greeter)
-    show_message = bridge.signal((LightDM.Greeter, str, str), arguments=('text', 'type'))
-    show_prompt = bridge.signal((LightDM.Greeter, str, str), arguments=('text', 'type'))
+    authentication_complete = bridge.signal(LightDM.Greeter, name='authentication_complete')
+    autologin_timer_expired = bridge.signal(LightDM.Greeter, name='autologin_timer_expired')
+
+    idle = bridge.signal(LightDM.Greeter, name='idle')
+    reset = bridge.signal(LightDM.Greeter, name='reset')
+
+    show_message = bridge.signal(
+        (LightDM.Greeter, str, LightDM.MessageType),
+        name='show_message',
+        arguments=('text', 'type')
+    )
+    show_prompt = bridge.signal(
+        (LightDM.Greeter, str, LightDM.PromptType),
+        name='show_prompt',
+        arguments=('text', 'type')
+    )
 
     def __init__(self, themes_dir, *args, **kwargs):
         super().__init__(name='LightDMGreeter', *args, **kwargs)
@@ -81,8 +91,8 @@ class Greeter(BridgeObject):
         LightDMGreeter.connect('autologin-timer-expired', self.authentication_complete.emit)
         LightDMGreeter.connect('idle', self.idle.emit)
         LightDMGreeter.connect('reset', self.reset.emit)
-        LightDMGreeter.connect('show-message', self.reset.emit)
-        LightDMGreeter.connect('show-prompt', self.reset.emit)
+        LightDMGreeter.connect('show-message', self.show_message.emit)
+        LightDMGreeter.connect('show-prompt', self.show_prompt.emit)
 
     @bridge.prop(str)
     def authentication_user(self):

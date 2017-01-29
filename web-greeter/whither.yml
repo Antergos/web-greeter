@@ -28,4 +28,4 @@ WebGreeter:
 
     # App's Config
     app:
-        themes_dir: /usr/share/lightdm-webkit/themes
+        themes_dir: /home/dustin/github/antergos/lightdm-webkit2-greeter/themes

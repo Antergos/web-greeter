@@ -25,12 +25,12 @@
  * along with lightdm-webkit2-greeter; If not, see <http://www.gnu.org/licenses/>.
  */
 
-let _channel;
-const _ready_event = new Event( 'GreeterReady' );
 
+(() => {
+	let _channel;
+	const _ready_event = new Event( 'GreeterReady' );
 
-function initialize() {
-	new QWebChannel( qt.webChannelTransport, channel => {
+	function channel_ready_cb( channel ) {
 		_channel = channel;
 
 		/**
@@ -75,11 +75,14 @@ function initialize() {
 		 */
 		window.greeterutil = window.theme_utils;
 
-		setTimeout(function() {
+		setTimeout( function () {
 			window.dispatchEvent( _ready_event );
-		}, 400);
+		}, 2 );
+	}
+
+	document.addEventListener( 'DOMContentLoaded', ( event ) => {
+		new QWebChannel( qt.webChannelTransport, channel_ready_cb );
 	});
-}
 
+})();
 
-setTimeout( initialize, 50 );

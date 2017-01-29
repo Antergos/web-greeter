@@ -28,7 +28,7 @@
 
 # Standard Lib
 import os
-import os.path as path
+from glob import glob
 
 # 3rd-Party Libs
 from whither.bridge import (
@@ -47,14 +47,14 @@ class ThemeUtils(BridgeObject):
         self._user_config = user_config
         self._greeter = greeter
 
-    @bridge.method(Variant)
-    def dirlist(self, dir_path):
+    @bridge.method(str, bool, name='dirlist', result=Variant)
+    def dirlist(self, dir_path, only_images=True):
         if not dir_path or not isinstance(dir_path, str):
             return []
 
-        dir_path = path.realpath(path.normpath(dir_path))
+        dir_path = os.path.realpath(os.path.normpath(dir_path))
 
-        if not path.isabs(dir_path) or not path.isdir(dir_path):
+        if not os.path.isabs(dir_path) or not os.path.isdir(dir_path):
             return []
 
         allowed = False
@@ -73,7 +73,15 @@ class ThemeUtils(BridgeObject):
         if not allowed:
             return []
 
-        return (path.join(dir_path, f) for f in os.listdir(dir_path))
+        if only_images:
+            file_types = ('jpg', 'jpeg', 'png', 'gif', 'bmp')
+            result = [
+                glob('{0}/**/*.{1}'.format(dir_path, ftype), recursive=True)
+                for ftype in file_types
+            ]
+            result = [image for image_list in result for image in image_list]
 
+        else:
+            result = [os.path.join(dir_path, f) for f in os.listdir(dir_path)]
 
-
+        return result

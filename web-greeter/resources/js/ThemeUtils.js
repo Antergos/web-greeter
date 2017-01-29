@@ -25,11 +25,6 @@
  * along with lightdm-webkit2-greeter; If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*if ( 'undefined' === typeof window.navigator.languages ) {
-	window.navigator.languages = [ window.navigator.language ];
-}*/
-
-
 
 let localized_invalid_date = null,
 	time_language = null,
@@ -109,20 +104,20 @@ class ThemeUtils {
 	 *   * Is located within the greeter's shared data directory (`/var/lib/lightdm-data`).
 	 *   * Is located in `/tmp`.
 	 *
-	 * @param {string} path The abs path to desired directory.
-	 *
-	 * @returns {string[]} List of abs paths for the files and directories found in `path`.
+	 * @param {string}              path        The abs path to desired directory.
+	 * @param {boolean}             only_images Include only images in the results. Default `true`.
+	 * @param {function(string[])}  callback    Callback function to be called with the result.
 	 */
-	dirlist( path ) {
+	dirlist( path, only_images = true, callback ) {
 		let allowed = false;
 
 		if ( '' === path || 'string' !== typeof path ) {
 			console.log('[ERROR] theme_utils.dirlist(): path must be a non-empty string!');
-			return [];
+			return callback([]);
 
 		} else if ( null !== path.match(/^[^/].+/) ) {
 			console.log('[ERROR] theme_utils.dirlist(): path must be absolute!');
-			return[];
+			return callback([]);
 		}
 
 		if ( null !== path.match(/\/\.+(?=\/)/) ) {
@@ -136,15 +131,15 @@ class ThemeUtils {
 
 		if ( ! Object.keys( allowed_dirs ).some( dir => path.startsWith( allowed_dirs[dir] ) ) ) {
 			console.log(`[ERROR] theme_utils.dirlist(): path is not allowed: ${path}`);
-			return [];
+			return callback([]);
 		}
 
 		try {
-			return _ThemeUtils.dirlist( path );
+			return _ThemeUtils.dirlist( path, only_images, callback );
 
 		} catch( err ) {
 			console.log( `[ERROR] theme_utils.dirlist(): ${err}` );
-			return [];
+			return callback([]);
 		}
 	}
 
