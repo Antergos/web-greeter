@@ -54,7 +54,7 @@ class WebGreeter(App):
     user_config = AttributeDict({})
 
     def __init__(self, *args, **kwargs):
-        super().__init__('WebGreeter', config_file=CONFIG_FILE, debug=False, *args, **kwargs)
+        super().__init__('WebGreeter', config_file=CONFIG_FILE, debug=True, *args, **kwargs)
         self.get_and_save_user_config()
 
         self.greeter = Greeter(self.config.themes_dir)

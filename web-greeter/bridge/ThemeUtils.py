@@ -47,7 +47,7 @@ class ThemeUtils(BridgeObject):
         self._user_config = user_config
         self._greeter = greeter
 
-    @bridge.method(str, bool, name='dirlist', result=Variant)
+    @bridge.method(str, bool, result=Variant)
     def dirlist(self, dir_path, only_images=True):
         if not dir_path or not isinstance(dir_path, str):
             return []

@@ -93,6 +93,8 @@ class ThemeUtils {
 				}
 			}
 		}
+
+		return context;
 	}
 
 

@@ -240,13 +240,12 @@
 	} );
 
 	$( '#collapseTwo' ).on( 'shown.bs.collapse', function() {
-		$( '#collapseTwo a' ).filter( ':not(.dropdown-menu *)' ).each( function( index ) {
-			var i = index + 1;
-			$( this ).attr( 'tabindex', i );
+		$(this).find( 'a' ).filter( ':not(.dropdown-menu *)' ).each( function( index ) {
+			$( this ).attr( 'tabindex', index + 1 );
 		} );
 	} );
 	$( '#collapseTwo' ).on( 'hidden.bs.collapse', function() {
-		$( '#collapseTwo a' ).filter( ':not(.dropdown-menu *)' ).each( function( index ) {
+		$(this).find( 'a' ).filter( ':not(.dropdown-menu *)' ).each( function( index ) {
 			$( this ).attr( 'tabindex', -1 );
 		} );
 	} );

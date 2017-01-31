@@ -29,9 +29,9 @@
 /**
  * This is used to access our classes from within jQuery callbacks.
  */
-var _self = null,
+let _self = null,
 	_bg_self = null,
-	_util = null;
+	_config = null;
 
 
 /**
@@ -39,76 +39,79 @@ var _self = null,
  *
  * @returns {string}
  */
-String.prototype.capitalize = function() {
+String.prototype.capitalize = function () {
 	return this.charAt( 0 ).toUpperCase() + this.slice( 1 );
 };
 
 
+function is_empty( value ) {
+	if ( value instanceof Array ) {
+		return value.length === 0;
+	}
+
+	return ['', null, 'null', undefined, 'undefined'].includes( value );
+}
+
 
 /**
- * This should be the base class for all the theme's components. However, webkit's
- * support of extending (subclassing) ES6 classes is not stable enough to use.
- * For now we simply bind this class to a global variable for use in our other classes.
+ * Add text to the debug log element (accessible from the login screen).
+ *
+ * @param {string} text - To be added to the log.
  */
-class AntergosThemeUtils {
+function log( text ) {
+	if ( _config.debug ) {
+		console.debug( text );
+	}
+
+	$( '#logArea' ).append( `${text}<br/>` );
+}
+
+
+/**
+ * The base class for all theme components. It handles accessing cached settings in
+ * local storage and also initializes config values.
+ */
+class ThemeConfig {
 
 	constructor() {
-		if ( null !== _util ) {
-			return _util;
+		if ( null !== _config ) {
+			return _config;
 		}
-		_util = this;
 
-		this.debug = false;
-		this.lang = window.navigator.language.split( '-' )[ 0 ].toLowerCase();
-		this.translations = window.ant_translations;
-		this.$log_container = $('#logArea');
-		this.recursion = 0;
-		this.cache_backend = '';
+		_config = theme_utils.bind_this( this );
+
+		this.debug             = false;
+		this.lang              = window.navigator.language.split( '-' )[0].toLowerCase();
+		this.translations      = window.ant_translations;
+		this.$log_container    = $( '#logArea' );
+		this.cache_backend     = '';
 
 		this.setup_cache_backend();
 		this.init_config_values();
 
-		return _util;
+		return _config;
 	}
 
 	setup_cache_backend() {
 		// Do we have access to localStorage?
 		try {
-			localStorage.setItem('testing', 'test');
-			let test = localStorage.getItem('testing');
+			localStorage.setItem( 'testing', 'test' );
 
-			if ('test' === test) {
+			if ( 'test' === localStorage.getItem( 'testing' ) ) {
 				// We have access to localStorage
 				this.cache_backend = 'localStorage';
 			}
-			localStorage.removeItem('testing');
 
-		} catch(err) {
-			// We do not have access to localStorage. Fallback to cookies.
-			this.log(err);
-			this.log('INFO: localStorage is not available. Using cookies for cache backend.');
+			localStorage.removeItem( 'testing' );
+
+		} catch ( err ) {
+			// We do not have access to localStorage. Use cookies instead.
+			log( err );
+			log( 'INFO: localStorage is not available. Using cookies for cache backend.' );
 			this.cache_backend = 'Cookies';
 		}
 
-		// Just in case...
-		if ('' === this.cache_backend) {
-			this.cache_backend = 'Cookies';
-		}
-
-		this.log(`AntergosThemeUtils.cache_backend is: ${this.cache_backend}`);
-	}
-
-
-	/**
-	 * Add text to the debug log element (accessible from the login screen).
-	 *
-	 * @param {string} text - To be added to the log.
-	 */
-	log( text ) {
-		if ( true === this.debug ) {
-			console.log( text );
-		}
-		$( '#logArea' ).append( `${text}<br/>` );
+		log( `AntergosThemeUtils.cache_backend is: ${this.cache_backend}` );
 	}
 
 
@@ -116,34 +119,28 @@ class AntergosThemeUtils {
 	 * Get a key's value from localStorage. Keys can have two or more parts.
 	 * For example: "ant:user:john:session".
 	 *
-	 * @param {...string} key_parts - Strings that are combined to form the key.
+	 * @param {...string} key_parts Strings that are combined to form the key.
+	 *
+	 * @return {string|null}
 	 */
-	cache_get() {
-		var key = `ant`, value;
+	_get( ...key_parts ) {
+		let key = `ant`,
+			value = null;
 
-		for (var _len = arguments.length, key_parts = new Array(_len), _key = 0; _key < _len; _key++) {
-			key_parts[_key] = arguments[_key];
-		}
-
-		for ( var part of key_parts ) {
+		for ( let part of key_parts ) {
 			key += `:${part}`;
 		}
 
-		this.log(`cache_get() called with key: ${key}`);
+		if ( 'localStorage' === this.cache_backend ) {
+			value = localStorage.getItem( key );
 
-		if ('localStorage' === this.cache_backend) {
-			value = localStorage.getItem(key);
-		} else if ('Cookies' === this.cache_backend) {
-			value = Cookies.get(key);
-		} else {
-			value = null;
+		} else if ( 'Cookies' === this.cache_backend ) {
+			value = Cookies.get( key ) || null;
 		}
 
-		if (null !== value) {
-			this.log(`cache_get() key: ${key} value is: ${value}`);
-		}
+		log( `ThemeSettings._get() key: ${key} value is: ${value}` );
 
-		return ('undefined' !== typeof(value)) ? value : null;
+		return value;
 	}
 
 
@@ -151,30 +148,28 @@ class AntergosThemeUtils {
 	 * Set a key's value in localStorage. Keys can have two or more parts.
 	 * For example: "ant:user:john:session".
 	 *
-	 * @param {string} value - The value to set.
-	 * @param {...string} key_parts - Strings that are combined to form the key.
+	 * @param {string}    value     The value to set.
+	 * @param {...string} key_parts Strings that are combined to form the key.
+	 *
+	 * @return {string} Always returns `value` (regardless of whether it was set successfully).
 	 */
-	cache_set( value ) {
-		var key = `ant`, res;
+	_set( value, ...key_parts ) {
+		let key = `ant`;
 
-		for (var _len2 = arguments.length, key_parts = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-			key_parts[_key2 - 1] = arguments[_key2];
-		}
-
-		for ( var part of key_parts ) {
+		for ( let part of key_parts ) {
 			key += `:${part}`;
 		}
-		this.log(`cache_set() called with key: ${key} and value: ${value}`);
 
-		if ('localStorage' === this.cache_backend) {
-			res = localStorage.setItem( key, value );
-		} else if ('Cookies' === this.cache_backend) {
-			res = Cookies.set(key, value);
-		} else {
-			res = null;
+		log( `ThemeSettings._set() called with key: ${key} and value: ${value}` );
+
+		if ( 'localStorage' === this.cache_backend ) {
+			localStorage.setItem( key, value );
+
+		} else if ( 'Cookies' === this.cache_backend ) {
+			Cookies.set( key, value );
 		}
 
-		return res;
+		return value;
 	}
 
 
@@ -183,60 +178,39 @@ class AntergosThemeUtils {
 	 */
 	init_config_values() {
 		if ( 'undefined' === typeof( greeter_config ) ) {
-			greeter_config = {branding: {}, greeter: {}};
+			greeter_config = { branding: {}, greeter: {} };
 		}
 
 		this.logo                  = greeter_config.branding.logo || 'img/antergos.png';
 		this.user_image            = greeter_config.branding.user_image || 'img/antergos-logo-user.png';
 		this.background_images_dir = greeter_config.branding.background_images || '/usr/share/backgrounds';
 		this.debug                 = greeter_config.greeter.debug_mode || false;
-		this.background_images     = [];
+		this.background_images     = this._get( 'background_manager', 'background_images' );
+		this.images_cache_expires  = moment.unix( parseInt( this._get( 'background_manager', 'cache_expires' ) ) );
 
-		if ( this.background_images_dir ) {
-			theme_utils.dirlist( this.background_images_dir, true, ( result ) => {
-				this.background_images = result || [];
+		let expired = ( null === this.background_images || ! this.images_cache_expires.isValid() || moment().isAfter( this.images_cache_expires ) );
 
-				_util.log( this.background_images );
-			} );
+		if ( ! expired || ! this.background_images_dir ) {
+			this.background_images = JSON.parse( this.background_images );
+			return;
 		}
+
+		theme_utils.dirlist( this.background_images_dir, true, result => this.cache_background_images(result) );
 	}
 
-	is_not_empty( value ) {
-		let empty_values = [null, 'null', undefined, 'undefined'];
-		return ! empty_values.includes(value);
-	}
+	cache_background_images( result ) {
+		this.background_images = result;
 
-
-	find_images( dirlist ) {
-		var images = [],
-			subdirs = [];
-
-		for ( let file of dirlist ) {
-			if ( file.match( /(png|PNG)|(jpg|JPEG)|(bmp|BMP)/ ) ) {
-				images.push( file );
-			} else if ( ! file.match( /\w+\.\w+/ ) ) {
-				subdirs.push( file )
-			}
+		if ( is_empty( this.background_images ) ) {
+			return;
 		}
 
-		if ( subdirs.length && images.length < 20 && this.recursion < 3 ) {
-			this.recursion++;
+		this._set( JSON.stringify( this.background_images ), 'background_manager', 'background_images' );
 
-			for ( let dir of subdirs ) {
-				theme_utils.dirlist( dir, ( result ) => {
-					if ( result && result.length ) {
-						images.push.apply( images, this.find_images( result ) );
-					}
-				} );
-
-
-			}
-		}
-
-		return images;
+		let expires = moment().add( 7, 'days' ).unix().toString();
+		this.images_cache_expires = this._set( expires, 'background_manager', 'cache_expires' );
 	}
 }
-
 
 
 
@@ -244,24 +218,24 @@ class AntergosThemeUtils {
 /**
  * This class handles the theme's background switcher.
  */
-class AntergosBackgroundManager {
+class BackgroundManager {
 
 	constructor() {
 		if ( null !== _bg_self ) {
 			return _bg_self;
 		}
 
-		_bg_self = this;
+		_bg_self = theme_utils.bind_this( this );
 
-		this.current_background = _util.cache_get( 'background_manager', 'current_background' );
+		this.current_background = _config._get( 'background_manager', 'current_background' );
+		this.random_background = _config._get( 'background_manager', 'random_background' );
 
-		if ( ! _util.background_images_dir || ! _util.background_images || ! _util.background_images.length ) {
-			_util.log( 'AntergosBackgroundManager: [ERROR] No background images detected.' );
+		if ( is_empty( _config.background_images ) ) {
+			log( 'BackgroundManager: [ERROR] No background images detected.' );
 
-			$( '.header' ).fadeTo( 300, 0.5, function() {
-				$( '.header' ).css( "background-image", 'url(img/fallback_bg.jpg)' );
+			$( '.header' ).fadeTo( 300, 0.5, function () {
+				$( '.header' ).css( 'background-image', 'url(img/fallback_bg.jpg)' );
 			} ).fadeTo( 300, 1 );
-
 		}
 
 		return _bg_self;
@@ -270,52 +244,34 @@ class AntergosBackgroundManager {
 
 	/**
 	 * Determine which background image should be displayed and apply it.
+	 *
+	 * @param {jQuery.Deferred} deferred
 	 */
 	initialize( deferred ) {
-		if ( ! _bg_self.current_background && 'localStorage' === _util.cache_backend ) {
-			// For backwards compatibility
-			if ( null !== localStorage.getItem( 'bgsaved' ) && '0' === localStorage.getItem( 'bgrandom' ) ) {
-				_bg_self.current_background = localStorage.getItem( 'bgsaved' );
-				_util.cache_set( _bg_self.current_background, 'background_manager', 'current_background' );
-				localStorage.removeItem( 'bgrandom' );
-				localStorage.removeItem( 'bgsaved' );
-			} else {
-				if ( '1' === localStorage.getItem( 'bgrandom' ) ) {
-					_bg_self.current_background = _bg_self.get_random_image();
-					_util.cache_set( 'true', 'background_manager', 'random_background' );
-					localStorage.removeItem( 'bgrandom' );
-				}
-			}
-		}
-
 		if ( ! _bg_self.current_background ) {
-			// For current and future versions
-			let current_background = _util.cache_get( 'background_manager', 'current_background' ),
-				random_background = _util.cache_get( 'background_manager', 'random_background' );
-
-			if ( 'true' === random_background || ! current_background ) {
-				current_background = _bg_self.get_random_image();
-				_util.cache_set( 'true', 'background_manager', 'random_background' );
-			}
-
-			_bg_self.current_background = current_background;
-			_util.cache_set( _bg_self.current_background, 'background_manager', 'current_background' );
+			_bg_self.random_background = _config._set( 'true', 'background_manager', 'random_background' );
 		}
 
-		_bg_self.do_background(deferred);
+		if ( 'true' === _bg_self.random_background ) {
+			_bg_self.current_background = _config._set( _bg_self.get_random_image(), 'background_manager', 'current_background' );
+		}
+
+		_bg_self.do_background( deferred );
 	}
 
 
 	/**
-	 * Set the background image to the value of `this.current_background`
+	 * Sets the background image to the value of {@link this.current_background}.
+	 *
+	 * @param {?jQuery.Deferred} deferred
 	 */
 	do_background( deferred = null ) {
-		let bg = _bg_self.current_background,
-			tpl = (bg.indexOf('url(') > -1) ? bg : `url(${_bg_self.current_background})`;
+		let background = _bg_self.current_background,
+			tpl = background.startsWith( 'url(' ) ? background : `url(${background})`;
 
-		$( '.header' ).css( "background-image", tpl );
+		$( '.header' ).css( 'background-image', tpl );
 
-		if (null !== deferred) {
+		if ( null !== deferred ) {
 			deferred.resolve();
 		}
 	}
@@ -324,14 +280,18 @@ class AntergosBackgroundManager {
 	/**
 	 * Get a random background image from our images array.
 	 *
-	 * @returns str The absolute path to a background image.
+	 * @returns {string} The absolute path to a background image.
 	 */
 	get_random_image() {
-		var random_bg;
+		let random_bg;
 
-		random_bg = Math.floor( Math.random() * _util.background_images.length );
+		if ( is_empty( _config.background_images ) ) {
+			return '';
+		}
 
-		return _util.background_images[ random_bg ];
+		random_bg = Math.floor( Math.random() * _config.background_images.length );
+
+		return _config.background_images[ random_bg ];
 	}
 
 
@@ -339,40 +299,35 @@ class AntergosBackgroundManager {
 	 * Setup the background switcher widget.
 	 */
 	setup_background_thumbnails() {
-		if ( _util.background_images && _util.background_images.length ) {
-			var old_bg_tpl = `url(${this.current_background})`;
+		if ( _config.background_images && _config.background_images.length ) {
+			let current_bg_url = `url(${this.current_background})`,
+				$random_thumbnail = $( '[data-img="random"]' ),
+				$thumbs_container = $( '.bgs' );
 
-			/* TODO: Implement some form of pagination
-			 */
-			if ( _util.background_images.length > 20 ) {
-				_util.background_images = _util.background_images.splice(0, 20);
+			// TODO: Implement some form of pagination
+			if ( _config.background_images.length > 20 ) {
+				_config.background_images = _config.background_images.splice( 0, 20 );
 			}
 
-			$('[data-img="random"]').click(this.background_selected_handler);
+			$random_thumbnail.on( 'click', event => this.background_selected_handler(event) );
 
-			for ( var image_file of _util.background_images ) {
-				var $link = $( '<a href="#"><div>' ),
+			for ( let image_file of _config.background_images ) {
+				let $link = $( '<a href="#"><div>' ),
 					$img_el = $link.children( 'div' ),
-					img_url_tpl = `url(file://${image_file})`;
+					img_url = `url(file://${image_file})`;
 
-				$link.addClass( 'bg clearfix' ).attr( 'data-img', img_url_tpl );
-
-				if ( image_file === this.current_background || image_file === old_bg_tpl ) {
-					var is_random = _util.cache_get( 'background_manager', 'random_background' );
-					if ('true' !== is_random ) {
-						$link.addClass( 'active' );
-					} else if ( 'true' === is_random ) {
-						$('[data-img="random"]').addClass('active');
-					}
+				if ( image_file === this.current_background || img_url === current_bg_url ) {
+					$link.addClass( 'active' );
 				}
 
-				$img_el.css( 'background-image', img_url_tpl );
+				$img_el.css( 'background-image', img_url );
 
-				$link.appendTo( $( '.bgs' ) ).click( this.background_selected_handler );
+				$link.addClass( 'bg clearfix' ).attr( 'data-img', img_url );
+				$link.appendTo( $thumbs_container ).on( 'click', event => this.background_selected_handler(event) );
 			}
 
-			if ( ! $('.bg.active').length ) {
-				$('[data-img="random"]').addClass('active');
+			if ( ! $( '.bg.active' ).length ) {
+				$random_thumbnail.addClass( 'active' );
 			}
 		}
 	}
@@ -381,61 +336,56 @@ class AntergosBackgroundManager {
 	/**
 	 * Handle background image selected event.
 	 *
-	 * @param event jQuery event object.
+	 * @param {Object} event jQuery event object.
 	 */
 	background_selected_handler( event ) {
-		var img = $( this ).attr( 'data-img' );
+		let $target = $( event.target ),
+			image = $target.attr( 'data-img' );
 
-		$('.bg.active').removeClass('active');
-		$(this).addClass('active');
+		$( '.bg.active' ).removeClass( 'active' );
+		$target.addClass( 'active' );
 
-		if ( 'random' === img ) {
-			_util.cache_set( 'true', 'background_manager', 'random_background' );
-			img = _bg_self.get_random_image();
+		if ( 'random' === image ) {
+			_bg_self.random_background = _config._set( 'true', 'background_manager', 'random_background' );
+			_bg_self.current_background = _bg_self.get_random_image();
 		} else {
-			_util.cache_set( 'false', 'background_manager', 'random_background' );
+			_bg_self.random_background = _config._set( 'false', 'background_manager', 'random_background' );
+			_bg_self.current_background = image;
 		}
 
-		_util.cache_set( img, 'background_manager', 'current_background' );
-		_bg_self.current_background = img;
-
-		_bg_self.do_background();
-
+		_config._set( image, 'background_manager', 'current_background' );
+		this.do_background();
 	}
 }
-
-
-
 
 
 /**
  * This is the theme's main class object. It contains most of the theme's logic.
  */
-class AntergosTheme {
+class Theme {
 
 	constructor() {
 		if ( null !== _self ) {
 			return _self;
 		}
-		_self = this;
 
-		this.tux = 'img/antergos-logo-user.png';
-		this.user_list_visible = false;
-		this.auth_pending = false;
-		this.selected_user = null;
-		this.$user_list = $( '#user-list2' );
-		this.$session_list = $( '#sessions' );
-		this.$clock_container = $( '#collapseOne' );
-		this.$clock = $( '#current_time' );
-		this.$actions_container = $( '#actionsArea' );
+		_self = theme_utils.bind_this( this );
+
+		this.tux                 = 'img/antergos-logo-user.png';
+		this.user_list_visible   = false;
+		this.auth_pending        = false;
+		this.selected_user       = null;
+		this.$user_list          = $( '#user-list2' );
+		this.$session_list       = $( '#sessions' );
+		this.$clock_container    = $( '#collapseOne' );
+		this.$clock              = $( '#current_time' );
+		this.$actions_container  = $( '#actionsArea' );
 		this.$msg_area_container = $( '#statusArea' );
-		this.$alert_msg_tpl = this.$msg_area_container.children('.alert-dismissible').clone();
+		this.$alert_msg_tpl      = this.$msg_area_container.children( '.alert-dismissible' ).clone();
 
-		this.background_manager = new AntergosBackgroundManager();
+		this.background_manager = new BackgroundManager();
 
-		let init_bg = $.Deferred(this.background_manager.initialize);
-
-		init_bg.then(() => this.initialize());
+		$.Deferred( this.background_manager.initialize ).then( () => this.initialize() );
 
 		return _self;
 	}
@@ -451,7 +401,7 @@ class AntergosTheme {
 		this.prepare_login_panel_header();
 		this.prepare_system_action_buttons();
 
-		$('#login').css('opacity', '1');
+		$( '#login' ).css( 'opacity', '1' );
 
 		this.prepare_user_list();
 		this.prepare_session_list();
@@ -465,62 +415,63 @@ class AntergosTheme {
 	 * been registered elsewhere.
 	 */
 	register_callbacks() {
-		this.$user_list.parents( '.collapse' ).on( 'shown.bs.collapse', this.user_list_collapse_handler );
-		this.$user_list.parents( '.collapse' ).on( ' hidden.bs.collapse', this.user_list_collapse_handler );
-		$( document ).keydown( this.key_press_handler );
-		$( '.cancel_auth:not(.alert .cancel_auth)' ).on('click', this.cancel_authentication );
-		$( '.submit_passwd' ).on('click', this.submit_password );
-		$('[data-i18n="debug_log"]').on('click', this.show_log_handler );
+		this.$user_list
+			.parents( '.collapse' )
+			.on( 'shown.bs.collapse hidden.bs.collapse', event => this.user_list_collapse_handler(event) );
 
-		window.show_prompt = this.show_prompt;
-		window.show_message = this.show_message;
-		window.start_authentication = this.start_authentication;
-		window.cancel_authentication = this.cancel_authentication;
-		window.authentication_complete = this.authentication_complete;
-		window.autologin_timer_expired = this.cancel_authentication;
+		$( document ).on( 'keydown', event => this.key_press_handler(event) );
+		$( '.cancel_auth:not(.alert .cancel_auth)' ).on( 'click', event => this.cancel_authentication(event) );
+
+		$( '.submit_passwd' ).on( 'click', event => this.submit_password(event) );
+		$( '[data-i18n="debug_log"]' ).on( 'click', event => this.show_log_handler(event) );
+
+		window.show_prompt             = (prompt, type) => this.show_prompt(prompt, type);
+		window.show_message            = (msg, type) => this.show_message(msg, type);
+
+		window.start_authentication    = event => this.start_authentication(event);
+		window.cancel_authentication   = event => this.cancel_authentication(event);
+
+		window.authentication_complete = () => this.authentication_complete();
+		window.autologin_timer_expired = event => this.cancel_authentication(event);
 	}
 
 	/**
 	 * Initialize the user list.
 	 */
 	prepare_user_list() {
-		var template;
+		let template;
 
 		// Loop through the array of LightDMUser objects to create our user list.
-		for ( var user of lightdm.users ) {
-			var last_session = _util.cache_get( 'user', user.name, 'session' ),
-				image_src = ( user.hasOwnProperty('image') && user.image && user.image.length ) ? user.image : _util.user_image;
+		for ( let user of lightdm.users ) {
+			let last_session = _config._get( 'user', user.username, 'session' ),
+				image_src = ( user.image && user.image.length ) ? user.image : _config.user_image;
 
 			if ( null === last_session ) {
-				// For backwards compatibility
-				if ('localStorage' === _util.cache_backend) {
-					last_session = localStorage.getItem( user.name );
-				}
-				if ( null === last_session ) {
-					// This user has never logged in before let's enable the system's default
-					// session.
-					last_session = lightdm.default_session;
-				}
-				_util.cache_set( last_session, 'user', user.name, 'session' );
+				// This user has never logged in before let's enable the system's default session.
+				last_session = _config._set( lightdm.default_session, 'user', user.name, 'session' );
 			}
 
-			_util.log( `Last session for ${user.name} was: ${last_session}` );
+			log( `Last session for ${user.name} was: ${last_session}` );
 
 			template = `
-				<a href="#" id="${user.name}" class="list-group-item ${user.name}" data-session="${last_session}">
+				<a href="#" id="${user.username}" class="list-group-item ${user.username}" data-session="${last_session}">
 					<img src="${image_src}" class="img-circle" alt="${user.display_name}" />
 					<span>${user.display_name}</span>
 					<span class="badge"><i class="fa fa-check"></i></span>
 				</a>`;
 
-			// Register event handler here so we don't have to iterate over the users again later.
-			$( template ).appendTo( this.$user_list ).click( this.start_authentication ).on( 'error.antergos', this.user_image_error_handler );
+			// Insert the template into the DOM and then register event handlers so we don't
+			// have to iterate over the users again later.
+			$( template )
+				.appendTo( this.$user_list )
+				.on( 'click', event => this.start_authentication(event) )
+				.on( 'error.antergos', err => this.user_image_error_handler(err) );
 
-		} // END for ( var user of lightdm.users )
+		} // END for ( let user of lightdm.users )
 
-		if ( $( this.$user_list ).children().length > 3 ) {
+		if ( this.$user_list.children().length > 3 ) {
 			// Make the user list two columns instead of one.
-			$( this.$user_list ).css( 'column-count', '2' ).parent().css( 'max-width', '85%' );
+			this.$user_list.css( 'column-count', '2' ).parent().css( 'max-width', '85%' );
 		}
 
 	}
@@ -530,18 +481,20 @@ class AntergosTheme {
 	 */
 	prepare_session_list() {
 		// Loop through the array of LightDMSession objects to create our session list.
-		for ( var session of lightdm.sessions ) {
-			var css_class = session.name.replace( / /g, '' ),
+		for ( let session of lightdm.sessions ) {
+			let css_class = session.name.replace( / /g, '' ),
 				template;
 
-			_util.log( `Adding ${session.name} to the session list...` );
+			log( `Adding ${session.name} to the session list...` );
 
 			template = `
 				<li>
 					<a href="#" data-session-id="${session.key}" class="${css_class}">${session.name}</a>
 				</li>`;
 
-			$( template ).appendTo( this.$session_list ).click( this.session_toggle_handler );
+			$( template )
+				.appendTo( this.$session_list )
+				.on( 'click', event => this.session_toggle_handler(event) );
 
 		} // END for (var session of lightdm.sessions)
 
@@ -552,31 +505,36 @@ class AntergosTheme {
 	 * Initialize the system action buttons
 	 */
 	prepare_system_action_buttons() {
-		var actions = {
-				shutdown: "power-off",
-				hibernate: "asterisk",
-				suspend: "arrow-down",
-				restart: "refresh"
-			},
-			template;
+		let template,
+			actions = {
+			shutdown: "power-off",
+			hibernate: "asterisk",
+			suspend: "arrow-down",
+			restart: "refresh"
+		};
 
-		for ( var action of Object.keys( actions ) ) {
-			var cmd = `can_${action}`;
+		for ( let action of Object.keys( actions ) ) {
+			let cmd = `can_${action}`;
 
 			template = `
 				<a href="#" id="${action}" class="btn btn-default ${action}" data-toggle="tooltip" data-placement="top" title="${action.capitalize()}" data-container="body">
-					<i class="fa fa-${actions[ action ]}"></i>
+					<i class="fa fa-${actions[action]}"></i>
 				</a>`;
 
-			if ( true === lightdm[ cmd ] ) {
-				$( template ).appendTo( $( this.$actions_container ) ).click( this.system_action_handler );
+			if ( ! lightdm[cmd] ) {
+				// This action is either not available on this system or we don't have permission to use it.
+				continue;
 			}
-		} // END for (var [action, icon] of actions)
+
+			$( template )
+				.appendTo( this.$actions_container )
+				.on( 'click', event => this.system_action_handler(event) );
+
+		} // END for (let [action, icon] of actions)
 
 		$( '[data-toggle=tooltip]' ).tooltip();
 		$( '.modal' ).modal( { show: false } );
 	}
-
 
 
 	/**
@@ -585,9 +543,7 @@ class AntergosTheme {
 	initialize_clock() {
 		this.$clock.html( theme_utils.get_current_localized_time() );
 
-		setInterval( () => {
-			_self.$clock.html( theme_utils.get_current_localized_time() );
-		}, 60000 );
+		setInterval( () => _self.$clock.html( theme_utils.get_current_localized_time() ), 60000 );
 	}
 
 
@@ -595,27 +551,28 @@ class AntergosTheme {
 	 * Show the user list if its not already shown. This is used to allow the user to
 	 * display the user list by pressing Enter or Spacebar.
 	 */
-	show_user_list( shown = false ) {
+	show_user_list( show = true ) {
 		let delay = 0;
 
-		if ( _self.$clock_container.hasClass( 'in' ) ) {
-			$( '#trigger' ).trigger( 'click' );
-			delay = 500;
-		} else if ( false === shown ) {
+		if ( false === show ) {
 			return;
 		}
 
-		if ( _self.$user_list.children().length <= 1 ) {
-			setTimeout(() => {
-				_self.$user_list.find( 'a' ).trigger( 'click', _self );
-			}, delay);
+		if ( this.$clock_container.hasClass( 'in' ) ) {
+			delay = 500;
+
+			$( '#trigger' ).trigger( 'click' );
+		}
+
+		if ( this.$user_list.children().length <= 1 ) {
+			setTimeout( () => this.$user_list.find( 'a' ).trigger( 'click', this ), delay );
 		}
 	}
 
 
 	prepare_login_panel_header() {
-		var greeting = (_util.translations.greeting) ? _util.translations.greeting : 'Welcome!',
-			logo = ( '' !== _util.logo ) ? _util.logo : 'img/antergos.png';
+		let greeting = _config.translations.greeting ? _config.translations.greeting : 'Welcome!',
+			logo = is_empty( _config.logo ) ? 'img/antergos.png' : _config.logo;
 
 		$( '.welcome' ).text( greeting );
 		$( '#hostname' ).append( lightdm.hostname );
@@ -624,19 +581,18 @@ class AntergosTheme {
 
 
 	prepare_translations() {
-		if ( ! _util.translations.hasOwnProperty( this.lang ) ) {
-			for ( var lang of window.navigator.languages ) {
-				if ( _util.translations.hasOwnProperty( lang ) ) {
+		if ( ! _config.translations.hasOwnProperty( this.lang ) ) {
+			this.lang = 'en';
+
+			for ( let lang of window.navigator.languages ) {
+				if ( _config.translations.hasOwnProperty( lang ) ) {
 					this.lang = lang;
 					break;
 				}
 			}
 		}
-		if ( ! _util.translations.hasOwnProperty( this.lang ) ) {
-			this.lang = 'en';
-		}
 
-		_util.translations = _util.translations[ this.lang ];
+		_config.translations = _config.translations[ this.lang ];
 	}
 
 
@@ -646,10 +602,10 @@ class AntergosTheme {
 	 * dynamically (they can be found in index.html).
 	 */
 	do_static_translations() {
-		$( '[data-i18n]' ).each( function() {
-			var key = $( this ).attr( 'data-i18n' ),
+		$( '[data-i18n]' ).each( function () {
+			let key = $( this ).attr( 'data-i18n' ),
 				html = $( this ).html(),
-				translated = _util.translations[ key ],
+				translated = _config.translations[ key ],
 				new_html = html.replace( '${i18n}', translated );
 
 			$( this ).html( new_html );
@@ -663,28 +619,31 @@ class AntergosTheme {
 	 * @param {object} event - jQuery.Event object from 'click' event.
 	 */
 	start_authentication( event ) {
-		var user_id = $( this ).attr( 'id' ),
+		let user_id = $( this ).attr( 'id' ),
 			selector = `.${user_id}`,
-			user_session_cached = _util.cache_get( 'user', user_id, 'session' ),
-			user_session = (_util.is_not_empty( user_session_cached )) ? user_session_cached : lightdm.default_session;
+			user_session_cached = _config._get( 'user', user_id, 'session' ),
+			user_session = is_empty( user_session_cached ) ? lightdm.default_session : user_session_cached;
 
-		if ( _self.auth_pending || null !== _self.selected_user ) {
+		if ( this.auth_pending || null !== this.selected_user ) {
 			lightdm.cancel_authentication();
-			_util.log( `Authentication cancelled for ${_self.selected_user}` );
-			_self.selected_user = null;
+			log( `Authentication cancelled for ${this.selected_user}` );
+			this.selected_user = null;
+			this.auth_pending = false;
 		}
 
-		_util.log( `Starting authentication for ${user_id}.` );
-		_self.selected_user = user_id;
+		log( `Starting authentication for ${user_id}.` );
 
-		if ( $( _self.$user_list ).children().length > 3 ) {
+		this.selected_user = user_id;
+
+		if ( this.$user_list.children().length > 3 ) {
 			// Reset columns since only the selected user is visible right now.
-			$( _self.$user_list ).css( 'column-count', 'initial' ).parent().css( 'max-width', '50%' );
+			this.$user_list.css( 'column-count', 'initial' ).parent().css( 'max-width', '50%' );
 		}
+
 		$( selector ).addClass( 'hovered' ).siblings().hide();
 		$( '.fa-toggle-down' ).hide();
 
-		_util.log( `Session for ${user_id} is ${user_session}` );
+		log( `Session for ${user_id} is ${user_session}` );
 
 		$( `[data-session-id="${user_session}"]` ).parent().trigger( 'click', this );
 
@@ -692,7 +651,7 @@ class AntergosTheme {
 		$( '#passwordArea' ).show();
 		$( '.dropdown-toggle' ).dropdown();
 
-		_self.auth_pending = true;
+		this.auth_pending = true;
 
 		lightdm.authenticate( user_id );
 	}
@@ -704,36 +663,34 @@ class AntergosTheme {
 	 * @param {object} event - jQuery.Event object from 'click' event.
 	 */
 	cancel_authentication( event ) {
-		var selectors = [ '#statusArea', '#timerArea', '#passwordArea', '#session-list' ];
+		let selectors = ['#statusArea', '#timerArea', '#passwordArea', '#session-list'];
 
-		for ( var selector of selectors ) {
-			$( selector ).hide();
-		}
+		selectors.forEach( selector => $( selector ).hide() );
 
 		lightdm.cancel_authentication();
 
-		_util.log( 'Cancelled authentication.' );
+		log( 'Cancelled authentication.' );
 
-		_self.selected_user = null;
-		_self.auth_pending = false;
+		this.selected_user = null;
+		this.auth_pending  = false;
 
-		if ( $(event.target).hasClass('alert') ) {
+		if ( $( event.target ).hasClass( 'alert' ) ) {
 			/* We were triggered by the authentication failed message being dismissed.
 			 * Keep the same account selected so user can retry without re-selecting an account.
 			 */
-			$( '#collapseTwo .user-wrap2' ).show(() => {
-				$( '.list-group-item.hovered' ).trigger('click');
-			});
+			$( '#collapseTwo .user-wrap2' ).show( () => {
+				$( '.list-group-item.hovered' ).trigger( 'click' );
+			} );
+
 		} else {
-			if ( $( _self.$user_list ).children().length > 3 ) {
+			if ( this.$user_list.children().length > 3 ) {
 				// Make the user list two columns instead of one.
-				$( _self.$user_list ).css( 'column-count', '2' ).parent().css( 'max-width', '85%' );
+				this.$user_list.css( 'column-count', '2' ).parent().css( 'max-width', '85%' );
 			}
 
 			$( '.hovered' ).removeClass( 'hovered' ).siblings().show();
 			$( '.fa-toggle-down' ).show();
 		}
-
 	}
 
 
@@ -743,28 +700,28 @@ class AntergosTheme {
 	 * Greeter to log them in with the session they selected.
 	 */
 	authentication_complete() {
-		var selected_session = $( '.selected' ).attr( 'data-session-id' ),
-			err_msg = _util.translations.auth_failed;
+		let selected_session = $( '.selected' ).attr( 'data-session-id' ),
+			err_msg = _config.translations.auth_failed;
 
-		_self.auth_pending = false;
-		_util.cache_set( selected_session, 'user', lightdm.authentication_user, 'session' );
+		this.auth_pending = false;
+
+		_config._set( selected_session, 'user', lightdm.authentication_user, 'session' );
 
 		$( '#timerArea' ).hide();
 
 		if ( lightdm.is_authenticated ) {
-			// The user entered the correct password. Let's log them in.
-			$( 'body' ).fadeOut( 1000, () => {
-				lightdm.login( lightdm.authentication_user, selected_session );
-			} );
+			// The user entered the correct password. Let's start the session.
+			$( 'body' ).fadeOut( 1000, () => lightdm.login( lightdm.authentication_user, selected_session ) );
+
 		} else {
 			// The user did not enter the correct password. Show error message.
-			_self.show_message(err_msg, 'error');
+			this.show_message( err_msg, 'error' );
 		}
 	}
 
 
 	submit_password( event ) {
-		let passwd =  $( '#passwordField' ).val();
+		let passwd = $( '#passwordField' ).val();
 
 		$( '#passwordArea' ).hide();
 		$( '#timerArea' ).show();
@@ -774,72 +731,82 @@ class AntergosTheme {
 
 
 	session_toggle_handler( event ) {
-		var $session = $( this ).children( 'a' ),
+		let $session = $( event.target ).children( 'a' ),
 			session_name = $session.text(),
 			session_key = $session.attr( 'data-session-id' );
 
-		$session.parents( '.btn-group' ).find( '.selected' ).attr( 'data-session-id', session_key ).html( session_name );
+		$session
+			.parents( '.btn-group' )
+			.find( '.selected' )
+			.attr( 'data-session-id', session_key )
+			.html( session_name );
 	}
 
 
 	key_press_handler( event ) {
-		let action = null;
+		let action;
+		console.log(event);
 
 		switch ( event.which ) {
 			case 13:
-				action = _self.auth_pending ? _self.submit_password : ! _self.user_list_visible ? _self.show_user_list : 0;
+				action = this.auth_pending ? this.submit_password : ! this.user_list_visible ? this.show_user_list : null;
 				break;
 			case 27:
-				action = _self.auth_pending ? _self.cancel_authentication : 0;
+				action = this.auth_pending ? this.cancel_authentication : null;
 				break;
 			case 32:
-				action = (! _self.user_list_visible && ! _self.auth_pending) ? _self.show_user_list : 0;
+				action = ( ! this.user_list_visible && ! this.auth_pending ) ? this.show_user_list : null;
 				break;
 			default:
+				action = null;
 				break;
 		}
 
-		if ( action instanceof Function ) {
+		if ( null !== action ) {
 			action();
 		}
 	}
 
 
 	system_action_handler() {
-		var action = $( this ).attr( 'id' ),
+		let action = $( this ).attr( 'id' ),
 			$modal = $( '.modal' );
 
-		$modal.find( '.btn-primary' ).text( _util.translations[ action ] ).click( action, ( event ) => {
-			$( this ).off( 'click' );
-			$( 'body' ).fadeOut( 1000, () => {
-				lightdm[event.data]();
-			});
-		} );
-		$modal.find( '.btn-default' ).click( () => {
-			$( this ).next().off( 'click' );
-		} );
+		$modal
+			.find( '.btn-primary' )
+			.text( _config.translations[ action ] )
+			.on( 'click', action, function( event ) {
+				$( this ).off( 'click' );
+				$( 'body' ).fadeOut( 1000, () => lightdm[ event.data ]() );
+			} );
+
+		$modal
+			.find( '.btn-default' )
+			.on( 'click', function( event ) {
+				$( this ).next().off( 'click' );
+			} );
 
 		$modal.modal( 'toggle' );
 	}
 
 
 	user_list_collapse_handler( event ) {
-		_self.user_list_visible = $(event.target).hasClass( 'in' );
-		_self.show_user_list(_self.user_list_visible);
+		this.user_list_visible = $( event.target ).hasClass( 'in' );
+		this.show_user_list( this.user_list_visible );
 	}
 
 
 	user_image_error_handler( event ) {
-		$( this ).off( 'error.antergos' );
-		$( this ).attr( 'src', _self.tux );
+		$( event.target ).off( 'error.antergos' );
+		$( event.target ).attr( 'src', this.tux );
 	}
 
 
 	show_log_handler( event ) {
-		if ( _util.$log_container.is( ':visible' ) ) {
-			_util.$log_container.hide();
+		if ( _config.$log_container.is( ':visible' ) ) {
+			_config.$log_container.hide();
 		} else {
-			_util.$log_container.show();
+			_config.$log_container.show();
 		}
 	}
 
@@ -852,7 +819,7 @@ class AntergosTheme {
 	 */
 	show_prompt( text, type ) {
 		if ( 'password' === type ) {
-			$( '#passwordField' ).val( "" );
+			$( '#passwordField' ).val( '' );
 			$( '#passwordArea' ).show();
 			$( '#passwordField' ).focus();
 		}
@@ -865,33 +832,31 @@ class AntergosTheme {
 	 * @param type
 	 */
 	show_message( text, type ) {
-		if (! text.length ) {
-			_util.log('show_message() called without a message to show!');
+		if ( ! text.length ) {
+			log( 'show_message() called without a message to show!' );
 			return;
 		}
 
-		let $msg_container = this.$msg_area_container.children('.alert-dismissible');
+		let $msg_container = this.$msg_area_container.children( '.alert-dismissible' );
 
-		if (! $msg_container.length ) {
+		if ( ! $msg_container.length ) {
 			$msg_container = this.$alert_msg_tpl.clone();
 			$msg_container.appendTo( this.$msg_area_container );
 		}
 
-		$msg_container.on('closed.bs.alert', _self.cancel_authentication);
+		$msg_container.on( 'closed.bs.alert', event => this.cancel_authentication( event ) );
 
 		$msg_container.html( $msg_container.html() + text );
 		$( '#collapseTwo .user-wrap2' ).hide();
 		this.$msg_area_container.show();
-
 	}
 }
-
 
 
 /**
  * Initialize the theme once the window has loaded.
  */
 $( window ).on( 'GreeterReady', () => {
-	new AntergosThemeUtils();
-	new AntergosTheme();
+	new ThemeConfig();
+	new Theme();
 } );
