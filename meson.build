@@ -1,84 +1,95 @@
-project('lightdm-webkit2-greeter', 'python', version: '3.0.0', license: 'GPL-3')
+project('web-greeter', 'python', version: '3.0.0alpha1', license: 'GPL-3')
 
 # ================================== #
 # ------->>> Version Vars <<<------- #
 # ================================== #
 
-as_version = meson.project_version()
+version = meson.project_version()
 version_parts = as_version.split('.')
 
-as_major_version = version_parts[0]
-as_minor_version = version_parts[1]
-as_micro_version = version_parts[2]
+major_version = version_parts[0]
+minor_version = version_parts[1]
+micro_version = version_parts[2]
 
 
 # ======================================= #
 # ------->>> Dependency Checks <<<------- #
 # ======================================= #
 
+python_dep = join(meson.build_root(), 'python_dep.py')
+
 dbus_glib       = dependency('dbus-glib-1')
 lightdm_gobject = dependency('liblightdm-gobject-1')
 x11             = dependency('x11')
+web_engine      = dependency('qt5', modules: ['WebEngine', 'WebEngineWidgets', 'WebChannel'])
 
-gtk3            = dependency('gtk+-3.0',                     version: '>=3.18')
-webkit2         = dependency('webkit2gtk-4.0',               version: '>=2.12')
-webkit2_webext  = dependency('webkit2gtk-web-extension-4.0', version: '>=2.12')
 
-greeter_deps = [dbus_glib, gtk3, webkit2, x11]
-webext_deps = [webkit2_webext, lightdm_gobject]
+pyqt5_check = run_command(python_dep, 'PyQt5')
 
-has_webkitgtk_2_14 = webkit2.version().version_compare('>=2.14')
+if pyqt5_check.return_code() == 0:
+  pyqt5 = declare_dependency(version: pyqt5_check.stdout().strip())
+else
+  pyqt5 = declare_dependency(version: '0.0.1')
+endif
+
+
+yaml_check = run_command(python_dep, 'ruamel.yaml')
+
+if yaml_check.return_code() == 0:
+  yaml = declare_dependency(version: yaml_check.stdout().strip())
+else
+  yaml = declare_dependency(version: '0.0.1')
+endif
+
+
+python_dependencies = [
+  ['pyqt5', pyqt5],
+  ['ruamel.yaml', yaml]
+]
+
+foreach dep: python_dependencies
+  if not dep.get(1).version().version_compare(>0.0.1):
+    error('Missing Dependency: @0@'.format(dep.get(0)))
+  endif
+endforeach
+
+
+greeter_deps       = [dbus_glib, lightdm_gobject, web_engine, x11]
 has_lightdm_1_19_2 = lightdm_gobject.version().version_compare('>=1.19.2')
-has_gtk_3_22 = gtk3.version().version_compare('>=3.22')
+
 
 # =================================== #
 # ------->>> Configuration <<<------- #
 # =================================== #
 
-conf               = configuration_data()
-config_file        = 'webkit2-greeter.conf'
-config_file_legacy = 'lightdm-webkit2-greeter.conf'
+conf        = configuration_data()
+config_file = 'whither.yaml'
+logo_image  = get_option('with-logo-image', join_paths(get_option('with-themes-dir'), 'antergos/img/antergos.png'))
+user_image  = get_option('with-user-image', join_paths(get_option('with-themes-dir'), 'antergos/img/antergos-logo-user.png'))
 
-conf.set('VERSION', as_version)
-conf.set('PACKAGE_VERSION', as_version)
-conf.set('AS_MAJOR_VERSION', as_major_version)
-conf.set('AS_MINOR_VERSION', as_minor_version)
-conf.set('AS_MICRO_VERSION', as_micro_version)
+conf.set('full_version', version)
+conf.set('major_version', major_version)
+conf.set('minor_version', minor_version)
+conf.set('micro_version', micro_version)
 
-conf.set('GETTEXT_PACKAGE', '"lightdm-webkit2-greeter"')
+conf.set('locale_dir', get_option('with-locale-dir'))
 
-conf.set('LOCALE_DIR', '"@0@"'.format(get_option('with-locale-dir')))
+conf.set('themes_dir', get_option('with-themes-dir'))
 
-conf.set('THEME_DIR', '"@0@"'.format(get_option('with-theme-dir')))
+conf.set('config_dir', get_option('with-config-dir'))
 
-conf.set('CONFIG_DIR', '"@0@"'.format(get_option('with-config-dir')))
+conf.set('greeters_dir', get_option('with-greeters-dir'))
 
-conf.set('CONFIG_FILE', '"@0@"'.format(join_paths(get_option('with-config-dir'), config_file)))
+conf.set('background_images_dir', get_option('with-background-images-dir'))
 
-conf.set('CONFIG_FILE_LEGACY', '"@0@"'.format(join_paths(get_option('with-config-dir'), config_file_legacy)))
+conf.set('logo_image', logo_image)
 
-conf.set('DESKTOP_DIR', '"@0@"'.format(get_option('with-desktop-dir')))
-
-conf.set('WEBEXT_DIR', '"@0@"'.format(get_option('with-webext-dir')))
-
-conf.set('GRESOURCE_PATH', '"/com/antergos/webkit2-greeter"')
-
-conf.set('BACKGROUND_IMAGES_DIR', '"/usr/share/backgrounds"')
-
-conf.set('LOGO_IMAGE', '"@0@"'.format(join_paths(get_option('with-theme-dir'), 'antergos/img/antergos.png')))
-
-conf.set('USER_IMAGE', '"@0@"'.format(join_paths(get_option('with-theme-dir'), 'antergos/img/antergos-logo-user.png')))
-
-if has_webkitgtk_2_14
-  conf.set('HAS_WEBKITGTK_2_14', has_webkitgtk_2_14)
-endif
+conf.set('user_image', user_image)
 
 if has_lightdm_1_19_2
-  conf.set('HAS_LIGHTDM_1_19_2', has_lightdm_1_19_2)
-endif
-
-if has_gtk_3_22
-  conf.set('HAS_GTK_3_22', has_gtk_3_22)
+  conf.set('has_lightdm_1_19_2', 'True')
+else
+  conf.set('has_lightdm_1_19_2', 'False')
 endif
 
 
@@ -86,7 +97,7 @@ endif
 # ------->>> Sub Directories <<<------- #
 # ===================================== #
 
-subdirs = ['src', 'man', 'themes', 'data', 'po']
+subdirs = ['web-greeter', 'man', 'themes', 'dist', 'po']
 
 foreach s : subdirs
   subdir(s)

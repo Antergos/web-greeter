@@ -29,7 +29,6 @@
 """ Utility class used to find and manage greeter themes. """
 
 # Standard Lib
-import json
 import os
 
 # This Application
@@ -37,20 +36,24 @@ from .pkg_json import PackageJSON
 
 
 class Theme:
+    """
+    Represents a greeter theme installed on the local system.
 
+    Args:
+        path (str): The absolute path to the theme's directory.
+
+    Attributes:
+        data (PackageJSON): The theme's data sourced from its `package.json` file.
+    """
     def __init__(self, path: str) -> None:
         self.path = path
 
         self._initialize()
 
-    def _initialize(self):
+    def _initialize(self) -> None:
         package_json = os.path.join(self.path, 'package.json')
 
         try:
             self.data = PackageJSON(package_json)
-            self.compatible = '3' in self.data.supports
-
-        data = json.loads(package_json)
-
-
-
+        except Exception:
+            self.data = None

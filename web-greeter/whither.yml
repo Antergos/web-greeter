@@ -1,31 +1,38 @@
 # Whither (Universal Linux Apps) Configuration
-# The top-level keys in this file should be application names. This makes it possible to
-# install multiple Whither-based apps on a single system, each with their own configuration.
 
 # App Name
 WebGreeter:
     # Whither's Config
     whither:
-        # Unique identifier string (dbus-style)
-        app_id: com.antergos.web-greeter
+        app_id: com.antergos.web-greeter # Unique identifier string (dbus style)
         toolkit: auto # auto|qt|gtk
-        # A valid URI for an HTML page that will be loaded when the app starts.
         entry_point:
             autoload: False
-            url: ''
+            url: '' # Valid URI for an HTML page to be loaded when the app starts (autoload only).
         window:
-            width: 1120
-            height: 720
+            width:
+            height:
             initial_state: maximized # normal|maximized|minimized|fullscreen
-            # Whether or not the window should show standard titlebar and action buttons.
-            decorated: False
-            # Whether or not the window should stay on top of all other windows.
-            stays_on_top: False
+            decorated: False         # Should the window show standard titlebar and action buttons.
+            stays_on_top: False      # Should the window stay on top of all other windows.
             title: Web Greeter for LightDM
-            icon: /usr/share/cnchi/data/icons/48x48/cnchi.png
+            icon:
         toolbar:
             enabled: False
 
     # App's Config
     app:
-        themes_dir: /home/dustin/github/antergos/lightdm-webkit2-greeter/themes
+        background_images_dir: @background_images_dir@
+        config_dir: @config_dir@
+        greeters_dir: @greeters_dir@
+        has_lightdm_1_19_2: @has_lightdm_1_19_2@
+        locale_dir: @locale_dir@
+        logo_image: @logo_image@
+        themes_dir: @themes_dir@
+        user_image: @user_image@
+        version:
+            full: @full_version@
+            major: @major_version@
+            minor: @minor_version@
+            micro: @micro_version@
+

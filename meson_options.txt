@@ -1,4 +1,4 @@
-option('with-theme-dir',
+option('with-themes-dir',
         type: 'string',
         value: '/usr/share/lightdm-webkit/themes',
         description: 'Directory to use for greeter themes')
