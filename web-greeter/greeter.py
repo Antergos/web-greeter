@@ -80,7 +80,8 @@ class WebGreeter(App):
     def load_theme(self):
         theme_url = 'file://{0}/{1}/index.html'.format(
             self.config.themes_dir,
-            self.user_config.greeter.webkit_theme
+            'antergos'
+            #self.user_config.greeter.webkit_theme
         )
 
         self._web_container.load(theme_url)

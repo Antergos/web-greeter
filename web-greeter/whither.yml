@@ -13,26 +13,26 @@ WebGreeter:
             width:
             height:
             initial_state: maximized # normal|maximized|minimized|fullscreen
-            decorated: False         # Should the window show standard titlebar and action buttons.
-            stays_on_top: False      # Should the window stay on top of all other windows.
+            decorated: True         # Should the window show standard titlebar and action buttons.
+            stays_on_top: False       # Should the window stay on top of all other windows.
             title: Web Greeter for LightDM
             icon:
+            no_desktop_env: False
         toolbar:
             enabled: False
 
     # App's Config
     app:
-        background_images_dir: @background_images_dir@
-        config_dir: @config_dir@
-        greeters_dir: @greeters_dir@
-        has_lightdm_1_19_2: @has_lightdm_1_19_2@
-        locale_dir: @locale_dir@
-        logo_image: @logo_image@
-        themes_dir: @themes_dir@
-        user_image: @user_image@
+        background_images_dir: '@background_images_dir@'
+        config_dir: '@config_dir@'
+        greeters_dir: '@greeters_dir@'
+        has_lightdm_1_19_2: '@has_lightdm_1_19_2@'
+        locale_dir: '@locale_dir@'
+        logo_image: '@logo_image@'
+        themes_dir: /home/dustin/github/antergos/lightdm-webkit2-greeter/themes
+        user_image: '@user_image@'
         version:
-            full: @full_version@
-            major: @major_version@
-            minor: @minor_version@
-            micro: @micro_version@
-
+            full: '@full_version@'
+            major: '@major_version@'
+            minor: '@minor_version@'
+            micro: '@micro_version@'

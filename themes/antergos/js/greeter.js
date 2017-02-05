@@ -425,14 +425,14 @@ class Theme {
 		$( '.submit_passwd' ).on( 'click', event => this.submit_password(event) );
 		$( '[data-i18n="debug_log"]' ).on( 'click', event => this.show_log_handler(event) );
 
-		window.show_prompt             = (prompt, type) => this.show_prompt(prompt, type);
-		window.show_message            = (msg, type) => this.show_message(msg, type);
+		lightdm.show_prompt.connect( (prompt, type) => this.show_prompt(prompt, type) );
+		lightdm.show_message.connect( (msg, type) => this.show_message(msg, type) );
 
 		window.start_authentication    = event => this.start_authentication(event);
 		window.cancel_authentication   = event => this.cancel_authentication(event);
 
-		window.authentication_complete = () => this.authentication_complete();
-		window.autologin_timer_expired = event => this.cancel_authentication(event);
+		lightdm.authentication_complete.connect( () => this.authentication_complete() );
+		lightdm.autologin_timer_expired.connect( event => this.cancel_authentication(event) );
 	}
 
 	/**
@@ -619,7 +619,7 @@ class Theme {
 	 * @param {object} event - jQuery.Event object from 'click' event.
 	 */
 	start_authentication( event ) {
-		let user_id = $( this ).attr( 'id' ),
+		let user_id = $( event.target ).attr( 'id' ),
 			selector = `.${user_id}`,
 			user_session_cached = _config._get( 'user', user_id, 'session' ),
 			user_session = is_empty( user_session_cached ) ? lightdm.default_session : user_session_cached;
@@ -711,7 +711,7 @@ class Theme {
 
 		if ( lightdm.is_authenticated ) {
 			// The user entered the correct password. Let's start the session.
-			$( 'body' ).fadeOut( 1000, () => lightdm.login( lightdm.authentication_user, selected_session ) );
+			$( 'body' ).fadeOut( 1000, () => lightdm.start_session( selected_session ) );
 
 		} else {
 			// The user did not enter the correct password. Show error message.
@@ -722,6 +722,7 @@ class Theme {
 
 	submit_password( event ) {
 		let passwd = $( '#passwordField' ).val();
+		console.log(lightdm.authentication_user);
 
 		$( '#passwordArea' ).hide();
 		$( '#timerArea' ).show();
@@ -745,7 +746,6 @@ class Theme {
 
 	key_press_handler( event ) {
 		let action;
-		console.log(event);
 
 		switch ( event.which ) {
 			case 13:

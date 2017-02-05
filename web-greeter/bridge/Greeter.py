@@ -27,6 +27,7 @@
 #  along with Web Greeter; If not, see <http://www.gnu.org/licenses/>.
 
 # Standard Lib
+import time
 
 # 3rd-Party Libs
 import gi
@@ -37,6 +38,7 @@ from whither.bridge import (
     bridge,
     Variant,
 )
+from PyQt5.QtCore import QTimer
 
 # This Application
 from . import (
@@ -53,22 +55,19 @@ LightDMUsers = LightDM.UserList()
 
 class Greeter(BridgeObject):
 
-    authentication_complete = bridge.signal(LightDM.Greeter, name='authentication_complete')
-    autologin_timer_expired = bridge.signal(LightDM.Greeter, name='autologin_timer_expired')
+    # LightDM.Greeter Signals
+    authentication_complete = bridge.signal()
+    autologin_timer_expired = bridge.signal()
+    idle = bridge.signal()
+    reset = bridge.signal()
+    show_message = bridge.signal(str, LightDM.MessageType, arguments=('text', 'type'))
+    show_prompt = bridge.signal(str, LightDM.PromptType, arguments=('text', 'type'))
 
-    idle = bridge.signal(LightDM.Greeter, name='idle')
-    reset = bridge.signal(LightDM.Greeter, name='reset')
-
-    show_message = bridge.signal(
-        (LightDM.Greeter, str, LightDM.MessageType),
-        name='show_message',
-        arguments=('text', 'type')
-    )
-    show_prompt = bridge.signal(
-        (LightDM.Greeter, str, LightDM.PromptType),
-        name='show_prompt',
-        arguments=('text', 'type')
-    )
+    # Property values are cached on the JavaScript side and will only update when
+    # a notify signal is emitted. We use the same signal for all properties which means
+    # all properties get updated when any property is changed. That's not a problem with
+    # the small number of properties we have.
+    property_changed = bridge.signal()
 
     def __init__(self, themes_dir, *args, **kwargs):
         super().__init__(name='LightDMGreeter', *args, **kwargs)
@@ -87,14 +86,32 @@ class Greeter(BridgeObject):
         self._shared_data_directory = user_data_dir.rpartition('/')[0]
 
     def _connect_signals(self):
-        LightDMGreeter.connect('authentication-complete', self.authentication_complete.emit)
-        LightDMGreeter.connect('autologin-timer-expired', self.authentication_complete.emit)
-        LightDMGreeter.connect('idle', self.idle.emit)
-        LightDMGreeter.connect('reset', self.reset.emit)
-        LightDMGreeter.connect('show-message', self.show_message.emit)
-        LightDMGreeter.connect('show-prompt', self.show_prompt.emit)
+        LightDMGreeter.connect(
+            'authentication-complete',
+            lambda greeter: self._emit_signal(self.authentication_complete)
+        )
+        LightDMGreeter.connect(
+            'autologin-timer-expired',
+            lambda greeter: self._emit_signal(self.autologin_timer_expired)
+        )
 
-    @bridge.prop(str)
+        LightDMGreeter.connect('idle', lambda greeter: self._emit_signal(self.idle))
+        LightDMGreeter.connect('reset', lambda greeter: self._emit_signal(self.reset))
+
+        LightDMGreeter.connect(
+            'show-message',
+            lambda greeter, msg, mtype: self._emit_signal(self.show_message, msg, mtype)
+        )
+        LightDMGreeter.connect(
+            'show-prompt',
+            lambda greeter, msg, mtype: self._emit_signal(self.show_prompt, msg, mtype)
+        )
+
+    def _emit_signal(self, _signal, *args):
+        self.property_changed.emit()
+        QTimer().singleShot(300, lambda: _signal.emit(*args))
+
+    @bridge.prop(str, notify=property_changed)
     def authentication_user(self):
         return LightDMGreeter.get_authentication_user() or ''
 
@@ -142,15 +159,15 @@ class Greeter(BridgeObject):
     def hostname(self):
         return LightDM.get_hostname()
 
-    @bridge.prop(bool)
+    @bridge.prop(bool, notify=property_changed)
     def in_authentication(self):
         return LightDMGreeter.get_in_authentication()
 
-    @bridge.prop(bool)
+    @bridge.prop(bool, notify=property_changed)
     def is_authenticated(self):
         return LightDMGreeter.get_is_authenticated()
 
-    @bridge.prop(Variant)
+    @bridge.prop(Variant, notify=property_changed)
     def language(self):
         return language_to_dict(LightDM.get_language())
 
@@ -170,7 +187,7 @@ class Greeter(BridgeObject):
     def lock_hint(self):
         return LightDMGreeter.get_lock_hint()
 
-    @bridge.prop(Variant)
+    @bridge.prop(Variant, notify=property_changed)
     def remote_sessions(self):
         return [session_to_dict(session) for session in LightDM.get_remote_sessions()]
 
@@ -209,18 +226,22 @@ class Greeter(BridgeObject):
     @bridge.method(str)
     def authenticate(self, username):
         LightDMGreeter.authenticate(username)
+        self.property_changed.emit()
 
     @bridge.method()
     def authenticate_as_guest(self):
         LightDMGreeter.authenticate_as_guest()
+        self.property_changed.emit()
 
     @bridge.method()
     def cancel_authentication(self):
         LightDMGreeter.cancel_authentication()
+        self.property_changed.emit()
 
     @bridge.method()
     def cancel_autologin(self):
         LightDMGreeter.cancel_autologin()
+        self.property_changed.emit()
 
     @bridge.method(result=bool)
     def hibernate(self):
@@ -229,6 +250,7 @@ class Greeter(BridgeObject):
     @bridge.method(str)
     def respond(self, response):
         LightDMGreeter.respond(response)
+        self.property_changed.emit()
 
     @bridge.method(result=bool)
     def restart(self):
@@ -238,6 +260,7 @@ class Greeter(BridgeObject):
     def set_language(self, lang):
         if self.is_authenticated:
             LightDMGreeter.set_language(lang)
+            self.property_changed.emit()
 
     @bridge.method(result=bool)
     def shutdown(self):

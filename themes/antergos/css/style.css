@@ -44,6 +44,7 @@
 body {
 	-webkit-font-smoothing: antialiased !important;
 	text-rendering: optimizeLegibility !important;
+	background-color: #000000;
 }
 
 *:focus {
