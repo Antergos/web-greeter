@@ -26,10 +26,9 @@ WebGreeter:
         background_images_dir: '@background_images_dir@'
         config_dir: '@config_dir@'
         greeters_dir: '@greeters_dir@'
-        has_lightdm_1_19_2: '@has_lightdm_1_19_2@'
         locale_dir: '@locale_dir@'
         logo_image: '@logo_image@'
-        themes_dir: /home/dustin/github/antergos/lightdm-webkit2-greeter/themes
+        themes_dir: '@themes_dir@'
         user_image: '@user_image@'
         version:
             full: '@full_version@'

@@ -4,9 +4,9 @@
          xmlns:gnome="http://api.gnome.org/doap-extensions#"
          xmlns="http://usefulinc.com/ns/doap#">
 
-  <name xml:lang="en">lightdm-webkit2-greeter</name>
-  <shortdesc xml:lang="en">LightDM Webkit2 Greeter</shortdesc>
-  <programming-language>C</programming-language>
+  <name xml:lang="en">web-greeter</name>
+  <shortdesc xml:lang="en">Web Greeter for LightDM</shortdesc>
+  <programming-language>Python</programming-language>
   <programming-language>JavaScript</programming-language>
   <homepage rdf:resource="https://github.com/Antergos/lightdm-webkit2-greeter" />
   <download-page rdf:resource="https://github.com/Antergos/lightdm-webkit2-greeter/release" />

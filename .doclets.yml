@@ -1,8 +1,9 @@
 files:
-  - src/gresource/js/LightDMObjects.js
-  - src/gresource/js/Greeter.js
-  - src/gresource/js/GreeterConfig.js
-  - src/gresource/js/ThemeUtils.js
+  - web-greeter/resources/js/docs/LightDMObjects.js
+  - web-greeter/resources/js/docs/Greeter.js
+  - web-greeter/resources/js/docs/GreeterConfig.js
+  - web-greeter/resources/js/ThemeUtils.js
+  - web-greeter/resources/js/bootstrap.js
 articles:
   - Overview: README.md
 branches:
