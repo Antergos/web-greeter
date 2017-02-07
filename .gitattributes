@@ -1,2 +1,2 @@
-**/_vendor/** linguist-vendored
-**/docs/** linguist-vendored
+**/_vendor/** linguist-vendored=true
+**/docs/** linguist-documentation=true
