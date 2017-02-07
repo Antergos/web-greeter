@@ -1,2 +1,6 @@
 **/_vendor/** linguist-vendored=true
 **/docs/** linguist-documentation=true
+themes/_vendor/* linguist-vendored
+web-greeter/resources/js/_vendor/* linguist-vendored
+web-greeter/resources/js/docs/* linguist-documentation
+
