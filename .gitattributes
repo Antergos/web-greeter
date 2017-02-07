@@ -1,5 +1,0 @@
-themes/_vendor/css/*.css linguist-vendored
-themes/_vendor/fonts/*/*.css linguist-vendored
-themes/_vendor/js/*.js linguist-vendored
-web-greeter/resources/js/_vendor/*.js linguist-vendored
-web-greeter/resources/js/docs/*.js linguist-documentation
