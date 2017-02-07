@@ -29,6 +29,7 @@
 
 > ***NOTE:*** These instructions are for the `master` branch. To build the latest release, please see the `stable` branch.
 
+### Download & Install
 ```sh
 git clone https://github.com/Antergos/lightdm-webkit2-greeter.git /tmp/greeter
 cd /tmp/greeter
