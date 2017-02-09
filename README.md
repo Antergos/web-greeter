@@ -24,8 +24,6 @@
 |**whither**            |python-whither|python3-whither       |python3-whither      |python3-whither       |
 |**liblightdm-gobject** |lightdm       |liblightdm-gobject-dev|lightdm-gobject-devel|liblightdm-gobject-1-0|
 |**pygobject**          |python-gobject|python3-gi            |pygobject3           |python3-gobject       |
-|**pyqt5**              |python-pyqt5  |python3-pyqt5         |python3-qt5          |python3-qt5           |
-|**qt5-webengine**      |qt5-webengine |libqt5webengine5      |qt5-qtwebengine      |libqt5-qtwebengine    |
 
 > ***NOTE:*** These instructions are for the `master` branch. To build the latest release, please see the `stable` branch.
 
