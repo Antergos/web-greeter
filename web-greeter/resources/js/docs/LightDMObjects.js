@@ -271,3 +271,4 @@ class User {
 		return this._real_name;
 	}
 }
+ 
