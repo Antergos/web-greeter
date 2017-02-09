@@ -1,12 +1,13 @@
 #!/bin/make -f
 
-DO=./build/utils.sh
-SET_CONFIG=$(DO) set-config
+DO         := ./build/utils.sh
+SET_CONFIG := $(DO) set-config
+DESTDIR    ?= '/'
 
 define colorecho
-	@tput setaf 118
-	@echo $1
-	@tput sgr0
+	@tput setaf 118 || true
+	@echo $1        || true
+	@tput sgr0      || true
 endef
 
 
