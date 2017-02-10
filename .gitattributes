@@ -3,3 +3,4 @@
 **/i18n/** linguist-vendored
 **/.tx/** linguist-vendored
 **/translations.js linguist-vendored
+**/themes/** linguist-vendored
