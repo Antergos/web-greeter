@@ -99,7 +99,7 @@ set_config() {
 	KEY="$1"
 	[[ '' != "$2" ]] && VALUE="$2" || VALUE="$3"
 
-	sed -i "s|@${KEY}@|@${VALUE}@|g" "${BUILD_DIR}/web-greeter/whither.yml"
+	sed -i "s|@${KEY}@|${VALUE}|g" "${BUILD_DIR}/web-greeter/whither.yml"
 }
 
 

@@ -4,17 +4,17 @@
 WebGreeter:
     # Whither's Config
     whither:
-        app_id: com.antergos.web-greeter # Unique identifier string (dbus style)
-        toolkit: auto # auto|qt|gtk
+        app_id: com.antergos.web-greeter
+        toolkit: auto
         entry_point:
             autoload: False
-            url: '' # Valid URI for an HTML page to be loaded when the app starts (autoload only).
+            url: ''
         window:
             width:
             height:
-            initial_state: maximized # normal|maximized|minimized|fullscreen
-            decorated: True         # Should the window show standard titlebar and action buttons.
-            stays_on_top: False       # Should the window stay on top of all other windows.
+            initial_state: maximized
+            decorated: False
+            stays_on_top: True
             title: Web Greeter for LightDM
             icon:
             no_desktop_env: False
@@ -31,7 +31,7 @@ WebGreeter:
         themes_dir: '@themes_dir@'
         user_image: '@user_image@'
         version:
-            full: '@full_version@'
-            major: '@major_version@'
-            minor: '@minor_version@'
-            micro: '@micro_version@'
+            full: '3.0.0alpha3'
+            major: '3'
+            minor: '0'
+            micro: '0alpha3'
