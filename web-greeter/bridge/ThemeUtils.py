@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 #  ThemeUtils.py
@@ -40,11 +39,10 @@ from whither.bridge import (
 
 class ThemeUtils(BridgeObject):
 
-    def __init__(self, greeter, config, user_config, *args, **kwargs):
+    def __init__(self, greeter, config, *args, **kwargs):
         super().__init__(name='ThemeUtils', *args, **kwargs)
 
         self._config = config
-        self._user_config = user_config
         self._greeter = greeter
 
     @bridge.method(str, bool, result=Variant)
@@ -60,9 +58,9 @@ class ThemeUtils(BridgeObject):
         allowed = False
         allowed_dirs = (
             self._config.themes_dir,
-            self._user_config.branding.background_images,
+            self._config.branding.background_images_dir,
             self._greeter.shared_data_directory,
-            '/tmp/'
+            '/tmp'
         )
 
         for allowed_dir in allowed_dirs:

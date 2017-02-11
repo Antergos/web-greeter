@@ -31,7 +31,7 @@ do_build() {
 
 	# Compile Resources
 	(combine_javascript_sources \
-		&& pyrcc5 -o ../../resources.py ../resources.qrc)
+		&& pyrcc5 -o "${BUILD_DIR}/${PKGNAME}/resources.py" ../resources.qrc)
 
 	# Create "Zip Application"
 	(cd "${PKGNAME}" \
@@ -56,23 +56,27 @@ do_install() {
 		&& mv themes/_vendor .)
 
 	# Man Page
-	cp "${REPO_DIR}/dist/${PKGNAME}.1" "${INSTALL_ROOT}/usr/share/man/man1"
+	cp "${BUILD_DIR}/dist/${PKGNAME}.1" "${INSTALL_ROOT}/usr/share/man/man1"
 
 	# Greeter Config
-	cp "${REPO_DIR}/dist/${PKGNAME}.conf" "${INSTALL_ROOT}/etc/lightdm"
+	cp "${BUILD_DIR}/dist/${PKGNAME}.yml" "${INSTALL_ROOT}/etc/lightdm"
 
 	# AppData File
-	cp "${REPO_DIR}/dist/com.antergos.${PKGNAME}.appdata.xml" "${INSTALL_ROOT}/usr/share/metainfo"
+	cp "${BUILD_DIR}/dist/com.antergos.${PKGNAME}.appdata.xml" "${INSTALL_ROOT}/usr/share/metainfo"
 
 	# Desktop File
-	cp "${REPO_DIR}/dist/com.antergos.${PKGNAME}.desktop" "${INSTALL_ROOT}/usr/share/xgreeters"
+	cp "${BUILD_DIR}/dist/com.antergos.${PKGNAME}.desktop" "${INSTALL_ROOT}/usr/share/xgreeters"
 
 	# Do Install!
 	[[ -e "${DESTDIR}" ]] || mkdir -p "${DESTDIR}"
 	cp -R "${INSTALL_ROOT}"/* "${DESTDIR}"
 
 	# Fix Permissions
-	chown -R "${SUDO_UID}:${SUDO_GID}" "${BUILD_DIR}"
+	[[ -n "${SUDO_UID}" ]] && chown -R "${SUDO_UID}:${SUDO_GID}" "${BUILD_DIR}"
+}
+
+do_install_dev() {
+	cp -RH "${REPO_DIR}/whither/whither" /usr/lib/python3.6/site-packages/
 }
 
 do_success() {
@@ -88,18 +92,17 @@ generate_pot_file() {
 }
 
 init_build_dir() {
-	[[ -e "${BUILD_DIR}/web-greeter" ]] && return 0
-	cp -R "${REPO_DIR}/web-greeter" "${BUILD_DIR}"
+	[[ -e "${BUILD_DIR}/web-greeter" ]] && rm -rf "${BUILD_DIR}/web-greeter"
+	[[ -e "${BUILD_DIR}/dist" ]] && rm -rf "${BUILD_DIR}/dist"
+	cp -R -t "${BUILD_DIR}" "${REPO_DIR}/web-greeter" "${REPO_DIR}/dist"
 }
 
 set_config() {
-	( [[ -z "$1" ]] || [[ -z "$2" && -z "$3" ]] ) && return 1
-	local KEY VALUE
+	[[ -z "$1" || -z "$2" ]] && return 1
 
-	KEY="$1"
-	[[ '' != "$2" ]] && VALUE="$2" || VALUE="$3"
-
-	sed -i "s|@${KEY}@|${VALUE}|g" "${BUILD_DIR}/web-greeter/whither.yml"
+	sed -i "s|'@$1@'|$2|g" \
+		"${BUILD_DIR}/web-greeter/whither.yml" \
+		"${BUILD_DIR}/dist/web-greeter.yml"
 }
 
 
@@ -134,7 +137,11 @@ case "$1" in
 		do_install
 	;;
 
+	install-dev)
+		do_install_dev
+	;;
+
 	set-config)
-		set_config "$2" "$3" "$4"
+		set_config "$2" "$3"
 	;;
 esac

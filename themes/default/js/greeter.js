@@ -248,7 +248,7 @@ class BackgroundManager {
 	 * @param {jQuery.Deferred} deferred
 	 */
 	initialize( deferred ) {
-		if ( ! _bg_self.current_background ) {
+		if ( is_empty( _bg_self.current_background ) ) {
 			_bg_self.random_background = _config._set( 'true', 'background_manager', 'random_background' );
 		}
 

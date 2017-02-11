@@ -2,7 +2,7 @@
 
 DO         := ./build/utils.sh
 SET_CONFIG := $(DO) set-config
-DESTDIR    ?= '/'
+DESTDIR    ?= /
 
 define colorecho
 	@tput setaf 118 || true
@@ -10,27 +10,55 @@ define colorecho
 	@tput sgr0      || true
 endef
 
+ifeq ($(MAKECMDGOALS),build_dev)
+debug_mode   := True
+decorated    := True
+stays_on_top := False
+endif
+
+
+# Configuration: Use values from command line if provided, default values otherwise.
+background_images_dir ?= $(realpath $(DESTDIR)/usr/share/backgrounds)
+config_dir            ?= $(realpath $(DESTDIR)/etc/lightdm)
+debug_mode            ?= False
+decorated             ?= False
+greeters_dir          ?= $(realpath $(DESTDIR)/usr/share/xgreeters)
+locale_dir            ?= $(realpath $(DESTDIR)/usr/share/locale)
+themes_dir            ?= $(realpath $(DESTDIR)/usr/share/web-greeter/themes)
+logo_image            ?= $(themes_dir)/default/img/antergos-logo-user.png
+stays_on_top          ?= True
+user_image            ?= $(themes_dir)/default/img/antergos.png
+
+
+_apply_config:
+	@$(SET_CONFIG) background_images_dir $(background_images_dir)
+	@$(SET_CONFIG) config_dir            $(config_dir)
+	@$(SET_CONFIG) debug_mode            $(debug_mode)
+	@$(SET_CONFIG) decorated             $(decorated)
+	@$(SET_CONFIG) greeters_dir          $(greeters_dir)
+	@$(SET_CONFIG) locale_dir            $(locale_dir)
+	@$(SET_CONFIG) themes_dir            $(themes_dir)
+	@$(SET_CONFIG) logo_image            $(logo_image)
+	@$(SET_CONFIG) stays_on_top          $(stays_on_top)
+	@$(SET_CONFIG) user_image            $(user_image)
+
+_build_init: clean
+	$(DO) build-init
 
 all: install
 
-apply_config:
-	@#            | KEY                 | VALUE FROM COMMAND LINE  | DEFAULT VALUE
-	@$(SET_CONFIG) background_images_dir '$(background_images_dir)' /usr/share/backgrounds
-	@$(SET_CONFIG) config_dir            '$(config_dir)'            /etc/lightdm
-	@$(SET_CONFIG) greeters_dir          '$(greeters_dir)'          /usr/share/xgreeters
-	@$(SET_CONFIG) locale_dir            '$(locale_dir)'            /usr/share/locale
-	@$(SET_CONFIG) themes_dir            '$(themes_dir)'            /usr/share/web-greeter
-
-build_init: clean
-	$(DO) build-init
-
-build: build_init apply_config
+build: _build_init _apply_config
 	$(DO) build
+
+build_dev: install
+	sudo $(DO) install-dev
 
 clean:
 	$(DO) clean
 
 install: build
-	$(DO) install $(DESTDIR)
+	sudo $(DO) install $(DESTDIR)
 	$(call colorecho, SUCCESS!)
 
+
+.PHONY: all _apply_config _build_init build build_dev clean install

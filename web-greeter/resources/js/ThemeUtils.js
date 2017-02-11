@@ -35,9 +35,9 @@ let localized_invalid_date = null,
 
 function _set_allowed_dirs() {
 	allowed_dirs = {
-		themes_dir: lightdm.themes_directory,
-		backgrounds_dir: greeter_config.branding.background_images,
-		lightdm_data_dir: lightdm.shared_data_directory,
+		themes_dir: lightdm.themes_dir,
+		backgrounds_dir: greeter_config.branding.background_images_dir,
+		lightdm_data_dir: lightdm.shared_data_dir,
 		tmpdir: '/tmp',
 	};
 }

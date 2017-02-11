@@ -27,12 +27,17 @@
 #  along with Web Greeter; If not, see <http://www.gnu.org/licenses/>.
 
 # Standard Lib
-import configparser
 import os
+from typing import (
+    ClassVar,
+    Type,
+)
 
 # 3rd-Party Libs
 from whither.app import App
 from whither.base.data import AttributeDict
+from whither.base.config_loader import ConfigLoader
+from whither.bridge import BridgeObject
 
 # This Application
 import resources
@@ -42,48 +47,44 @@ from bridge import (
     ThemeUtils,
 )
 
+# Typing Helpers
+BridgeObj = Type[BridgeObject]
+
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 CONFIG_FILE = os.path.join(BASE_DIR, 'whither.yml')
 
 
 class WebGreeter(App):
-    greeter = None
-    greeter_config = None
-    theme_utils = None
-    user_config = AttributeDict({})
+    greeter = None         # type: ClassVar[BridgeObj]
+    greeter_config = None  # type: ClassVar[BridgeObj]
+    theme_utils = None     # type: ClassVar[BridgeObj]
 
     def __init__(self, *args, **kwargs):
-        super().__init__('WebGreeter', config_file=CONFIG_FILE, debug=True, *args, **kwargs)
-        self.get_and_save_user_config()
+        super().__init__('WebGreeter', *args, **kwargs)
 
         self.greeter = Greeter(self.config.themes_dir)
-        self.greeter_config = Config(self.user_config)
-        self.theme_utils = ThemeUtils(self.greeter, self.config, self.user_config)
+        self.greeter_config = Config(self.config)
+        self.theme_utils = ThemeUtils(self.greeter, self.config)
         self._web_container.bridge_objects = (self.greeter, self.greeter_config, self.theme_utils)
 
         self._web_container.initialize_bridge_objects()
         self._web_container.load_script(':/_greeter/js/bundle.js', 'Web Greeter Bundle')
         self.load_theme()
 
-    def get_and_save_user_config(self):
-        config = configparser.ConfigParser()
+    def _before_web_container_init(self):
+        self.get_and_apply_user_config()
 
-        config.read('/etc/lightdm/web-greeter.conf')
+    def get_and_apply_user_config(self):
+        config_file = os.path.join(self.config.config_dir, 'web-greeter.yml')
+        branding_config = ConfigLoader('branding', config_file).config
+        greeter_config = ConfigLoader('greeter', config_file).config
 
-        for section in config.sections():
-            self.user_config[section] = {}
-
-            for key in config[section]:
-                self.user_config[section][key] = config[section][key]
+        self.config.branding.update(branding_config)
+        self.config.greeter.update(greeter_config)
 
     def load_theme(self):
-        theme_url = 'file://{0}/{1}/index.html'.format(
-            self.config.themes_dir,
-            'antergos'
-            #self.user_config.greeter.webkit_theme
-        )
-
+        theme_url = f'/{self.config.themes_dir}/{self.config.greeter.theme}/index.html'
         self._web_container.load(theme_url)
 
 

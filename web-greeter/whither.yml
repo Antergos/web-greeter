@@ -4,34 +4,42 @@
 WebGreeter:
     # Whither's Config
     whither:
+        allow_remote_urls: False
         app_id: com.antergos.web-greeter
-        toolkit: auto
+        debug_mode: '@debug_mode@'
         entry_point:
             autoload: False
-            url: ''
-        window:
-            width:
-            height:
-            initial_state: maximized
-            decorated: False
-            stays_on_top: True
-            title: Web Greeter for LightDM
-            icon:
-            no_desktop_env: False
         toolbar:
             enabled: False
+        toolkit: auto
+        window:
+            decorated: '@decorated@'
+            initial_state: maximized
+            stays_on_top: '@stays_on_top@'
+            title: Web Greeter for LightDM
 
     # App's Config
     app:
-        background_images_dir: '@background_images_dir@'
+        branding:
+            background_images_dir: '@background_images_dir@'
+            logo_image: '@logo_image@'
+            user_image: '@user_image@'
         config_dir: '@config_dir@'
+        greeter:
+            debug_mode: '@debug_mode@'
+            detect_theme_errors: True
+            screensaver_timeout: 300
+            secure_mode: True
+            theme: default
+            time_format: LT
+            time_language: auto
         greeters_dir: '@greeters_dir@'
         locale_dir: '@locale_dir@'
-        logo_image: '@logo_image@'
         themes_dir: '@themes_dir@'
-        user_image: '@user_image@'
         version:
-            full: '3.0.0alpha3'
-            major: '3'
-            minor: '0'
-            micro: '0alpha3'
+            full: '3.0.0alpha4'
+            major: 3
+            minor: 0
+            micro: 0
+            alpha: 4
+            beta: False
