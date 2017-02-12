@@ -35,7 +35,6 @@ from typing import (
 
 # 3rd-Party Libs
 from whither.app import App
-from whither.base.data import AttributeDict
 from whither.base.config_loader import ConfigLoader
 from whither.bridge import BridgeObject
 
@@ -60,7 +59,7 @@ class WebGreeter(App):
     greeter_config = None  # type: ClassVar[BridgeObj]
     theme_utils = None     # type: ClassVar[BridgeObj]
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__('WebGreeter', *args, **kwargs)
 
         self.greeter = Greeter(self.config.themes_dir)
@@ -72,8 +71,24 @@ class WebGreeter(App):
         self._web_container.load_script(':/_greeter/js/bundle.js', 'Web Greeter Bundle')
         self.load_theme()
 
+    @classmethod
+    def __pre_init__(cls):
+        ConfigLoader.add_filter(cls.validate_greeter_config_data)
+
     def _before_web_container_init(self):
         self.get_and_apply_user_config()
+
+    @classmethod
+    def validate_greeter_config_data(cls, key: str, data: str) -> str:
+        if "'@" not in data:
+            return data
+
+        if 'WebGreeter' == key:
+            path = '../build/web-greeter/whither.yml'
+        else:
+            path = '../build/dist/web-greeter.yml'
+
+        return open(path, 'r').read()
 
     def get_and_apply_user_config(self):
         config_file = os.path.join(self.config.config_dir, 'web-greeter.yml')
