@@ -245,34 +245,36 @@ class BackgroundManager {
 	/**
 	 * Determine which background image should be displayed and apply it.
 	 *
-	 * @param {jQuery.Deferred} deferred
+	 * @return {Promise}
 	 */
-	initialize( deferred ) {
-		if ( is_empty( _bg_self.current_background ) ) {
-			_bg_self.random_background = _config._set( 'true', 'background_manager', 'random_background' );
-		}
+	initialize() {
+		return new Promise( (resolve, reject) => {
+			if ( is_empty( _bg_self.current_background ) ) {
+				_bg_self.random_background = _config._set( 'true', 'background_manager', 'random_background' );
+			}
 
-		if ( 'true' === _bg_self.random_background ) {
-			_bg_self.current_background = _config._set( _bg_self.get_random_image(), 'background_manager', 'current_background' );
-		}
+			if ( 'true' === _bg_self.random_background ) {
+				_bg_self.current_background = _config._set( _bg_self.get_random_image(), 'background_manager', 'current_background' );
+			}
 
-		_bg_self.do_background( deferred );
+			return _bg_self.do_background( resolve );
+		});
 	}
 
 
 	/**
 	 * Sets the background image to the value of {@link this.current_background}.
 	 *
-	 * @param {?jQuery.Deferred} deferred
+	 * @param {?Promise.resolve} resolve
 	 */
-	do_background( deferred = null ) {
+	do_background( resolve = null ) {
 		let background = _bg_self.current_background,
 			tpl = background.startsWith( 'url(' ) ? background : `url(${background})`;
 
 		$( '.header' ).css( 'background-image', tpl );
 
-		if ( null !== deferred ) {
-			deferred.resolve();
+		if ( null !== resolve ) {
+			return resolve();
 		}
 	}
 
@@ -385,7 +387,7 @@ class Theme {
 
 		this.background_manager = new BackgroundManager();
 
-		$.Deferred( this.background_manager.initialize ).then( () => this.initialize() );
+		this.background_manager.initialize().then( () => this.initialize() );
 
 		return _self;
 	}
