@@ -509,10 +509,10 @@ class Theme {
 	prepare_system_action_buttons() {
 		let template,
 			actions = {
-			shutdown: "power-off",
-			hibernate: "asterisk",
-			suspend: "arrow-down",
-			restart: "refresh"
+			shutdown: 'power-off',
+			hibernate: 'asterisk',
+			suspend: 'arrow-down',
+			restart: 'refresh'
 		};
 
 		for ( let action of Object.keys( actions ) ) {
