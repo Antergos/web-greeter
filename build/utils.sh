@@ -10,8 +10,8 @@ DESTDIR=''
 _handle_error() {
 	LASTLINE="$1"
 	LASTERR="$2"
-	echo "${BASH_SOURCE[0]}: line ${LASTLINE}: exit status of last command: ${LASTERR}"
-	exit 1
+	(>&2 echo "${BASH_SOURCE[0]}: line ${LASTLINE}: exit status of last command: ${LASTERR}")
+	exit "${LASTERR}"
 }
 
 clean_build_dir() {
@@ -45,34 +45,8 @@ do_build() {
 }
 
 do_install() {
-	cd "${BUILD_DIR}"
-	mkdir -p \
-		"${INSTALL_ROOT}"/usr/share/{man/man1,metainfo,web-greeter,xgreeters} \
-		"${INSTALL_ROOT}/etc/lightdm"
-
-	# Themes
-	(cp -R "${REPO_DIR}/themes" "${INSTALL_ROOT}/usr/share/web-greeter" \
-		&& cd "${INSTALL_ROOT}/usr/share/web-greeter" \
-		&& mv themes/_vendor .)
-
-	# Man Page
-	cp "${BUILD_DIR}/dist/${PKGNAME}.1" "${INSTALL_ROOT}/usr/share/man/man1"
-
-	# Greeter Config
-	cp "${BUILD_DIR}/dist/${PKGNAME}.yml" "${INSTALL_ROOT}/etc/lightdm"
-
-	# AppData File
-	cp "${BUILD_DIR}/dist/com.antergos.${PKGNAME}.appdata.xml" "${INSTALL_ROOT}/usr/share/metainfo"
-
-	# Desktop File
-	cp "${BUILD_DIR}/dist/com.antergos.${PKGNAME}.desktop" "${INSTALL_ROOT}/usr/share/xgreeters"
-
-	# Do Install!
 	[[ -e "${DESTDIR}" ]] || mkdir -p "${DESTDIR}"
 	cp -R "${INSTALL_ROOT}"/* "${DESTDIR}"
-
-	# Fix Permissions
-	[[ -n "${SUDO_UID}" ]] && chown -R "${SUDO_UID}:${SUDO_GID}" "${BUILD_DIR}"
 }
 
 do_install_dev() {
@@ -95,6 +69,30 @@ init_build_dir() {
 	[[ -e "${BUILD_DIR}/web-greeter" ]] && rm -rf "${BUILD_DIR}/web-greeter"
 	[[ -e "${BUILD_DIR}/dist" ]] && rm -rf "${BUILD_DIR}/dist"
 	cp -R -t "${BUILD_DIR}" "${REPO_DIR}/web-greeter" "${REPO_DIR}/dist"
+}
+
+prepare_install() {
+	cd "${BUILD_DIR}"
+	mkdir -p \
+		"${INSTALL_ROOT}"/usr/share/{man/man1,metainfo,web-greeter,xgreeters} \
+		"${INSTALL_ROOT}/etc/lightdm"
+
+	# Themes
+	(cp -R "${REPO_DIR}/themes" "${INSTALL_ROOT}/usr/share/web-greeter" \
+		&& cd "${INSTALL_ROOT}/usr/share/web-greeter" \
+		&& mv themes/_vendor .)
+
+	# Man Page
+	cp "${BUILD_DIR}/dist/${PKGNAME}.1" "${INSTALL_ROOT}/usr/share/man/man1"
+
+	# Greeter Config
+	cp "${BUILD_DIR}/dist/${PKGNAME}.yml" "${INSTALL_ROOT}/etc/lightdm"
+
+	# AppData File
+	cp "${BUILD_DIR}/dist/com.antergos.${PKGNAME}.appdata.xml" "${INSTALL_ROOT}/usr/share/metainfo"
+
+	# Desktop File
+	cp "${BUILD_DIR}/dist/com.antergos.${PKGNAME}.desktop" "${INSTALL_ROOT}/usr/share/xgreeters"
 }
 
 set_config() {
@@ -140,6 +138,10 @@ case "$1" in
 
 	install-dev)
 		do_install_dev
+	;;
+
+	prepare-install)
+		prepare_install
 	;;
 
 	set-config)

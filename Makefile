@@ -1,9 +1,9 @@
 #!/bin/make -f
 
-DO         := ./build/utils.sh
-SET_CONFIG := $(DO) set-config
-DESTDIR    ?= /
-MAYBE_SUDO := ''
+DO            := ./build/utils.sh
+SET_CONFIG    := $(DO) set-config
+DESTDIR       ?= /
+MAYBE_SUDO_DO := $(DO)
 
 define colorecho
 	@tput setaf 118 || true
@@ -18,7 +18,7 @@ stays_on_top := False
 endif
 
 ifeq ($(DESTDIR),/)
-MAYBE_SUDO := sudo
+MAYBE_SUDO_DO := sudo $(DO)
 endif
 
 
@@ -58,13 +58,14 @@ build: _build_init _apply_config
 	$(DO) build
 
 build_dev: install
-	sudo $(DO) install-dev
+	$(MAYBE_SUDO_DO) install-dev
 
 clean:
 	$(DO) clean
 
 install: build
-	$(MAYBE_SUDO) $(DO) install $(DESTDIR)
+	./build/utils.sh prepare-install
+	$(MAYBE_SUDO_DO) install $(DESTDIR)
 	$(call colorecho, SUCCESS!)
 
 

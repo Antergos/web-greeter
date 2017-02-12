@@ -11,8 +11,8 @@
 			Web Greeter for LightDM utilizes themes built with HTML/CSS/JavaScript for it's login screen.
 		</p>
 		<p>
-			Web Greeter's themes provide modern, visually appealing, and feature-rich
-			login screens. It includes two themes by default. There are a growing number of
+			Web Greeter themes provide modern, visually appealing, and feature-rich
+			login screens. Two themes are included by default. There are a growing number of
 			3rd-Party themes available online.
 		</p>
 	</description>
@@ -97,6 +97,9 @@
 	<suggests>
 		<id>apps.light-locker</id>
 	</suggests>
+	<provides>
+		<binary>web-greeter</binary>
+	</provides>
 	<update_contact>dustin_at_antergos.com</update_contact>
 	<translation type="gettext">web-greeter</translation>
 	<developer_name>Antergos Linux Project</developer_name>
