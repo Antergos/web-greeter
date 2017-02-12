@@ -19,13 +19,13 @@ endif
 
 # Configuration: Use values from command line if provided, default values otherwise.
 at_spi_service        ?= True
-background_images_dir ?= $(realpath $(DESTDIR)/usr/share/backgrounds)
-config_dir            ?= $(realpath $(DESTDIR)/etc/lightdm)
+background_images_dir ?= $(abspath $(DESTDIR)/usr/share/backgrounds)
+config_dir            ?= $(abspath $(DESTDIR)/etc/lightdm)
 debug_mode            ?= False
 decorated             ?= False
-greeters_dir          ?= $(realpath $(DESTDIR)/usr/share/xgreeters)
-locale_dir            ?= $(realpath $(DESTDIR)/usr/share/locale)
-themes_dir            ?= $(realpath $(DESTDIR)/usr/share/web-greeter/themes)
+greeters_dir          ?= $(abspath $(DESTDIR)/usr/share/xgreeters)
+locale_dir            ?= $(abspath $(DESTDIR)/usr/share/locale)
+themes_dir            ?= $(abspath $(DESTDIR)/usr/share/web-greeter/themes)
 logo_image            ?= $(themes_dir)/default/img/antergos-logo-user.png
 stays_on_top          ?= True
 user_image            ?= $(themes_dir)/default/img/antergos.png
