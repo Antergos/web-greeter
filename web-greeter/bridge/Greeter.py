@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 #  Greeter.py
@@ -111,116 +110,142 @@ class Greeter(BridgeObject):
         self.property_changed.emit()
         QTimer().singleShot(300, lambda: _signal.emit(*args))
 
+    @staticmethod
     @bridge.prop(str, notify=property_changed)
-    def authentication_user(self):
+    def authentication_user():
         return LightDMGreeter.get_authentication_user() or ''
 
+    @staticmethod
     @bridge.prop(bool)
-    def autologin_guest(self):
+    def autologin_guest():
         return LightDMGreeter.get_autologin_guest_hint()
 
+    @staticmethod
     @bridge.prop(int)
-    def autologin_timeout(self):
+    def autologin_timeout():
         return LightDMGreeter.get_autologin_timeout_hint()
 
+    @staticmethod
     @bridge.prop(str)
-    def autologin_user(self):
+    def autologin_user():
         return LightDMGreeter.get_autologin_user_hint()
 
+    @staticmethod
     @bridge.prop(bool)
-    def can_hibernate(self):
+    def can_hibernate():
         return LightDM.get_can_hibernate()
 
+    @staticmethod
     @bridge.prop(bool)
-    def can_restart(self):
+    def can_restart():
         return LightDM.get_can_restart()
 
+    @staticmethod
     @bridge.prop(bool)
-    def can_shutdown(self):
+    def can_shutdown():
         return LightDM.get_can_shutdown()
 
+    @staticmethod
     @bridge.prop(bool)
-    def can_suspend(self):
+    def can_suspend():
         return LightDM.get_can_suspend()
 
+    @staticmethod
     @bridge.prop(str)
-    def default_session(self):
+    def default_session():
         return LightDMGreeter.get_default_session_hint()
 
+    @staticmethod
     @bridge.prop(bool)
-    def has_guest_account(self):
+    def has_guest_account():
         return LightDMGreeter.get_has_guest_account_hint()
 
+    @staticmethod
     @bridge.prop(bool)
-    def hide_users(self):
+    def hide_users():
         return LightDMGreeter.get_hide_users_hint()
 
+    @staticmethod
     @bridge.prop(str)
-    def hostname(self):
+    def hostname():
         return LightDM.get_hostname()
 
+    @staticmethod
     @bridge.prop(bool, notify=property_changed)
-    def in_authentication(self):
+    def in_authentication():
         return LightDMGreeter.get_in_authentication()
 
+    @staticmethod
     @bridge.prop(bool, notify=property_changed)
-    def is_authenticated(self):
+    def is_authenticated():
         return LightDMGreeter.get_is_authenticated()
 
+    @staticmethod
     @bridge.prop(Variant, notify=property_changed)
-    def language(self):
+    def language():
         return language_to_dict(LightDM.get_language())
 
+    @staticmethod
     @bridge.prop(Variant)
-    def languages(self):
+    def languages():
         return [language_to_dict(lang) for lang in LightDM.get_languages()]
 
+    @staticmethod
     @bridge.prop(Variant)
-    def layout(self):
+    def layout():
         return layout_to_dict(LightDM.get_layout())
 
+    @staticmethod
     @bridge.prop(Variant)
-    def layouts(self):
+    def layouts():
         return [layout_to_dict(layout) for layout in LightDM.get_layouts()]
 
+    @staticmethod
     @bridge.prop(bool)
-    def lock_hint(self):
+    def lock_hint():
         return LightDMGreeter.get_lock_hint()
 
+    @staticmethod
     @bridge.prop(Variant, notify=property_changed)
-    def remote_sessions(self):
+    def remote_sessions():
         return [session_to_dict(session) for session in LightDM.get_remote_sessions()]
 
+    @staticmethod
     @bridge.prop(bool)
-    def select_guest_hint(self):
+    def select_guest_hint():
         return LightDMGreeter.get_select_guest_hint()
 
+    @staticmethod
     @bridge.prop(str)
-    def select_user_hint(self):
+    def select_user_hint():
         return LightDMGreeter.get_select_user_hint() or ''
 
+    @staticmethod
     @bridge.prop(Variant)
-    def sessions(self):
+    def sessions():
         return [session_to_dict(session) for session in LightDM.get_sessions()]
 
     @bridge.prop(str)
     def shared_data_directory(self):
         return self._shared_data_directory
 
+    @staticmethod
     @bridge.prop(bool)
-    def show_manual_login_hint(self):
+    def show_manual_login_hint():
         return LightDMGreeter.get_show_manual_login_hint()
 
+    @staticmethod
     @bridge.prop(bool)
-    def show_remote_login_hint(self):
+    def show_remote_login_hint():
         return LightDMGreeter.get_show_remote_login_hint()
 
     @bridge.prop(str)
     def themes_directory(self):
         return self._themes_directory
 
+    @staticmethod
     @bridge.prop(Variant)
-    def users(self):
+    def users():
         return [user_to_dict(user) for user in LightDMUsers.get_users()]
 
     @bridge.method(str)
@@ -243,8 +268,9 @@ class Greeter(BridgeObject):
         LightDMGreeter.cancel_autologin()
         self.property_changed.emit()
 
+    @staticmethod
     @bridge.method(result=bool)
-    def hibernate(self):
+    def hibernate():
         return LightDMGreeter.hibernate()
 
     @bridge.method(str)
@@ -252,8 +278,9 @@ class Greeter(BridgeObject):
         LightDMGreeter.respond(response)
         self.property_changed.emit()
 
+    @staticmethod
     @bridge.method(result=bool)
-    def restart(self):
+    def restart():
         return LightDMGreeter.restart()
 
     @bridge.method(str)
@@ -262,16 +289,19 @@ class Greeter(BridgeObject):
             LightDMGreeter.set_language(lang)
             self.property_changed.emit()
 
+    @staticmethod
     @bridge.method(result=bool)
-    def shutdown(self):
+    def shutdown():
         return LightDMGreeter.shutdown()
 
+    @staticmethod
     @bridge.method(str, result=bool)
-    def start_session(self, session):
+    def start_session(session):
         return LightDMGreeter.start_session_sync(session)
 
+    @staticmethod
     @bridge.method(result=bool)
-    def suspend(self):
+    def suspend():
         return LightDMGreeter.suspend()
 
 

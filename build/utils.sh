@@ -15,8 +15,8 @@ _handle_error() {
 }
 
 clean_build_dir() {
-	find "${BUILD_DIR}" -type f ! -path '*/ci/*' ! -name utils.sh -delete
-	find "${BUILD_DIR}" -type d ! -name build ! -path '*/ci' -delete
+	find "${BUILD_DIR}" -type f ! -path '**/ci/**' ! -name '*.yml' ! -name utils.sh -delete
+	find "${BUILD_DIR}" -type d ! -name build ! -path '**/ci' -delete 2>/dev/null || true
 }
 
 combine_javascript_sources() {
@@ -135,6 +135,7 @@ case "$1" in
 	install)
 		DESTDIR="$2"
 		do_install
+		clean_build_dir
 	;;
 
 	install-dev)
