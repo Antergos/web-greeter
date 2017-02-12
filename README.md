@@ -1,5 +1,5 @@
 # Web Greeter for LightDM
-[![Latest Release][release]](https://github.com/Antergos/lightdm-webkit2-greeter/releases)  &nbsp;[![CircleCI][circleci]](https://circleci.com/gh/Antergos/lightdm-webkit2-greeter) &nbsp;[![Coverity Scan Build Status](https://img.shields.io/coverity/scan/6871.svg?style=flat-square)](https://scan.coverity.com/projects/antergos-lightdm-webkit2-greeter) &nbsp;[![Theme API Docs][api]](https://doclets.io/Antergos/lightdm-webkit2-greeter/stable) &nbsp;[![AUR Votes][aur]](https://aur.archlinux.org/packages/lightdm-webkit2-greeter)
+[![Latest Release][release]](https://github.com/Antergos/lightdm-webkit2-greeter/releases)  &nbsp;[![Codacy Grade][codacy]](https://www.codacy.com/app/Antergos/lightdm-webkit2-greeter) &nbsp;[![CircleCI][circleci]](https://circleci.com/gh/Antergos/lightdm-webkit2-greeter) &nbsp;[![Theme API Docs][api]](https://doclets.io/Antergos/lightdm-webkit2-greeter/stable) &nbsp;[![AUR Votes][aur]](https://aur.archlinux.org/packages/lightdm-webkit2-greeter)
 
 ## Install It
 
@@ -45,6 +45,7 @@ Translations are managed through [Transifex](https://www.transifex.com/faidoc/an
 [ubuntu]: https://dl.dropboxusercontent.com/u/60521097/ubuntu_orange_hex.png "ubuntu"
 
 [release]: https://img.shields.io/github/release/Antergos/lightdm-webkit2-greeter.svg?style=flat-square "Latest Release"
+[codacy]: https://img.shields.io/codacy/grade/43c95c8c0e3749b8afa3bfd2b6edf541.svg?style=flat-square "Codacy Grade"
 [circleci]: https://img.shields.io/circleci/project/Antergos/lightdm-webkit2-greeter/master.svg?style=flat-square "CI Status"
-[api]: https://img.shields.io/badge/API--Doc-ready-brightgreen.svg?style=flat-square "Theme API"
+[api]: https://img.shields.io/badge/API--Doc-ready-brightgreen.svg?style=flat-square "Theme API Docs"
 [aur]: https://img.shields.io/aur/votes/lightdm-webkit2-greeter.svg?maxAge=2592000&style=flat-square "AUR Votes"
