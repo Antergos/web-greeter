@@ -18,6 +18,7 @@ endif
 
 
 # Configuration: Use values from command line if provided, default values otherwise.
+at_spi_service        ?= True
 background_images_dir ?= $(realpath $(DESTDIR)/usr/share/backgrounds)
 config_dir            ?= $(realpath $(DESTDIR)/etc/lightdm)
 debug_mode            ?= False
@@ -31,6 +32,7 @@ user_image            ?= $(themes_dir)/default/img/antergos.png
 
 
 _apply_config:
+	@$(SET_CONFIG) at_spi_service        $(at_spi_service)
 	@$(SET_CONFIG) background_images_dir $(background_images_dir)
 	@$(SET_CONFIG) config_dir            $(config_dir)
 	@$(SET_CONFIG) debug_mode            $(debug_mode)

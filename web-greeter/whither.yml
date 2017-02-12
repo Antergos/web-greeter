@@ -5,6 +5,10 @@ WebGreeter:
     # Whither's Config
     whither:
         allow_remote_urls: False
+        at_spi_service:
+            enabled: '@at_spi_service@'
+            command: /usr/lib/at-spi2-core/at-spi-bus-launcher
+            arg: --launch-immediately
         app_id: com.antergos.web-greeter
         debug_mode: '@debug_mode@'
         entry_point:
