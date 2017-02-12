@@ -26,7 +26,6 @@
 #  along with Web Greeter; If not, see <http://www.gnu.org/licenses/>.
 
 # Standard Lib
-import time
 
 # 3rd-Party Libs
 import gi
