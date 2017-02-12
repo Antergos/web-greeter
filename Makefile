@@ -3,6 +3,7 @@
 DO         := ./build/utils.sh
 SET_CONFIG := $(DO) set-config
 DESTDIR    ?= /
+MAYBE_SUDO := ''
 
 define colorecho
 	@tput setaf 118 || true
@@ -14,6 +15,10 @@ ifeq ($(MAKECMDGOALS),build_dev)
 debug_mode   := True
 decorated    := True
 stays_on_top := False
+endif
+
+ifeq ($(DESTDIR),/)
+MAYBE_SUDO := sudo
 endif
 
 
@@ -59,7 +64,7 @@ clean:
 	$(DO) clean
 
 install: build
-	sudo $(DO) install $(DESTDIR)
+	$(MAYBE_SUDO) $(DO) install $(DESTDIR)
 	$(call colorecho, SUCCESS!)
 
 
