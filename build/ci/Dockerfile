@@ -8,6 +8,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
 		python3-gi \
 		python3-pyqt5 \
 		python3-pip \
+		zip \
 	&& pip3 install whither
 
 VOLUME /build
