@@ -3,22 +3,18 @@
 
 ## Install It
 
-#### Official Distro Packages
+### Distro Packages
 |Distro|Install Command/Links|
 |:---:|:---:|
 |![antergos](https://dl.dropboxusercontent.com/u/60521097/logo-square26x26.png)|`sudo pacman -S lightdm-webkit2-greeter`|
-
-#### Unofficial Distro Packages
-|Distro|Install Command/Links|
-|:---:|:---:|
 |![arch](https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png)|`yaourt -S lightdm-webkit2-greeter`|
-|![fedora](https://dl.dropboxusercontent.com/u/60521097/fedora-logo.png)|[copr](https://copr.fedorainfracloud.org/coprs/antergos/lightdm-webkit2-greeter/) &nbsp;\|&nbsp; [OBS Repo](https://software.opensuse.org/download.html?project=home:antergos&package=lightdm-webkit2-greeter)|
-|![openSUSE](https://dl.dropboxusercontent.com/u/60521097/Geeko-button-bling7.png)|[1 Click Install](https://software.opensuse.org/ymp/home:antergos/openSUSE_Leap_42.1/lightdm-webkit2-greeter.ymp?base=openSUSE%3ALeap%3A42.1&query=lightdm-webkit2-greeter) &nbsp;\|&nbsp; [OBS Repo](https://software.opensuse.org/download.html?project=home:antergos&package=lightdm-webkit2-greeter)|
+|![fedora](https://dl.dropboxusercontent.com/u/60521097/fedora-logo.png)|`dnf copr enable antergos/lightdm-webkit2-greeter`|
+|![openSUSE](https://dl.dropboxusercontent.com/u/60521097/Geeko-button-bling7.png)|[1 Click Install](https://software.opensuse.org/ymp/home:antergos/openSUSE_Leap_42.1/lightdm-webkit2-greeter.ymp?base=openSUSE%3ALeap%3A42.1&query=lightdm-webkit2-greeter)|
 |![ubuntu](https://dl.dropboxusercontent.com/u/60521097/ubuntu_orange_hex.png)|[OBS Repo](https://software.opensuse.org/download.html?project=home:antergos&package=lightdm-webkit2-greeter)|
 
-## Install It Manually
+### From Source
 
-### Dependencies
+#### Dependencies
 |                       | ![antergos](https://dl.dropboxusercontent.com/u/60521097/logo-square26x26.png) &nbsp;&nbsp; ![arch](https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png) | ![debian](https://dl.dropboxusercontent.com/u/60521097/openlogo-nd-25.png) &nbsp;&nbsp; ![ubuntu](https://dl.dropboxusercontent.com/u/60521097/ubuntu_orange_hex.png) | ![fedora](https://dl.dropboxusercontent.com/u/60521097/fedora-logo.png) | ![openSUSE](https://dl.dropboxusercontent.com/u/60521097/Geeko-button-bling7.png) | 
 |-----------------------|-------------------------------------------------------------------------|----------------------------------------------------------------------------|-------------------------------------------------------------------------|-----------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
 |**whither**            |python-whither|python3-whither       |python3-whither      |python3-whither       |
@@ -27,7 +23,7 @@
 
 > ***NOTE:*** These instructions are for the `master` branch. To build the latest release, please see the `stable` branch.
 
-### Download & Install
+#### Download & Install
 ```sh
 git clone https://github.com/Antergos/lightdm-webkit2-greeter.git /tmp/greeter
 cd /tmp/greeter
