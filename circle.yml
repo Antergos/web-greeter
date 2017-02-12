@@ -7,9 +7,9 @@ dependencies:
   cache_directories:
     - ~/docker
   override:
-    - '[[ -e ~/docker/image1.tar ]] && docker load -i ~/docker/image1.tar || true'
-    - '[[ -e ~/docker/image1.tar ]] || docker build --rm=false -t antergos/ci-ubuntu build/ci'
-    - '[[ -e ~/docker/image1.tar ]] || mkdir -p ~/docker; docker save antergos/ci-ubuntu > ~/docker/image1.tar'
+    - '[[ -e ~/docker/image2.tar ]] && docker load -i ~/docker/image2.tar || true'
+    - '[[ -e ~/docker/image2.tar ]] || docker build --rm=false -t antergos/ci-ubuntu build/ci'
+    - '[[ -e ~/docker/image2.tar ]] || mkdir -p ~/docker; docker save antergos/ci-ubuntu > ~/docker/image2.tar'
 
 test:
   override:
