@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the lightdm-webkit2-greeter package.
-# 
+# This file is distributed under the same license as the web-greeter package.
+#
 # Translators:
 # Dustin Falgout <dustin@falgout.us>, 2016
 # FABIO SASSI <infinito8824@gmail.com>, 2016

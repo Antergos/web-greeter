@@ -56,7 +56,7 @@ do_install_dev() {
 
 generate_pot_file() {
 	REPO_ROOT="$(dirname "${REPO_DIR}")"
-	xgettext --from-code UTF-8 -o "${REPO_ROOT}/po/lightdm-webkit2-greeter.pot" -d lightdm-webkit2-greeter "${REPO_ROOT}"/src/*.c
+	xgettext --from-code UTF-8 -o "${REPO_ROOT}/po/web-greeter.pot" -d web-greeter "${REPO_ROOT}"/src/*.c
 }
 
 init_build_dir() {

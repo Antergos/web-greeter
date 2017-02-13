@@ -3,14 +3,14 @@
  *
  * Copyright © 2015-2017 Antergos
  *
- * This file is part of lightdm-webkit2-greeter
+ * This file is part of web-greeter
  *
- * lightdm-webkit2-greeter is free software: you can redistribute it and/or modify
+ * web-greeter is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License,
  * or any later version.
  *
- * lightdm-webkit2-greeter is distributed in the hope that it will be useful,
+ * web-greeter is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -174,7 +174,7 @@ class ThemeConfig {
 
 
 	/**
-	 * Get some values from `lightdm-webkit2-greeter.conf` and save them for later.
+	 * Get some values from `web-greeter.conf` and save them for later.
 	 */
 	init_config_values() {
 		if ( 'undefined' === typeof( greeter_config ) ) {

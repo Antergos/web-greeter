@@ -1,5 +1,5 @@
 # Web Greeter for LightDM
-[![Latest Release][release]](https://github.com/Antergos/lightdm-webkit2-greeter/releases)  &nbsp;[![Codacy Grade][codacy]](https://www.codacy.com/app/Antergos/lightdm-webkit2-greeter) &nbsp;[![CircleCI][circleci]](https://circleci.com/gh/Antergos/lightdm-webkit2-greeter) &nbsp;[![Theme API Docs][api]](https://doclets.io/Antergos/lightdm-webkit2-greeter/stable) &nbsp;[![AUR Votes][aur]](https://aur.archlinux.org/packages/lightdm-webkit2-greeter)
+[![Latest Release][release]](https://github.com/Antergos/web-greeter/releases)  &nbsp;[![Codacy Grade][codacy]](https://www.codacy.com/app/Antergos/web-greeter) &nbsp;[![CircleCI][circleci]](https://circleci.com/gh/Antergos/web-greeter) &nbsp;[![Theme API Docs][api]](https://doclets.io/Antergos/web-greeter/stable) &nbsp;[![AUR Votes][aur]](https://aur.archlinux.org/packages/web-greeter)
 
 ## Install It
 
@@ -25,13 +25,13 @@
 
 #### Download & Install
 ```sh
-git clone https://github.com/Antergos/lightdm-webkit2-greeter.git /tmp/greeter
+git clone https://github.com/Antergos/web-greeter.git /tmp/greeter
 cd /tmp/greeter
 sudo make install
 ```
 
 ## Theme JavaScript API:
-The greeter exposes a JavaScript API to themes which they must use to interact with the greeter (in order to facilitate the user login process). For more details, check out the [API Documentation](https://doclets.io/Antergos/lightdm-webkit2-greeter/stable). 
+The greeter exposes a JavaScript API to themes which they must use to interact with the greeter (in order to facilitate the user login process). For more details, check out the [API Documentation](https://doclets.io/Antergos/web-greeter/stable). 
 
 
 ## Translations
@@ -44,8 +44,8 @@ Translations are managed through [Transifex](https://www.transifex.com/faidoc/an
 [openSUSE]: https://dl.dropboxusercontent.com/u/60521097/Geeko-button-bling7.png "openSUSE"
 [ubuntu]: https://dl.dropboxusercontent.com/u/60521097/ubuntu_orange_hex.png "ubuntu"
 
-[release]: https://img.shields.io/github/release/Antergos/lightdm-webkit2-greeter.svg?style=flat-square "Latest Release"
+[release]: https://img.shields.io/github/release/Antergos/web-greeter.svg?style=flat-square "Latest Release"
 [codacy]: https://img.shields.io/codacy/grade/43c95c8c0e3749b8afa3bfd2b6edf541.svg?style=flat-square "Codacy Grade"
-[circleci]: https://img.shields.io/circleci/project/Antergos/lightdm-webkit2-greeter/master.svg?style=flat-square "CI Status"
-[api]: https://img.shields.io/badge/API--Doc-ready-brightgreen.svg?style=flat-square "Theme API Docs"
+[circleci]: https://img.shields.io/circleci/project/Antergos/web-greeter/master.svg?style=flat-square "CI Status"
+[api]: https://img.shields.io/badge/API--Docs-ready-brightgreen.svg?style=flat-square "Theme API Docs"
 [aur]: https://img.shields.io/aur/votes/lightdm-webkit2-greeter.svg?maxAge=2592000&style=flat-square "AUR Votes"

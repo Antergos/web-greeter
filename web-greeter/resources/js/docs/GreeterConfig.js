@@ -3,14 +3,14 @@
  *
  * Copyright © 2017 Antergos Developers <dev@antergos.com>
  *
- * This file is part of lightdm-webkit2-greeter.
+ * This file is part of web-greeter.
  *
- * lightdm-webkit2-greeter is free software; you can redistribute it and/or modify
+ * web-greeter is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
- * lightdm-webkit2-greeter is distributed in the hope that it will be useful,
+ * web-greeter is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
@@ -22,7 +22,7 @@
  * by works containing it is required.
  *
  * You should have received a copy of the GNU General Public License
- * along with lightdm-webkit2-greeter; If not, see <http://www.gnu.org/licenses/>.
+ * along with web-greeter; If not, see <http://www.gnu.org/licenses/>.
  */
 
 
@@ -45,7 +45,7 @@ function set_values( defaults, target_obj, method ) {
 
 /**
  * Provides greeter themes with a way to access values from the greeter's config
- * file located at `/etc/lightdm/lightdm-webkit2-greeter.conf`. The greeter will
+ * file located at `/etc/lightdm/web-greeter.conf`. The greeter will
  * create an instance of this class when it starts. The instance can be accessed
  * with the global variable: [`greeter_config`](#dl-window-greeter_config).
  *
@@ -181,4 +181,4 @@ const __greeter_config = new Promise( (resolve, reject) => {
 
 
 
- 
+

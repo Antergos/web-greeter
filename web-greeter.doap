@@ -8,11 +8,11 @@
   <shortdesc xml:lang="en">Web Greeter for LightDM</shortdesc>
   <programming-language>Python</programming-language>
   <programming-language>JavaScript</programming-language>
-  <homepage rdf:resource="https://github.com/Antergos/lightdm-webkit2-greeter" />
-  <download-page rdf:resource="https://github.com/Antergos/lightdm-webkit2-greeter/release" />
-  <bug-database rdf:resource="https://github.com/Antergos/lightdm-webkit2-greeter/issues" />
+  <homepage rdf:resource="https://github.com/Antergos/web-greeter" />
+  <download-page rdf:resource="https://github.com/Antergos/web-greeter/release" />
+  <bug-database rdf:resource="https://github.com/Antergos/web-greeter/issues" />
   <category rdf:resource="http://api.gnome.org/doap-extensions#desktop" />
-  <screenshots rdf:resource="https://github.com/Antergos/lightdm-webkit2-greeter/raw/master/themes/antergos/img/screenshot1.jpg" />
+  <screenshots rdf:resource="https://github.com/Antergos/web-greeter/raw/master/themes/antergos/img/screenshot1.jpg" />
 
   <maintainer>
     <foaf:Person>
