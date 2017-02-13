@@ -50,30 +50,12 @@
 		window.greeter_config = _channel.objects.Config;
 
 		/**
-		 * ***Deprecated!*** Use {@link window.greeter_config} instead.
-		 * @name config
-		 * @type {LightDM.GreeterConfig}
-		 * @memberOf window
-		 * @deprecated
-		 */
-		window.config = window.greeter_config;
-
-		/**
 		 * Theme Utils - various utility methods for use in greeter themes.
 		 * @name theme_utils
 		 * @type {LightDM.ThemeUtils}
 		 * @memberOf window
 		 */
 		window.theme_utils = new ThemeUtils( _channel.objects.ThemeUtils );
-
-		/**
-		 * ***Deprecated!*** Use {@link window.theme_utils} instead.
-		 * @name greeterutil
-		 * @type {LightDM.ThemeUtils}
-		 * @memberOf window
-		 * @deprecated
-		 */
-		window.greeterutil = window.theme_utils;
 
 		setTimeout( function () {
 			window.dispatchEvent( _ready_event );

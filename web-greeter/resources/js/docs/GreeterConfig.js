@@ -28,7 +28,7 @@
 
 /**
  * Provides greeter themes with a way to access values from the greeter's config
- * file located at `/etc/lightdm/web-greeter.conf`. The greeter will
+ * file located at `/etc/lightdm/web-greeter.yml`. The greeter will
  * create an instance of this class when it starts. The instance can be accessed
  * with the global variable: [`greeter_config`](#dl-window-greeter_config).
  *
