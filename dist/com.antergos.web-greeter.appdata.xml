@@ -12,7 +12,7 @@
 		</p>
 		<p>
 			Web Greeter themes provide modern, visually appealing, and feature-rich
-			login screens. Two themes are included by default. There are a growing number of
+			login screens. Two themes are included by default. There is also a growing number of
 			3rd-Party themes available online.
 		</p>
 	</description>
@@ -36,6 +36,19 @@
 	-->
 
 	<releases>
+		<release date="2017-02-13" version="3.0.0alpha5">
+			<description>
+				<p>This is a pre-release of what will soon be the 3.0 series.</p>
+			</description>
+		</release>
+		<release date="2017-01-18" version="2.2.2">
+			<description>
+				<p>This is a hotfix release in the 2.2 series, with the following improvements:</p>
+				<ul>
+					<li>Implement workaround to prevent the web process from crashing in webkit2gtk 2.14.3. (GH #107)</li>
+				</ul>
+			</description>
+		</release>
 		<release date="2016-12-26" version="2.2.1">
 			<description>
 				<p>This is a maintenance release in the 2.2 series, with the following improvements:</p>
