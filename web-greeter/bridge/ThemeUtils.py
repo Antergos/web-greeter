@@ -28,6 +28,7 @@
 # Standard Lib
 import os
 from glob import glob
+import tempfile
 
 # 3rd-Party Libs
 from whither.bridge import (
@@ -45,9 +46,16 @@ class ThemeUtils(BridgeObject):
         self._config = config
         self._greeter = greeter
 
+        self._allowed_dirs = (
+            self._config.themes_dir,
+            self._config.branding.background_images_dir,
+            self._greeter.shared_data_directory,
+            tempfile.gettempdir(),
+        )
+
     @bridge.method(str, bool, result=Variant)
     def dirlist(self, dir_path, only_images=True):
-        if not dir_path or not isinstance(dir_path, str):
+        if not dir_path or not isinstance(dir_path, str) or '/' == dir_path:
             return []
 
         dir_path = os.path.realpath(os.path.normpath(dir_path))
@@ -56,14 +64,8 @@ class ThemeUtils(BridgeObject):
             return []
 
         allowed = False
-        allowed_dirs = (
-            self._config.themes_dir,
-            self._config.branding.background_images_dir,
-            self._greeter.shared_data_directory,
-            '/tmp'
-        )
 
-        for allowed_dir in allowed_dirs:
+        for allowed_dir in self._allowed_dirs:
             if dir_path.startswith(allowed_dir):
                 allowed = True
                 break
