@@ -28,6 +28,14 @@
 
 (() => {
 	let _channel;
+
+	/**
+	 * Greeter Ready Event. Themes should not initialize until this event has fired.
+	 * @event window.LightDM#GreeterReady
+	 * @name GreeterReady
+	 * @type Event
+	 * @memberOf window.LightDM
+	 */
 	const _ready_event = new Event( 'GreeterReady' );
 
 	function channel_ready_cb( channel ) {
