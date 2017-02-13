@@ -31,10 +31,10 @@
 
 	/**
 	 * Greeter Ready Event. Themes should not initialize until this event has fired.
-	 * @event window.LightDM#GreeterReady
+	 * @event window#GreeterReady
 	 * @name GreeterReady
 	 * @type Event
-	 * @memberOf window.LightDM
+	 * @memberOf window
 	 */
 	const _ready_event = new Event( 'GreeterReady' );
 

@@ -330,6 +330,7 @@ class Greeter {
  */
 
 /**
+ * jQuery instance
  * @name $
  * @memberOf window
  * @see {@link window.jQuery}
