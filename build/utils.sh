@@ -5,6 +5,7 @@ REPO_DIR="$(dirname "${BUILD_DIR}")"
 INSTALL_ROOT="${BUILD_DIR}/install_root"
 PKGNAME='web-greeter'
 DESTDIR=''
+PREFIX=''
 
 
 _handle_error() {
@@ -38,10 +39,10 @@ do_build() {
 		&& mv greeter.py __main__.py \
 		&& zip -rq ../"${PKGNAME}.zip" . -x '**__pycache__**' 'resources/*' \
 		&& cd - >/dev/null \
-		&& mkdir -p "${INSTALL_ROOT}"/usr/{bin,share} \
-		&& echo '#!/bin/python3' >> "${INSTALL_ROOT}/usr/bin/web-greeter" \
-		&& cat web-greeter.zip >> "${INSTALL_ROOT}/usr/bin/web-greeter" \
-		&& chmod +x "${INSTALL_ROOT}/usr/bin/web-greeter")
+		&& mkdir -p "${INSTALL_ROOT}${PREFIX}"/{bin,share} \
+		&& echo '#!/bin/python3' >> "${INSTALL_ROOT}${PREFIX}/bin/web-greeter" \
+		&& cat web-greeter.zip >> "${INSTALL_ROOT}${PREFIX}/bin/web-greeter" \
+		&& chmod +x "${INSTALL_ROOT}${PREFIX}/bin/web-greeter")
 }
 
 do_install() {
@@ -51,13 +52,6 @@ do_install() {
 
 do_install_dev() {
 	cp -RH "${REPO_DIR}/whither/whither" /usr/lib/python3.6/site-packages/
-}
-
-do_success() {
-	NO_COLOR=\x1b[0m
-	SUCCESS_COLOR=\x1b[32;01m
-	SUCCESS="${SUCCESS_COLOR}[SUCCESS!]${NO_COLOR}"
-	echo "${SUCCESS}"
 }
 
 generate_pot_file() {
@@ -74,25 +68,25 @@ init_build_dir() {
 prepare_install() {
 	cd "${BUILD_DIR}"
 	mkdir -p \
-		"${INSTALL_ROOT}"/usr/share/{man/man1,metainfo,web-greeter,xgreeters} \
+		"${INSTALL_ROOT}${PREFIX}"/share/{man/man1,metainfo,web-greeter,xgreeters} \
 		"${INSTALL_ROOT}/etc/lightdm"
 
 	# Themes
-	(cp -R "${REPO_DIR}/themes" "${INSTALL_ROOT}/usr/share/web-greeter" \
-		&& cd "${INSTALL_ROOT}/usr/share/web-greeter" \
+	(cp -R "${REPO_DIR}/themes" "${INSTALL_ROOT}${PREFIX}/share/web-greeter" \
+		&& cd "${INSTALL_ROOT}${PREFIX}/share/web-greeter" \
 		&& mv themes/_vendor .)
 
 	# Man Page
-	cp "${BUILD_DIR}/dist/${PKGNAME}.1" "${INSTALL_ROOT}/usr/share/man/man1"
+	cp "${BUILD_DIR}/dist/${PKGNAME}.1" "${INSTALL_ROOT}${PREFIX}/share/man/man1"
 
 	# Greeter Config
 	cp "${BUILD_DIR}/dist/${PKGNAME}.yml" "${INSTALL_ROOT}/etc/lightdm"
 
 	# AppData File
-	cp "${BUILD_DIR}/dist/com.antergos.${PKGNAME}.appdata.xml" "${INSTALL_ROOT}/usr/share/metainfo"
+	cp "${BUILD_DIR}/dist/com.antergos.${PKGNAME}.appdata.xml" "${INSTALL_ROOT}${PREFIX}/share/metainfo"
 
 	# Desktop File
-	cp "${BUILD_DIR}/dist/com.antergos.${PKGNAME}.desktop" "${INSTALL_ROOT}/usr/share/xgreeters"
+	cp "${BUILD_DIR}/dist/com.antergos.${PKGNAME}.desktop" "${INSTALL_ROOT}${PREFIX}/share/xgreeters"
 }
 
 set_config() {
@@ -119,6 +113,7 @@ case "$1" in
 	;;
 
 	build)
+		PREFIX="$2"
 		do_build
 	;;
 
@@ -132,6 +127,7 @@ case "$1" in
 
 	install)
 		DESTDIR="$2"
+		PREFIX="$3"
 		do_install
 		clean_build_dir
 	;;
@@ -141,6 +137,7 @@ case "$1" in
 	;;
 
 	prepare-install)
+		PREFIX="$2"
 		prepare_install
 	;;
 

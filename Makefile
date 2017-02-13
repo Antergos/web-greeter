@@ -3,6 +3,7 @@
 DO            := ./build/utils.sh
 SET_CONFIG    := $(DO) set-config
 DESTDIR       ?= /
+PREFIX        ?= /usr
 MAYBE_SUDO_DO := $(DO)
 
 define colorecho
@@ -11,11 +12,6 @@ define colorecho
 	@tput sgr0      || true
 endef
 
-ifeq ($(MAKECMDGOALS),build_dev)
-debug_mode   := True
-decorated    := True
-stays_on_top := False
-endif
 
 ifeq ($(DESTDIR),/)
 MAYBE_SUDO_DO := sudo $(DO)
@@ -24,16 +20,23 @@ endif
 
 # Configuration: Use values from command line if provided, default values otherwise.
 at_spi_service        ?= True
-background_images_dir ?= $(abspath $(DESTDIR)/usr/share/backgrounds)
-config_dir            ?= $(abspath $(DESTDIR)/etc/lightdm)
-debug_mode            ?= False
-decorated             ?= False
-greeters_dir          ?= $(abspath $(DESTDIR)/usr/share/xgreeters)
-locale_dir            ?= $(abspath $(DESTDIR)/usr/share/locale)
-themes_dir            ?= $(abspath $(DESTDIR)/usr/share/web-greeter/themes)
+background_images_dir ?= $(abspath $(PREFIX)/share/backgrounds)
+config_dir            ?= $(abspath /etc/lightdm)
+debug_mode            := False
+decorated             := False
+greeters_dir          ?= $(abspath $(PREFIX)/share/xgreeters)
+locale_dir            ?= $(abspath $(PREFIX)/share/locale)
+themes_dir            ?= $(abspath $(PREFIX)/share/web-greeter/themes)
 logo_image            ?= $(themes_dir)/default/img/antergos-logo-user.png
-stays_on_top          ?= True
+stays_on_top          := True
 user_image            ?= $(themes_dir)/default/img/antergos.png
+
+
+ifeq ($(MAKECMDGOALS),build_dev)
+debug_mode   := True
+decorated    := True
+stays_on_top := False
+endif
 
 
 _apply_config:
@@ -55,7 +58,7 @@ _build_init: clean
 all: install
 
 build: _build_init _apply_config
-	$(DO) build
+	$(DO) build $(PREFIX)
 
 build_dev: install
 	$(MAYBE_SUDO_DO) install-dev
@@ -64,8 +67,8 @@ clean:
 	$(DO) clean
 
 install: build
-	./build/utils.sh prepare-install
-	$(MAYBE_SUDO_DO) install $(DESTDIR)
+	./build/utils.sh prepare-install $(PREFIX)
+	$(MAYBE_SUDO_DO) install $(DESTDIR) $(PREFIX)
 	$(call colorecho, SUCCESS!)
 
 

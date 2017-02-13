@@ -41,9 +41,9 @@ WebGreeter:
         locale_dir: '@locale_dir@'
         themes_dir: '@themes_dir@'
         version:
-            full: '3.0.0alpha4'
+            full: '3.0.0alpha5'
             major: 3
             minor: 0
             micro: 0
-            alpha: 4
+            alpha: 5
             beta: False
