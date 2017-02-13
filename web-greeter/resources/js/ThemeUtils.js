@@ -38,7 +38,7 @@ function _set_allowed_dirs() {
 		themes_dir: lightdm.themes_dir,
 		backgrounds_dir: greeter_config.branding.background_images_dir,
 		lightdm_data_dir: lightdm.shared_data_dir,
-		tmpdir: '/tmp',
+		tmpdir: '/' + 'tmp',
 	};
 }
 
@@ -189,21 +189,5 @@ class ThemeUtils {
 		}
 
 		return local_time;
-	}
-
-
-	/**
-	 * Use {@link window.theme_utils.esc_html()} instead.
-	 *
-	 * @deprecated
-	 */
-	txt2html( text ) {
-		try {
-			return _ThemeUtils.esc_html( text );
-
-		} catch( err ) {
-			console.log( `[ERROR] theme_utils.dirlist(): ${err}` );
-			return text;
-		}
 	}
 }

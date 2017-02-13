@@ -123,7 +123,7 @@ class Greeter {
 	 * @type {boolean}
 	 * @readonly
 	 */
-	get hide_users() {}
+	get hide_users_hint() {}
 
 	/**
 	 * The system's hostname.
@@ -187,13 +187,11 @@ class Greeter {
 	get lock_hint() {}
 
 	/**
-	 * The number of users able to log in.
-	 * @type {number}
+	 * The available remote sessions.
+	 * @type {LightDM.Session[]}
 	 * @readonly
 	 */
-	get num_users() {
-		return this.users.length;
-	}
+	get remote_sessions() {}
 
 	/**
 	 * Whether or not the guest account should be selected by default.
@@ -215,6 +213,24 @@ class Greeter {
 	 * @readonly
 	 */
 	get sessions() {}
+
+	/**
+	 * Check if a manual login option should be shown. If {@link true}, the theme should
+	 * provide a way for a username to be entered manually. Otherwise, themes that show
+	 * a user list may limit logins to only those users.
+	 * @type {string}
+	 * @readonly
+	 */
+	get show_manual_login_hint() {}
+
+	/**
+	 * Check if a remote login option should be shown. If {@link true}, the theme should provide
+	 * a way for a user to log into a remote desktop server.
+	 * @type {string}
+	 * @readonly
+	 * @internal
+	 */
+	get show_remote_login_hint() {}
 
 	/**
 	 * List of available users.
@@ -247,13 +263,6 @@ class Greeter {
 	cancel_autologin() {}
 
 	/**
-	 * Get the value of a hint.
-	 * @arg {string} name The name of the hint to get.
-	 * @returns {string|boolean|number|null}
-	 */
-	get_hint( name ) {}
-
-	/**
 	 * Triggers the system to hibernate.
 	 * @returns {boolean} {@link true} if hibernation initiated, otherwise {@link false}
 	 */
@@ -263,7 +272,7 @@ class Greeter {
 
 	/**
 	 * Provide a response to a prompt.
-	 * @arg {*} response
+	 * @arg {string} response
 	 */
 	respond( response ) {}
 

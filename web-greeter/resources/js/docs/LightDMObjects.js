@@ -250,25 +250,5 @@ class User {
 	get session() {
 		return this._session;
 	}
-
-	/**
-	 * ***Deprecated!*** See {@link LightDM.User#username}.
-	 * @deprecated
-	 * @type {string}
-	 * @readonly
-	 */
-	get name() {
-		return this._name;
-	}
-
-	/**
-	 * ***Deprecated!*** See {@link LightDM.User#display_name}.
-	 * @deprecated
-	 * @type {string}
-	 * @readonly
-	 */
-	get real_name() {
-		return this._real_name;
-	}
 }
 

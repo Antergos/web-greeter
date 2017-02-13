@@ -26,23 +26,6 @@
  */
 
 
-let _branding = null,
-	_greeter = null;
-
-
-function set_values( defaults, target_obj, method ) {
-	let keys = Object.keys(defaults);
-
-	keys.forEach( prop => {
-		try {
-			target_obj[prop] = window;
-		} catch(err) {
-			target_obj[prop] = defaults[prop];
-		}
-	});
-}
-
-
 /**
  * Provides greeter themes with a way to access values from the greeter's config
  * file located at `/etc/lightdm/web-greeter.conf`. The greeter will
@@ -56,29 +39,14 @@ class GreeterConfig  {
 	 * Holds keys/values from the `branding` section of the config file.
 	 *
 	 * @type {object} branding
-	 * @prop {string} background_images Path to directory that contains background images
-	 *                                  for use in greeter themes.
-	 * @prop {string} logo              Path to distro logo image for use in greeter themes.
-	 * @prop {string} user_image        Default user image/avatar. This is used by greeter themes
-	 *                                  for users that have not configured a `.face` image.
+	 * @prop {string} background_images_dir Path to directory that contains background images
+	 *                                      for use in greeter themes.
+	 * @prop {string} logo                  Path to distro logo image for use in greeter themes.
+	 * @prop {string} user_image            Default user image/avatar. This is used by greeter themes
+	 *                                      for users that have not configured a `.face` image.
 	 * @readonly
 	 */
-	get branding() {
-		if ( null === _branding ) {
-			let theme_dir = '/usr/share/lightdm-webkit/themes/antergos',
-				props = {
-					'background_images': '/usr/share/backgrounds',
-					'logo': `${theme_dir}/img/antergos-logo-user.png`,
-					'user_image': `${theme_dir}/img/antergos.png`
-			};
-
-			_branding = {};
-
-			set_values( props, _branding, this.get_str );
-		}
-
-		return _branding;
-	}
+	get branding() {}
 
 	/**
 	 * Holds keys/values from the `greeter` section of the config file.
@@ -93,90 +61,11 @@ class GreeterConfig  {
 	 *                                     generate localized time for display.
 	 * @prop {string}  time_language       Language to use when displaying the time or `auto`
 	 *                                     to use the system's language.
-	 * @prop {string}  webkit_theme        The name of the theme to be used by the greeter.
+	 * @prop {string}  theme               The name of the theme to be used by the greeter.
 	 * @readonly
 	 */
-	get greeter() {
-		if ( null === _greeter ) {
-			let bools = {'debug_mode': false, 'secure_mode': true, 'detect_theme_errors': true},
-				strings = {'time_format': 'LT', 'time_language': 'auto', 'webkit_theme': 'antergos'},
-				numbers = {'screensaver_timeout': 300};
-
-			_greeter = {};
-
-			set_values( bools, _greeter, this.get_bool );
-			set_values( strings, _greeter, this.get_str );
-			set_values( numbers, _greeter, this.get_num );
-		}
-
-		return _greeter;
-	}
-
-	/**
-	 * ***Deprecated!*** Access config sections directly as properties of this object instead.
-	 *
-	 * @deprecated
-	 *
-	 * @arg {string} config_section
-	 * @arg {string} key
-	 *
-	 * @returns {boolean} Config value for `key`.
-	 */
-	get_bool( config_section, key ) {
-		return __GreeterConfig.get_bool( config_section, key );
-	}
-
-	/**
-	 * ***Deprecated!*** Access config sections directly as properties of this object instead.
-	 *
-	 * @deprecated
-	 *
-	 * @arg {string} config_section
-	 * @arg {string} key
-	 *
-	 * @returns {number} Config value for `key`.
-	 */
-	get_num( config_section, key ) {
-		return __GreeterConfig.get_num( config_section, key );
-	}
-
-	/**
-	 * ***Deprecated!*** Access config sections directly as properties of this object instead.
-	 *
-	 * @deprecated
-	 *
-	 * @arg {string} config_section
-	 * @arg {string} key
-	 *
-	 * @returns {string} Config value for `key`.
-	 */
-	get_str( config_section, key ) {
-		return __GreeterConfig.get_str( config_section, key );
-	}
+	get greeter() {}
 }
-
-
-const __greeter_config = new Promise( (resolve, reject) => {
-	let waiting = 0;
-
-	const check_window_prop = () => {
-		if ( waiting > 15000 ) {
-			return reject( 'Timeout Reached!');
-		}
-
-		setTimeout( () => {
-			waiting += 1;
-
-			if ( '__GreeterConfig' in window ) {
-				return resolve( (() => new GreeterConfig())() );
-			}
-
-			check_window_prop();
-		}, 0 );
-	};
-
-	check_window_prop();
-});
 
 
 

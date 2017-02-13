@@ -150,7 +150,7 @@ class Greeter(BridgeObject):
         return LightDMGreeter.get_has_guest_account_hint()
 
     @bridge.prop(bool)
-    def hide_users(self):
+    def hide_users_hint(self):
         return LightDMGreeter.get_hide_users_hint()
 
     @bridge.prop(str)
