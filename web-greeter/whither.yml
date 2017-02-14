@@ -45,5 +45,5 @@ WebGreeter:
             major: 3
             minor: 0
             micro: 0
-            alpha: 5
+            alpha: 6
             beta: False
