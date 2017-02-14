@@ -99,7 +99,7 @@ class WebGreeter(App):
         self.config.greeter.update(greeter_config)
 
     def load_theme(self):
-        theme_url = f'/{self.config.themes_dir}/{self.config.greeter.theme}/index.html'
+        theme_url = '/{0}/{1}/index.html'.format(self.config.themes_dir, self.config.greeter.theme)
         self._web_container.load(theme_url)
 
 
