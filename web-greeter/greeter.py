@@ -61,7 +61,7 @@ class WebGreeter(App):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__('WebGreeter', *args, **kwargs)
-
+        self.logger.debug('Web Greeter started.')
         self.greeter = Greeter(self.config.themes_dir)
         self.greeter_config = Config(self.config)
         self.theme_utils = ThemeUtils(self.greeter, self.config)
@@ -99,6 +99,7 @@ class WebGreeter(App):
         self.config.greeter.update(greeter_config)
 
     def load_theme(self):
+        self.logger.debug('Loading theme...')
         theme_url = '/{0}/{1}/index.html'.format(self.config.themes_dir, self.config.greeter.theme)
         self._web_container.load(theme_url)
 
