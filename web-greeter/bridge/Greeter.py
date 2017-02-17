@@ -61,10 +61,7 @@ class Greeter(BridgeObject):
     show_message = bridge.signal(str, LightDM.MessageType, arguments=('text', 'type'))
     show_prompt = bridge.signal(str, LightDM.PromptType, arguments=('text', 'type'))
 
-    # Property values are cached on the JavaScript side and will only update when
-    # a notify signal is emitted. We use the same signal for all properties which means
-    # all properties get updated when any property is changed. That's not a problem with
-    # the small number of properties we have.
+    noop_signal = bridge.signal()
     property_changed = bridge.signal()
 
     def __init__(self, themes_dir, *args, **kwargs):
@@ -113,47 +110,47 @@ class Greeter(BridgeObject):
     def authentication_user(self):
         return LightDMGreeter.get_authentication_user() or ''
 
-    @bridge.prop(bool)
+    @bridge.prop(bool, notify=noop_signal)
     def autologin_guest(self):
         return LightDMGreeter.get_autologin_guest_hint()
 
-    @bridge.prop(int)
+    @bridge.prop(int, notify=noop_signal)
     def autologin_timeout(self):
         return LightDMGreeter.get_autologin_timeout_hint()
 
-    @bridge.prop(str)
+    @bridge.prop(str, notify=noop_signal)
     def autologin_user(self):
         return LightDMGreeter.get_autologin_user_hint()
 
-    @bridge.prop(bool)
+    @bridge.prop(bool, notify=noop_signal)
     def can_hibernate(self):
         return LightDM.get_can_hibernate()
 
-    @bridge.prop(bool)
+    @bridge.prop(bool, notify=noop_signal)
     def can_restart(self):
         return LightDM.get_can_restart()
 
-    @bridge.prop(bool)
+    @bridge.prop(bool, notify=noop_signal)
     def can_shutdown(self):
         return LightDM.get_can_shutdown()
 
-    @bridge.prop(bool)
+    @bridge.prop(bool, notify=noop_signal)
     def can_suspend(self):
         return LightDM.get_can_suspend()
 
-    @bridge.prop(str)
+    @bridge.prop(str, notify=noop_signal)
     def default_session(self):
         return LightDMGreeter.get_default_session_hint()
 
-    @bridge.prop(bool)
+    @bridge.prop(bool, notify=noop_signal)
     def has_guest_account(self):
         return LightDMGreeter.get_has_guest_account_hint()
 
-    @bridge.prop(bool)
+    @bridge.prop(bool, notify=noop_signal)
     def hide_users_hint(self):
         return LightDMGreeter.get_hide_users_hint()
 
-    @bridge.prop(str)
+    @bridge.prop(str, notify=noop_signal)
     def hostname(self):
         return LightDM.get_hostname()
 
@@ -169,19 +166,19 @@ class Greeter(BridgeObject):
     def language(self):
         return language_to_dict(LightDM.get_language())
 
-    @bridge.prop(Variant)
+    @bridge.prop(Variant, notify=noop_signal)
     def languages(self):
         return [language_to_dict(lang) for lang in LightDM.get_languages()]
 
-    @bridge.prop(Variant)
+    @bridge.prop(Variant, notify=noop_signal)
     def layout(self):
         return layout_to_dict(LightDM.get_layout())
 
-    @bridge.prop(Variant)
+    @bridge.prop(Variant, notify=noop_signal)
     def layouts(self):
         return [layout_to_dict(layout) for layout in LightDM.get_layouts()]
 
-    @bridge.prop(bool)
+    @bridge.prop(bool, notify=noop_signal)
     def lock_hint(self):
         return LightDMGreeter.get_lock_hint()
 
@@ -189,35 +186,35 @@ class Greeter(BridgeObject):
     def remote_sessions(self):
         return [session_to_dict(session) for session in LightDM.get_remote_sessions()]
 
-    @bridge.prop(bool)
+    @bridge.prop(bool, notify=noop_signal)
     def select_guest_hint(self):
         return LightDMGreeter.get_select_guest_hint()
 
-    @bridge.prop(str)
+    @bridge.prop(str, notify=noop_signal)
     def select_user_hint(self):
         return LightDMGreeter.get_select_user_hint() or ''
 
-    @bridge.prop(Variant)
+    @bridge.prop(Variant, notify=noop_signal)
     def sessions(self):
         return [session_to_dict(session) for session in LightDM.get_sessions()]
 
-    @bridge.prop(str)
+    @bridge.prop(str, notify=noop_signal)
     def shared_data_directory(self):
         return self._shared_data_directory
 
-    @bridge.prop(bool)
+    @bridge.prop(bool, notify=noop_signal)
     def show_manual_login_hint(self):
         return LightDMGreeter.get_show_manual_login_hint()
 
-    @bridge.prop(bool)
+    @bridge.prop(bool, notify=noop_signal)
     def show_remote_login_hint(self):
         return LightDMGreeter.get_show_remote_login_hint()
 
-    @bridge.prop(str)
+    @bridge.prop(str, notify=noop_signal)
     def themes_directory(self):
         return self._themes_directory
 
-    @bridge.prop(Variant)
+    @bridge.prop(Variant, notify=noop_signal)
     def users(self):
         return [user_to_dict(user) for user in LightDMUsers.get_users()]
 

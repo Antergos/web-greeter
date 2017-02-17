@@ -35,15 +35,17 @@ from whither.bridge import (
 
 class Config(BridgeObject):
 
+    noop_signal = bridge.signal()
+
     def __init__(self, config, *args, **kwargs):
         super().__init__(name='Config', *args, **kwargs)
 
         self._branding, self._greeter = config.branding.as_dict(), config.greeter.as_dict()
 
-    @bridge.prop(Variant)
+    @bridge.prop(Variant, notify=noop_signal)
     def branding(self):
         return self._branding
 
-    @bridge.prop(Variant)
+    @bridge.prop(Variant, notify=noop_signal)
     def greeter(self):
         return self._greeter
