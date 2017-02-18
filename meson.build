@@ -29,6 +29,7 @@ greeter_deps = [dbus_glib, gtk3, webkit2, x11]
 webext_deps = [webkit2_webext, lightdm_gobject]
 
 has_webkitgtk_2_14 = webkit2.version().version_compare('>=2.14')
+has_webkitgtk_2_14_4 = webkit2.version().version_compare('>=2.14.4')
 has_lightdm_1_19_2 = lightdm_gobject.version().version_compare('>=1.19.2')
 has_gtk_3_22 = gtk3.version().version_compare('>=3.22')
 
@@ -60,6 +61,10 @@ conf.set('GRESOURCE_PATH', '"/com/antergos/lightdm-webkit2-greeter"')
 
 if has_webkitgtk_2_14
   conf.set('HAS_WEBKITGTK_2_14', has_webkitgtk_2_14)
+endif
+
+if has_webkitgtk_2_14_4
+  conf.set('HAS_WEBKITGTK_2_14_4', has_webkitgtk_2_14_4)
 endif
 
 if has_lightdm_1_19_2

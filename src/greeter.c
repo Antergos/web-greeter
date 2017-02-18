@@ -349,8 +349,10 @@ main(int argc, char **argv) {
 	/* https://goo.gl/vDFwFe */
 	g_setenv ("GDK_CORE_DEVICE_EVENTS", "1", TRUE);
 
-	/* Temporary workaround until fixed upstream: https://goo.gl/wFJ4v7 */
-	g_setenv("WEBKIT_DISABLE_COMPOSITING_MODE", "1", TRUE);
+	if ( HAS_WEBKITGTK_2_14 && ! HAS_WEBKITGTK_2_14_4 ) {
+		/* AC mode causes a lot of crashes in webkit2gtk versions 2.14.0 through 2.14.3: */
+		g_setenv("WEBKIT_DISABLE_COMPOSITING_MODE", "1", TRUE);
+	}
 
 	/* Initialize i18n */
 	bindtextdomain(GETTEXT_PACKAGE, LOCALE_DIR);
