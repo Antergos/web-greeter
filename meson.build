@@ -1,4 +1,4 @@
-project('lightdm-webkit2-greeter', 'c', version: '2.2.2', license: 'GPL-3')
+project('lightdm-webkit2-greeter', 'c', version: '2.2.3', license: 'GPL-3')
 
 
 # ================================== #
@@ -60,11 +60,11 @@ conf.set('WEBEXT_DIR', '"@0@"'.format(get_option('with-webext-dir')))
 conf.set('GRESOURCE_PATH', '"/com/antergos/lightdm-webkit2-greeter"')
 
 if has_webkitgtk_2_14
-  conf.set('HAS_WEBKITGTK_2_14', has_webkitgtk_2_14)
+  conf.set('HAS_WEBKITGTK_2_14', 'TRUE')
 endif
 
 if has_webkitgtk_2_14_4
-  conf.set('HAS_WEBKITGTK_2_14_4', has_webkitgtk_2_14_4)
+  conf.set('HAS_WEBKITGTK_2_14_4', 'TRUE')
 endif
 
 if has_lightdm_1_19_2

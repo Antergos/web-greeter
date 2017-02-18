@@ -1,6 +1,16 @@
 # Change Log
 
-## [2.2.2](https://github.com/antergos/lightdm-webkit2-greeter/tree/2.2.1) ~ 01-18-2017
+## [2.2.3](https://github.com/antergos/web-greeter/tree/2.2.3) ~ 02-18-2017
+
+**Changed:**
+
+  * Revert workaround implemented in v2.2.2 for webkit2gtk 2.14.4+. It remains in place for
+    versions in the 2.14.0 series older than 2.14.4.
+
+[Full Changelog](https://github.com/antergos/web-greeter/compare/2.2.2...2.2.3)
+
+
+## [2.2.2](https://github.com/antergos/lightdm-webkit2-greeter/tree/2.2.2) ~ 01-18-2017
 
 **Fixed:**
 
