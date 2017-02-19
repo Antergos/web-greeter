@@ -48,7 +48,7 @@ do_build() {
 do_install() {
 	[[ -e "${DESTDIR}" ]] || mkdir -p "${DESTDIR}"
 	find "${INSTALL_ROOT}" -type f -name '.git*' -delete
-	find "${INSTALL_ROOT}" -type d -name '.tx' -delete
+	rm-rf "${INSTALL_ROOT}/usr/share/web-greeter/themes/default/.tx"
 	cp -R "${INSTALL_ROOT}"/* "${DESTDIR}"
 }
 

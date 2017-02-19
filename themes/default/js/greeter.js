@@ -651,6 +651,7 @@ class Theme {
 
 		$( '#session-list' ).removeClass( 'hidden' ).show();
 		$( '#passwordArea' ).show();
+		$('#passwordField').focus();
 		$( '.dropdown-toggle' ).dropdown();
 
 		this.auth_pending = true;
