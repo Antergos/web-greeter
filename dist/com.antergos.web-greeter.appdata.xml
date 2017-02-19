@@ -18,15 +18,15 @@
 	</description>
 	<screenshots>
 		<screenshot height="412" width="800" type="default">
-			<image>https://github.com/Antergos/web-greeter/raw/master/themes/antergos/img/screenshot1.jpg</image>
+			<image>https://github.com/Antergos/web-greeter/raw/master/themes/default/img/screenshot1.jpg</image>
 			<caption>Login screen (default theme)</caption>
 		</screenshot>
 		<screenshot height="412" width="800">
-			<image>https://github.com/Antergos/web-greeter/raw/master/themes/antergos/img/screenshot2.jpg</image>
+			<image>https://github.com/Antergos/web-greeter/raw/master/themes/default/img/screenshot2.jpg</image>
 			<caption>Login screen background switcher (default theme)</caption>
 		</screenshot>
 		<screenshot height="412" width="800">
-			<image>https://github.com/Antergos/web-greeter/raw/master/themes/antergos/img/screenshot3.jpg</image>
+			<image>https://github.com/Antergos/web-greeter/raw/master/themes/default/img/screenshot3.jpg</image>
 			<caption>Login screen user selection (default theme)</caption>
 		</screenshot>
 	</screenshots>

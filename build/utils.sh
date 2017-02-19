@@ -48,6 +48,7 @@ do_build() {
 do_install() {
 	[[ -e "${DESTDIR}" ]] || mkdir -p "${DESTDIR}"
 	find "${INSTALL_ROOT}" -type f -name '.git*' -delete
+	find "${INSTALL_ROOT}" -type d -name '.tx' -delete
 	cp -R "${INSTALL_ROOT}"/* "${DESTDIR}"
 }
 
