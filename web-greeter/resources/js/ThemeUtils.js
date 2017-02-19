@@ -29,19 +29,7 @@
 let localized_invalid_date = null,
 	time_language = null,
 	time_format = null,
-	allowed_dirs = null,
 	_ThemeUtils = null;
-
-
-function _set_allowed_dirs() {
-	allowed_dirs = {
-		themes_dir: lightdm.themes_dir,
-		backgrounds_dir: greeter_config.branding.background_images_dir,
-		lightdm_data_dir: lightdm.shared_data_dir,
-		tmpdir: '/' + 'tmp',
-	};
-}
-
 
 
 /**
@@ -111,14 +99,12 @@ class ThemeUtils {
 	 * @param {function(string[])}  callback    Callback function to be called with the result.
 	 */
 	dirlist( path, only_images = true, callback ) {
-		let allowed = false;
-
 		if ( '' === path || 'string' !== typeof path ) {
-			console.log('[ERROR] theme_utils.dirlist(): path must be a non-empty string!');
+			console.error('[ERROR] theme_utils.dirlist(): path must be a non-empty string!');
 			return callback([]);
 
 		} else if ( null !== path.match(/^[^/].+/) ) {
-			console.log('[ERROR] theme_utils.dirlist(): path must be absolute!');
+			console.error('[ERROR] theme_utils.dirlist(): path must be absolute!');
 			return callback([]);
 		}
 
@@ -127,35 +113,13 @@ class ThemeUtils {
 			path = path.replace(/\/\.+(?=\/)/g, '' );
 		}
 
-		if ( null === allowed_dirs ) {
-			_set_allowed_dirs();
-		}
-
-		if ( ! Object.keys( allowed_dirs ).some( dir => path.startsWith( allowed_dirs[dir] ) ) ) {
-			console.log(`[ERROR] theme_utils.dirlist(): path is not allowed: ${path}`);
-			return callback([]);
-		}
-
 		try {
 			return _ThemeUtils.dirlist( path, only_images, callback );
-
 		} catch( err ) {
-			console.log( `[ERROR] theme_utils.dirlist(): ${err}` );
+			console.error( `[ERROR] theme_utils.dirlist(): ${err}` );
 			return callback([]);
 		}
 	}
-
-	/**
-	 * Escape HTML entities in a string.
-	 *
-	 * @param {string} text The text to be escaped.
-	 *
-	 * @returns {string}
-	 */
-	esc_html( text ) {
-		return this.txt2html( text );
-	}
-
 
 	/**
 	 * Get the current time in a localized format. Time format and language are auto-detected
