@@ -10,6 +10,8 @@ WebGreeter:
             command: /usr/lib/at-spi2-core/at-spi-bus-launcher
             arg: --launch-immediately
         app_id: com.antergos.web-greeter
+        context_menu:
+            enabled: False
         debug_mode: '@debug_mode@'
         entry_point:
             autoload: False
