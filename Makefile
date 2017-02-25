@@ -19,7 +19,7 @@ endif
 
 
 # Configuration: Use values from command line if provided, default values otherwise.
-at_spi_service        ?= True
+at_spi_service        ?= False
 background_images_dir ?= $(abspath $(PREFIX)/share/backgrounds)
 config_dir            ?= $(abspath /etc/lightdm)
 debug_mode            := False
