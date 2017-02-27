@@ -16,8 +16,8 @@ Package: web-greeter
 Provides: lightdm-greeter
 Replaces: lightdm-webkit-greeter
 Architecture: any
-Depends: ${python:Depends},
-	${misc:Depends},
+Depends: python3,
+	python3-whither,
 	python3-gi,
 	liblightdm-gobject-1-0
 Description: A modern, visually appealing greeter for LightDM.
