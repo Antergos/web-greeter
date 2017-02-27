@@ -1,0 +1,13 @@
+#!/usr/bin/make -f
+
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	true
+
+override_dh_auto_install:
+	dh_auto_install -- \
+		logo_image=/usr/share/help/C/ubuntu-help/figures/ubuntu-logo.png \
+		user_image=/usr/share/pixmaps/faces/sunset.jpg

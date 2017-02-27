@@ -1,3 +1,0 @@
-# This is for automated dependency tracking. See the README for dependency information.
-whither
-pgi
