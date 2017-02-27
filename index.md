@@ -4,6 +4,7 @@
 ## Install It
 
 ### Distro Packages
+
 |Distro|Install Command/Links|
 |:---:|:---:|
 |![antergos][antergos]|`sudo pacman -S lightdm-webkit2-greeter`|
@@ -15,6 +16,7 @@
 ### From Source
 
 #### Dependencies
+
 |                       | ![antergos][antergos] &nbsp;&nbsp; ![arch][arch] | ![ubuntu][ubuntu]    | ![fedora][fedora]   | ![openSUSE][openSUSE] | 
 |-----------------------|--------------------------------------------------|----------------------|---------------------|-----------------------|
 |**whither**            |python-whither                                    |python3-whither       |python3-whither      |python3-whither        |
