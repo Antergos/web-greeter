@@ -13,7 +13,6 @@ Homepage: https://github.com/antergos/web-greeter
 Package: web-greeter
 Provides: lightdm-greeter
 Replaces: lightdm-webkit-greeter
-Replaces: lightdm-webkit2-greeter
 Architecture: any
 Depends: ${shlibs:Depends},
 	${python:Depends},
