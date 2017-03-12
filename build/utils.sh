@@ -7,14 +7,6 @@ PKGNAME='web-greeter'
 DESTDIR=''
 PREFIX=''
 
-
-_handle_error() {
-	LASTLINE="$1"
-	LASTERR="$2"
-	(>&2 echo "${BASH_SOURCE[0]}: line ${LASTLINE}: exit status of last command: ${LASTERR}")
-	exit "${LASTERR}"
-}
-
 clean_build_dir() {
 	find "${BUILD_DIR}" -type f ! -path '**/ci/**' ! -name '*.yml' ! -name utils.sh -delete
 	find "${BUILD_DIR}" -type d ! -name build ! -path '**/ci' -delete 2>/dev/null || true
@@ -48,8 +40,6 @@ do_build() {
 
 do_install() {
 	[[ -e "${DESTDIR}" ]] || mkdir -p "${DESTDIR}"
-	find "${INSTALL_ROOT}" -type f -name '.git*' -delete
-	rm -rf "${INSTALL_ROOT}/usr/share/web-greeter/themes/default/.tx"
 	cp -R "${INSTALL_ROOT}"/* "${DESTDIR}"
 }
 
@@ -72,7 +62,7 @@ prepare_install() {
 	cd "${BUILD_DIR}"
 	mkdir -p \
 		"${INSTALL_ROOT}${PREFIX}"/share/{man/man1,metainfo,web-greeter,xgreeters} \
-		"${INSTALL_ROOT}/etc/lightdm"
+		"${INSTALL_ROOT}"/etc/{lightdm,xdg/lightdm/lightdm.conf.d}
 
 	# Themes
 	(cp -R "${REPO_DIR}/themes" "${INSTALL_ROOT}${PREFIX}/share/web-greeter" \
@@ -89,7 +79,32 @@ prepare_install() {
 	cp "${BUILD_DIR}/dist/com.antergos.${PKGNAME}.appdata.xml" "${INSTALL_ROOT}${PREFIX}/share/metainfo"
 
 	# Desktop File
-	cp "${BUILD_DIR}/dist/com.antergos.${PKGNAME}.desktop" "${INSTALL_ROOT}${PREFIX}/share/xgreeters"
+	cp "${BUILD_DIR}/dist/${PKGNAME}.desktop" "${INSTALL_ROOT}${PREFIX}/share/xgreeters"
+
+	# Xgreeter wrapper
+	cp "${BUILD_DIR}/dist/90-greeter-wrapper.conf" \
+		"${INSTALL_ROOT}/etc/xdg/lightdm/lightdm.conf.d/90-greeter-wrapper.conf"
+
+	install -Dm755 "${BUILD_DIR}/dist/Xgreeter" "${INSTALL_ROOT}/etc/lightdm/Xgreeter"
+
+	# Don't install hidden files
+	find "${INSTALL_ROOT}" -type f -name '.git*' -delete
+	rm -rf "${INSTALL_ROOT}/usr/share/web-greeter/themes/default/.tx"
+
+	if [[ "${DESTDIR}" != '/' ]]; then
+		# Save a list of installed files for uninstall command
+		find "${INSTALL_ROOT}" -fprint /tmp/.installed_files
+
+		while read _file
+		do
+			[[ -d "${_file}" && *'/web-greeter/'* != "${_file}" ]] && continue
+
+			echo "${_file##*/install_root}" >> "${INSTALL_ROOT}${PREFIX}/share/web-greeter/.installed_files"
+
+		done < /tmp/.installed_files
+
+		rm /tmp/.installed_files
+	fi
 }
 
 set_config() {
@@ -101,8 +116,6 @@ set_config() {
 }
 
 
-# Catch Command Errors
-trap '_handle_error ${LINENO} ${$?}' ERR
 
 cd "${REPO_DIR}/build" >/dev/null
 
