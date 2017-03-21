@@ -38,11 +38,11 @@ The greeter exposes a JavaScript API to themes which they must use to interact w
 Translations are managed through [Transifex](https://www.transifex.com/faidoc/antergos/lightdm-webkit2-greeter/).
 
 
-[antergos]: https://dl.dropboxusercontent.com/u/60521097/logo-square26x26.png "antergos"
-[arch]: https://dl.dropboxusercontent.com/u/60521097/archlogo26x26.png "arch"
-[fedora]: https://dl.dropboxusercontent.com/u/60521097/fedora-logo.png "fedora"
-[openSUSE]: https://dl.dropboxusercontent.com/u/60521097/Geeko-button-bling7.png "openSUSE"
-[ubuntu]: https://dl.dropboxusercontent.com/u/60521097/ubuntu_orange_hex.png "ubuntu"
+[antergos]: https://www.dropbox.com/sh/16iymk8mjdrr6z8/AABSB7b6jYqeY4mdl3gWG0_Qa?dl=1 "antergos"
+[arch]: https://www.dropbox.com/s/q8ypd345cqcd0b5/archlogo26x26.png?dl=1 "arch"
+[fedora]: https://www.dropbox.com/s/b8q448vuwopb0cl/fedora-logo.png?dl=1 "fedora"
+[openSUSE]: https://www.dropbox.com/s/jhirpw85ztgl59h/Geeko-button-bling7.png?dl=1 "openSUSE"
+[ubuntu]: https://www.dropbox.com/s/nev98nld2u1qbgl/ubuntu_orange_hex.png?dl=1 "ubuntu"
 
 [release]: https://img.shields.io/github/release/Antergos/web-greeter.svg?style=flat-square "Latest Release"
 [codacy]: https://img.shields.io/codacy/grade/43c95c8c0e3749b8afa3bfd2b6edf541.svg?style=flat-square "Codacy Grade"
