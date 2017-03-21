@@ -38,7 +38,7 @@ The greeter exposes a JavaScript API to themes which they must use to interact w
 Translations are managed through [Transifex](https://www.transifex.com/faidoc/antergos/lightdm-webkit2-greeter/).
 
 
-[antergos]: https://www.dropbox.com/sh/16iymk8mjdrr6z8/AABSB7b6jYqeY4mdl3gWG0_Qa?dl=1 "antergos"
+[antergos]: https://www.dropbox.com/s/tju7maccr328w87/logo-square26x26.png?dl=1 "antergos"
 [arch]: https://www.dropbox.com/s/q8ypd345cqcd0b5/archlogo26x26.png?dl=1 "arch"
 [fedora]: https://www.dropbox.com/s/b8q448vuwopb0cl/fedora-logo.png?dl=1 "fedora"
 [openSUSE]: https://www.dropbox.com/s/jhirpw85ztgl59h/Geeko-button-bling7.png?dl=1 "openSUSE"
