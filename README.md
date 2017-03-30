@@ -30,9 +30,19 @@ cd /tmp/greeter
 sudo make install
 ```
 
-## Theme JavaScript API:
+## Theme JavaScript API
 The greeter exposes a JavaScript API to themes which they must use to interact with the greeter (in order to facilitate the user login process). For more details, check out the [API Documentation](https://doclets.io/Antergos/web-greeter/stable). 
 
+## Debugging
+You can run the greeter from within your desktop session if you add the following line to the desktop file for your session located in `/usr/share/xsessions/`:
+
+`X-LightDM-Allow-Greeter=true`
+
+You have to log out and log back in after adding that line. Then you can run the greeter from command line.
+
+Themes can be opened with a debug console if you set `debug_mode` to `true` inside `/etc/lightdm/web-greeter.yml`.
+
+***Note:*** Do not use `lightdm --test-mode` as it is not supported.
 
 ## Translations
 Translations are managed through [Transifex](https://www.transifex.com/faidoc/antergos/lightdm-webkit2-greeter/).
