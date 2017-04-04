@@ -43,7 +43,13 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
+
+#ifdef HAS_WEBKITGTK_2_16
+#include <webkitdom/WebKitDOMDOMWindow.h>
+#else
 #include <webkitdom/WebKitDOMCustom.h>
+#endif
+
 #include <webkit2/webkit-web-extension.h>
 #include <JavaScriptCore/JavaScript.h>
 #include <lightdm.h>
