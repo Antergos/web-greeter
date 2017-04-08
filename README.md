@@ -17,7 +17,7 @@
 #### Dependencies
 |                       | ![antergos][antergos] &nbsp;&nbsp; ![arch][arch] | ![ubuntu][ubuntu]    | ![fedora][fedora]   | ![openSUSE][openSUSE] | 
 |-----------------------|--------------------------------------------------|----------------------|---------------------|-----------------------|
-|**whither**            |python-whither                                    |python3-whither       |python3-whither      |python3-whither        |
+|**[whither][whither]** |python-whither                                    |python3-whither       |python3-whither      |python3-whither        |
 |**liblightdm-gobject** |lightdm                                           |liblightdm-gobject-dev|lightdm-gobject-devel|liblightdm-gobject-1-0 |
 |**pygobject**          |python-gobject                                    |python3-gi            |pygobject3           |python3-gobject        |
 
@@ -61,3 +61,5 @@ Translations are managed through [Transifex](https://www.transifex.com/faidoc/an
 [circleci]: https://img.shields.io/circleci/project/Antergos/web-greeter/master.svg?style=flat-square "CI Status"
 [api]: https://img.shields.io/badge/API--Docs-ready-brightgreen.svg?style=flat-square "Theme API Docs"
 [aur]: https://img.shields.io/aur/votes/lightdm-webkit2-greeter.svg?maxAge=604800&style=flat-square "AUR Votes"
+
+[whither]: https://github.com/Antergos/whither "Whither"
