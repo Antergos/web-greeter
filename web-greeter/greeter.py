@@ -98,6 +98,8 @@ class WebGreeter(App):
         self.config.branding.update(branding_config)
         self.config.greeter.update(greeter_config)
 
+        self._config.debug_mode = greeter_config['debug_mode']
+
     def load_theme(self):
         self.logger.debug('Loading theme...')
         theme_url = '/{0}/{1}/index.html'.format(self.config.themes_dir, self.config.greeter.theme)

@@ -735,7 +735,7 @@ class Theme {
 
 
 	session_toggle_handler( event ) {
-		let $session = $( event.target ).children( 'a' ),
+		let $session = $( event.target ),
 			session_name = $session.text(),
 			session_key = $session.attr( 'data-session-id' );
 
