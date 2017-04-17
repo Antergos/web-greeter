@@ -864,6 +864,8 @@ class Theme {
 			.children( '.alert-dismissible' )
 			.find('.close')
 			.trigger('click');
+
+		this.showing_message = false;
 	}
 }
 
