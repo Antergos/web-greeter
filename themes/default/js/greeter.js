@@ -772,7 +772,7 @@ class Theme {
 
 
 	system_action_handler( event ) {
-		let action = $( event.target ).attr( 'id' ),
+		let action = $( event.currentTarget ).attr( 'id' ),
 			$modal = $( '.modal' );
 
 		$modal
