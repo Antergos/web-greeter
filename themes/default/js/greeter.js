@@ -376,6 +376,7 @@ class Theme {
 		this.tux                 = 'img/antergos-logo-user.png';
 		this.user_list_visible   = false;
 		this.auth_pending        = false;
+		this.showing_message     = false;
 		this.selected_user       = null;
 		this.$user_list          = $( '#user-list2' );
 		this.$session_list       = $( '#sessions' );
@@ -718,6 +719,7 @@ class Theme {
 
 		} else {
 			// The user did not enter the correct password. Show error message.
+			this.showing_message = true;
 			this.show_message( err_msg, 'error' );
 		}
 	}
@@ -748,21 +750,24 @@ class Theme {
 
 
 	key_press_handler( event ) {
-		let action;
+		let action = this.showing_message ? this.dismiss_message : null;
 
-		switch ( event.which ) {
-			case 13:
-				action = this.auth_pending ? this.submit_password : ! this.user_list_visible ? this.show_user_list : null;
-				break;
-			case 27:
-				action = this.auth_pending ? this.cancel_authentication : null;
-				break;
-			case 32:
-				action = ( ! this.user_list_visible && ! this.auth_pending ) ? this.show_user_list : null;
-				break;
-			default:
-				action = null;
-				break;
+		if ( null === action ) {
+			switch ( event.which ) {
+				case 13:
+					if ( this.auth_pending ) {
+						action = this.submit_password;
+					} else if ( ! this.user_list_visible ) {
+						action = this.show_user_list;
+					}
+					break;
+				case 27:
+					action = this.auth_pending ? this.cancel_authentication : null;
+					break;
+				case 32:
+					action = ( !this.user_list_visible && !this.auth_pending ) ? this.show_user_list : null;
+					break;
+			}
 		}
 
 		if ( null !== action ) {
@@ -852,6 +857,13 @@ class Theme {
 		$msg_container.html( $msg_container.html() + text );
 		$( '#collapseTwo .user-wrap2' ).hide();
 		this.$msg_area_container.show();
+	}
+
+	dismiss_message() {
+		this.$msg_area_container
+			.children( '.alert-dismissible' )
+			.find('.close')
+			.trigger('click');
 	}
 }
 
