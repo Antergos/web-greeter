@@ -532,7 +532,7 @@ class Theme {
 				.appendTo( this.$actions_container )
 				.on( 'click', event => this.system_action_handler(event) );
 
-		} // END for (let [action, icon] of actions)
+		} // END for (let action of actions)
 
 		$( '[data-toggle=tooltip]' ).tooltip();
 		$( '.modal' ).modal( { show: false } );
@@ -771,8 +771,8 @@ class Theme {
 	}
 
 
-	system_action_handler() {
-		let action = $( this ).attr( 'id' ),
+	system_action_handler( event ) {
+		let action = $( event.target ).attr( 'id' ),
 			$modal = $( '.modal' );
 
 		$modal
