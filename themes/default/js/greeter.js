@@ -703,8 +703,8 @@ class Theme {
 	 * Greeter to log them in with the session they selected.
 	 */
 	authentication_complete() {
-		let selected_session = $( '.selected' ).attr( 'data-session-id' ),
-			err_msg = _config.translations.auth_failed;
+		let selected_session = $( '#session-list .selected' ).attr( 'data-session-id' ),
+			err_msg          = _config.translations.auth_failed;
 
 		this.auth_pending = false;
 
