@@ -1,5 +1,14 @@
 # Change Log
 
+## [2.2.5](https://github.com/antergos/web-greeter/tree/2.2.5) ~ 04-24-2017
+
+**Fixed:**
+
+  * Support for webkitgtk 2.16+
+
+[Full Changelog](https://github.com/antergos/web-greeter/compare/2.2.4...2.2.5)
+
+
 ## [2.2.4](https://github.com/antergos/web-greeter/tree/2.2.4) ~ 04-04-2017
 
 **Added:**
