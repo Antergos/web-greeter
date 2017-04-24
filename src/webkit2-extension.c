@@ -47,7 +47,7 @@
 #include "config.h"
 
 #ifdef HAS_WEBKITGTK_2_16
-#include <webkitdom/WebKitDOMDOMWindow.h>
+#include <webkitdom/webkitdom.h>
 #else
 #include <webkitdom/WebKitDOMCustom.h>
 #endif
