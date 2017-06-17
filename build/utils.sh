@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 BUILD_DIR="$(realpath $(dirname "${BASH_SOURCE[0]}"))"
 REPO_DIR="$(dirname "${BUILD_DIR}")"
