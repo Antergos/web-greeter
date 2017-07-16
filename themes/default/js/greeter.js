@@ -678,7 +678,7 @@ class Theme {
 		this.selected_user = null;
 		this.auth_pending  = false;
 
-		if ( $( event.target ).hasClass( 'alert' ) ) {
+		if ( event != null && $( event.target ).hasClass( 'alert' ) ) {
 			/* We were triggered by the authentication failed message being dismissed.
 			 * Keep the same account selected so user can retry without re-selecting an account.
 			 */
