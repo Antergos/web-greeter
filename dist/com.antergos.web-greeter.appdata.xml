@@ -36,6 +36,11 @@
 	-->
 
 	<releases>
+		<release date="2018-01-07" version="3.0.0rc1">
+			<description>
+				<p>This is the first release candidate for the 3.0 series.</p>
+			</description>
+		</release>
 		<release date="2017-02-13" version="3.0.0alpha5">
 			<description>
 				<p>This is a pre-release of what will soon be the 3.0 series.</p>
