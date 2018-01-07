@@ -87,9 +87,17 @@ class ThemeConfig {
 		this.cache_backend     = '';
 
 		this.setup_cache_backend();
-		this.init_config_values();
 
 		return _config;
+	}
+
+	/**
+	 * Determine which background image should be displayed and apply it.
+	 *
+	 * @return {Promise}
+	 */
+	initialize() {
+		return new Promise( resolve => this.init_config_values( resolve ) );
 	}
 
 	setup_cache_backend() {
@@ -175,10 +183,12 @@ class ThemeConfig {
 
 	/**
 	 * Get some values from `web-greeter.conf` and save them for later.
+	 *
+	 * @param {Promise.resolve} callback
 	 */
-	init_config_values() {
+	init_config_values( callback ) {
 		if ( 'undefined' === typeof( greeter_config ) ) {
-			greeter_config = { branding: {}, greeter: {} };
+			window.greeter_config = { branding: {}, greeter: {} };
 		}
 
 		this.logo                  = greeter_config.branding.logo || 'img/antergos.png';
@@ -192,10 +202,13 @@ class ThemeConfig {
 
 		if ( ! expired || ! this.background_images_dir ) {
 			this.background_images = JSON.parse( this.background_images );
-			return;
+			return callback();
 		}
 
-		theme_utils.dirlist( this.background_images_dir, true, result => this.cache_background_images(result) );
+		theme_utils.dirlist( this.background_images_dir, true, result => {
+			this.cache_background_images( result );
+			return callback();
+		} );
 	}
 
 	cache_background_images( result ) {
@@ -451,10 +464,10 @@ class Theme {
 
 			if ( null === last_session ) {
 				// This user has never logged in before let's enable the system's default session.
-				last_session = _config._set( lightdm.default_session, 'user', user.name, 'session' );
+				last_session = _config._set( lightdm.default_session, 'user', user.username, 'session' );
 			}
 
-			log( `Last session for ${user.name} was: ${last_session}` );
+			log( `Last session for ${user.username} was: ${last_session}` );
 
 			template = `
 				<a href="#" id="${user.username}" class="list-group-item ${user.username}" data-session="${last_session}">
@@ -874,6 +887,7 @@ class Theme {
  * Initialize the theme once the window has loaded.
  */
 $( window ).on( 'GreeterReady', () => {
-	new ThemeConfig();
-	new Theme();
+	const config = new ThemeConfig();
+
+	config.initialize().then( () => new Theme() );
 } );
