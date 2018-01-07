@@ -49,7 +49,7 @@ function is_empty( value ) {
 		return value.length === 0;
 	}
 
-	return ['', null, 'null', undefined, 'undefined'].includes( value );
+	return ['', null, 'null', undefined, 'undefined', false, 'false'].includes( value );
 }
 
 
@@ -288,7 +288,7 @@ class BackgroundManager {
 		let random_bg;
 
 		if ( is_empty( _config.background_images ) ) {
-			return '';
+			return 'img/fallback_bg.jpg';
 		}
 
 		random_bg = Math.floor( Math.random() * _config.background_images.length );
