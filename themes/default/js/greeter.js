@@ -193,14 +193,14 @@ class ThemeConfig {
 
 		this.logo                  = greeter_config.branding.logo || 'img/antergos.png';
 		this.user_image            = greeter_config.branding.user_image || 'img/antergos-logo-user.png';
-		this.background_images_dir = greeter_config.branding.background_images || '/usr/share/backgrounds';
+		this.background_images_dir = greeter_config.branding.background_images_dir || '/usr/share/backgrounds';
 		this.debug                 = greeter_config.greeter.debug_mode || false;
 		this.background_images     = this._get( 'background_manager', 'background_images' );
 		this.images_cache_expires  = moment.unix( parseInt( this._get( 'background_manager', 'cache_expires' ) ) );
 
 		let expired = ( null === this.background_images || ! this.images_cache_expires.isValid() || moment().isAfter( this.images_cache_expires ) );
 
-		if ( ! expired || ! this.background_images_dir ) {
+		if ( this.background_images && this.background_images.length > 0 && ! expired ) {
 			this.background_images = JSON.parse( this.background_images );
 			return callback();
 		}

@@ -74,7 +74,7 @@ class ThemeUtils(BridgeObject):
             return []
 
         if only_images:
-            file_types = ('jpg', 'jpeg', 'png', 'gif', 'bmp')
+            file_types = ('jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp')
             result = [
                 glob('{0}/**/*.{1}'.format(dir_path, ftype), recursive=True)
                 for ftype in file_types
