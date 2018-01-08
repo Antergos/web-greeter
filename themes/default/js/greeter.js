@@ -320,8 +320,8 @@ class BackgroundManager {
 				$thumbs_container = $( '.bgs' );
 
 			// TODO: Implement some form of pagination
-			if ( _config.background_images.length > 20 ) {
-				_config.background_images = _config.background_images.splice( 0, 20 );
+			if ( _config.background_images.length > 100 ) {
+				_config.background_images = _config.background_images.splice( 0, 100 );
 			}
 
 			$random_thumbnail.on( 'click', event => this.background_selected_handler(event) );
