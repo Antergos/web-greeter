@@ -27,9 +27,10 @@
  */
 
 /* HiDPI */
-@media screen and (min-width: 3000px) and (min-height: 1200px)
-{
-    html { zoom: 2.0; }
+@media screen and (min-width: 3000px) and (min-height: 1200px) {
+    html {
+        zoom: 2.0;
+    }
 }
 
 /* Global Styles */
