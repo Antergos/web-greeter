@@ -27,7 +27,7 @@
  */
 
 /* HiDPI */
-@media screen and (min-width: 3000px)
+@media screen and (min-width: 3000px) and (min-height: 1200px)
 {
     html { zoom: 2.0; }
 }
