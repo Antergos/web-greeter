@@ -26,6 +26,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* HiDPI */
+@media screen and (min-width: 3000px)
+{
+    html { zoom: 2.0; }
+}
+
 /* Global Styles */
 
 @font-face {
