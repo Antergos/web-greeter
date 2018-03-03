@@ -9,7 +9,7 @@ extdir = with_webext_dir[0]
 
 gresources_dir = include_directories('gresource')
 gnome = import('gnome')
-utils = '@0@/utils.sh'.format(meson.build_root())
+utils = join_paths(meson.source_root(), 'build/utils.sh')
 
 # Can't do it the right way until GLib 2.52 is released
 # js_sources = run_command(utils, 'get-js-files').stdout().split()
