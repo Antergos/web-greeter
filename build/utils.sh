@@ -33,7 +33,7 @@ do_build() {
 		&& zip -rq ../"${PKGNAME}.zip" . -x '**__pycache__**' 'resources/*' \
 		&& cd - >/dev/null \
 		&& mkdir -p "${INSTALL_ROOT}${PREFIX}"/{bin,share} \
-		&& echo '#!/bin/python3' >> "${INSTALL_ROOT}${PREFIX}/bin/web-greeter" \
+		&& echo '#!/usr/bin/env python3' >> "${INSTALL_ROOT}${PREFIX}/bin/web-greeter" \
 		&& cat web-greeter.zip >> "${INSTALL_ROOT}${PREFIX}/bin/web-greeter" \
 		&& chmod +x "${INSTALL_ROOT}${PREFIX}/bin/web-greeter")
 }
