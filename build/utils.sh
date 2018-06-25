@@ -44,7 +44,7 @@ do_install() {
 }
 
 do_install_dev() {
-	cp -RH "${REPO_DIR}/whither/whither" /usr/lib/python3.6/site-packages/
+	cp -RH "${REPO_DIR}/whither/whither" /usr/lib/python3.6/site-packages
 }
 
 generate_pot_file() {

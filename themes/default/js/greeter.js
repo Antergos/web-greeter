@@ -329,7 +329,7 @@ class BackgroundManager {
 			for ( let image_file of _config.background_images ) {
 				let $link = $( '<a href="#"><div>' ),
 					$img_el = $link.children( 'div' ),
-					img_url = `url(file://${image_file})`;
+					img_url = `url(web-greeter://${image_file})`;
 
 				if ( image_file === this.current_background || img_url === current_bg_url ) {
 					$link.addClass( 'active' );
